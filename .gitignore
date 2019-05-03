@@ -1,0 +1,10 @@
+# super ignore any roms
+*.z64
+
+#build directores
+game/build-*/
+
+# external programs
+.vscode/
+
+
