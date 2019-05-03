@@ -1,1 +1,20 @@
 .gitignore
+
+### Compiler Settings ###
+CROSS = mips64-elf-
+AS = $(CROSS)as
+
+AS_FLAGS = -march=vr4300 -mabi=32 -I include 
+# -I $(BUILD_DIR) $(VERSION_ASFLAGS) $(GRUCODE_ASFLAGS)
+
+### Tools ###
+TOOL_DIR = ../tools
+
+
+### Target Settings ###
+TARGET = ssb64.@(VERSION)
+ROM    = $(TARGET).z64
+
+
+### Rule Macros ###
+!as = |> $(AS) $(AS_FLAGS) -o %o %f |> %B.o
