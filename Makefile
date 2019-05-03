@@ -1,5 +1,6 @@
 # Variables
-VERSIONS := us jp
+VERSIONS := us
+COMPARE ?= 1
 
 # Directories
 TUP_DIR = game
