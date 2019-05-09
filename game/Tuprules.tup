@@ -1,20 +1,38 @@
-.gitignore
 
-### Compiler Settings ###
-CROSS = mips64-elf-
-AS = $(CROSS)as
-
-AS_FLAGS = -march=vr4300 -mabi=32 -I include 
-# -I $(BUILD_DIR) $(VERSION_ASFLAGS) $(GRUCODE_ASFLAGS)
 
 ### Tools ###
 TOOL_DIR = ../tools
 
 
+ifndef VERSION
+error "VERSION wasn't defined"
+endif
+
 ### Target Settings ###
 TARGET = ssb64.@(VERSION)
 ROM    = $(TARGET).z64
+ELF    = $(TARGET).elf
+BUILD_DIR = &build-$(TARGET)
+
+### Compiler Settings ###
+CROSS = mips64-elf-
+AS = $(CROSS)as
+LD = $(CROSS)ld
+
+CPP = $(CROSS)cpp
+
+AS_FLAGS = -march=vr4300 -mabi=32 -I include 
+LD_FLAGS = -Map $(TARGET).map --no-check-sections
+#OBJCOPY_FLAGS := --pad-to=0x800000 --gap-fill=0xFF
+
+
+# -I $(BUILD_DIR) $(VERSION_ASFLAGS) $(GRUCODE_ASFLAGS)
 
 
 ### Rule Macros ###
 !as = |> $(AS) $(AS_FLAGS) -o %o %f |> %B.o
+
+!tempbin2o = |> $(LD) -r -b binary %f -o %B.o |> %B.o
+!tempaudio2o = |> $(LD) -r -b binary %f -o %f.o |> %f.o
+!tempres2o = |> $(LD) -r -b binary %f -o %f.o |> %f.o
+

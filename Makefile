@@ -4,9 +4,10 @@ COMPARE ?= 1
 
 # Directories
 TUP_DIR = game
-CONFIG_DIR = config
 fmt_build_dir = $(strip $(TUP_DIR))/build-$(strip $(1))
 BUILD_DIRS := $(foreach v, $(VERSIONS), $(call fmt_build_dir, $(v)))
+CONFIG_DIR = configs
+fmt_tup_config = $(strip $(CONFIG_DIR))/$(strip $(1)).config
 
 # Programs
 TUP := tup
@@ -25,7 +26,6 @@ clean:
 
 ## Create rules for initializing a tup variant (game version)
 ## can call `make VERSION` to build only that version
-fmt_tup_config = $(strip $(TUP_DIR))/$(strip $(CONFIG_DIR))/$(strip $(1)).config
 # TUPVARIANT(version)
 define TUPVARIANT
 $(call fmt_build_dir, $(1)):

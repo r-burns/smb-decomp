@@ -1,0 +1,11 @@
+include_rules
+
+#$(CPP) $(VERSION_CFLAGS) -I include/ -DBUILD_DIR=$(BUILD_DIR) -o $@ $<
+
+: ssb64.in.ld |> $(CPP) -P -o %o %f |> ssb64.ld {cpp-ld} 
+
+: {cpp-ld}  | <audio_objs> <asm_objs> <resources>                           \
+|> $(LD) -T %f $(LD_FLAGS) -o $(ELF) %<audio_objs> %<asm_objs> %<resources> \
+|> $(ELF) | $(TARGET).map
+
+: $(ELF) |> $(CROSS)objcopy -O binary %f %o |> $(ROM)

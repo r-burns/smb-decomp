@@ -1,3 +1,4 @@
 include_rules
 
-: foreach *.s |> !as |>
+: foreach *.s |> !as |> | ../<asm_objs>
+: foreach tempbins/*.bin |> !tempbin2o |> | ../<asm_objs>
