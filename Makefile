@@ -1,5 +1,5 @@
 # Variables
-COMPARE ?= 0
+COMPARE ?= 1
 
 # Targets
 VERSIONS := us

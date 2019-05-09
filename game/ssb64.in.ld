@@ -125,6 +125,9 @@ SECTIONS
 
     .unknown :
     {
+        unknown/F573D0.o(.data);
+        unknown/F57BF0.o(.data);
+        unknown/F5A9C0.o(.data);
     }
 
     /DISCARD/ :
