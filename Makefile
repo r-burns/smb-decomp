@@ -1,6 +1,10 @@
 # Variables
+COMPARE ?= 0
+
+# Targets
 VERSIONS := us
-COMPARE ?= 1
+fmt_target = ssb64.$(strip $(1))
+TARGETS := $(foreach v, $(VERSIONS), $(call fmt_target, $(v)).z64)
 
 # Directories
 TUP_DIR = game
@@ -12,6 +16,7 @@ fmt_tup_config = $(strip $(CONFIG_DIR))/$(strip $(1)).config
 # Programs
 TUP := tup
 RUN_TUP := cd $(TUP_DIR); $(TUP)
+SHA1SUM := shasum
 
 #------------------------------------------------------------------------------#
 ### Commands
@@ -20,19 +25,26 @@ RUN_TUP := cd $(TUP_DIR); $(TUP)
 # by default, all versions are built, as that's how tup works
 all: | $(BUILD_DIRS)
 	$(RUN_TUP)
+ifeq ($(COMPARE), 1) 
+	@$(SHA1SUM) -c $(subst z64,sha1,$(TARGETS))
+endif
 
 clean:
 	rm -rf $(BUILD_DIRS)
 
 ## Create rules for initializing a tup variant (game version)
 ## can call `make VERSION` to build only that version
-# TUPVARIANT(version)
+
+# $(call TUPVARIANT, version)
 define TUPVARIANT
 $(call fmt_build_dir, $(1)):
 	$(RUN_TUP) variant $(call fmt_tup_config, $(1))
 
 $(1): |$(call fmt_build_dir, $(1))
 	$(RUN_TUP) $(notdir $(call fmt_build_dir, $(1)))
+ifeq ($(COMPARE), 1) 
+	$(SHA1SUM) -c $(call fmt_target, $(v)).sha1 
+endif
 endef
 
 $(foreach v, $(VERSIONS), $(eval $(call TUPVARIANT, $(v))))
