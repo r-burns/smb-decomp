@@ -113,10 +113,15 @@ SECTIONS
     }
     __romPos += SIZEOF(.imgbank);
 
-
     .audio : 
     {
+        audio/S1_music.sbk.o(.data);
+        audio/B1_sounds1.ctl.o(.data);
+        audio/B1_sounds1.tbl.o(.data);
+        audio/B1_sounds2.ctl.o(.data);
+        audio/B1_sounds2.tbl.o(.data);
     }
+    __romPos += SIZEOF(.audio);
 
     .unknown :
     {
