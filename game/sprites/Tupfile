@@ -1,0 +1,4 @@
+include_rules
+
+# Temporarily convert the image/sprite banks into objects
+: foreach tempbins/*.bin |> !tempbin2o |> | ../<imgbanks>

@@ -4,8 +4,9 @@ include_rules
 
 : ssb64.in.ld |> $(CPP) -P -o %o %f |> ssb64.ld {cpp-ld} 
 
-: {cpp-ld}  | <audio_objs> <asm_objs> <resources>                           \
-|> $(LD) -T %f $(LD_FLAGS) -o $(ELF) %<audio_objs> %<asm_objs> %<resources> \
+: {cpp-ld}  | <audio_objs> <asm_objs> <resources> <imgbanks> \
+|> $(LD) -T %f $(LD_FLAGS) -o $(ELF) \
+   %<audio_objs> %<asm_objs> %<resources> %<imgbanks>  \
 |> $(ELF) | $(TARGET).map
 
 : $(ELF) |> $(CROSS)objcopy -O binary %f %o |> $(ROM)

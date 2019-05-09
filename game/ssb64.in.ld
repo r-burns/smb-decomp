@@ -9,7 +9,6 @@ SECTIONS
         asm/header.o(.rodata);
         asm/bootstrap.o(.data);
     }
-
     __romPos += SIZEOF(.boot);
 
     .code 0x80000400 : AT(__romPos)
@@ -82,7 +81,6 @@ SECTIONS
         asm/18DCB0.o(.data);
         asm/1AB6B0.o(.data);
     }
-
     __romPos += SIZEOF(.code);
 
     .resources 0x0 : AT(__romPos)
@@ -90,12 +88,33 @@ SECTIONS
         resources/resfiletable.o(.data);
         resources/resourcefiles.o(.data);
     }
+    __romPos += SIZEOF(.resources);
 
-    .imgbank :
+    .imgbank 0x0 : AT(__romPos)
     {
+        sprites/spr_bank-1.o(.data);
+        sprites/img_bank-1.o(.data);
+        sprites/spr_bank-2.o(.data);
+        sprites/img_bank-2.o(.data);
+        sprites/spr_bank-3.o(.data);
+        sprites/img_bank-3.o(.data);
+        sprites/spr_bank-4.o(.data);
+        sprites/img_bank-4.o(.data);
+        sprites/spr_bank-5.o(.data);
+        sprites/img_bank-5.o(.data);
+        sprites/spr_bank-6.o(.data);
+        sprites/img_bank-6.o(.data);
+        sprites/spr_bank-7.o(.data);
+        sprites/img_bank-7.o(.data);
+        sprites/spr_bank-8.o(.data);
+        sprites/img_bank-8.o(.data);
+        sprites/spr_bank-9.o(.data);
+        sprites/img_bank-9.o(.data);
     }
+    __romPos += SIZEOF(.imgbank);
 
-    .audio_assets : 
+
+    .audio : 
     {
     }
 
