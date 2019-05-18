@@ -10,3 +10,6 @@ need to be transformed into a singly linked list type of structure. The start of
 then need to be saved for use in the main table.
 
 Also, some files need to be vpk encoded...
+
+## Ideas
+* Use elf relocation symbols? regular symbols?

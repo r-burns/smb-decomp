@@ -1,0 +1,9 @@
+[package]
+name = "libgfx"
+version = "0.1.0"
+authors = ["SSB64d team <unknown>"]
+edition = "2018"
+
+[dependencies]
+rgb = "0.8.13"
+serde = {version = "1.0.91", features = ["derive"] }
