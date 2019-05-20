@@ -1,18 +1,18 @@
-use crate::{Mode, Opts};
+use crate::Encode;
 use failure::{format_err, Error, ResultExt};
 use libgfx::{self, BitDepth, ImageFormat};
 use lodepng;
 use std::fs;
 use std::path::{Path, PathBuf};
 
-pub fn encode_binary(opts: Opts) -> Result<(), Error> {
+pub fn encode_binary(opts: Encode) -> Result<(), Error> {
     use ImageFormat::*;
-    let Opts {
+    let Encode {
         input,
         output,
         format,
         bitdepth,
-        ..
+        palette_output,
     } = opts;
 
     let (img, pal) = match format {
@@ -24,13 +24,10 @@ pub fn encode_binary(opts: Opts) -> Result<(), Error> {
     fs::write(&output, &img)?;
 
     if format == ImageFormat::CI {
-        let palette_file = match opts.mode {
-            Mode::Encode { palette_output } => palette_output,
-            _ => unreachable!(),
-        }
-        .ok_or(())
-        .or_else(|_| append_to_filename(&output, "pal"))
-        .context("generating palette output filename from image output filename")?;
+        let palette_file = palette_output
+            .ok_or(())
+            .or_else(|_| append_to_filename(&output, "pal"))
+            .context("generating palette output filename from image output filename")?;
 
         let pal = pal.expect("palette data for encoded CI image");
 
@@ -52,8 +49,7 @@ fn append_to_filename(file: &Path, s: &str) -> Result<PathBuf, Error> {
     name.push(".");
     name.push(ext);
 
-    let appended = file.with_file_name(&name);
-    Ok(appended)
+    Ok(file.with_file_name(&name))
 }
 
 fn convert_to_rgba(file: PathBuf, depth: BitDepth) -> Result<Vec<u8>, Error> {
@@ -90,7 +86,7 @@ fn convert_to_ci(file: PathBuf, depth: BitDepth) -> Result<(Vec<u8>, Option<Vec<
 
     let indices = state.decode_file(&file).map(|res| match res {
         Image::RawData(bits) => Ok(bits),
-        _ => Err(format_err!("could read input png as paletted png")),
+        _ => Err(format_err!("couldn't read input png as paletted png")),
     })??;
 
     let palette = state.info_png_mut().color.palette();

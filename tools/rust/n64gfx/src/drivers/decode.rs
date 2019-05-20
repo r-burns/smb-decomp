@@ -1,4 +1,4 @@
-use crate::{Mode, Opts};
+use crate::Decode;
 use failure::{bail, Error, ResultExt};
 use libgfx::{BitDepth, ImageFormat};
 use lodepng;
@@ -15,24 +15,19 @@ struct ImageInfo<'i> {
     height: u32,
 }
 
-pub fn decode_binary(opts: Opts) -> Result<(), Error> {
-    let Opts {
+pub fn decode_binary(opts: Decode) -> Result<(), Error> {
+    let Decode {
         input,
         output,
         format,
         bitdepth,
-        ..
+        height,
+        width,
+        offset,
+        convert_palette,
+        palette,
     } = opts;
-    let (offset, indexed_png, palette, height, width) = match opts.mode {
-        Mode::Decode {
-            offset,
-            convert_palette,
-            palette,
-            height,
-            width,
-        } => (offset, !convert_palette, palette, height, width),
-        _ => unreachable!("not mode::decode in decode binary function"),
-    };
+    let indexed_png = !convert_palette;
 
     if format == ImageFormat::CI && palette.is_none() {
         bail!("No palette offset for CI image!");

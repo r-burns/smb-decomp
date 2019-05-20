@@ -8,13 +8,21 @@ mod drivers;
 /// A tool to convert PNGs to N64 image formats, and from raw N64 binary
 /// data into PNGs
 #[derive(Debug, StructOpt)]
-pub struct Opts {
-    #[structopt(subcommand)]
-    mode: Mode,
+enum Opts {
+    /// Convert a PNG into an N64 binary
+    #[structopt(name = "encode")]
+    Encode(Encode),
+    /// Convert N64 binary data into a PNG
+    #[structopt(name = "decode")]
+    Decode(Decode),
+}
+
+#[derive(Debug, StructOpt)]
+pub struct Encode {
     /// Input binary or PNG
     #[structopt(short, long, parse(from_os_str))]
     input: PathBuf,
-    /// Output file
+    /// Output filename
     #[structopt(short, long, parse(from_os_str))]
     output: PathBuf,
     /// RGBA, CI, I, or IA
@@ -23,34 +31,38 @@ pub struct Opts {
     /// 4, 8, 16, or 32
     #[structopt(short = "d", long, parse(try_from_str = "arg_bitdepth"))]
     bitdepth: BitDepth,
+    /// A custom output filename for a CI image palette binary
+    #[structopt(long = "palette", short, parse(from_os_str))]
+    palette_output: Option<PathBuf>,
 }
 
 #[derive(Debug, StructOpt)]
-enum Mode {
-    /// Convert a PNG into an N64 binary
-    #[structopt(name = "encode")]
-    Encode {
-        /// A custom output for a CI image palette binary
-        #[structopt(long = "palette", short, parse(from_os_str))]
-        palette_output: Option<PathBuf>,
-    },
-    /// Convert N64 binary data into a PNG
-    #[structopt(name = "decode")]
-    Decode {
-        /// Location of image data in input binary, if not at the start
-        #[structopt(long, parse(try_from_str = "possible_hex"))]
-        offset: Option<u64>,
-        /// Convert a CI palette into RGBA PNG (default is paletted PNG)
-        #[structopt(long = "convert-palette")]
-        convert_palette: bool,
-        /// Location of palette data (RBGA16 array) for CI image
-        #[structopt(short, long, parse(try_from_str = "possible_hex"))]
-        palette: Option<u64>,
-        #[structopt(short, long)]
-        height: u32,
-        #[structopt(short, long)]
-        width: u32,
-    },
+pub struct Decode {
+    /// Input binary or PNG
+    #[structopt(short, long, parse(from_os_str))]
+    input: PathBuf,
+    /// Output filename
+    #[structopt(short, long, parse(from_os_str))]
+    output: PathBuf,
+    /// RGBA, CI, I, or IA
+    #[structopt(short, long, parse(try_from_str = "arg_format"))]
+    format: ImageFormat,
+    /// 4, 8, 16, or 32
+    #[structopt(short = "d", long, parse(try_from_str = "arg_bitdepth"))]
+    bitdepth: BitDepth,
+    #[structopt(short, long)]
+    height: u32,
+    #[structopt(short, long)]
+    width: u32,
+    /// Location of image data in input binary
+    #[structopt(long, parse(try_from_str = "possible_hex"))]
+    offset: Option<u64>,
+    /// Convert a CI palette into RGBA PNG (default is paletted PNG)
+    #[structopt(long = "convert-palette")]
+    convert_palette: bool,
+    /// Location of palette data (RBGA16 array) for CI image
+    #[structopt(short, long, parse(try_from_str = "possible_hex"))]
+    palette: Option<u64>,
 }
 
 fn main() {
@@ -67,11 +79,9 @@ fn main() {
 }
 
 fn run(opts: Opts) -> Result<(), Error> {
-    println!("{:?}", opts);
-
-    match opts.mode {
-        Mode::Encode { .. } => drivers::encode_binary(opts),
-        Mode::Decode { .. } => drivers::decode_binary(opts),
+    match opts {
+        Opts::Encode(settings) => drivers::encode_binary(settings),
+        Opts::Decode(settings) => drivers::decode_binary(settings),
     }
 }
 
