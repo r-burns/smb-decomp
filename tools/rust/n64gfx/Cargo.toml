@@ -1,0 +1,12 @@
+[package]
+name = "n64gfx"
+version = "0.1.0"
+authors = ["SSB64d team <unknown>"]
+edition = "2018"
+
+[dependencies]
+structopt = {version = "0.2.15", default-features = false}
+libgfx = {path = "../libgfx"}
+failure = "0.1.5" 
+lodepng = "2.4.2"
+

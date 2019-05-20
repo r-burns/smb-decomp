@@ -1,12 +1,14 @@
+use serde::{Serialize, Serializer};
 ///! A crate for dealing with n64 graphic formats. It can convert from the raw, big-endian
 ///! n64 binary data into a `Vec` of RGBA or GrayAlpha values
 use std::fmt;
-use serde::{Serialize, Serializer};
 
 mod decode;
+mod encode;
 mod utils;
 
 pub use decode::{raw_to_gray, raw_to_indexed, raw_to_rgba};
+pub use encode::{gray_to_raw, indexed_to_raw, rgba_to_raw};
 
 /// The supported N64 image formats.
 #[derive(Debug, Copy, Clone, Eq, PartialEq, Serialize)]

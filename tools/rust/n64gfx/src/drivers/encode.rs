@@ -1,0 +1,100 @@
+use crate::{Mode, Opts};
+use failure::{format_err, Error, ResultExt};
+use libgfx::{self, BitDepth, ImageFormat};
+use lodepng;
+use std::fs;
+use std::path::{Path, PathBuf};
+
+pub fn encode_binary(opts: Opts) -> Result<(), Error> {
+    use ImageFormat::*;
+    let Opts {
+        input,
+        output,
+        format,
+        bitdepth,
+        ..
+    } = opts;
+
+    let (img, pal) = match format {
+        RGBA => (convert_to_rgba(input, bitdepth)?, None),
+        IA | I => (convert_to_intensity(input, format, bitdepth)?, None),
+        CI => convert_to_ci(input, bitdepth)?,
+    };
+
+    fs::write(&output, &img)?;
+
+    if format == ImageFormat::CI {
+        let palette_file = match opts.mode {
+            Mode::Encode { palette_output } => palette_output,
+            _ => unreachable!(),
+        }
+        .ok_or(())
+        .or_else(|_| append_to_filename(&output, "pal"))
+        .context("generating palette output filename from image output filename")?;
+
+        let pal = pal.expect("palette data for encoded CI image");
+
+        fs::write(&palette_file, pal)?;
+    }
+
+    Ok(())
+}
+
+fn append_to_filename(file: &Path, s: &str) -> Result<PathBuf, Error> {
+    let mut name = file
+        .file_stem()
+        .ok_or(format_err!("no file stem"))?
+        .to_os_string();
+    let ext = file.extension().ok_or(format_err!("no file extension"))?;
+
+    name.push(".");
+    name.push(s);
+    name.push(".");
+    name.push(ext);
+
+    let appended = file.with_file_name(&name);
+    Ok(appended)
+}
+
+fn convert_to_rgba(file: PathBuf, depth: BitDepth) -> Result<Vec<u8>, Error> {
+    let bitmap = lodepng::decode32_file(&file)?;
+
+    Ok(libgfx::rgba_to_raw(
+        &bitmap.buffer,
+        ImageFormat::RGBA,
+        depth,
+    ))
+}
+
+fn convert_to_intensity(
+    file: PathBuf,
+    format: ImageFormat,
+    depth: BitDepth,
+) -> Result<Vec<u8>, Error> {
+    use lodepng::{ffi::ColorType::GREY_ALPHA, Image};
+
+    let bitmap = lodepng::decode_file(&file, GREY_ALPHA, depth as u32).map(|res| match res {
+        Image::GreyAlpha(bits) => Ok(bits),
+        _ => Err(format_err!("couldn't read input png as grey alpha image")),
+    })??;
+
+    Ok(libgfx::gray_to_raw(&bitmap.buffer, format, depth))
+}
+
+fn convert_to_ci(file: PathBuf, depth: BitDepth) -> Result<(Vec<u8>, Option<Vec<u8>>), Error> {
+    use lodepng::{ffi::ColorType::PALETTE, Image, State};
+
+    let mut state = State::new();
+    state.info_raw_mut().colortype = PALETTE;
+    state.info_raw_mut().set_bitdepth(8);
+
+    let indices = state.decode_file(&file).map(|res| match res {
+        Image::RawData(bits) => Ok(bits),
+        _ => Err(format_err!("could read input png as paletted png")),
+    })??;
+
+    let palette = state.info_png_mut().color.palette();
+    let (img, pal) = libgfx::indexed_to_raw(&indices.buffer, &palette, depth);
+
+    Ok((img.into(), pal.into()))
+}

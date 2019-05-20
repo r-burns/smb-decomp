@@ -9,6 +9,7 @@ mod unpack;
 /// A utility to pack and unpack the image banks in SSB64.
 #[derive(Debug, StructOpt)]
 enum Opts {
+    /// Extract images and information from the native N64 big-endian image bank format
     #[structopt(name = "unpack")]
     Unpack {
         #[structopt(parse(from_os_str))]
