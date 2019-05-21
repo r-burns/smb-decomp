@@ -1,8 +1,8 @@
 use byteorder::{ByteOrder, BE};
 use failure::{format_err, Error};
 use libgfx::{BitDepth, ImageFormat};
-use serde::Serialize;
-use std::convert::From;
+use serde::{Serialize, Serializer};
+use std::convert::{From, TryFrom};
 use std::fmt;
 
 /// Bank file header that has offsets each set of images
@@ -34,8 +34,8 @@ impl fmt::Display for Header {
 pub struct Entry {
     pub entry_offset: u32,
     pub image_count: u32,
-    pub format: ImageFormat,
-    pub bitdepth: BitDepth,
+    pub format: BankFormat,
+    pub bitdepth: BankDepth,
     pub width: u32,
     pub height: u32,
     pub are_palettes: bool,
@@ -49,7 +49,7 @@ impl Entry {
     }
 
     pub fn bitsize(&self) -> usize {
-        self.size() * (self.bitdepth as usize)
+        self.size() * (self.bitdepth.depth())
     }
     // round up for the case of an odd pixel numbered 4bit image
     pub fn bytesize(&self) -> usize {
@@ -68,8 +68,8 @@ macro_rules! img_file_name {
 /// Configuration struct for an image entry
 #[derive(Debug, Serialize)]
 pub struct EntryConfig {
-    format: ImageFormat,
-    bitdepth: BitDepth,
+    format: BankFormat,
+    bitdepth: BankDepth,
     width: u32,
     height: u32,
     /// None = use filesystem to list images; Some(vec![]) = no images in this entry...
@@ -89,7 +89,7 @@ impl From<Entry> for EntryConfig {
         let images = Some(
             image_offsets
                 .into_iter()
-                .map(|o| format!(img_file_name![], o, format, bitdepth as u32))
+                .map(|o| format!(img_file_name![], o, format, bitdepth.depth()))
                 .collect(),
         );
 
@@ -116,26 +116,111 @@ impl From<Vec<String>> for BankConfig {
     }
 }
 
-/// Convert from raw format int into ImageFormat enum
-pub fn read_imgformat(magic: u32) -> Result<ImageFormat, Error> {
-    use ImageFormat::*;
-    match magic {
-        0 => Ok(RGBA),
-        1 => Err(format_err!("YUV not supported")),
-        2 => Ok(CI),
-        3 => Ok(IA),
-        4 => Ok(I),
-        _ => Err(format_err!("Unknown entry format number '{}", magic)),
+/// Custom enum for an Entry's N64 image format
+#[derive(Debug, Copy, Clone, Eq, PartialEq, Serialize)]
+#[serde(rename_all = "lowercase")]
+pub enum BankFormat {
+    RGBA = 0,
+    YUV = 1,
+    CI = 2,
+    IA = 3,
+    I = 4,
+}
+
+impl Into<ImageFormat> for BankFormat {
+    fn into(self) -> ImageFormat {
+        match self {
+            BankFormat::RGBA => ImageFormat::RGBA,
+            BankFormat::CI => ImageFormat::CI,
+            BankFormat::IA => ImageFormat::IA,
+            BankFormat::I => ImageFormat::I,
+            BankFormat::YUV => panic!("YUV images are not supported!"),
+        }
     }
 }
-/// Convert form raw bitdepth int into BitDepth enum
-pub fn read_bitdepth(magic: u32) -> Result<BitDepth, Error> {
-    use BitDepth::*;
-    match magic {
-        0 => Ok(Bit4),
-        1 => Ok(Bit8),
-        2 => Ok(Bit16),
-        3 => Ok(Bit32),
-        _ => Err(format_err!("Unknown entry bitdepth '{}'", magic)),
+
+impl TryFrom<u32> for BankFormat {
+    type Error = Error;
+    fn try_from(v: u32) -> Result<Self, Self::Error> {
+        use BankFormat::*;
+        match v {
+            0 => Ok(RGBA),
+            1 => Ok(YUV),
+            2 => Ok(CI),
+            3 => Ok(IA),
+            4 => Ok(I),
+            _ => Err(format_err!("unknown image format: {}", v)),
+        }
+    }
+}
+
+impl fmt::Display for BankFormat {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        f.write_str(self.as_str())
+    }
+}
+
+impl BankFormat {
+    fn as_str(&self) -> &'static str {
+        use BankFormat::*;
+        match self {
+            RGBA => "rgba",
+            YUV => "yuv",
+            CI => "ci",
+            IA => "ia",
+            I => "i",
+        }
+    }
+}
+
+/// Custom enum for an Entry's N64 bit depth
+#[derive(Debug, Copy, Clone, Eq, PartialEq)]
+pub enum BankDepth {
+    B4 = 0,
+    B8 = 1,
+    B16 = 2,
+    B32 = 3,
+}
+
+impl BankDepth {
+    fn depth(&self) -> usize {
+        use BankDepth::*;
+        match self {
+            B4 => 4,
+            B8 => 8,
+            B16 => 16,
+            B32 => 32,
+        }
+    }
+}
+
+impl Into<BitDepth> for BankDepth {
+    fn into(self) -> BitDepth {
+        match self {
+            BankDepth::B4 => BitDepth::Bit4,
+            BankDepth::B8 => BitDepth::Bit8,
+            BankDepth::B16 => BitDepth::Bit16,
+            BankDepth::B32 => BitDepth::Bit32,
+        }
+    }
+}
+
+impl Serialize for BankDepth {
+    fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
+        Serialize::serialize(&self.depth(), serializer)
+    }
+}
+
+impl TryFrom<u32> for BankDepth {
+    type Error = Error;
+    fn try_from(v: u32) -> Result<Self, Self::Error> {
+        use BankDepth::*;
+        match v {
+            0 => Ok(B4),
+            1 => Ok(B8),
+            2 => Ok(B16),
+            3 => Ok(B32),
+            _ => Err(format_err!("unknown bit depth: {}", v)),
+        }
     }
 }

@@ -107,7 +107,6 @@ name = "libgfx"
 version = "0.1.0"
 dependencies = [
  "rgb 0.8.13 (registry+https://github.com/rust-lang/crates.io-index)",
- "serde 1.0.91 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
 [[package]]

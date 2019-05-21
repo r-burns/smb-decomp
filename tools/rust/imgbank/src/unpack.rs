@@ -1,7 +1,7 @@
-use crate::format::{self, BankConfig, Entry, EntryConfig, Header};
+use crate::format::{BankConfig, BankDepth, BankFormat, Entry, EntryConfig, Header};
 use byteorder::{ByteOrder, BE};
 use failure::{Error, ResultExt};
-use libgfx::{self, ImageFormat};
+use libgfx::{self, BitDepth, ImageFormat};
 use lodepng::{
     self,
     ffi::{
@@ -9,6 +9,7 @@ use lodepng::{
         State as PngState,
     },
 };
+use std::convert::TryFrom;
 use std::fs;
 use std::path::PathBuf;
 
@@ -75,6 +76,8 @@ fn write_entry_images(entry: &Entry, outdir: &PathBuf, data: &[u8]) -> Result<()
         height,
         ..
     } = entry;
+    let format: ImageFormat = format.into();
+    let bitdepth: BitDepth = bitdepth.into();
     let bytelength = entry.bytesize();
     let as_usize = |&o| o as usize;
     let img_filename = |o| {
@@ -168,12 +171,12 @@ fn parse_entry(offset: usize, raw: &[u8]) -> Result<Entry, Error> {
     BE::read_u32_into(&raw[offset..end], &mut buf);
 
     let image_count = buf[0];
-    let format = format::read_imgformat(buf[1])?;
-    let bitdepth = format::read_bitdepth(buf[2])?;
+    let format = BankFormat::try_from(buf[1])?;
+    let bitdepth = BankDepth::try_from(buf[2])?;
     let width = buf[3];
     let height = buf[4];
     // CI image sets with 1 image show "no palettes" (0x1) even though they have a palette pointer
-    let are_palettes = buf[5] == 0 || (format == ImageFormat::CI && image_count == 1);
+    let are_palettes = buf[5] == 0 || (format == BankFormat::CI && image_count == 1);
 
     let mut image_offsets = vec![0u32; image_count as usize];
     let end_imgs = end + image_count as usize * 4;

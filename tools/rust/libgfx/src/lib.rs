@@ -1,4 +1,3 @@
-use serde::{Serialize, Serializer};
 ///! A crate for dealing with n64 graphic formats. It can convert from the raw, big-endian
 ///! n64 binary data into a `Vec` of RGBA or GrayAlpha values
 use std::fmt;
@@ -11,8 +10,7 @@ pub use decode::{raw_to_gray, raw_to_indexed, raw_to_rgba};
 pub use encode::{gray_to_raw, indexed_to_raw, rgba_to_raw};
 
 /// The supported N64 image formats.
-#[derive(Debug, Copy, Clone, Eq, PartialEq, Serialize)]
-#[serde(rename_all = "lowercase")]
+#[derive(Debug, Copy, Clone, Eq, PartialEq)]
 pub enum ImageFormat {
     RGBA,
     IA,
@@ -41,19 +39,4 @@ pub enum BitDepth {
     Bit8 = 8,
     Bit16 = 16,
     Bit32 = 32,
-}
-
-impl Serialize for BitDepth {
-    fn serialize<S>(&self, ser: S) -> Result<S::Ok, S::Error>
-    where
-        S: Serializer,
-    {
-        use BitDepth::*;
-        match *self {
-            Bit4 => ser.serialize_unit_variant("BitDepth", 0, "4bit"),
-            Bit8 => ser.serialize_unit_variant("BitDepth", 0, "8bit"),
-            Bit16 => ser.serialize_unit_variant("BitDepth", 0, "16bit"),
-            Bit32 => ser.serialize_unit_variant("BitDepth", 0, "32bit"),
-        }
-    }
 }
