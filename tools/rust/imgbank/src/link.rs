@@ -1,8 +1,8 @@
-use failure::{format_err, Error, ResultExt};
 use crate::format::BankConfig;
+use failure::{format_err, Error, ResultExt};
+use std::fmt::Write;
 use std::fs;
 use std::path::PathBuf;
-use std::fmt::Write;
 use toml;
 
 macro_rules! begin_script {
@@ -11,14 +11,14 @@ macro_rules! begin_script {
     .{secname} 0 : 0
     {{
 "#
-    }
+    };
 }
 
 macro_rules! end_script {
     () => {
-r#"    }}
+        r#"    }}
 }}"#
-    }
+    };
 }
 
 pub fn generate_script(
@@ -28,12 +28,15 @@ pub fn generate_script(
 ) -> Result<(), Error> {
     let section = section.unwrap_or_else(|| ".rodata".into());
     let output = output.unwrap_or_else(|| input.with_extension("ld"));
-    let bankname = output.file_stem().ok_or_else(|| {
-        format_err!(
-            "couldn't generate bank name (output {} had no filename)",
-            output.display()
-        )
-    })?.to_string_lossy();
+    let bankname = output
+        .file_stem()
+        .ok_or_else(|| {
+            format_err!(
+                "couldn't generate bank name (output {} had no filename)",
+                output.display()
+            )
+        })?
+        .to_string_lossy();
 
     let raw = fs::read(&input).context("reading input config toml file")?;
     let config: BankConfig = toml::from_slice(&raw).context("parsing config file")?;
@@ -44,9 +47,7 @@ pub fn generate_script(
     }
     writeln!(&mut script, end_script![])?;
 
-    print!("{}", &script);
+    fs::write(&output, &script).context("writing out ld script")?;
 
     Ok(())
 }
-
-
