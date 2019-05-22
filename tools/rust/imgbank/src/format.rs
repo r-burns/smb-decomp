@@ -1,7 +1,7 @@
 use byteorder::{ByteOrder, BE};
 use failure::{format_err, Error};
 use libgfx::{BitDepth, ImageFormat};
-use serde::{Serialize, Serializer};
+use serde::{Deserialize, Deserializer, Serialize, Serializer};
 use std::convert::{From, TryFrom};
 use std::fmt;
 
@@ -66,14 +66,14 @@ macro_rules! img_file_name {
 }
 
 /// Configuration struct for an image entry
-#[derive(Debug, Serialize)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct EntryConfig {
-    format: BankFormat,
-    bitdepth: BankDepth,
-    width: u32,
-    height: u32,
+    pub format: BankFormat,
+    pub bitdepth: BankDepth,
+    pub width: u32,
+    pub height: u32,
     /// None = use filesystem to list images; Some(vec![]) = no images in this entry...
-    images: Option<Vec<String>>,
+    pub images: Option<Vec<String>>,
 }
 
 impl From<Entry> for EntryConfig {
@@ -117,7 +117,7 @@ impl From<Vec<String>> for BankConfig {
 }
 
 /// Custom enum for an Entry's N64 image format
-#[derive(Debug, Copy, Clone, Eq, PartialEq, Serialize)]
+#[derive(Debug, Copy, Clone, Eq, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "lowercase")]
 pub enum BankFormat {
     RGBA = 0,
@@ -161,7 +161,7 @@ impl fmt::Display for BankFormat {
 }
 
 impl BankFormat {
-    fn as_str(&self) -> &'static str {
+    pub fn as_str(&self) -> &'static str {
         use BankFormat::*;
         match self {
             RGBA => "rgba",
@@ -183,7 +183,7 @@ pub enum BankDepth {
 }
 
 impl BankDepth {
-    fn depth(&self) -> usize {
+    pub fn depth(&self) -> usize {
         use BankDepth::*;
         match self {
             B4 => 4,
@@ -208,6 +208,42 @@ impl Into<BitDepth> for BankDepth {
 impl Serialize for BankDepth {
     fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
         Serialize::serialize(&self.depth(), serializer)
+    }
+}
+
+impl<'de> Deserialize<'de> for BankDepth {
+    fn deserialize<D>(deser: D) -> Result<Self, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        use serde::de;
+        struct Visitor;
+        impl<'de> de::Visitor<'de> for Visitor {
+            type Value = BankDepth;
+            fn expecting(&self, f: &mut fmt::Formatter) -> fmt::Result {
+                f.write_str("N64 integer bitdepth (4, 8, 16, or 32)")
+            }
+            fn visit_u64<E>(self, val: u64) -> Result<Self::Value, E>
+            where
+                E: de::Error,
+            {
+                match val {
+                    4 => Ok(BankDepth::B4),
+                    8 => Ok(BankDepth::B8),
+                    16 => Ok(BankDepth::B16),
+                    32 => Ok(BankDepth::B32),
+                    _ => Err(E::custom(format!("unknown bitdepth: {}", val))),
+                }
+            }
+            fn visit_i64<E>(self, val: i64) -> Result<Self::Value, E>
+            where
+                E: de::Error,
+            {
+                self.visit_u64(val as u64)
+            }
+        }
+
+        deser.deserialize_u32(Visitor)
     }
 }
 
