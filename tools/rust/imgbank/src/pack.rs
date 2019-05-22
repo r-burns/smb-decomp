@@ -19,8 +19,8 @@ pub fn pack_entry(
 ) -> Result<(), Error> {
     let raw = fs::read(&input).context("reading input config")?;
     let config: EntryConfig = toml::from_slice(&raw).context("parsing config")?;
-    let imgext = imgext
-        .unwrap_or_else(|| format!("{}{}", config.format.as_str(), config.bitdepth.depth()));
+    let imgext =
+        imgext.unwrap_or_else(|| format!("{}{}", config.format.as_str(), config.bitdepth.depth()));
     let palext = palext.unwrap_or_else(|| "pal.bin".into());
 
     let asm_file = generate_entry_s(&config, &imgext, &palext).context("generating .s file")?;

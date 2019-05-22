@@ -105,9 +105,9 @@ impl From<Entry> for EntryConfig {
 
 /// A simple wrapper type for the list of entries in a bank for outputting
 /// the TOML config file for entry order in a bank
-#[derive(Debug, Serialize)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct BankConfig {
-    entries: Vec<String>,
+    pub entries: Vec<String>,
 }
 
 impl From<Vec<String>> for BankConfig {
