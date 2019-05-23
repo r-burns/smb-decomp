@@ -1,0 +1,9 @@
+format = 'ia'
+bitdepth = 8
+width = 64
+height = 64
+images = [
+    '049E98.ia8.png',
+    '04AE98.ia8.png',
+    '04BE98.ia8.png',
+]

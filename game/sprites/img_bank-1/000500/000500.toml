@@ -1,0 +1,9 @@
+format = 'i'
+bitdepth = 4
+width = 16
+height = 16
+images = [
+    '000528.i4.png',
+    '0005A8.i4.png',
+    '000628.i4.png',
+]

@@ -1,0 +1,14 @@
+format = 'ci'
+bitdepth = 4
+width = 32
+height = 32
+images = [
+    '033558.ci4.png',
+    '033758.ci4.png',
+    '033958.ci4.png',
+    '033B58.ci4.png',
+    '033D58.ci4.png',
+    '033F58.ci4.png',
+    '034158.ci4.png',
+    '034358.ci4.png',
+]

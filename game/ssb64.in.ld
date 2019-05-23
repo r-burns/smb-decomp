@@ -93,7 +93,7 @@ SECTIONS
     .imgbank 0x0 : AT(__romPos)
     {
         sprites/spr_bank-1.o(.data);
-        sprites/img_bank-1.o(.data);
+        sprites/img_bank-1.o(.header .rodata);
         sprites/spr_bank-2.o(.data);
         sprites/img_bank-2.o(.header .rodata);
         sprites/spr_bank-3.o(.data);

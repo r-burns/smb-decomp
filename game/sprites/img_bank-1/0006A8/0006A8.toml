@@ -1,0 +1,5 @@
+format = 'i'
+bitdepth = 4
+width = 16
+height = 16
+images = ['0006C8.i4.png']
