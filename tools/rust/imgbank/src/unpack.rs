@@ -14,7 +14,7 @@ use std::fs;
 use std::path::PathBuf;
 
 /// Main function for decomposing a bank binary into its constituent images and metadata.
-pub fn unpack_bank(bank: PathBuf, output_dir: PathBuf) -> Result<(), Error> {
+pub fn unpack_bank(bank: PathBuf, output_dir: PathBuf, extra: bool) -> Result<(), Error> {
     // Just the read the whole file into memory, as the files are small,
     // and the jumping around with offsets will trash a BufReader anyways
     let data = fs::read(&bank)?;
@@ -42,7 +42,8 @@ pub fn unpack_bank(bank: PathBuf, output_dir: PathBuf) -> Result<(), Error> {
         written_entries.push(entry_name);
     }
 
-    let bank_config = written_entries.into();
+    let mut bank_config = BankConfig::from(written_entries);
+    bank_config.include_end = extra;
     write_bank_entry_order(&bank_config, output_dir)?;
 
     Ok(())

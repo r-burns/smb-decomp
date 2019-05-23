@@ -108,11 +108,14 @@ impl From<Entry> for EntryConfig {
 #[derive(Debug, Serialize, Deserialize)]
 pub struct BankConfig {
     pub entries: Vec<String>,
+    /// One image bank (5) (erroneously?) includes the end of bank 
+    // (or the start of an unlisted image) as an extra entry offset
+    pub include_end: bool,
 }
 
 impl From<Vec<String>> for BankConfig {
     fn from(entries: Vec<String>) -> Self {
-        Self { entries }
+        Self { entries, include_end: false}
     }
 }
 

@@ -9,7 +9,7 @@ const START: &'static str = "TARGET(elf32-bigmips)\n\nSECTIONS {";
 macro_rules! begin_table {
     () => {
         r#"
-    .bankheader 0 : AT(0)
+    .header 0 : AT(0)
     {{
         LONG({entries})
 "#
@@ -42,6 +42,13 @@ macro_rules! align_section {
         "        . = ALIGN({align});";
     };
 }
+
+macro_rules! extra_entry {
+    () => {
+        "        LONG(SIZEOF(.header) + SIZEOF({sec}))"
+    }
+}
+
 const END_SUBSECTION: &'static str = "    }\n";
 const END: &'static str = r#"    /DISCARD/ :
     {
@@ -62,7 +69,7 @@ pub fn generate_script(
     let config: BankConfig = toml::from_slice(&raw).context("parsing config file")?;
 
     let mut script = START.to_string();
-    let body = write_entries(&config.entries, &section)?;
+    let body = write_entries(&config, &section)?;
     script.push_str(&body);
     script.push_str(END);
 
@@ -71,13 +78,17 @@ pub fn generate_script(
     Ok(())
 }
 
-fn write_entries(entries: &[String], section: &str) -> Result<String, Error> {
+fn write_entries(config: &BankConfig, section: &str) -> Result<String, Error> {
+    let entries = &config.entries;
+    let extra = config.include_end;
+
     let mut offsets = format!(begin_table![], entries = entries.len());
     let mut files = format!(begin_entries![], sec = section);
     for entry in entries.iter() {
         writeln!(&mut offsets, offset![], entry = entry)?;
         writeln!(&mut files, entry![], entry = entry, sec = section)?;
     }
+    if extra {writeln!(&mut offsets, extra_entry![], sec = section)?; }
     writeln!(&mut offsets, align_section![], align = 8)?;
     offsets.push_str(END_SUBSECTION);
     writeln!(&mut files, align_section![], align = 16)?;
