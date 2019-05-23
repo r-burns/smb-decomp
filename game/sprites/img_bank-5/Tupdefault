@@ -1,0 +1,9 @@
+include_rules
+
+# Image Bank Entry Rules
+
+: foreach *.ia16.png |> $(GFX) encode -i %f -f ia -d 16 -o %o |> %B {n64images}
+: foreach *.rgba16.png |> $(GFX) encode -i %f -f rgba -d 16 -o %o |> %B {n64images}
+
+: foreach *.toml |> $(IMGBANK) pack-entry %f -o %o |> %B.s {entryasm}
+: foreach {entryasm} | {n64images} |> !as |> ../%B.o | ../<entry_objs>

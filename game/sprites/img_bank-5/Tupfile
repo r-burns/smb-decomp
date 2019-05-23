@@ -1,0 +1,5 @@
+include_rules
+
+: *.toml |> $(IMGBANK) link %f -o %o |> %B.ld {script}
+# no relink (want symbols to be resolved)
+: {script} | <entry_objs> |> $(LD) -dT %f -o %o %<entry_objs> |> ../%B.o ../../<imgbanks>

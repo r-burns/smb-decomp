@@ -101,7 +101,7 @@ SECTIONS
         sprites/spr_bank-4.o(.data);
         sprites/img_bank-4.o(.data);
         sprites/spr_bank-5.o(.data);
-        sprites/img_bank-5.o(.data);
+        sprites/img_bank-5.o(.bankheader .rodata);
         sprites/spr_bank-6.o(.data);
         sprites/img_bank-6.o(.data);
         sprites/spr_bank-7.o(.data);

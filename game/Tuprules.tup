@@ -1,7 +1,11 @@
 
 
 ### Tools ###
-TOOL_DIR = ../tools
+# tup is always called within the version variant directory, 
+# so there needs to be an extra up
+TOOL_DIR = $(TUP_CWD)/../../tools
+IMGBANK = $(TOOL_DIR)/imgbank
+GFX = $(TOOL_DIR)/n64gfx
 
 
 ifndef VERSION

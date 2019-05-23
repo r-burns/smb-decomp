@@ -69,7 +69,7 @@ fn convert_to_intensity(
 ) -> Result<Vec<u8>, Error> {
     use lodepng::{ffi::ColorType::GREY_ALPHA, Image};
     // TODO: convert from RGBA png as well (with rgba_to_raw(bytes, format, depth))
-    let bitmap = lodepng::decode_file(&file, GREY_ALPHA, depth as u32).map(|res| match res {
+    let bitmap = lodepng::decode_file(&file, GREY_ALPHA, 8).map(|res| match res {
         Image::GreyAlpha(bits) => Ok(bits),
         _ => Err(format_err!("couldn't read input png as grey alpha image")),
     })??;
