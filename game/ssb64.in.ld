@@ -105,11 +105,11 @@ SECTIONS
         sprites/spr_bank-6.o(.data);
         sprites/img_bank-6.o(.data);
         sprites/spr_bank-7.o(.data);
-        sprites/img_bank-7.o(.data);
+        sprites/img_bank-7.o(.header .rodata);
         sprites/spr_bank-8.o(.data);
-        sprites/img_bank-8.o(.data);
+        sprites/img_bank-8.o(.header .rodata);
         sprites/spr_bank-9.o(.data);
-        sprites/img_bank-9.o(.data);
+        sprites/img_bank-9.o(.header .rodata);
     }
     __romPos += SIZEOF(.imgbank);
 

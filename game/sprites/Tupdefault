@@ -2,8 +2,13 @@ include_rules
 
 # This file generates the packed image entry objects for each bank
 
-: foreach *.ia16.png |> $(GFX) encode -i %f -f ia -d 16 -o %o |> %B {n64images}
-: foreach *.rgba16.png |> $(GFX) encode -i %f -f rgba -d 16 -o %o |> %B {n64images}
+: foreach *.rgba16.png |> !gfx_rgba16 |> {n64images}
+: foreach *.ia16.png |> !gfx_ia16 |> {n64images}
+: foreach *.ia8.png |> !gfx_ia8 |> {n64images}
+: foreach *.ia4.png |> !gfx_ia4 |> {n64images}
+: foreach *.i8.png |> !gfx_i8 |> {n64images}
+: foreach *.i4.png |> !gfx_i4 |> {n64images}
+
 
 : foreach *.toml |> $(IMGBANK) pack-entry %f -o %o |> %B.s {entryasm}
 : foreach {entryasm} | {n64images} |> !as |> ../%B.o | ../<entry_objs>

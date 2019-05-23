@@ -63,4 +63,25 @@ mod tests {
         assert_eq!(0x1F, scale_8_to_5(0xFF));
         assert_eq!(0x0E, scale_8_to_5(0x73));
     }
+
+    #[test]
+    fn scaling_3bit_to_8bit() {
+        assert_eq!(scale_3_to_8(0), 0);
+        assert_eq!(scale_3_to_8(7), 0xFC);
+        assert_eq!(scale_3_to_8(6), 0xD8);
+        assert_eq!(scale_3_to_8(5), 0xB4);
+        assert_eq!(scale_3_to_8(4), 0x90);
+        assert_eq!(scale_3_to_8(3), 0x6C);
+        assert_eq!(scale_3_to_8(2), 0x48);
+        assert_eq!(scale_3_to_8(1), 0x24);
+    }
+
+    #[test]
+    fn scaling_8bit_to_3bit() {
+        assert_eq!(0, scale_8_to_3(0));
+        assert_eq!(7, scale_8_to_3(0xFF));
+        assert_eq!(3, scale_8_to_3(0x6C));
+        assert_eq!(2, scale_8_to_3(0x48));
+        assert_eq!(1, scale_8_to_3(0x24));
+    }
 }

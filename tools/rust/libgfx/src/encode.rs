@@ -136,7 +136,7 @@ fn ga_to_ia8(p: GRAYA8) -> u8 {
 
 fn ga_to_ia4(p: GRAYA8) -> u8 {
     let g = scale_8_to_3(p.0);
-    let a = (p.0 > 0) as u8;
+    let a = (p.1 > 0) as u8;
     ((g << 1) | a) & 0x0F
 }
 

@@ -1,0 +1,15 @@
+format = 'rgba'
+bitdepth = 16
+width = 32
+height = 32
+images = [
+    '000050.rgba16.png',
+    '000850.rgba16.png',
+    '001050.rgba16.png',
+    '001850.rgba16.png',
+    '002050.rgba16.png',
+    '002850.rgba16.png',
+    '003050.rgba16.png',
+    '003850.rgba16.png',
+    '004050.rgba16.png',
+]

@@ -1,5 +1,4 @@
-
-
+# Macros for generating image bank linker scripts and bank objects
 
 !genlink = |> $(IMGBANK) link %f -o %o |> %B.ld 
 # no relink (want symbols to be resolved)

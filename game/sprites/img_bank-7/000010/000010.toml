@@ -1,0 +1,5 @@
+format = 'ia'
+bitdepth = 4
+width = 16
+height = 16
+images = ['000030.ia4.png']

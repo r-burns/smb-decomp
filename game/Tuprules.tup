@@ -40,3 +40,14 @@ LD_FLAGS = -Map $(TARGET).map --no-check-sections
 !tempaudio2o = |> $(LD) -r -b binary %f -o %b.o |> %b.o
 !tempres2o = |> $(LD) -r -b binary %f -o %f.o |> %f.o
 
+## Image Conversions
+# assume img.(format)(bitdepth).png
+!gfx_rgba32 = |> $(GFX) encode -i %f -f rgba -d 32 -o %o |> %B 
+!gfx_rgba16 = |> $(GFX) encode -i %f -f rgba -d 16 -o %o |> %B 
+
+!gfx_ia16 = |> $(GFX) encode -i %f -f ia -d 16 -o %o |> %B
+!gfx_ia8 = |> $(GFX) encode -i %f -f ia -d 8 -o %o |> %B
+!gfx_ia4 = |> $(GFX) encode -i %f -f ia -d 4 -o %o |> %B
+
+!gfx_i8 = |> $(GFX) encode -i %f -f i -d 8 -o %o |> %B
+!gfx_i4 = |> $(GFX) encode -i %f -f i -d 4 -o %o |> %B
