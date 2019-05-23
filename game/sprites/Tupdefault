@@ -1,6 +1,6 @@
 include_rules
 
-# Image Bank Entry Rules
+# This file generates the packed image entry objects for each bank
 
 : foreach *.ia16.png |> $(GFX) encode -i %f -f ia -d 16 -o %o |> %B {n64images}
 : foreach *.rgba16.png |> $(GFX) encode -i %f -f rgba -d 16 -o %o |> %B {n64images}

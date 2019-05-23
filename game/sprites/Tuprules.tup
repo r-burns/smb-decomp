@@ -1,0 +1,6 @@
+
+
+
+!genlink = |> $(IMGBANK) link %f -o %o |> %B.ld 
+# no relink (want symbols to be resolved)
+!linkbank = | <entry_objs> |> $(LD) -dT %f -o %o %<entry_objs> |> ../%B.o ../../<imgbanks>

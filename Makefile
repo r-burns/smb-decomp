@@ -1,3 +1,5 @@
+default: all
+
 # Variables
 COMPARE ?= 1
 
@@ -51,7 +53,7 @@ $(foreach v, $(VERSIONS), $(eval $(call TUPVARIANT, $(v))))
 
 # maybe generate the tup rules file? to avoid double defining CC, AS, etc.?
 
-.PHONY: all clean $(VERSIONS)
+.PHONY: all clean default $(VERSIONS)
 
 # Debug Print [`make print-VARIABLE`]
 print-% : ; $(info $* is a $(flavor $*) variable set to [$($*)]) @true
