@@ -46,7 +46,7 @@ macro_rules! align_section {
 macro_rules! extra_entry {
     () => {
         "        LONG(SIZEOF(.header) + SIZEOF({sec}))"
-    }
+    };
 }
 
 const END_SUBSECTION: &'static str = "    }\n";
@@ -88,7 +88,9 @@ fn write_entries(config: &BankConfig, section: &str) -> Result<String, Error> {
         writeln!(&mut offsets, offset![], entry = entry)?;
         writeln!(&mut files, entry![], entry = entry, sec = section)?;
     }
-    if extra {writeln!(&mut offsets, extra_entry![], sec = section)?; }
+    if extra {
+        writeln!(&mut offsets, extra_entry![], sec = section)?;
+    }
     writeln!(&mut offsets, align_section![], align = 8)?;
     offsets.push_str(END_SUBSECTION);
     writeln!(&mut files, align_section![], align = 16)?;

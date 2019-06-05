@@ -20,7 +20,7 @@ enum Opts {
         /// Output directory for unpacked image files
         #[structopt(short, long, parse(from_os_str))]
         output: PathBuf,
-        /// indicate a misformed bank that (erroneously?) has the end of bank entry 
+        /// indicate a misformed bank that (erroneously?) has the end of bank entry
         #[structopt(short, long)]
         extra: bool,
     },
@@ -71,7 +71,11 @@ fn main() {
 
 fn run(opts: Opts) -> Result<(), Error> {
     match opts {
-        Opts::Unpack { bank, output, extra } => unpack::unpack_bank(bank, output, extra),
+        Opts::Unpack {
+            bank,
+            output,
+            extra,
+        } => unpack::unpack_bank(bank, output, extra),
         Opts::PackEntry {
             config,
             output,

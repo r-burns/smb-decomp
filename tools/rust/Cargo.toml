@@ -3,4 +3,5 @@ members = [
     "libgfx",
     "imgbank",
     "n64gfx",
+    "libvpk",
 ]
