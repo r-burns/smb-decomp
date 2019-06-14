@@ -73,7 +73,7 @@ pub fn decode<R: Read>(mut buf: R) -> Result<Vec<u8>, VpkError> {
 }
 
 /// Pretty print information about a vpk0 encoded `Reader` into a `Writer`
-fn info<R, W>(mut rdr: R, mut wtr: W) -> Result<(), VpkError>
+pub fn info<R, W>(mut rdr: R, mut wtr: W) -> Result<(), VpkError>
 where
     R: Read,
     W: Write,
@@ -86,30 +86,34 @@ where
     writeln!(&mut wtr, "# Header\n{:?}", &header)?;
     writeln!(&mut wtr, "## Move Tree\n{}", &movetree)?;
     writeln!(&mut wtr, "## Size Tree\n{}", &sizetree)?;
+    writeln!(&mut wtr, "")?;
 
     let output_size = header.size as usize;
     let mut output: Vec<u8> = Vec::with_capacity(output_size);
 
     while output.len() < output_size {
         if vpk0_bits.read_bit()? {
-            
             let initial_move = movetree.read_value(&mut vpk0_bits)? as usize;
             let move_back = match header.method {
                 VpkMethod::TwoSample => {
                     if initial_move < 3 {
                         let l = initial_move + 1;
                         let u = movetree.read_value(&mut vpk0_bits)? as usize;
-                        writeln!(&mut wtr, "Encoded 2-sample | initial: {} | second: {}", initial_move, u)?;
+                        writeln!(
+                            &mut wtr,
+                            "Encoded 2-sample => initial move: {} | second move: {}",
+                            initial_move, u
+                        )?;
                         (l + (u << 2)) - 8
                     } else {
-                        writeln!(&mut wtr, "Encoded 2-sample | initial: {}", initial_move)?;
+                        writeln!(&mut wtr, "Encoded 2-sample => initial move: {}", initial_move)?;
                         (initial_move << 2) - 8
                     }
-                },
+                }
                 VpkMethod::OneSample => {
-                    writeln!(&mut wtr, "Encoded 1-sample | initial: {}", initial_move)?;                    
+                    writeln!(&mut wtr, "Encoded 1-sample => move back: {}", initial_move)?;
                     initial_move
-                },
+                }
             };
 
             // get start position in output, and the number of bytes to copy-back
@@ -118,27 +122,22 @@ where
             }
             let start = output.len() - move_back;
             let size = sizetree.read_value(&mut vpk0_bits)? as usize;
-            writeln!(&mut wtr,
-                "Copyback | start: {} | size: {} | buflength: {}",
+            writeln!(
+                &mut wtr,
+                "Copyback | start: {:04x} | size: {} | buflength: {:04x}",
                 start,
                 size,
                 output.len()
             )?;
 
-            // append bytes from somewhere in output to the end of output
-            // this needs to be done byte-by-byte,
-            // as the range can include newly added bytes
-            write!(&mut wtr, "\t")?;
             for i in start..start + size {
                 let byte = output[i];
-                write!(&mut wtr, "{}: {} | ", i, byte)?;
+                writeln!(&mut wtr, "\t{:04x}: {:02x}", output.len(), byte)?;
                 output.push(byte);
             }
-            write!(&mut wtr, "\n")?;
         } else {
-            // push next byte from compressed input to output
             let byte = vpk0_bits.read(8)?;
-            writeln!(&mut wtr, "Unencoded: {}", byte)?;
+            writeln!(&mut wtr, "Unencoded: {:04x}: {:02x}", output.len(), byte)?;
             output.push(byte);
         }
     }

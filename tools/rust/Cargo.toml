@@ -4,4 +4,5 @@ members = [
     "imgbank",
     "n64gfx",
     "libvpk",
+    "vpktool",
 ]

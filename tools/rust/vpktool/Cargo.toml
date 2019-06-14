@@ -1,0 +1,11 @@
+[package]
+name = "vpktool"
+version = "0.1.0"
+authors = ["SSB64d team <unknown>"]
+edition = "2018"
+
+[dependencies]
+structopt = {version = "0.2.15", default-features = false}
+libvpk = {path = "../libvpk"}
+failure = "0.1.5" 
+lodepng = "2.4.2"
