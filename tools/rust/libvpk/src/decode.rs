@@ -2,9 +2,9 @@ use crate::error::VpkError;
 use crate::format::{HuffTree, VpkHeader, VpkMethod};
 use bitstream_io::{BigEndian, BitReader};
 use log::{debug, info, log_enabled, trace, Level::Info};
-use std::io::Read;
+use std::io::{Read, Write};
 
-/// Decode a Reader of vpk0 compressed data into a byte `Vec` of decompressed data
+/// Decode a `Reader` of vpk0 compressed data into a decompressed `Vec<u8>`
 pub fn decode<R: Read>(mut buf: R) -> Result<Vec<u8>, VpkError> {
     let mut vpk0_bits = BitReader::endian(&mut buf, BigEndian);
 
@@ -70,4 +70,78 @@ pub fn decode<R: Read>(mut buf: R) -> Result<Vec<u8>, VpkError> {
     }
 
     Ok(output)
+}
+
+/// Pretty print information about a vpk0 encoded `Reader` into a `Writer`
+fn info<R, W>(mut rdr: R, mut wtr: W) -> Result<(), VpkError>
+where
+    R: Read,
+    W: Write,
+{
+    let mut vpk0_bits = BitReader::endian(&mut rdr, BigEndian);
+    let header = VpkHeader::from_bitreader(&mut vpk0_bits)?;
+    let movetree = HuffTree::from_bitreader(&mut vpk0_bits)?;
+    let sizetree = HuffTree::from_bitreader(&mut vpk0_bits)?;
+
+    writeln!(&mut wtr, "# Header\n{:?}", &header)?;
+    writeln!(&mut wtr, "## Move Tree\n{}", &movetree)?;
+    writeln!(&mut wtr, "## Size Tree\n{}", &sizetree)?;
+
+    let output_size = header.size as usize;
+    let mut output: Vec<u8> = Vec::with_capacity(output_size);
+
+    while output.len() < output_size {
+        if vpk0_bits.read_bit()? {
+            
+            let initial_move = movetree.read_value(&mut vpk0_bits)? as usize;
+            let move_back = match header.method {
+                VpkMethod::TwoSample => {
+                    if initial_move < 3 {
+                        let l = initial_move + 1;
+                        let u = movetree.read_value(&mut vpk0_bits)? as usize;
+                        writeln!(&mut wtr, "Encoded 2-sample | initial: {} | second: {}", initial_move, u)?;
+                        (l + (u << 2)) - 8
+                    } else {
+                        writeln!(&mut wtr, "Encoded 2-sample | initial: {}", initial_move)?;
+                        (initial_move << 2) - 8
+                    }
+                },
+                VpkMethod::OneSample => {
+                    writeln!(&mut wtr, "Encoded 1-sample | initial: {}", initial_move)?;                    
+                    initial_move
+                },
+            };
+
+            // get start position in output, and the number of bytes to copy-back
+            if move_back > output.len() {
+                return Err(VpkError::BadLookBack(move_back, output.len()));
+            }
+            let start = output.len() - move_back;
+            let size = sizetree.read_value(&mut vpk0_bits)? as usize;
+            writeln!(&mut wtr,
+                "Copyback | start: {} | size: {} | buflength: {}",
+                start,
+                size,
+                output.len()
+            )?;
+
+            // append bytes from somewhere in output to the end of output
+            // this needs to be done byte-by-byte,
+            // as the range can include newly added bytes
+            write!(&mut wtr, "\t")?;
+            for i in start..start + size {
+                let byte = output[i];
+                write!(&mut wtr, "{}: {} | ", i, byte)?;
+                output.push(byte);
+            }
+            write!(&mut wtr, "\n")?;
+        } else {
+            // push next byte from compressed input to output
+            let byte = vpk0_bits.read(8)?;
+            writeln!(&mut wtr, "Unencoded: {}", byte)?;
+            output.push(byte);
+        }
+    }
+
+    Ok(())
 }
