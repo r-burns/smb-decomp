@@ -106,7 +106,11 @@ where
                         )?;
                         (l + (u << 2)) - 8
                     } else {
-                        writeln!(&mut wtr, "Encoded 2-sample => initial move: {}", initial_move)?;
+                        writeln!(
+                            &mut wtr,
+                            "Encoded 2-sample => initial move: {}",
+                            initial_move
+                        )?;
                         (initial_move << 2) - 8
                     }
                 }
