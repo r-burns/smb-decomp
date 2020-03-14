@@ -9,7 +9,7 @@ GFX = $(TOOL_DIR)/n64gfx
 
 
 ifndef VERSION
-error "VERSION wasn't defined"
+error "VERSION wasn't defined in tup.config"
 endif
 
 ### Target Settings ###

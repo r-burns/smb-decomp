@@ -1,5 +1,5 @@
 RUST_TOOLS := imgbank n64gfx
-RUST_DIR :=rust
+RUST_DIR := rust
 RUST_MANIFEST := --manifest-path $(RUST_DIR)/Cargo.toml
 RUST_FLAGS := --release
 RUST_OUTPUT := $(RUST_DIR)/target/release/
