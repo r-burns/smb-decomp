@@ -1,5 +1,5 @@
 use failure::{Error, ResultExt};
-use libvpk;
+use libvpk::{self, LzssSettings};
 use std::{
     fs::{self, File},
     io::{self, BufReader, BufWriter, Write},
@@ -10,6 +10,12 @@ use structopt::StructOpt;
 /// A tool to compress, decompress, and examine vpk0 encoded files.
 #[derive(Debug, StructOpt)]
 enum Opts {
+    /// Compress a binary file into the vpk0 format
+    #[structopt(name = "compress")]
+    Encode {
+        /// input binary file path
+        input: PathBuf,
+    },
     /// Decode a compressed vpk0 file into an uncompressed binary file
     #[structopt(name = "decompress")]
     Decomp {
@@ -45,9 +51,19 @@ fn main() {
 
 fn run(opts: Opts) -> Result<(), Error> {
     match opts {
+        Opts::Encode { input } => compress_vpk(input),
         Opts::Decomp { input, output } => decompress_vpk(input, output),
         Opts::Info { input, output } => print_vpk_info(input, output),
     }
+}
+
+fn compress_vpk(input: PathBuf) -> Result<(), Error> {
+    let rdr =
+        BufReader::new(File::open(&input).context("reading input binary file for compression")?);
+    let settings = LzssSettings::new(16, 16, 2);
+    libvpk::encode(rdr, settings).context("compressing binary")?;
+
+    Ok(())
 }
 
 fn decompress_vpk(input: PathBuf, output: PathBuf) -> Result<(), Error> {
