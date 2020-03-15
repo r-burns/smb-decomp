@@ -25,7 +25,8 @@ LD = $(CROSS)ld
 
 CPP = $(CROSS)cpp
 
-AS_FLAGS = -march=vr4300 -mabi=32 -I include 
+&incdir = include/
+AS_FLAGS = -march=vr4300 -mabi=32
 LD_FLAGS = -Map $(TARGET).map --no-check-sections
 #OBJCOPY_FLAGS := --pad-to=0x800000 --gap-fill=0xFF
 
@@ -34,7 +35,7 @@ LD_FLAGS = -Map $(TARGET).map --no-check-sections
 
 
 ### Rule Macros ###
-!as = |> $(AS) $(AS_FLAGS) -o %o %f |> %B.o
+!as = |> $(AS) $(AS_FLAGS) -I&(incdir) -o %o %f |> %B.o
 
 !tempbin2o = |> $(LD) -r -b binary %f -o %B.o |> %B.o
 !tempaudio2o = |> $(LD) -r -b binary %f -o %b.o |> %b.o

@@ -2,10 +2,12 @@ include_rules
 
 #$(CPP) $(VERSION_CFLAGS) -I include/ -DBUILD_DIR=$(BUILD_DIR) -o $@ $<
 
+&UNKSYM = not-found-sym.ld
+
 : ssb64.in.ld |> $(CPP) -P -o %o %f |> ssb64.ld {cpp-ld} 
 
 : {cpp-ld}  | <audio_objs> <asm_objs> <resources> <imgbanks> <unknowns> \
-|> $(LD) -T %f $(LD_FLAGS) -o $(ELF) \
+|> $(LD) -T %f &(UNKSYM) $(LD_FLAGS) -o $(ELF) \
    %<audio_objs> %<asm_objs> %<resources> %<imgbanks> %<unknowns> \
 |> $(ELF) | $(TARGET).map
 

@@ -4,10 +4,10 @@ SECTIONS
 {
     __romPos = 0;
 
-    .boot 0x04000000 : AT(__romPos)
+    .boot 0xA4000000 : AT(__romPos)
     {
         asm/header.o(.rodata);
-        asm/bootstrap.o(.data);
+        asm/boot/boot.o(.text .data);
     }
     __romPos += SIZEOF(.boot);
 
