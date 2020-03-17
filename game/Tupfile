@@ -1,14 +1,13 @@
 include_rules
 
-#$(CPP) $(VERSION_CFLAGS) -I include/ -DBUILD_DIR=$(BUILD_DIR) -o $@ $<
-
+# Linker Symbol Inputs
 &UNKSYM = not-found-sym.ld
 
-: ssb64.in.ld |> $(CPP) -P -o %o %f |> ssb64.ld {cpp-ld} 
+: ssb64.in.ld |> $(CPP) -P -o %o %f |> ssb64.ld {cpp-ld}
 
-: {cpp-ld}  | <audio_objs> <asm_objs> <resources> <imgbanks> <unknowns> \
-|> $(LD) -T %f &(UNKSYM) $(LD_FLAGS) -o $(ELF) \
+: {cpp-ld} | <audio_objs> <asm_objs> <resources> <imgbanks> <unknowns> <extern_syms> \
+|> $(LD) -T %f -T &(UNKSYM) -T %<extern_syms> $(LD_FLAGS) -o $(ELF) \
    %<audio_objs> %<asm_objs> %<resources> %<imgbanks> %<unknowns> \
 |> $(ELF) | $(TARGET).map
 
-: $(ELF) |> $(CROSS)objcopy --pad-to=0x1000000 --gap-fill=0xFF -O binary %f %o |> $(ROM)
+: $(ELF) |> !cpy_rom |> $(ROM)

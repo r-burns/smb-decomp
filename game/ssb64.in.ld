@@ -11,9 +11,21 @@ SECTIONS
     }
     __romPos += SIZEOF(.boot);
 
-    .code 0x80000400 : AT(__romPos)
+    .system 0x80000400 : AT(__romPos)
     {
-        asm/system.o(.data);
+        asm/system/system.text.o(.text);
+        asm/system/system.data.o(.data);
+    }
+
+    __romPos += SIZEOF(.system);
+
+    .system.noload (NOLOAD) : 
+    {
+        asm/system/system.bss.o(.bss);
+    }
+
+    .code 0x800A1980 : AT(__romPos)
+    {
         asm/fileloader.o(.data);
         asm/043220.o(.data);
         asm/051C90.o(.data);

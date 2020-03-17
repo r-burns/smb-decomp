@@ -1,0 +1,751 @@
+.include "macros.inc"
+
+.section .bss
+
+# 0x8003FAD0 -> 0x800A1970 [0x61ea0 bytes]
+glabel D_8003FAD0
+    .space 56
+glabel D_8003FB08
+    .space 4
+glabel D_8003FB0C
+    .space 452
+glabel D_8003FCD0
+    .space 488
+glabel D_8003FEB8
+    .space 4
+glabel D_8003FEBC
+    .space 196
+glabel D_8003FF80
+    .space 160
+glabel D_80040020
+    .space 32
+glabel D_80040040
+    .space 296
+glabel D_80040168
+    .space 4
+glabel D_8004016C
+    .space 964
+glabel D_80040530
+    .space 488
+glabel D_80040718
+    .space 4
+glabel D_8004071C
+    .space 1476
+glabel D_80040CE0
+    .space 432
+glabel D_80040E90
+    .space 56
+glabel D_80040EC8
+    .space 4
+glabel D_80040ECC
+    .space 13252
+glabel D_80044290
+    .space 488
+glabel D_80044478
+    .space 4
+glabel D_8004447C
+    .space 1988
+glabel D_80044C40
+    .space 256
+glabel D_80044D40
+    .space 1
+glabel D_80044D41
+    .space 3
+glabel D_80044D44
+    .space 4
+glabel D_80044D48
+    .space 24
+glabel D_80044D60
+    .space 200
+glabel D_80044E28
+    .space 24
+glabel D_80044E40
+    .space 128
+glabel D_80044EC0
+    .space 4
+glabel D_80044EC4
+    .space 4
+glabel D_80044EC8
+    .space 4
+glabel D_80044ECC
+    .space 4
+glabel D_80044ED0
+    .space 4
+glabel D_80044ED4
+    .space 4
+glabel D_80044ED8
+    .space 4
+glabel D_80044EDC
+    .space 4
+glabel D_80044EE0
+    .space 4
+glabel D_80044EE4
+    .space 4
+glabel D_80044EE8
+    .space 80
+glabel D_80044F38
+    .space 4
+glabel D_80044F3C
+    .space 76
+glabel D_80044F88
+    .space 8
+glabel D_80044F90
+    .space 12
+glabel D_80044F9C
+    .space 4
+glabel D_80044FA0
+    .space 4
+glabel D_80044FA4
+    .space 4
+glabel D_80044FA8
+    .space 4
+glabel D_80044FAC
+    .space 4
+glabel D_80044FB0
+    .space 4
+glabel D_80044FB4
+    .space 4
+glabel D_80044FB8
+    .space 4
+glabel D_80044FBC
+    .space 4
+glabel D_80044FC0
+    .space 8
+glabel D_80044FC8
+    .space 4
+glabel D_80044FCC
+    .space 4
+glabel D_80044FD0
+    .space 8
+glabel D_80044FD8
+    .space 32
+glabel D_80044FF8
+    .space 24
+glabel D_80045010
+    .space 4
+glabel D_80045014
+    .space 4
+glabel D_80045018
+    .space 4
+glabel D_8004501C
+    .space 4
+glabel D_80045020
+    .space 4
+glabel D_80045024
+    .space 4
+glabel D_80045028
+    .space 12
+glabel D_80045034
+    .space 1
+glabel D_80045035
+    .space 11
+glabel D_80045040
+    .space 8
+glabel D_80045048
+    .space 20
+glabel D_8004505C
+    .space 96
+glabel D_800450BC
+    .space 4
+glabel D_800450C0
+    .space 24
+glabel D_800450D8
+    .space 4
+glabel D_800450DC
+    .space 4
+glabel D_800450E0
+    .space 16
+glabel D_800450F0
+    .space 24
+glabel D_80045108
+    .space 8
+glabel D_80045110
+    .space 8
+glabel D_80045118
+    .space 32
+glabel D_80045138
+    .space 24
+glabel D_80045150
+    .space 16
+glabel D_80045160
+    .space 24
+glabel D_80045178
+    .space 16
+glabel D_80045188
+    .space 24
+glabel D_800451A0
+    .space 4
+glabel D_800451A4
+    .space 4
+glabel D_800451A8
+    .space 16
+glabel D_800451B8
+    .space 4
+glabel D_800451BC
+    .space 28
+glabel D_800451D8
+    .space 4
+glabel D_800451DC
+    .space 28
+glabel D_800451F8
+    .space 4
+glabel D_800451FC
+    .space 28
+glabel D_80045218
+    .space 4
+glabel D_8004521C
+    .space 12
+glabel D_80045228
+    .space 2
+glabel D_8004522A
+    .space 38
+glabel D_80045250
+    .space 4
+glabel D_80045254
+    .space 4
+glabel D_80045258
+    .space 4
+glabel D_8004525C
+    .space 4
+glabel D_80045260
+    .space 8
+glabel D_80045268
+    .space 96
+glabel D_800452C8
+    .space 424
+glabel D_80045470
+    .space 2
+glabel D_80045472
+    .space 2
+glabel D_80045474
+    .space 2
+glabel D_80045476
+    .space 2
+glabel D_80045478
+    .space 1
+glabel D_80045479
+    .space 23
+glabel D_80045490
+    .space 16
+glabel D_800454A0
+    .space 24
+glabel D_800454B8
+    .space 2
+glabel D_800454BA
+    .space 2
+glabel D_800454BC
+    .space 4
+glabel D_800454C0
+    .space 8
+glabel D_800454C8
+    .space 24
+glabel D_800454E0
+    .space 8
+glabel D_800454E8
+    .space 8
+glabel D_800454F0
+    .space 16
+glabel D_80045500
+    .space 24
+glabel D_80045518
+    .space 8
+glabel D_80045520
+    .space 1056
+glabel D_80045940
+    .space 3080
+glabel D_80046548
+    .space 8
+glabel D_80046550
+    .space 8
+glabel D_80046558
+    .space 8
+glabel D_80046560
+    .space 8
+glabel D_80046568
+    .space 8
+glabel D_80046570
+    .space 8
+glabel D_80046578
+    .space 8
+glabel D_80046580
+    .space 8
+glabel D_80046588
+    .space 40
+glabel D_800465B0
+    .space 4
+glabel D_800465B4
+    .space 4
+glabel D_800465B8
+    .space 4
+glabel D_800465BC
+    .space 4
+glabel D_800465C0
+    .space 4
+glabel D_800465C4
+    .space 4
+glabel D_800465C8
+    .space 4
+glabel D_800465CC
+    .space 4
+glabel D_800465D0
+    .space 4
+glabel D_800465D4
+    .space 4
+glabel D_800465D8
+    .space 12
+glabel D_800465E4
+    .space 4
+glabel D_800465E8
+    .space 16
+glabel D_800465F8
+    .space 20
+glabel D_8004660C
+    .space 4
+glabel D_80046610
+    .space 4
+glabel D_80046614
+    .space 4
+glabel D_80046618
+    .space 4
+glabel D_8004661C
+    .space 4
+glabel D_80046620
+    .space 4
+glabel D_80046624
+    .space 2
+glabel D_80046626
+    .space 2
+glabel D_80046628
+    .space 4
+glabel D_8004662C
+    .space 4
+glabel D_80046630
+    .space 4
+glabel D_80046634
+    .space 4
+glabel D_80046638
+    .space 8
+glabel D_80046640
+    .space 8
+glabel D_80046648
+    .space 32
+glabel D_80046668
+    .space 4
+glabel D_8004666C
+    .space 4
+glabel D_80046670
+    .space 4
+glabel D_80046674
+    .space 4
+glabel D_80046678
+    .space 4
+glabel D_8004667C
+    .space 4
+glabel D_80046680
+    .space 4
+glabel D_80046684
+    .space 4
+glabel D_80046688
+    .space 12
+glabel D_80046694
+    .space 2
+glabel D_80046696
+    .space 2
+glabel D_80046698
+    .space 2
+glabel D_8004669A
+    .space 6
+glabel D_800466A0
+    .space 16
+glabel D_800466B0
+    .space 4
+glabel D_800466B4
+    .space 4
+glabel D_800466B8
+    .space 4
+glabel D_800466BC
+    .space 4
+glabel D_800466C0
+    .space 4
+glabel D_800466C4
+    .space 4
+glabel D_800466C8
+    .space 4
+glabel D_800466CC
+    .space 4
+glabel D_800466D0
+    .space 20
+glabel D_800466E4
+    .space 4
+glabel D_800466E8
+    .space 8
+glabel D_800466F0
+    .space 8
+glabel D_800466F8
+    .space 4
+glabel D_800466FC
+    .space 4
+glabel D_80046700
+    .space 4
+glabel D_80046704
+    .space 4
+glabel D_80046708
+    .space 8
+glabel D_80046710
+    .space 4
+glabel D_80046714
+    .space 4
+glabel D_80046718
+    .space 4
+glabel D_8004671C
+    .space 8
+glabel D_80046724
+    .space 4
+glabel D_80046728
+    .space 76
+glabel D_80046774
+    .space 4
+glabel D_80046778
+    .space 132
+glabel D_800467FC
+    .space 4
+glabel D_80046800
+    .space 4
+glabel D_80046804
+    .space 252
+glabel D_80046900
+    .space 4
+glabel D_80046904
+    .space 4
+glabel D_80046908
+    .space 4
+glabel D_8004690C
+    .space 256
+glabel D_80046A0C
+    .space 4
+glabel D_80046A10
+    .space 2
+glabel D_80046A12
+    .space 2
+glabel D_80046A14
+    .space 4
+glabel D_80046A18
+    .space 4
+glabel D_80046A1C
+    .space 4
+glabel D_80046A20
+    .space 4
+glabel D_80046A24
+    .space 4
+glabel D_80046A28
+    .space 4
+glabel D_80046A2C
+    .space 4
+glabel D_80046A30
+    .space 4
+glabel D_80046A34
+    .space 4
+glabel D_80046A38
+    .space 4
+glabel D_80046A3C
+    .space 4
+glabel D_80046A40
+    .space 4
+glabel D_80046A44
+    .space 4
+glabel D_80046A48
+    .space 4
+glabel D_80046A4C
+    .space 4
+glabel D_80046A50
+    .space 4
+glabel D_80046A54
+    .space 4
+glabel D_80046A58
+    .space 4
+glabel D_80046A5C
+    .space 4
+glabel D_80046A60
+    .space 4
+glabel D_80046A64
+    .space 4
+glabel D_80046A68
+    .space 8
+glabel D_80046A70
+    .space 24
+glabel D_80046A88
+    .space 1280
+glabel D_80046F88
+    .space 24
+glabel D_80046FA0
+    .space 4
+glabel D_80046FA4
+    .space 4
+glabel D_80046FA8
+    .space 64
+glabel D_80046FE8
+    .space 64
+glabel D_80047028
+    .space 64
+glabel D_80047068
+    .space 64
+glabel D_800470A8
+    .space 4
+glabel D_800470AC
+    .space 4
+glabel D_800470B0
+    .space 8
+glabel D_800470B8
+    .space 4
+glabel D_800470BC
+    .space 4
+glabel D_800470C0
+    .space 4
+glabel D_800470C4
+    .space 4
+glabel D_800470C8
+    .space 480
+glabel D_800472A8
+    .space 12
+glabel D_800472B4
+    .space 12
+glabel D_800472C0
+    .space 16
+glabel D_800472D0
+    .space 232880
+glabel D_80080080
+    .space 119376
+glabel D_8009D2D0
+    .space 8
+glabel D_8009D2D8
+    .space 16
+glabel D_8009D2E8
+    .space 4
+glabel D_8009D2EC
+    .space 4
+glabel D_8009D2F0
+    .space 8
+glabel D_8009D2F8
+    .space 24
+glabel D_8009D310
+    .space 24
+glabel D_8009D328
+    .space 24
+glabel D_8009D340
+    .space 4
+glabel D_8009D344
+    .space 4
+glabel D_8009D348
+    .space 200
+glabel D_8009D410
+    .space 1200
+glabel D_8009D8C0
+    .space 92
+glabel D_8009D91C
+    .space 4
+glabel D_8009D920
+    .space 8
+glabel D_8009D928
+    .space 12
+glabel D_8009D934
+    .space 4
+glabel D_8009D938
+    .space 8
+glabel D_8009D940
+    .space 8
+glabel D_8009D948
+    .space 8
+glabel D_8009D950
+    .space 4
+glabel D_8009D954
+    .space 4
+glabel D_8009D958
+    .space 4
+glabel D_8009D95C
+    .space 4
+glabel D_8009D960
+    .space 4
+glabel D_8009D964
+    .space 4
+glabel D_8009D968
+    .space 4
+glabel D_8009D96C
+    .space 4
+glabel D_8009D970
+    .space 4
+glabel D_8009D974
+    .space 4
+glabel D_8009D978
+    .space 4
+glabel D_8009D97C
+    .space 4
+glabel D_8009D980
+    .space 8
+glabel D_8009D988
+    .space 13
+glabel D_8009D995
+    .space 6
+glabel D_8009D99B
+    .space 29
+glabel D_8009D9B8
+    .space 3
+glabel D_8009D9BB
+    .space 53
+glabel D_8009D9F0
+    .space 4
+glabel D_8009D9F4
+    .space 4
+glabel D_8009D9F8
+    .space 8
+glabel D_8009DA00
+    .space 8
+glabel D_8009DA08
+    .space 2480
+glabel D_8009E3B8
+    .space 24
+glabel D_8009E3D0
+    .space 8
+glabel D_8009E3D8
+    .space 8
+glabel D_8009E3E0
+    .space 8
+glabel D_8009E3E8
+    .space 8
+glabel D_8009E3F0
+    .space 24
+glabel D_8009E408
+    .space 2480
+glabel D_8009EDB8
+    .space 8
+glabel D_8009EDC0
+    .space 4
+glabel D_8009EDC4
+    .space 4
+glabel D_8009EDC8
+    .space 4
+glabel D_8009EDCC
+    .space 4
+glabel D_8009EDD0
+    .space 60
+glabel D_8009EE0C
+    .space 4
+glabel D_8009EE10
+    .space 14
+glabel D_8009EE1E
+    .space 2
+glabel D_8009EE20
+    .space 10
+glabel D_8009EE2A
+    .space 22
+glabel D_8009EE40
+    .space 64
+glabel D_8009EE80
+    .space 256
+glabel D_8009EF80
+    .space 8
+glabel D_8009EF88
+    .space 24
+glabel D_8009EFA0
+    .space 60
+glabel D_8009EFDC
+    .space 4
+glabel D_8009EFE0
+    .space 1
+glabel D_8009EFE1
+    .space 39
+glabel D_8009F008
+    .space 24
+glabel D_8009F020
+    .space 16
+glabel D_8009F030
+    .space 16
+glabel D_8009F040
+    .space 432
+glabel D_8009F1F0
+    .space 4
+glabel D_8009F1F4
+    .space 1
+glabel D_8009F1F5
+    .space 1
+glabel D_8009F1F6
+    .space 1
+glabel D_8009F1F7
+    .space 1
+glabel D_8009F1F8
+    .space 112
+glabel D_8009F268
+    .space 4
+glabel D_8009F26C
+    .space 1
+glabel D_8009F26D
+    .space 1
+glabel D_8009F26E
+    .space 1
+glabel D_8009F26F
+    .space 1
+glabel D_8009F270
+    .space 112
+glabel D_8009F2E0
+    .space 3360
+glabel D_800A0000
+    .space 4
+glabel D_800A0004
+    .space 1
+glabel D_800A0005
+    .space 1
+glabel D_800A0006
+    .space 1
+glabel D_800A0007
+    .space 1
+glabel D_800A0008
+    .space 1
+glabel D_800A0009
+    .space 3
+glabel D_800A000C
+    .space 4
+glabel D_800A0010
+    .space 1152
+glabel D_800A0490
+    .space 24
+glabel D_800A04A8
+    .space 8
+glabel D_800A04B0
+    .space 8
+glabel D_800A04B8
+    .space 24
+glabel D_800A04D0
+    .space 128
+glabel D_800A0550
+    .space 32
+glabel D_800A0570
+    .space 4
+glabel D_800A0574
+    .space 4
+glabel D_800A0578
+    .space 4
+glabel D_800A057C
+    .space 4
+glabel D_800A0580
+    .space 16
+glabel D_800A0590
+    .space 20
+glabel D_800A05A4
+    .space 108
+glabel D_800A0610
+    .space 256
+glabel D_800A0710
+    .space 60
+glabel D_800A074C
+    .space 4
+glabel D_800A0750
+    .space 4528
+glabel D_800A1900
+    .space 24
+glabel D_800A1918
+    .space 24
+glabel D_800A1930
+    .space 24
+glabel D_800A1948
+    .space 24
+glabel D_800A1960
+    .space 16
