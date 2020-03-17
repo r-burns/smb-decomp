@@ -1,14 +1,4 @@
 /* External Overlayed Symbols in overlayloader */
-/* ovl0 */
-    func_ovl0_800C7840 = 0x800C7840;
-    func_ovl0_800D4644 = 0x800D4644;
-    func_ovl0_800D46F4 = 0x800D46F4;
-    D_ovl0_800D4CA0 = 0x800D4CA0;
-    D_ovl0_800D62B0 = 0x800D62B0;
-    D_ovl0_800D6448 = 0x800D6448;
-    D_ovl0_800D644A = 0x800D644A;
-    D_ovl0_800D644C = 0x800D644C;
-
 /* ovl1 */
     func_ovl1_803903E0 = 0x803903E0;
     D_ovl1_80390BE0 = 0x80390BE0;
