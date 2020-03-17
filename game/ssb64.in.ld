@@ -33,9 +33,19 @@ SECTIONS
         asm/loadovl/overlayloader.bss.o(.bss);
     }
 
-    .code 0x800C7840 : AT(__romPos)
+    .ovl0 0x800C7840 : AT(__romPos)
     {
-        asm/043220.o(.data);
+        asm/ovl0/ovl0.text.o(.text);
+        asm/ovl0/ovl0.data.o(.data);
+    }
+    __romPos += SIZEOF(.ovl0);
+    .ovl0.noload (NOLOAD) : 
+    {
+        asm/ovl0/ovl0.bss.o(.bss);
+    }
+
+    .code 0x800D6490 : AT(__romPos)
+    {
         asm/051C90.o(.data);
         asm/0AC540.o(.data);
         asm/1079C0.o(.data);
