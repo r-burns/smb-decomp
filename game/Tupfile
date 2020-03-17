@@ -5,8 +5,8 @@ include_rules
 
 : ssb64.in.ld |> $(CPP) -P -o %o %f |> ssb64.ld {cpp-ld}
 
-: {cpp-ld} | <audio_objs> <asm_objs> <resources> <imgbanks> <unknowns> <extern_syms> \
-|> $(LD) -T %f -T &(UNKSYM) -T %<extern_syms> $(LD_FLAGS) -o $(ELF) \
+: {cpp-ld} | <audio_objs> <asm_objs> <resources> <imgbanks> <unknowns> <extern_syms> <unres_syms>\
+|> $(LD) -T %f -T &(UNKSYM) -T %<extern_syms> -T %<unres_syms> $(LD_FLAGS) -o $(ELF) \
    %<audio_objs> %<asm_objs> %<resources> %<imgbanks> %<unknowns> \
 |> $(ELF) | $(TARGET).map
 

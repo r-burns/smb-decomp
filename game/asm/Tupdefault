@@ -2,5 +2,7 @@ include_rules
 
 : foreach *.s |> !as |> | ../../<asm_objs>
 
+: foreach *.unresolved.ld |> cp %f %o |> ../unres/%b | ../../<unres_syms>
+
 # temporarily collect all of the external symbols into one big file
-: foreach *.extern.ld |> cat %o %f > %o |> ../../all-extern-syms.ld | ../../<extern_syms>
+: foreach *.extern.ld |> cp %f %o |>  ../extern/%b | ../../<extern_syms>

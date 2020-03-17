@@ -16,17 +16,25 @@ SECTIONS
         asm/system/system.text.o(.text);
         asm/system/system.data.o(.data);
     }
-
     __romPos += SIZEOF(.system);
-
     .system.noload (NOLOAD) : 
     {
         asm/system/system.bss.o(.bss);
     }
 
-    .code 0x800A1980 : AT(__romPos)
+    .loadovl 0x800A1980 : AT(__romPos)
     {
-        asm/fileloader.o(.data);
+        asm/loadovl/overlayloader.text.o(.text);
+        asm/loadovl/overlayloader.data.o(.data);
+    }
+    __romPos += SIZEOF(.loadovl);
+    .loadovl.noload (NOLOAD) : 
+    {
+        asm/loadovl/overlayloader.bss.o(.bss);
+    }
+
+    .code 0x800C7840 : AT(__romPos)
+    {
         asm/043220.o(.data);
         asm/051C90.o(.data);
         asm/0AC540.o(.data);
