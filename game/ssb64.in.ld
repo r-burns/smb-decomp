@@ -154,10 +154,21 @@ SECTIONS
     }
     END_NOLOAD(ovl6)
 
+    BEGIN_SEG(ovl7, 0x8018D0C0)
+    {
+        asm/ovl7/ovl7.text.o(.text);
+        asm/ovl7/ovl7.data.o(.data);
+    }
+    END_SEG(ovl7)
+    BEGIN_NOLOAD(ovl7)
+    {
+        asm/ovl7/ovl7.bss.o(.bss);
+    }
+    END_NOLOAD(ovl7)
+
 
     .code 0x800D6490 : AT(__romPos)
     {
-        asm/1138E0.o(.data);
         asm/117180.o(.data);
         asm/119AC0.o(.data);
         asm/119DF0.o(.data);

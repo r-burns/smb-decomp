@@ -198,9 +198,6 @@
 /* ovl64 */
     D_ovl64_8018E2F0 = 0x8018E2F0;
 
-/* ovl7 */
-    training_mode_battle_entry = 0x801905F4;
-
 /* ovl8 */
     func_ovl8_80371460 = 0x80371460;
     D_ovl8_80387CA0 = 0x80387CA0;
