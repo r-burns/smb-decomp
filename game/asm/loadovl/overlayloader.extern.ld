@@ -108,11 +108,6 @@
     intro_focus_fox_entry = 0x8018E02C;
     D_ovl39_8018E1C0 = 0x8018E1C0;
 
-/* ovl4 */
-    vs_battle_entry = 0x8018E190;
-    D_ovl4_8018E3D0 = 0x8018E3D0;
-    D_ovl4_8018E480 = 0x8018E480;
-
 /* ovl43 */
     intro_focus_kirby_entry = 0x8018E058;
 

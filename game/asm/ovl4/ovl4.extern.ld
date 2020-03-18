@@ -1,0 +1,87 @@
+/* External Global Symbols in ovl4 */
+    func_80004310 = 0x80004310;
+    func_80004980 = 0x80004980;
+    func_80007024 = 0x80007024;
+    func_8000B9FC = 0x8000B9FC;
+    func_80020A74 = 0x80020A74;
+    func_80020B38 = 0x80020B38;
+    func_80020D58 = 0x80020D58;
+    func_800266A0 = 0x800266A0;
+    func_800269C0 = 0x800269C0;
+    osWritebackDCache = 0x800321D0;
+    osInvalICache = 0x800344B0;
+    D_80045228 = 0x80045228;
+    func_800A2698 = 0x800A2698;
+    func_800A26B8 = 0x800A26B8;
+    D_800A44E0 = 0x800A44E0;
+    D_800A4AC2 = 0x800A4AC2;
+    D_800A4AD0 = 0x800A4AD0;
+    D_800A4ADF = 0x800A4ADF;
+    D_800A4AE0 = 0x800A4AE0;
+    D_800A4AE2 = 0x800A4AE2;
+    D_800A4D08 = 0x800A4D08;
+    D_800A4EF8 = 0x800A4EF8;
+    D_800A50C8 = 0x800A50C8;
+    D_800A50E8 = 0x800A50E8;
+
+/* External Overlayed Symbols in ovl4 */
+/* ovl0 */
+    func_ovl0_800CDBD0 = 0x800CDBD0;
+    func_ovl0_800CDC88 = 0x800CDC88;
+    func_ovl0_800CDE04 = 0x800CDE04;
+    func_ovl0_800CDEEC = 0x800CDEEC;
+    func_ovl0_800CDF78 = 0x800CDF78;
+    func_ovl0_800D4060 = 0x800D4060;
+    jtbl_ovl0_800D5CAC = 0x800D5CAC;
+
+/* ovl2 */
+    func_ovl2_800D7194 = 0x800D7194;
+    func_ovl2_800D782C = 0x800D782C;
+    func_ovl2_800D786C = 0x800D786C;
+    func_ovl2_800D78B4 = 0x800D78B4;
+    func_ovl2_800D7F3C = 0x800D7F3C;
+    func_ovl2_800E7C4C = 0x800E7C4C;
+    func_ovl2_800EC130 = 0x800EC130;
+    func_ovl2_800FAF64 = 0x800FAF64;
+    func_ovl2_800FC284 = 0x800FC284;
+    func_ovl2_800FC3E8 = 0x800FC3E8;
+    func_ovl2_800FCB70 = 0x800FCB70;
+    func_ovl2_800FD300 = 0x800FD300;
+    func_ovl2_80104BDC = 0x80104BDC;
+    func_ovl2_80105600 = 0x80105600;
+    func_ovl2_8010DB00 = 0x8010DB00;
+    func_ovl2_8010DB54 = 0x8010DB54;
+    func_ovl2_8010DDC4 = 0x8010DDC4;
+    func_ovl2_8010E1A4 = 0x8010E1A4;
+    func_ovl2_8010E2D4 = 0x8010E2D4;
+    func_ovl2_8010E374 = 0x8010E374;
+    func_ovl2_8010E498 = 0x8010E498;
+    func_ovl2_8010E598 = 0x8010E598;
+    func_ovl2_8010F3A0 = 0x8010F3A0;
+    func_ovl2_8010F3C0 = 0x8010F3C0;
+    func_ovl2_80110514 = 0x80110514;
+    func_ovl2_80111440 = 0x80111440;
+    func_ovl2_801118E4 = 0x801118E4;
+    func_ovl2_80111BE4 = 0x80111BE4;
+    func_ovl2_80112A80 = 0x80112A80;
+    func_ovl2_80112B74 = 0x80112B74;
+    func_ovl2_80112F68 = 0x80112F68;
+    func_ovl2_80113398 = 0x80113398;
+    func_ovl2_8011485C = 0x8011485C;
+    func_ovl2_80114958 = 0x80114958;
+    func_ovl2_80114D98 = 0x80114D98;
+    func_ovl2_801156E4 = 0x801156E4;
+    func_ovl2_801157EC = 0x801157EC;
+    func_ovl2_80115890 = 0x80115890;
+    func_ovl2_80115DE8 = 0x80115DE8;
+    D_ovl2_80116BD0 = 0x80116BD0;
+    D_ovl2_80116DD0 = 0x80116DD0;
+    D_ovl2_80130D40 = 0x80130D40;
+    D_ovl2_80131390 = 0x80131390;
+    D_ovl2_80131394 = 0x80131394;
+
+/* ovl3 */
+    func_ovl3_801653E0 = 0x801653E0;
+    func_ovl3_801654B0 = 0x801654B0;
+    func_ovl3_8016DEA0 = 0x8016DEA0;
+
