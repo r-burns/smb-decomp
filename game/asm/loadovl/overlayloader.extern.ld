@@ -174,10 +174,6 @@
     overlay_set56_entry = 0x801351B8;
     D_ovl59_80135260 = 0x80135260;
 
-/* ovl6 */
-    bonus_game_play_entry = 0x8018EACC;
-    D_ovl6_8018F1A0 = 0x8018F1A0;
-
 /* ovl60 */
     menu_options_entry = 0x801335C0;
     D_ovl60_80133620 = 0x80133620;

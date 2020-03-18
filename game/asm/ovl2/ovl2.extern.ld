@@ -26,7 +26,3 @@
 /* ovl56 */
     overlay_set50_51_entry = 0x80134E84;
     D_ovl56_80134EE0 = 0x80134EE0;
-
-/* ovl6 */
-    bonus_game_play_entry = 0x8018EACC;
-    D_ovl6_8018F1A0 = 0x8018F1A0;
