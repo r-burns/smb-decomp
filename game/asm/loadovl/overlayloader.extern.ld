@@ -41,11 +41,6 @@
     D_ovl19_801347B0 = 0x801347B0;
     D_ovl19_80134930 = 0x80134930;
 
-/* ovl2 */
-    func_ovl2_800D7170 = 0x800D7170;
-    D_ovl2_80116BD0 = 0x80116BD0;
-    D_ovl2_80130D40 = 0x80130D40;
-
 /* ovl20 */
     options_vs_entry = 0x80134668;
     D_ovl20_801346C0 = 0x801346C0;
@@ -81,11 +76,6 @@
 /* ovl29 */
     bonus_css_entry = 0x80136EF4;
     D_ovl29_80136F50 = 0x80136F50;
-
-/* ovl3 */
-    func_ovl3_8013C4C0 = 0x8013C4C0;
-    D_ovl3_80186660 = 0x80186660;
-    D_ovl3_8018CF80 = 0x8018CF80;
 
 /* ovl30 */
     stage_select_entry = 0x8013446C;

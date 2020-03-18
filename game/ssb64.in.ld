@@ -80,10 +80,23 @@ SECTIONS
     {
         asm/ovl2/ovl2.bss.o(.bss);
     }
+    END_NOLOAD(ovl2)
+
+    BEGIN_SEG(ovl3, 0x80131B00)
+    {
+        asm/ovl3/ovl3.text.o(.text);
+        asm/ovl3/ovl3.data.o(.data);
+    }
+    END_SEG(ovl3)
+    BEGIN_NOLOAD(ovl3)
+    {
+        asm/ovl3/ovl3.bss.o(.bss);
+    }
+    END_NOLOAD(ovl3)
+
 
     .code 0x800D6490 : AT(__romPos)
     {
-        asm/0AC540.o(.data);
         asm/1079C0.o(.data);
         asm/109FB0.o(.data);
         asm/10B370.o(.data);
