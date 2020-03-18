@@ -1,12 +1,4 @@
 /* External Overlayed Symbols in overlayloader */
-/* ovl11 */
-    n64_logo_entry = 0x800D6604;
-    D_ovl11_800D6700 = 0x800D6700;
-
-/* ovl12 */
-    debug_sss_entry = 0x800D6620;
-    D_ovl12_800D6680 = 0x800D6680;
-
 /* ovl14 */
     D_ovl14_80132690 = 0x80132690;
     D_ovl14_80132BC0 = 0x80132BC0;
