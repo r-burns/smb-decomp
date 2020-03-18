@@ -202,12 +202,45 @@ SECTIONS
     }
     END_NOLOAD(ovl12)
 
+    BEGIN_SEG(ovl13, 0x80131B00)
+    {
+        asm/ovl13/ovl13.text.o(.text);
+        asm/ovl13/ovl13.data.o(.data);
+    }
+    END_SEG(ovl13)
+    BEGIN_NOLOAD(ovl13)
+    {
+        asm/ovl13/ovl13.bss.o(.bss);
+    }
+    END_NOLOAD(ovl13)
+
+    BEGIN_SEG(ovl14, 0x80131B00)
+    {
+        asm/ovl14/ovl14.text.o(.text);
+        asm/ovl14/ovl14.data.o(.data);
+    }
+    END_SEG(ovl14)
+    BEGIN_NOLOAD(ovl14)
+    {
+        asm/ovl14/ovl14.bss.o(.bss);
+    }
+    END_NOLOAD(ovl14)
+
+    BEGIN_SEG(ovl17, 0x80131B00)
+    {
+        asm/ovl17/ovl17.text.o(.text);
+        asm/ovl17/ovl17.data.o(.data);
+    }
+    END_SEG(ovl17)
+    BEGIN_NOLOAD(ovl17)
+    {
+        asm/ovl17/ovl17.bss.o(.bss);
+    }
+    END_NOLOAD(ovl17)
+
 
     .code 0x800D6490 : AT(__romPos)
     {
-        asm/11A340.o(.data);
-        asm/11B970.o(.data);
-        asm/11CA90.o(.data);
         asm/11DC10.o(.data);
         asm/11F2B0.o(.data);
         asm/120F50.o(.data);

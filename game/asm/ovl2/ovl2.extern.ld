@@ -1,7 +1,4 @@
 /* External Overlayed Symbols in ovl2 */
-/* ovl14 */
-    D_ovl14_80132BC0 = 0x80132BC0;
-
 /* ovl22 */
     D_ovl22_80132500 = 0x80132500;
 

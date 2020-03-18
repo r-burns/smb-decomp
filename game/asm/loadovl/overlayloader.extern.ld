@@ -1,8 +1,4 @@
 /* External Overlayed Symbols in overlayloader */
-/* ovl14 */
-    D_ovl14_80132690 = 0x80132690;
-    D_ovl14_80132BC0 = 0x80132BC0;
-
 /* ovl15 */
     debug_falls_entry = 0x800D6688;
     D_ovl15_800D66E0 = 0x800D66E0;
@@ -10,10 +6,6 @@
 /* ovl16 */
     debug_button_test_entry = 0x800D6FB0;
     D_ovl16_800D7010 = 0x800D7010;
-
-/* ovl17 */
-    menu_main_entry = 0x80132B34;
-    D_ovl17_80132B90 = 0x80132B90;
 
 /* ovl18 */
     menu_1p_entry = 0x80133020;
