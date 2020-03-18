@@ -1,52 +1,88 @@
 /* OUTPUT_FORMAT (elf64-bigmips) TARGET (elf64-bigmips) */
 
+/* Macros */
+#define SET_ROM_POS(offset) \
+    __romPos = offset;
+
+#define BEGIN_SEG(name, addr) \
+    _##name##SegStart = ADDR(.name); \
+    _##name##SegRomStart = __romPos; \
+    .name addr : AT(__romPos)
+
+#define END_SEG(name) \
+    _##name##SegEnd = ADDR(.name) + SIZEOF(.name); \
+    _##name##SegRomEnd = __romPos + SIZEOF(.name); \
+    __romPos += SIZEOF(.name);
+
+#define BEGIN_NOLOAD(name) \
+    _##name##SegNoloadStart = ADDR(.name.noload); \
+    .name.noload (NOLOAD) :
+
+#define END_NOLOAD(name) \
+    _##name##SegNoloadEnd = ADDR(.name.noload) + SIZEOF(.name.noload);
+
+
+/* Start of Linker Script */
 SECTIONS 
 {
-    __romPos = 0;
+    SET_ROM_POS(0)
 
-    .boot 0xA4000000 : AT(__romPos)
+    BEGIN_SEG(boot, 0xA4000000)
     {
         asm/header.o(.rodata);
         asm/boot/boot.o(.text .data);
     }
-    __romPos += SIZEOF(.boot);
+    END_SEG(boot)
 
-    .system 0x80000400 : AT(__romPos)
+    BEGIN_SEG(system, 0x80000400) 
     {
         asm/system/system.text.o(.text);
         asm/system/system.data.o(.data);
     }
-    __romPos += SIZEOF(.system);
-    .system.noload (NOLOAD) : 
+    END_SEG(system)
+    BEGIN_NOLOAD(system)
     {
         asm/system/system.bss.o(.bss);
     }
+    END_NOLOAD(system)
 
-    .loadovl 0x800A1980 : AT(__romPos)
+    BEGIN_SEG(loadovl, 0x800A1980)
     {
         asm/loadovl/overlayloader.text.o(.text);
         asm/loadovl/overlayloader.data.o(.data);
     }
-    __romPos += SIZEOF(.loadovl);
-    .loadovl.noload (NOLOAD) : 
+    END_SEG(loadovl)
+    BEGIN_NOLOAD(loadovl)
     {
         asm/loadovl/overlayloader.bss.o(.bss);
     }
+    END_NOLOAD(loadovl)
 
-    .ovl0 0x800C7840 : AT(__romPos)
+    BEGIN_SEG(ovl0, 0x800C7840)
     {
         asm/ovl0/ovl0.text.o(.text);
         asm/ovl0/ovl0.data.o(.data);
     }
-    __romPos += SIZEOF(.ovl0);
-    .ovl0.noload (NOLOAD) : 
+    END_SEG(ovl0)
+    BEGIN_NOLOAD(ovl0)
     {
         asm/ovl0/ovl0.bss.o(.bss);
+    }
+    END_NOLOAD(ovl0)
+
+    BEGIN_SEG(ovl2, 0x800D6490)
+    {
+        asm/ovl2/ovl2.text.o(.text);
+        asm/ovl2/ovl2.data.o(.data);
+    }
+    END_SEG(ovl2)
+    BEGIN_NOLOAD(ovl2)
+    {
+        asm/ovl2/ovl2.bss.o(.bss);
     }
 
     .code 0x800D6490 : AT(__romPos)
     {
-        asm/051C90.o(.data);
         asm/0AC540.o(.data);
         asm/1079C0.o(.data);
         asm/109FB0.o(.data);
