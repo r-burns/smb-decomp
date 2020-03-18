@@ -512,7 +512,9 @@ glabel D_800472B4
 glabel D_800472C0
     .space 16
 glabel D_800472D0
-    .space 232880
+    .space 101680
+glabel D_80060000
+    .space 131200
 glabel D_80080080
     .space 119376
 glabel D_8009D2D0
@@ -626,7 +628,9 @@ glabel D_8009EDC8
 glabel D_8009EDCC
     .space 4
 glabel D_8009EDD0
-    .space 60
+    .space 40
+glabel D_8009EDF8
+    .space 20
 glabel D_8009EE0C
     .space 4
 glabel D_8009EE10

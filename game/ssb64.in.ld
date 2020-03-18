@@ -118,10 +118,33 @@ SECTIONS
     }
     END_NOLOAD(ovl4)
 
+    BEGIN_SEG(ovl5, 0x8018D0C0)
+    {
+        asm/ovl5/ovl5.text.o(.text);
+        asm/ovl5/ovl5.data.o(.data);
+    }
+    END_SEG(ovl5)
+    BEGIN_NOLOAD(ovl5)
+    {
+        asm/ovl5/ovl5.bss.o(.bss);
+    }
+    END_NOLOAD(ovl5)
+
+    BEGIN_SEG(ovl65, 0x8018D0C0)
+    {
+        asm/ovl65/ovl65.text.o(.text);
+        asm/ovl65/ovl65.data.o(.data);
+    }
+    END_SEG(ovl65)
+    BEGIN_NOLOAD(ovl65)
+    {
+        asm/ovl65/ovl65.bss.o(.bss);
+    }
+    END_NOLOAD(ovl65)
+
 
     .code 0x800D6490 : AT(__romPos)
     {
-        asm/10B370.o(.data);
         asm/111800.o(.data);
         asm/1138E0.o(.data);
         asm/117180.o(.data);

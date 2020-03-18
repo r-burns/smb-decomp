@@ -134,10 +134,6 @@
 /* ovl49 */
     D_ovl49_80132D70 = 0x80132D70;
 
-/* ovl5 */
-    overlay_set23_entry = 0x8018D508;
-    D_ovl5_8018D580 = 0x8018D580;
-
 /* ovl50 */
     intro_great_fox_entry = 0x80132898;
     D_ovl50_801328F0 = 0x801328F0;
@@ -207,10 +203,7 @@
     D_ovl64_8018E2F0 = 0x8018E2F0;
 
 /* ovl7 */
-    .L8018F710 = 0x8018F710;
     training_mode_battle_entry = 0x801905F4;
-    D_ovl7_80190770 = 0x80190770;
-    D_ovl7_80190960 = 0x80190960;
 
 /* ovl8 */
     func_ovl8_80371460 = 0x80371460;

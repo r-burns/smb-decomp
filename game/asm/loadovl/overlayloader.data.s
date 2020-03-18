@@ -74,17 +74,17 @@ glabel D_800A3148
   /* 17DC 041EAC 800A315C */  .4byte D_unkmulti_8018EEC0
   /* 17E0 041EB0 800A3160 */  .4byte D_ovl6_8018F1A0
   /* 17E4 041EB4 800A3164 */  .4byte D_ovl6_8018F1A0
-  /* 17E8 041EB8 800A3168 */  .4byte .L8018F710
+  /* 17E8 041EB8 800A3168 */  .4byte D_unkmulti_8018F710
 
 glabel D_800A316C
   .incbin "overlayloader.raw.bin", 0x17EC, 0x8
   /* 17F4 041EC4 800A3174 */  .4byte D_unkmulti_8018D0C0
   /* 17F8 041EC8 800A3178 */  .4byte D_unkmulti_8018D0C0
-  /* 17FC 041ECC 800A317C */  .4byte D_ovl7_80190770
-  /* 1800 041ED0 800A3180 */  .4byte D_ovl7_80190770
-  /* 1804 041ED4 800A3184 */  .4byte D_ovl7_80190960
-  /* 1808 041ED8 800A3188 */  .4byte D_ovl7_80190960
-  /* 180C 041EDC 800A318C */  .4byte D_NF_80190FA0
+  /* 17FC 041ECC 800A317C */  .4byte D_unkmulti_80190770
+  /* 1800 041ED0 800A3180 */  .4byte D_unkmulti_80190770
+  /* 1804 041ED4 800A3184 */  .4byte D_unkmulti_80190960
+  /* 1808 041ED8 800A3188 */  .4byte D_unkmulti_80190960
+  /* 180C 041EDC 800A318C */  .4byte func_ovl65_80190FA0
 
 glabel D_800A3190
   .incbin "overlayloader.raw.bin", 0x1810, 0x8

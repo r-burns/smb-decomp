@@ -84,7 +84,9 @@ glabel D_800A4B08
 glabel D_800A4B14
     .space 4
 glabel D_800A4B18
-    .space 84
+    .space 41
+glabel D_800A4B41
+    .space 43
 glabel D_800A4B6C
     .space 412
 glabel D_800A4D08
