@@ -1,8 +1,4 @@
 /* External Overlayed Symbols in overlayloader */
-/* ovl10 */
-    title_screen_entry = 0x801340B8;
-    D_ovl10_80134480 = 0x80134480;
-
 /* ovl11 */
     n64_logo_entry = 0x800D6604;
     D_ovl11_800D6700 = 0x800D6700;
