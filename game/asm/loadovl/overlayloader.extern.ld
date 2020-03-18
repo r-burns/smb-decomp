@@ -1,9 +1,4 @@
 /* External Overlayed Symbols in overlayloader */
-/* ovl1 */
-    func_ovl1_803903E0 = 0x803903E0;
-    D_ovl1_80390BE0 = 0x80390BE0;
-    D_ovl1_803929D0 = 0x803929D0;
-
 /* ovl10 */
     title_screen_entry = 0x801340B8;
     D_ovl10_80134480 = 0x80134480;
