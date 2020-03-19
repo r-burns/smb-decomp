@@ -1,15 +1,4 @@
 /* External Overlayed Symbols in ovl2 */
-/* ovl22 */
-    D_ovl22_80132500 = 0x80132500;
-
-/* ovl23 */
-    overlay_set13_entry = 0x80132310;
-    D_ovl23_80132370 = 0x80132370;
-
-/* ovl24 */
-    classic_map_entry = 0x80134D98;
-    D_ovl24_80134DF0 = 0x80134DF0;
-
 /* ovl33 */
     D_ovl33_801342F0 = 0x801342F0;
 

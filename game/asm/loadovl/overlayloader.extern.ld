@@ -7,22 +7,6 @@
     debug_button_test_entry = 0x800D6FB0;
     D_ovl16_800D7010 = 0x800D7010;
 
-/* ovl22 */
-    D_ovl22_80132500 = 0x80132500;
-    D_ovl22_80132660 = 0x80132660;
-
-/* ovl23 */
-    overlay_set13_entry = 0x80132310;
-    D_ovl23_80132370 = 0x80132370;
-
-/* ovl24 */
-    classic_map_entry = 0x80134D98;
-    D_ovl24_80134DF0 = 0x80134DF0;
-
-/* ovl25 */
-    screen_adjust_entry = 0x801327D8;
-    D_ovl25_80132830 = 0x80132830;
-
 /* ovl26 */
     vs_css_entry = 0x8013B33C;
     D_ovl26_8013B3A0 = 0x8013B3A0;

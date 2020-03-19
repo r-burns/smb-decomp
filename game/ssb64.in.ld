@@ -298,14 +298,69 @@ SECTIONS
     }
     END_NOLOAD(ovl20)
 
+    BEGIN_SEG(ovl21, 0x80131B00)
+    {
+        asm/ovl21/ovl21.text.o(.text);
+        asm/ovl21/ovl21.data.o(.data);
+    }
+    END_SEG(ovl21)
+    BEGIN_NOLOAD(ovl21)
+    {
+        asm/ovl21/ovl21.bss.o(.bss);
+    }
+    END_NOLOAD(ovl21)
+
+    BEGIN_SEG(ovl22, 0x80131B00)
+    {
+        asm/ovl22/ovl22.text.o(.text);
+        asm/ovl22/ovl22.data.o(.data);
+    }
+    END_SEG(ovl22)
+    BEGIN_NOLOAD(ovl22)
+    {
+        asm/ovl22/ovl22.bss.o(.bss);
+    }
+    END_NOLOAD(ovl22)
+
+    BEGIN_SEG(ovl23, 0x80131B00)
+    {
+        asm/ovl23/ovl23.text.o(.text);
+        asm/ovl23/ovl23.data.o(.data);
+    }
+    END_SEG(ovl23)
+    BEGIN_NOLOAD(ovl23)
+    {
+        asm/ovl23/ovl23.bss.o(.bss);
+    }
+    END_NOLOAD(ovl23)
+
+    BEGIN_SEG(ovl24, 0x80131B00)
+    {
+        asm/ovl24/ovl24.text.o(.text);
+        asm/ovl24/ovl24.data.o(.data);
+    }
+    END_SEG(ovl24)
+    BEGIN_NOLOAD(ovl24)
+    {
+        asm/ovl24/ovl24.bss.o(.bss);
+    }
+    END_NOLOAD(ovl24)
+
+    BEGIN_SEG(ovl25, 0x80131B00)
+    {
+        asm/ovl25/ovl25.text.o(.text);
+        asm/ovl25/ovl25.data.o(.data);
+    }
+    END_SEG(ovl25)
+    BEGIN_NOLOAD(ovl25)
+    {
+        asm/ovl25/ovl25.bss.o(.bss);
+    }
+    END_NOLOAD(ovl25)
+
 
     .code 0x800D6490 : AT(__romPos)
     {
-        asm/1280A0.o(.data);
-        asm/129970.o(.data);
-        asm/12A4C0.o(.data);
-        asm/12AE40.o(.data);
-        asm/12EF60.o(.data);
         asm/12FD80.o(.data);
         asm/139D00.o(.data);
         asm/1410E0.o(.data);
