@@ -7,26 +7,6 @@
     debug_button_test_entry = 0x800D6FB0;
     D_ovl16_800D7010 = 0x800D7010;
 
-/* ovl26 */
-    vs_css_entry = 0x8013B33C;
-    D_ovl26_8013B3A0 = 0x8013B3A0;
-
-/* ovl27 */
-    classic_css_entry = 0x80138558;
-
-/* ovl28 */
-    training_css_entry = 0x80137F00;
-    D_ovl28_80137F60 = 0x80137F60;
-
-/* ovl29 */
-    bonus_css_entry = 0x80136EF4;
-    D_ovl29_80136F50 = 0x80136F50;
-
-/* ovl30 */
-    stage_select_entry = 0x8013446C;
-    D_ovl30_801344D0 = 0x801344D0;
-    D_ovl30_80134A50 = 0x80134A50;
-
 /* ovl31 */
     vs_results_entry = 0x80138E64;
 
