@@ -418,25 +418,201 @@ SECTIONS
     }
     END_NOLOAD(ovl30)
 
+    BEGIN_SEG(ovl15, 0x800D6490)
+    {
+        asm/ovl15/ovl15.text.o(.text);
+        asm/ovl15/ovl15.data.o(.data);
+    }
+    END_SEG(ovl15)
+    BEGIN_NOLOAD(ovl15)
+    {
+        asm/ovl15/ovl15.bss.o(.bss);
+    }
+    END_NOLOAD(ovl15)
+
+    BEGIN_SEG(ovl31, 0x80131B00)
+    {
+        asm/ovl31/ovl31.text.o(.text);
+        asm/ovl31/ovl31.data.o(.data);
+    }
+    END_SEG(ovl31)
+    BEGIN_NOLOAD(ovl31)
+    {
+        asm/ovl31/ovl31.bss.o(.bss);
+    }
+    END_NOLOAD(ovl31)
+
+    BEGIN_SEG(ovl32, 0x80131B00)
+    {
+        asm/ovl32/ovl32.text.o(.text);
+        asm/ovl32/ovl32.data.o(.data);
+    }
+    END_SEG(ovl32)
+    BEGIN_NOLOAD(ovl32)
+    {
+        asm/ovl32/ovl32.bss.o(.bss);
+    }
+    END_NOLOAD(ovl32)
+
+    BEGIN_SEG(ovl33, 0x80131B00)
+    {
+        asm/ovl33/ovl33.text.o(.text);
+        asm/ovl33/ovl33.data.o(.data);
+    }
+    END_SEG(ovl33)
+    BEGIN_NOLOAD(ovl33)
+    {
+        asm/ovl33/ovl33.bss.o(.bss);
+    }
+    END_NOLOAD(ovl33)
+
+    BEGIN_SEG(ovl34, 0x80131B00)
+    {
+        asm/ovl34/ovl34.text.o(.text);
+        asm/ovl34/ovl34.data.o(.data);
+    }
+    END_SEG(ovl34)
+    BEGIN_NOLOAD(ovl34)
+    {
+        asm/ovl34/ovl34.bss.o(.bss);
+    }
+    END_NOLOAD(ovl34)
+
+    BEGIN_SEG(ovl35, 0x80131B00)
+    {
+        asm/ovl35/ovl35.text.o(.text);
+        asm/ovl35/ovl35.data.o(.data);
+    }
+    END_SEG(ovl35)
+    BEGIN_NOLOAD(ovl35)
+    {
+        asm/ovl35/ovl35.bss.o(.bss);
+    }
+    END_NOLOAD(ovl35)
+
+    BEGIN_SEG(ovl36, 0x8018D0C0)
+    {
+        asm/ovl36/ovl36.text.o(.text);
+        asm/ovl36/ovl36.data.o(.data);
+    }
+    END_SEG(ovl36)
+    BEGIN_NOLOAD(ovl36)
+    {
+        asm/ovl36/ovl36.bss.o(.bss);
+    }
+    END_NOLOAD(ovl36)
+
+    BEGIN_SEG(ovl37, 0x8018D0C0)
+    {
+        asm/ovl37/ovl37.text.o(.text);
+        asm/ovl37/ovl37.data.o(.data);
+    }
+    END_SEG(ovl37)
+    BEGIN_NOLOAD(ovl37)
+    {
+        asm/ovl37/ovl37.bss.o(.bss);
+    }
+    END_NOLOAD(ovl37)
+
+    BEGIN_SEG(ovl38, 0x8018D0C0)
+    {
+        asm/ovl38/ovl38.text.o(.text);
+        asm/ovl38/ovl38.data.o(.data);
+    }
+    END_SEG(ovl38)
+    BEGIN_NOLOAD(ovl38)
+    {
+        asm/ovl38/ovl38.bss.o(.bss);
+    }
+    END_NOLOAD(ovl38)
+
+    BEGIN_SEG(ovl39, 0x8018D0C0)
+    {
+        asm/ovl39/ovl39.text.o(.text);
+        asm/ovl39/ovl39.data.o(.data);
+    }
+    END_SEG(ovl39)
+    BEGIN_NOLOAD(ovl39)
+    {
+        asm/ovl39/ovl39.bss.o(.bss);
+    }
+    END_NOLOAD(ovl39)
+
+    BEGIN_SEG(ovl40, 0x8018D0C0)
+    {
+        asm/ovl40/ovl40.text.o(.text);
+        asm/ovl40/ovl40.data.o(.data);
+    }
+    END_SEG(ovl40)
+    BEGIN_NOLOAD(ovl40)
+    {
+        asm/ovl40/ovl40.bss.o(.bss);
+    }
+    END_NOLOAD(ovl40)
+
+    BEGIN_SEG(ovl41, 0x8018D0C0)
+    {
+        asm/ovl41/ovl41.text.o(.text);
+        asm/ovl41/ovl41.data.o(.data);
+    }
+    END_SEG(ovl41)
+    BEGIN_NOLOAD(ovl41)
+    {
+        asm/ovl41/ovl41.bss.o(.bss);
+    }
+    END_NOLOAD(ovl41)
+
+    BEGIN_SEG(ovl42, 0x8018D0C0)
+    {
+        asm/ovl42/ovl42.text.o(.text);
+        asm/ovl42/ovl42.data.o(.data);
+    }
+    END_SEG(ovl42)
+    BEGIN_NOLOAD(ovl42)
+    {
+        asm/ovl42/ovl42.bss.o(.bss);
+    }
+    END_NOLOAD(ovl42)
+
+    BEGIN_SEG(ovl43, 0x8018D0C0)
+    {
+        asm/ovl43/ovl43.text.o(.text);
+        asm/ovl43/ovl43.data.o(.data);
+    }
+    END_SEG(ovl43)
+    BEGIN_NOLOAD(ovl43)
+    {
+        asm/ovl43/ovl43.bss.o(.bss);
+    }
+    END_NOLOAD(ovl43)
+
+    BEGIN_SEG(ovl44, 0x80131B00)
+    {
+        asm/ovl44/ovl44.text.o(.text);
+        asm/ovl44/ovl44.data.o(.data);
+    }
+    END_SEG(ovl44)
+    BEGIN_NOLOAD(ovl44)
+    {
+        asm/ovl44/ovl44.bss.o(.bss);
+    }
+    END_NOLOAD(ovl44)
+
+    BEGIN_SEG(ovl45, 0x80131B00)
+    {
+        asm/ovl45/ovl45.text.o(.text);
+        asm/ovl45/ovl45.data.o(.data);
+    }
+    END_SEG(ovl45)
+    BEGIN_NOLOAD(ovl45)
+    {
+        asm/ovl45/ovl45.bss.o(.bss);
+    }
+    END_NOLOAD(ovl45)
+
 
     .code 0x800D6490 : AT(__romPos)
     {
-        asm/150740.o(.data);
-        asm/150CA0.o(.data);
-        asm/158A40.o(.data);
-        asm/15DB50.o(.data);
-        asm/162640.o(.data);
-        asm/165810.o(.data);
-        asm/1666F0.o(.data);
-        asm/167830.o(.data);
-        asm/168930.o(.data);
-        asm/169AE0.o(.data);
-        asm/16AC10.o(.data);
-        asm/16BD10.o(.data);
-        asm/16CE70.o(.data);
-        asm/16DFD0.o(.data);
-        asm/16F130.o(.data);
-        asm/16FD40.o(.data);
         asm/170660.o(.data);
         asm/171320.o(.data);
         asm/1721E0.o(.data);

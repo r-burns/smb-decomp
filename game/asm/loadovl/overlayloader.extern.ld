@@ -1,55 +1,7 @@
 /* External Overlayed Symbols in overlayloader */
-/* ovl15 */
-    debug_falls_entry = 0x800D6688;
-    D_ovl15_800D66E0 = 0x800D66E0;
-
 /* ovl16 */
     debug_button_test_entry = 0x800D6FB0;
     D_ovl16_800D7010 = 0x800D7010;
-
-/* ovl31 */
-    vs_results_entry = 0x80138E64;
-
-/* ovl32 */
-    D_ovl32_80136630 = 0x80136630;
-    D_ovl32_80136A90 = 0x80136A90;
-
-/* ovl33 */
-    char_bkg_info_entry = 0x80134050;
-    D_ovl33_801340B0 = 0x801340B0;
-    D_ovl33_80134E30 = 0x80134E30;
-
-/* ovl34 */
-    intro_firstscene_entry = 0x801349BC;
-    D_ovl34_80134BD0 = 0x80134BD0;
-
-/* ovl35 */
-    D_ovl35_801328A0 = 0x801328A0;
-
-/* ovl36 */
-    intro_focus_mario_entry = 0x8018E030;
-    D_ovl36_8018E220 = 0x8018E220;
-
-/* ovl38 */
-    intro_focus_samus_entry = 0x8018E0C8;
-    D_ovl38_8018E120 = 0x8018E120;
-
-/* ovl39 */
-    intro_focus_fox_entry = 0x8018E02C;
-    D_ovl39_8018E1C0 = 0x8018E1C0;
-
-/* ovl43 */
-    intro_focus_kirby_entry = 0x8018E058;
-
-/* ovl44 */
-    intro_chars_running_entry = 0x8013256C;
-    D_ovl44_801325D0 = 0x801325D0;
-    D_ovl44_80132650 = 0x80132650;
-    D_ovl44_80132740 = 0x80132740;
-
-/* ovl45 */
-    intro_yoshi_nest_entry = 0x801322CC;
-    D_ovl45_80132330 = 0x80132330;
 
 /* ovl46 */
     D_ovl46_801326D0 = 0x801326D0;

@@ -1,7 +1,4 @@
 /* External Overlayed Symbols in ovl2 */
-/* ovl33 */
-    D_ovl33_801342F0 = 0x801342F0;
-
 /* ovl54 */
     overlay_set48_entry = 0x80132A78;
 
