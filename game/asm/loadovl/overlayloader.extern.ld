@@ -7,20 +7,6 @@
     debug_button_test_entry = 0x800D6FB0;
     D_ovl16_800D7010 = 0x800D7010;
 
-/* ovl18 */
-    menu_1p_entry = 0x80133020;
-    D_ovl18_801331A0 = 0x801331A0;
-    D_ovl18_801331C0 = 0x801331C0;
-
-/* ovl19 */
-    D_ovl19_801347B0 = 0x801347B0;
-    D_ovl19_80134930 = 0x80134930;
-
-/* ovl20 */
-    options_vs_entry = 0x80134668;
-    D_ovl20_801346C0 = 0x801346C0;
-    D_ovl20_801348C0 = 0x801348C0;
-
 /* ovl22 */
     D_ovl22_80132500 = 0x80132500;
     D_ovl22_80132660 = 0x80132660;
@@ -153,17 +139,6 @@
 /* ovl59 */
     overlay_set56_entry = 0x801351B8;
     D_ovl59_80135260 = 0x80135260;
-
-/* ovl60 */
-    menu_options_entry = 0x801335C0;
-    D_ovl60_80133620 = 0x80133620;
-    D_ovl60_801337A0 = 0x801337A0;
-
-/* ovl61 */
-    menu_data_entry = 0x80132EC0;
-    D_ovl61_80132F20 = 0x80132F20;
-    D_ovl61_80132F80 = 0x80132F80;
-    D_ovl61_80133060 = 0x80133060;
 
 /* ovl62 */
     overlay_set59_entry = 0x80133988;
