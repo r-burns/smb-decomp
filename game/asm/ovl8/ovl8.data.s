@@ -1185,8 +1185,8 @@ glabel D_ovl8_80389598
   .incbin "ovl8.raw.bin", 0x18138, 0x4
   /* 1813C 1A5DEC 8038959C */  .4byte func_80018000
   .incbin "ovl8.raw.bin", 0x18140, 0x4
-  /* 18144 1A5DF4 803895A4 */  .4byte func_80008001
-  /* 18148 1A5DF8 803895A8 */  .4byte func_80008001
+  /* 18144 1A5DF4 803895A4 */  .4byte 0x80008001 # Warning: missing label
+  /* 18148 1A5DF8 803895A8 */  .4byte 0x80008001 # Warning: missing label
   .incbin "ovl8.raw.bin", 0x1814C, 0x4
   /* 18150 1A5E00 803895B0 */  .4byte func_80018000
   /* 18154 1A5E04 803895B4 */  .4byte func_80008000
@@ -1805,19 +1805,19 @@ glabel D_ovl8_80389FB4
   .incbin "ovl8.raw.bin", 0x18B5C, 0x8
   /* 18B64 1A6814 80389FC4 */  .4byte func_80010000
   .incbin "ovl8.raw.bin", 0x18B68, 0x10
-  /* 18B78 1A6828 80389FD8 */  .4byte func_80010002
-  /* 18B7C 1A682C 80389FDC */  .4byte func_80018001
+  /* 18B78 1A6828 80389FD8 */  .4byte 0x80010002 # Warning: missing label
+  /* 18B7C 1A682C 80389FDC */  .4byte 0x80018001 # Warning: missing label
   .incbin "ovl8.raw.bin", 0x18B80, 0x8
-  /* 18B88 1A6838 80389FE8 */  .4byte func_80018001
+  /* 18B88 1A6838 80389FE8 */  .4byte 0x80018001 # Warning: missing label
   .incbin "ovl8.raw.bin", 0x18B8C, 0x8
   /* 18B94 1A6844 80389FF4 */  .4byte func_80008000
   .incbin "ovl8.raw.bin", 0x18B98, 0x8
   /* 18BA0 1A6850 8038A000 */  .4byte func_80008000
   .incbin "ovl8.raw.bin", 0x18BA4, 0x10
-  /* 18BB4 1A6864 8038A014 */  .4byte func_80010001
-  /* 18BB8 1A6868 8038A018 */  .4byte func_80010001
+  /* 18BB4 1A6864 8038A014 */  .4byte 0x80010001 # Warning: missing label
+  /* 18BB8 1A6868 8038A018 */  .4byte 0x80010001 # Warning: missing label
   .incbin "ovl8.raw.bin", 0x18BBC, 0x38
-  /* 18BF4 1A68A4 8038A054 */  .4byte func_80028002
+  /* 18BF4 1A68A4 8038A054 */  .4byte 0x80028002 # Warning: missing label
   .incbin "ovl8.raw.bin", 0x18BF8, 0x10
 
 glabel D_ovl8_8038A068
@@ -1826,19 +1826,19 @@ glabel D_ovl8_8038A068
   .incbin "ovl8.raw.bin", 0x18C10, 0x8
   /* 18C18 1A68C8 8038A078 */  .4byte func_80020000
   .incbin "ovl8.raw.bin", 0x18C1C, 0x14
-  /* 18C30 1A68E0 8038A090 */  .4byte func_80020001
+  /* 18C30 1A68E0 8038A090 */  .4byte 0x80020001 # Warning: missing label
   .incbin "ovl8.raw.bin", 0x18C34, 0x10
   /* 18C44 1A68F4 8038A0A4 */  .4byte func_80010000
   /* 18C48 1A68F8 8038A0A8 */  .4byte func_80010000
   .incbin "ovl8.raw.bin", 0x18C4C, 0x1C
-  /* 18C68 1A6918 8038A0C8 */  .4byte func_80010001
-  /* 18C6C 1A691C 8038A0CC */  .4byte func_80010001
+  /* 18C68 1A6918 8038A0C8 */  .4byte 0x80010001 # Warning: missing label
+  /* 18C6C 1A691C 8038A0CC */  .4byte 0x80010001 # Warning: missing label
   .incbin "ovl8.raw.bin", 0x18C70, 0x20
   /* 18C90 1A6940 8038A0F0 */  .4byte func_80008000
   .incbin "ovl8.raw.bin", 0x18C94, 0x8
   /* 18C9C 1A694C 8038A0FC */  .4byte func_80008000
   .incbin "ovl8.raw.bin", 0x18CA0, 0x8
-  /* 18CA8 1A6958 8038A108 */  .4byte func_80028002
+  /* 18CA8 1A6958 8038A108 */  .4byte 0x80028002 # Warning: missing label
   .incbin "ovl8.raw.bin", 0x18CAC, 0x10
 
 glabel D_ovl8_8038A11C
@@ -2645,19 +2645,19 @@ glabel D_ovl8_8038ADD0
   .incbin "ovl8.raw.bin", 0x19978, 0x8
   /* 19980 1A7630 8038ADE0 */  .4byte func_80010000
   .incbin "ovl8.raw.bin", 0x19984, 0x10
-  /* 19994 1A7644 8038ADF4 */  .4byte func_80010002
-  /* 19998 1A7648 8038ADF8 */  .4byte func_80018001
+  /* 19994 1A7644 8038ADF4 */  .4byte 0x80010002 # Warning: missing label
+  /* 19998 1A7648 8038ADF8 */  .4byte 0x80018001 # Warning: missing label
   .incbin "ovl8.raw.bin", 0x1999C, 0x8
-  /* 199A4 1A7654 8038AE04 */  .4byte func_80018001
+  /* 199A4 1A7654 8038AE04 */  .4byte 0x80018001 # Warning: missing label
   .incbin "ovl8.raw.bin", 0x199A8, 0x8
   /* 199B0 1A7660 8038AE10 */  .4byte func_80008000
   .incbin "ovl8.raw.bin", 0x199B4, 0x8
   /* 199BC 1A766C 8038AE1C */  .4byte func_80008000
   .incbin "ovl8.raw.bin", 0x199C0, 0x10
-  /* 199D0 1A7680 8038AE30 */  .4byte func_80010001
-  /* 199D4 1A7684 8038AE34 */  .4byte func_80010001
+  /* 199D0 1A7680 8038AE30 */  .4byte 0x80010001 # Warning: missing label
+  /* 199D4 1A7684 8038AE34 */  .4byte 0x80010001 # Warning: missing label
   .incbin "ovl8.raw.bin", 0x199D8, 0x38
-  /* 19A10 1A76C0 8038AE70 */  .4byte func_80028002
+  /* 19A10 1A76C0 8038AE70 */  .4byte 0x80028002 # Warning: missing label
   .incbin "ovl8.raw.bin", 0x19A14, 0x10
 
 glabel D_ovl8_8038AE84
@@ -2666,19 +2666,19 @@ glabel D_ovl8_8038AE84
   .incbin "ovl8.raw.bin", 0x19A2C, 0x8
   /* 19A34 1A76E4 8038AE94 */  .4byte func_80020000
   .incbin "ovl8.raw.bin", 0x19A38, 0x14
-  /* 19A4C 1A76FC 8038AEAC */  .4byte func_80020001
+  /* 19A4C 1A76FC 8038AEAC */  .4byte 0x80020001 # Warning: missing label
   .incbin "ovl8.raw.bin", 0x19A50, 0x10
   /* 19A60 1A7710 8038AEC0 */  .4byte func_80010000
   /* 19A64 1A7714 8038AEC4 */  .4byte func_80010000
   .incbin "ovl8.raw.bin", 0x19A68, 0x1C
-  /* 19A84 1A7734 8038AEE4 */  .4byte func_80010001
-  /* 19A88 1A7738 8038AEE8 */  .4byte func_80010001
+  /* 19A84 1A7734 8038AEE4 */  .4byte 0x80010001 # Warning: missing label
+  /* 19A88 1A7738 8038AEE8 */  .4byte 0x80010001 # Warning: missing label
   .incbin "ovl8.raw.bin", 0x19A8C, 0x20
   /* 19AAC 1A775C 8038AF0C */  .4byte func_80008000
   .incbin "ovl8.raw.bin", 0x19AB0, 0x8
   /* 19AB8 1A7768 8038AF18 */  .4byte func_80008000
   .incbin "ovl8.raw.bin", 0x19ABC, 0x8
-  /* 19AC4 1A7774 8038AF24 */  .4byte func_80028002
+  /* 19AC4 1A7774 8038AF24 */  .4byte 0x80028002 # Warning: missing label
   .incbin "ovl8.raw.bin", 0x19AC8, 0x10
 
 glabel D_ovl8_8038AF38
@@ -4548,19 +4548,19 @@ glabel D_ovl8_8038CCD8
   .incbin "ovl8.raw.bin", 0x1B880, 0x8
   /* 1B888 1A9538 8038CCE8 */  .4byte func_80020000
   .incbin "ovl8.raw.bin", 0x1B88C, 0x14
-  /* 1B8A0 1A9550 8038CD00 */  .4byte func_80020001
+  /* 1B8A0 1A9550 8038CD00 */  .4byte 0x80020001 # Warning: missing label
   .incbin "ovl8.raw.bin", 0x1B8A4, 0x10
   /* 1B8B4 1A9564 8038CD14 */  .4byte func_80010000
   /* 1B8B8 1A9568 8038CD18 */  .4byte func_80010000
   .incbin "ovl8.raw.bin", 0x1B8BC, 0x1C
-  /* 1B8D8 1A9588 8038CD38 */  .4byte func_80010001
-  /* 1B8DC 1A958C 8038CD3C */  .4byte func_80010001
+  /* 1B8D8 1A9588 8038CD38 */  .4byte 0x80010001 # Warning: missing label
+  /* 1B8DC 1A958C 8038CD3C */  .4byte 0x80010001 # Warning: missing label
   .incbin "ovl8.raw.bin", 0x1B8E0, 0x20
   /* 1B900 1A95B0 8038CD60 */  .4byte func_80008000
   .incbin "ovl8.raw.bin", 0x1B904, 0x8
   /* 1B90C 1A95BC 8038CD6C */  .4byte func_80008000
   .incbin "ovl8.raw.bin", 0x1B910, 0x8
-  /* 1B918 1A95C8 8038CD78 */  .4byte func_80028002
+  /* 1B918 1A95C8 8038CD78 */  .4byte 0x80028002 # Warning: missing label
   .incbin "ovl8.raw.bin", 0x1B91C, 0x10
 
 glabel D_ovl8_8038CD8C

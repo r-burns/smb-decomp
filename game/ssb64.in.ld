@@ -48,13 +48,13 @@ SECTIONS
 
     BEGIN_SEG(loadovl, 0x800A1980)
     {
-        asm/loadovl/overlayloader.text.o(.text);
-        asm/loadovl/overlayloader.data.o(.data);
+        asm/loadovl/loadovl.text.o(.text);
+        asm/loadovl/loadovl.data.o(.data);
     }
     END_SEG(loadovl)
     BEGIN_NOLOAD(loadovl)
     {
-        asm/loadovl/overlayloader.bss.o(.bss);
+        asm/loadovl/loadovl.bss.o(.bss);
     }
     END_NOLOAD(loadovl)
 

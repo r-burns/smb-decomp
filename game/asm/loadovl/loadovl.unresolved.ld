@@ -1,4 +1,4 @@
-/* Symbols in "overlayloader" that are in multiple locations */
+/* Symbols in "loadovl" that are in multiple locations */
     D_unkmulti_800D6490 = 0x800D6490; /* in ovl2, ovl11, ovl12, ovl15, ovl16 */
     D_unkmulti_800D67C0 = 0x800D67C0; /* in ovl2, ovl11, ovl12, ovl15, ovl16 */
     func_unkmulti_800D67DC = 0x800D67DC; /* in ovl2, ovl11, ovl12, ovl15, ovl16 */

@@ -3,6 +3,3 @@ include_rules
 : foreach *.s |> !as |> | ../../<asm_objs>
 
 : foreach *.unresolved.ld |> !tup_preserve |> | ../../<unres_syms>
-
-# temporarily collect all of the external symbols into one big file
-: foreach *.extern.ld |> !tup_preserve|> | ../../<extern_syms>
