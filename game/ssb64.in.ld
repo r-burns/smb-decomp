@@ -730,14 +730,130 @@ SECTIONS
     }
     END_NOLOAD(ovl55)
 
+    BEGIN_SEG(ovl56, 0x80131B00)
+    {
+        asm/ovl56/ovl56.text.o(.text);
+        asm/ovl56/ovl56.data.o(.data);
+    }
+    END_SEG(ovl56)
+    BEGIN_NOLOAD(ovl56)
+    {
+        asm/ovl56/ovl56.bss.o(.bss);
+    }
+    END_NOLOAD(ovl56)
 
+    BEGIN_SEG(ovl57, 0x80131B00)
+    {
+        asm/ovl57/ovl57.text.o(.text);
+        asm/ovl57/ovl57.data.o(.data);
+    }
+    END_SEG(ovl57)
+    BEGIN_NOLOAD(ovl57)
+    {
+        asm/ovl57/ovl57.bss.o(.bss);
+    }
+    END_NOLOAD(ovl57)
+
+    BEGIN_SEG(ovl58, 0x80131B00)
+    {
+        asm/ovl58/ovl58.text.o(.text);
+        asm/ovl58/ovl58.data.o(.data);
+    }
+    END_SEG(ovl58)
+    BEGIN_NOLOAD(ovl58)
+    {
+        asm/ovl58/ovl58.bss.o(.bss);
+    }
+    END_NOLOAD(ovl58)
+
+    BEGIN_SEG(ovl59, 0x80131B00)
+    {
+        asm/ovl59/ovl59.text.o(.text);
+        asm/ovl59/ovl59.data.o(.data);
+    }
+    END_SEG(ovl59)
+    BEGIN_NOLOAD(ovl59)
+    {
+        asm/ovl59/ovl59.bss.o(.bss);
+    }
+    END_NOLOAD(ovl59)
+
+    BEGIN_SEG(ovl62, 0x80131B00)
+    {
+        asm/ovl62/ovl62.text.o(.text);
+        asm/ovl62/ovl62.data.o(.data);
+    }
+    END_SEG(ovl62)
+    BEGIN_NOLOAD(ovl62)
+    {
+        asm/ovl62/ovl62.bss.o(.bss);
+    }
+    END_NOLOAD(ovl62)
+
+    BEGIN_SEG(ovl63, 0x8018D0C0)
+    {
+        asm/ovl63/ovl63.text.o(.text);
+        asm/ovl63/ovl63.data.o(.data);
+    }
+    END_SEG(ovl63)
+    BEGIN_NOLOAD(ovl63)
+    {
+        asm/ovl63/ovl63.bss.o(.bss);
+    }
+    END_NOLOAD(ovl63)
+
+    BEGIN_SEG(ovl64, 0x8018D0C0)
+    {
+        asm/ovl64/ovl64.text.o(.text);
+        asm/ovl64/ovl64.data.o(.data);
+    }
+    END_SEG(ovl64)
+    BEGIN_NOLOAD(ovl64)
+    {
+        asm/ovl64/ovl64.bss.o(.bss);
+    }
+    END_NOLOAD(ovl64)
+
+    BEGIN_SEG(ovl16, 0x800D6490)
+    {
+        asm/ovl16/ovl16.text.o(.text);
+        asm/ovl16/ovl16.data.o(.data);
+    }
+    END_SEG(ovl16)
+    BEGIN_NOLOAD(ovl16)
+    {
+        asm/ovl16/ovl16.bss.o(.bss);
+    }
+    END_NOLOAD(ovl16)
+
+    BEGIN_SEG(ovl8, 0x80371460)
+    {
+        asm/ovl8/ovl8.text.o(.text);
+        asm/ovl8/ovl8.data.o(.data);
+    }
+    END_SEG(ovl8)
+    BEGIN_NOLOAD(ovl8)
+    {
+        asm/ovl8/ovl8.bss.o(.bss);
+    }
+    END_NOLOAD(ovl8)
+
+    BEGIN_SEG(ovl9, 0x80369240)
+    {
+        asm/ovl9/ovl9.text.o(.text);
+        asm/ovl9/ovl9.data.o(.data);
+    }
+    END_SEG(ovl9)
+    BEGIN_NOLOAD(ovl9)
+    {
+        asm/ovl9/ovl9.bss.o(.bss);
+    }
+    END_NOLOAD(ovl9)
+
+
+    /*
     .code 0x800D6490 : AT(__romPos)
     {
-        asm/17AD50.o(.data);
-        asm/17E510.o(.data);
-        asm/17ECC0.o(.data);
-        asm/17F200.o(.data);
-        asm/187ED0.o(.data);
         asm/18A6D0.o(.data);
         asm/18BE00.o(.data);
         asm/18D030.o(.data);
@@ -745,6 +861,7 @@ SECTIONS
         asm/1AB6B0.o(.data);
     }
     __romPos += SIZEOF(.code);
+    */
 
     .resources 0x0 : AT(__romPos)
     {
