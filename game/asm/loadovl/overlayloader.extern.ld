@@ -3,43 +3,6 @@
     debug_button_test_entry = 0x800D6FB0;
     D_ovl16_800D7010 = 0x800D7010;
 
-/* ovl46 */
-    D_ovl46_801326D0 = 0x801326D0;
-
-/* ovl47 */
-    D_ovl47_801329D0 = 0x801329D0;
-
-/* ovl48 */
-    intro_pika_pokeball_entry = 0x80132344;
-    D_ovl48_801323A0 = 0x801323A0;
-
-/* ovl49 */
-    D_ovl49_80132D70 = 0x80132D70;
-
-/* ovl50 */
-    intro_great_fox_entry = 0x80132898;
-    D_ovl50_801328F0 = 0x801328F0;
-
-/* ovl51 */
-    intro_dk_vs_samus_entry = 0x8018D818;
-    D_ovl51_8018D870 = 0x8018D870;
-
-/* ovl52 */
-    intro_hidden_chars_entry = 0x801325E0;
-    D_ovl52_80132640 = 0x80132640;
-
-/* ovl53 */
-    menu_backup_clear_entry = 0x80132E28;
-    D_ovl53_80132E80 = 0x80132E80;
-
-/* ovl54 */
-    overlay_set48_entry = 0x80132A78;
-
-/* ovl55 */
-    overlay_set49_entry = 0x801340FC;
-    D_ovl55_80134160 = 0x80134160;
-    D_ovl55_80134300 = 0x80134300;
-
 /* ovl56 */
     overlay_set50_51_entry = 0x80134E84;
     D_ovl56_80134EE0 = 0x80134EE0;

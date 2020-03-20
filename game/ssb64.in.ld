@@ -610,19 +610,129 @@ SECTIONS
     }
     END_NOLOAD(ovl45)
 
+    BEGIN_SEG(ovl46, 0x80131B00)
+    {
+        asm/ovl46/ovl46.text.o(.text);
+        asm/ovl46/ovl46.data.o(.data);
+    }
+    END_SEG(ovl46)
+    BEGIN_NOLOAD(ovl46)
+    {
+        asm/ovl46/ovl46.bss.o(.bss);
+    }
+    END_NOLOAD(ovl46)
+
+    BEGIN_SEG(ovl47, 0x80131B00)
+    {
+        asm/ovl47/ovl47.text.o(.text);
+        asm/ovl47/ovl47.data.o(.data);
+    }
+    END_SEG(ovl47)
+    BEGIN_NOLOAD(ovl47)
+    {
+        asm/ovl47/ovl47.bss.o(.bss);
+    }
+    END_NOLOAD(ovl47)
+
+    BEGIN_SEG(ovl48, 0x80131B00)
+    {
+        asm/ovl48/ovl48.text.o(.text);
+        asm/ovl48/ovl48.data.o(.data);
+    }
+    END_SEG(ovl48)
+    BEGIN_NOLOAD(ovl48)
+    {
+        asm/ovl48/ovl48.bss.o(.bss);
+    }
+    END_NOLOAD(ovl48)
+
+    BEGIN_SEG(ovl49, 0x80131B00)
+    {
+        asm/ovl49/ovl49.text.o(.text);
+        asm/ovl49/ovl49.data.o(.data);
+    }
+    END_SEG(ovl49)
+    BEGIN_NOLOAD(ovl49)
+    {
+        asm/ovl49/ovl49.bss.o(.bss);
+    }
+    END_NOLOAD(ovl49)
+
+    BEGIN_SEG(ovl50, 0x80131B00)
+    {
+        asm/ovl50/ovl50.text.o(.text);
+        asm/ovl50/ovl50.data.o(.data);
+    }
+    END_SEG(ovl50)
+    BEGIN_NOLOAD(ovl50)
+    {
+        asm/ovl50/ovl50.bss.o(.bss);
+    }
+    END_NOLOAD(ovl50)
+
+    BEGIN_SEG(ovl51, 0x8018D0C0)
+    {
+        asm/ovl51/ovl51.text.o(.text);
+        asm/ovl51/ovl51.data.o(.data);
+    }
+    END_SEG(ovl51)
+    BEGIN_NOLOAD(ovl51)
+    {
+        asm/ovl51/ovl51.bss.o(.bss);
+    }
+    END_NOLOAD(ovl51)
+
+    BEGIN_SEG(ovl52, 0x80131B00)
+    {
+        asm/ovl52/ovl52.text.o(.text);
+        asm/ovl52/ovl52.data.o(.data);
+    }
+    END_SEG(ovl52)
+    BEGIN_NOLOAD(ovl52)
+    {
+        asm/ovl52/ovl52.bss.o(.bss);
+    }
+    END_NOLOAD(ovl52)
+
+    BEGIN_SEG(ovl53, 0x80131B00)
+    {
+        asm/ovl53/ovl53.text.o(.text);
+        asm/ovl53/ovl53.data.o(.data);
+    }
+    END_SEG(ovl53)
+    BEGIN_NOLOAD(ovl53)
+    {
+        asm/ovl53/ovl53.bss.o(.bss);
+    }
+    END_NOLOAD(ovl53)
+
+    BEGIN_SEG(ovl54, 0x80131B00)
+    {
+        asm/ovl54/ovl54.text.o(.text);
+        asm/ovl54/ovl54.data.o(.data);
+    }
+    END_SEG(ovl54)
+    BEGIN_NOLOAD(ovl54)
+    {
+        asm/ovl54/ovl54.bss.o(.bss);
+    }
+    END_NOLOAD(ovl54)
+
+    BEGIN_SEG(ovl55, 0x80131B00)
+    {
+        asm/ovl55/ovl55.text.o(.text);
+        asm/ovl55/ovl55.data.o(.data);
+    }
+    END_SEG(ovl55)
+    BEGIN_NOLOAD(ovl55)
+    {
+        asm/ovl55/ovl55.bss.o(.bss);
+    }
+    END_NOLOAD(ovl55)
+
 
     .code 0x800D6490 : AT(__romPos)
     {
-        asm/170660.o(.data);
-        asm/171320.o(.data);
-        asm/1721E0.o(.data);
-        asm/172B60.o(.data);
-        asm/173A30.o(.data);
-        asm/174940.o(.data);
-        asm/1752C0.o(.data);
-        asm/175F00.o(.data);
-        asm/1774A0.o(.data);
-        asm/178560.o(.data);
         asm/17AD50.o(.data);
         asm/17E510.o(.data);
         asm/17ECC0.o(.data);
