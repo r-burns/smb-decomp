@@ -16,7 +16,6 @@ endif
 TARGET = ssb64.@(VERSION)
 ROM    = $(TARGET).z64
 ELF    = $(TARGET).elf
-BUILD_DIR = &build-$(TARGET)
 
 ### Compiler Settings ###
 CROSS = mips64-elf-
@@ -26,13 +25,13 @@ OBJCPY = $(CROSS)objcopy
 
 CPP = $(CROSS)cpp
 
-&incdir = include/
+&INC_DIR = include/
+&ASM_DIR = asm/
 AS_FLAGS = -march=vr4300 -mabi=32
-# -I $(BUILD_DIR) $(VERSION_ASFLAGS) $(GRUCODE_ASFLAGS)
 LD_FLAGS = -Map $(TARGET).map --no-check-sections
 
 ### Rule Macros ###
-!as = |> $(AS) $(AS_FLAGS) -I&(incdir) -o %o %f |> %B.o
+!as = |> $(AS) $(AS_FLAGS) -I&(INC_DIR) -I&(ASM_DIR) -o %o %f |> %B.o
 !cpy_rom = |> $(OBJCPY) --pad-to=0x1000000 --gap-fill=0xFF -O binary %f %o |>
 
 !tempbin2o = |> $(LD) -r -b binary %f -o %B.o |> %B.o

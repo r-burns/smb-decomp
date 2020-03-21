@@ -850,27 +850,16 @@ SECTIONS
     }
     END_NOLOAD(ovl9)
 
+    /* End of Code */
 
-    /*
-    .code 0x800D6490 : AT(__romPos)
-    {
-        asm/18A6D0.o(.data);
-        asm/18BE00.o(.data);
-        asm/18D030.o(.data);
-        asm/18DCB0.o(.data);
-        asm/1AB6B0.o(.data);
-    }
-    __romPos += SIZEOF(.code);
-    */
-
-    .resources 0x0 : AT(__romPos)
+    BEGIN_SEG(resources, 0)
     {
         resources/resfiletable.o(.data);
         resources/resourcefiles.o(.data);
     }
-    __romPos += SIZEOF(.resources);
+    END_SEG(resources)
 
-    .imgbank 0x0 : AT(__romPos)
+    BEGIN_SEG(imgbank, 0)
     {
         sprites/spr_bank-1.o(.data);
         sprites/img_bank-1.o(.header .rodata);
@@ -891,9 +880,9 @@ SECTIONS
         sprites/spr_bank-9.o(.data);
         sprites/img_bank-9.o(.header .rodata);
     }
-    __romPos += SIZEOF(.imgbank);
+    END_SEG(imgbank)
 
-    .audio : 
+    BEGIN_SEG(audio, 0)
     {
         audio/S1_music.sbk.o(.data);
         audio/B1_sounds1.ctl.o(.data);
@@ -901,14 +890,15 @@ SECTIONS
         audio/B1_sounds2.ctl.o(.data);
         audio/B1_sounds2.tbl.o(.data);
     }
-    __romPos += SIZEOF(.audio);
+    END_SEG(audio)
 
-    .unknown :
+    BEGIN_SEG(unknown, 0)
     {
         unknown/F573D0.o(.data);
         unknown/F57BF0.o(.data);
         unknown/F5A9C0.o(.data);
     }
+    END_SEG(unknown)
 
     /DISCARD/ :
     {
