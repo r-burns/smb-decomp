@@ -34,8 +34,15 @@ SECTIONS
     }
     END_SEG(boot)
 
+    /* MIPS needs size values defined as hi and lo 2-byte halfwords of a 32bit size 
+     * but, GAS cannot perform the needed math inline with the instructions.
+    **/
+    _systemSegNoloadSizeHi = SIZEOF(.system.noload) >> 16;
+    _systemSegNoloadSizeLo = SIZEOF(.system.noload) & 0xFFFF;
+
     BEGIN_SEG(system, 0x80000400) 
     {
+        asm/system/entry.o(.text);
         asm/system/system.text.o(.text);
         asm/system/system.data.o(.data);
     }
@@ -43,9 +50,11 @@ SECTIONS
     BEGIN_NOLOAD(system)
     {
         asm/system/system.bss.o(.bss);
+        /* Entry code assumes 8-byte aligned bss section */
+        . = ALIGN(8);
     }
     END_NOLOAD(system)
-
+    
     BEGIN_SEG(loadovl, 0x800A1980)
     {
         asm/loadovl/loadovl.text.o(.text);
