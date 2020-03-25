@@ -686,6 +686,13 @@ func_NF_A4001008 = 0xA4001008;
 func_NF_A400103C = 0xA400103C;
 func_NF_A4001064 = 0xA4001064;
 D_NF_A6000000 = 0xA6000000;
+/* 
+    0xB0000004 = "Header: Clock rate";
+    0xB0000008 = "Header: Game entry point";
+    0xB000000C = "Header: Release";
+    0xB0000010 = "Header: CRC1";
+    0xB0000014 = "Header: CRC2";
+*/
 D_NF_B0000000 = 0xB0000000;
 D_NF_B0000008 = 0xB0000008;
 D_NF_B0000010 = 0xB0000010;

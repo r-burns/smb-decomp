@@ -3,6 +3,7 @@
 .section .bss
 
 # 0x8003FAD0 -> 0x800A1970 [0x61ea0 bytes]
+# main.bss
 glabel D_8003FAD0
     .space 56
 glabel D_8003FB08
@@ -61,6 +62,8 @@ glabel D_80044E28
     .space 24
 glabel D_80044E40
     .space 128
+
+# unsplit system.bss
 glabel D_80044EC0
     .space 4
 glabel D_80044EC4
