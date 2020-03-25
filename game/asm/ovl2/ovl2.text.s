@@ -649,14 +649,14 @@ glabel func_ovl2_800D6738
   /* 052574 800D6D74 24846CEC */     addiu $a0, $a0, %lo(D_ovl2_80116CEC)
   /* 052578 800D6D78 24080038 */     addiu $t0, $zero, 0x38
   /* 05257C 800D6D7C A25E0001 */        sb $fp, 1($s2) # D_800A4AD0 + 1
-  /* 052580 800D6D80 0C04D46E */       jal func_unkmulti_801351B8 # located somewhere in: ovl26, ovl3, ovl24, ovl56, ovl31, ovl27, ovl33, ovl29, ovl28
+  /* 052580 800D6D80 0C04D46E */       jal func_unkmulti_801351B8 # located somewhere in: ovl28, ovl26, ovl3, ovl33, ovl24, ovl31, ovl56, ovl27, ovl29
   /* 052584 800D6D84 A2480000 */        sb $t0, ($s2) # D_800A4AD0 + 0
   /* 052588 800D6D88 3C048011 */       lui $a0, %hi(D_ovl2_80116CC8)
   /* 05258C 800D6D8C 0C000AF9 */       jal load_overlay
   /* 052590 800D6D90 24846CC8 */     addiu $a0, $a0, %lo(D_ovl2_80116CC8)
   /* 052594 800D6D94 240B0037 */     addiu $t3, $zero, 0x37
   /* 052598 800D6D98 A25E0001 */        sb $fp, 1($s2) # D_800A4AD0 + 1
-  /* 05259C 800D6D9C 0C04C803 */       jal func_unkmulti_8013200C # located somewhere in: ovl26, ovl3, ovl22, ovl24, ovl56, ovl31, ovl13, ovl27, ovl53, ovl23, ovl10, ovl25, ovl33, ovl29, ovl14, ovl54, ovl55, ovl28
+  /* 05259C 800D6D9C 0C04C803 */       jal func_unkmulti_8013200C # located somewhere in: ovl28, ovl13, ovl26, ovl23, ovl22, ovl3, ovl33, ovl55, ovl24, ovl25, ovl31, ovl53, ovl56, ovl27, ovl14, ovl10, ovl54, ovl29
   /* 0525A0 800D6DA0 A24B0000 */        sb $t3, ($s2) # D_800A4AD0 + 0
   /* 0525A4 800D6DA4 924A0017 */       lbu $t2, 0x17($s2) # D_800A4AD0 + 23
   /* 0525A8 800D6DA8 254CFFFF */     addiu $t4, $t2, -1
@@ -52343,7 +52343,7 @@ glabel func_ovl2_80104BDC
   /* 0803E8 80104BE8 24010036 */     addiu $at, $zero, 0x36
   /* 0803EC 80104BEC 15C10007 */       bne $t6, $at, .L80104C0C
   /* 0803F0 80104BF0 AFBF0014 */        sw $ra, 0x14($sp)
-  /* 0803F4 80104BF4 0C06376C */       jal func_unkmulti_8018DDB0 # located somewhere in: ovl4, ovl64, ovl63, ovl6, ovl7, ovl65
+  /* 0803F4 80104BF4 0C06376C */       jal func_unkmulti_8018DDB0 # located somewhere in: ovl6, ovl65, ovl7, ovl63, ovl64, ovl4
   /* 0803F8 80104BF8 00000000 */       nop 
   /* 0803FC 80104BFC 0C04123E */       jal func_ovl2_801048F8
   /* 080400 80104C00 00000000 */       nop 
@@ -53125,7 +53125,7 @@ glabel func_ovl2_801056C0
   .L80105720:
   /* 080F20 80105720 54200006 */      bnel $at, $zero, .L8010573C
   /* 080F24 80105724 28410011 */      slti $at, $v0, 0x11
-  /* 080F28 80105728 0C06370E */       jal func_unkmulti_8018DC38 # located somewhere in: ovl4, ovl64, ovl63, ovl6, ovl7, ovl65
+  /* 080F28 80105728 0C06370E */       jal func_unkmulti_8018DC38 # located somewhere in: ovl6, ovl65, ovl7, ovl63, ovl64, ovl4
   /* 080F2C 8010572C 00000000 */       nop 
   /* 080F30 80105730 10000007 */         b .L80105750
   /* 080F34 80105734 8FBF0014 */        lw $ra, 0x14($sp)
@@ -53133,7 +53133,7 @@ glabel func_ovl2_801056C0
   .L8010573C:
   /* 080F3C 8010573C 54200004 */      bnel $at, $zero, .L80105750
   /* 080F40 80105740 8FBF0014 */        lw $ra, 0x14($sp)
-  /* 080F44 80105744 0C063572 */       jal func_unkmulti_8018D5C8 # located somewhere in: ovl5, ovl4, ovl64, ovl63, ovl6, ovl7, ovl65
+  /* 080F44 80105744 0C063572 */       jal func_unkmulti_8018D5C8 # located somewhere in: ovl6, ovl65, ovl7, ovl5, ovl63, ovl64, ovl4
   /* 080F48 80105748 00000000 */       nop 
   /* 080F4C 8010574C 8FBF0014 */        lw $ra, 0x14($sp)
   .L80105750:
@@ -68919,7 +68919,7 @@ glabel func_ovl2_80113804
 glabel func_ovl2_80113854
   /* 08F054 80113854 27BDFFE8 */     addiu $sp, $sp, -0x18
   /* 08F058 80113858 AFBF0014 */        sw $ra, 0x14($sp)
-  /* 08F05C 8011385C 0C063DB7 */       jal func_unkmulti_8018F6DC # located somewhere in: ovl6, ovl7, ovl65
+  /* 08F05C 8011385C 0C063DB7 */       jal func_unkmulti_8018F6DC # located somewhere in: ovl6, ovl65, ovl7
   /* 08F060 80113860 00000000 */       nop 
   /* 08F064 80113864 3C0F800A */       lui $t7, %hi(D_800A50E8)
   /* 08F068 80113868 8DEF50E8 */        lw $t7, %lo(D_800A50E8)($t7)
@@ -70330,7 +70330,7 @@ glabel func_ovl2_80114C20
   /* 090458 80114C58 2418002D */     addiu $t8, $zero, 0x2d
   /* 09045C 80114C5C 3C018013 */       lui $at, %hi(D_ovl2_801317E6)
   /* 090460 80114C60 A1EE0011 */        sb $t6, 0x11($t7)
-  /* 090464 80114C64 0C063CEB */       jal func_unkmulti_8018F3AC # located somewhere in: ovl6, ovl7, ovl65
+  /* 090464 80114C64 0C063CEB */       jal func_unkmulti_8018F3AC # located somewhere in: ovl6, ovl65, ovl7
   /* 090468 80114C68 A43817E6 */        sh $t8, %lo(D_ovl2_801317E6)($at)
   /* 09046C 80114C6C 8FBF0014 */        lw $ra, 0x14($sp)
   /* 090470 80114C70 3C018013 */       lui $at, %hi(D_ovl2_80131580)

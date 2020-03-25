@@ -36112,8 +36112,8 @@ glabel func_80020000
   /* 020ED4 800202D4 00002825 */        or $a1, $zero, $zero
   /* 020ED8 800202D8 0C00C084 */       jal osRecvMesg
   /* 020EDC 800202DC 02A03025 */        or $a2, $s5, $zero
-  /* 020EE0 800202E0 3C0CA450 */       lui $t4, %hi(D_NF_A4500004)
-  /* 020EE4 800202E4 8D8D0004 */        lw $t5, %lo(D_NF_A4500004)($t4)
+  /* 020EE0 800202E0 3C0CA450 */       lui $t4, %hi(AI_LEN_REG)
+  /* 020EE4 800202E4 8D8D0004 */        lw $t5, %lo(AI_LEN_REG)($t4)
   /* 020EE8 800202E8 3C04800A */       lui $a0, %hi(D_8009D310)
   /* 020EEC 800202EC 2484D310 */     addiu $a0, $a0, %lo(D_8009D310)
   /* 020EF0 800202F0 000D4882 */       srl $t1, $t5, 2
@@ -36584,8 +36584,8 @@ glabel func_80020800
   /* 02159C 8002099C AD590000 */        sw $t9, ($t2) # D_8003CB3C + 0
   /* 0215A0 800209A0 AD4F0004 */        sw $t7, 4($t2) # D_8003CB3C + 4
   /* 0215A4 800209A4 AC20CB2C */        sw $zero, %lo(D_8003CB2C)($at)
-  /* 0215A8 800209A8 3C18A450 */       lui $t8, %hi(D_NF_A4500004)
-  /* 0215AC 800209AC 8F0C0004 */        lw $t4, %lo(D_NF_A4500004)($t8)
+  /* 0215A8 800209A8 3C18A450 */       lui $t8, %hi(AI_LEN_REG)
+  /* 0215AC 800209AC 8F0C0004 */        lw $t4, %lo(AI_LEN_REG)($t8)
   /* 0215B0 800209B0 000C5882 */       srl $t3, $t4, 2
   /* 0215B4 800209B4 1000FDB5 */         b .L8002008C
   /* 0215B8 800209B8 AFAB0078 */        sw $t3, 0x78($sp)
@@ -54229,8 +54229,8 @@ glabel osSetIntMask
   /* 030F68 80030368 01614026 */       xor $t0, $t3, $at
   /* 030F6C 8003036C 3108FF00 */      andi $t0, $t0, 0xff00
   /* 030F70 80030370 00481025 */        or $v0, $v0, $t0
-  /* 030F74 80030374 3C0AA430 */       lui $t2, %hi(D_NF_A430000C)
-  /* 030F78 80030378 8D4A000C */        lw $t2, %lo(D_NF_A430000C)($t2)
+  /* 030F74 80030374 3C0AA430 */       lui $t2, %hi(MI_INTR_MASK_REG)
+  /* 030F78 80030378 8D4A000C */        lw $t2, %lo(MI_INTR_MASK_REG)($t2)
   /* 030F7C 8003037C 11400005 */      beqz $t2, .L80030394
   /* 030F80 80030380 000B4C02 */       srl $t1, $t3, 0x10
   /* 030F84 80030384 2401FFFF */     addiu $at, $zero, -1
@@ -54247,8 +54247,8 @@ glabel osSetIntMask
   /* 030FAC 800303AC 3C0A8004 */       lui $t2, %hi(D_8003F0E0)
   /* 030FB0 800303B0 01485021 */      addu $t2, $t2, $t0
   /* 030FB4 800303B4 954AF0E0 */       lhu $t2, %lo(D_8003F0E0)($t2)
-  /* 030FB8 800303B8 3C01A430 */       lui $at, %hi(D_NF_A430000C)
-  /* 030FBC 800303BC AC2A000C */        sw $t2, %lo(D_NF_A430000C)($at)
+  /* 030FB8 800303B8 3C01A430 */       lui $at, %hi(MI_INTR_MASK_REG)
+  /* 030FBC 800303BC AC2A000C */        sw $t2, %lo(MI_INTR_MASK_REG)($at)
   /* 030FC0 800303C0 3088FF01 */      andi $t0, $a0, 0xff01
   /* 030FC4 800303C4 3169FF00 */      andi $t1, $t3, 0xff00
   /* 030FC8 800303C8 01094024 */       and $t0, $t0, $t1
@@ -54970,8 +54970,8 @@ glabel func_80030C80
   /* 0319A0 80030DA0 AF4B0118 */        sw $t3, 0x118($k0)
   /* 0319A4 80030DA4 0369D825 */        or $k1, $k1, $t1
   .L80030DA8:
-  /* 0319A8 80030DA8 3C09A430 */       lui $t1, %hi(D_NF_A430000C)
-  /* 0319AC 80030DAC 8D29000C */        lw $t1, %lo(D_NF_A430000C)($t1)
+  /* 0319A8 80030DA8 3C09A430 */       lui $t1, %hi(MI_INTR_MASK_REG)
+  /* 0319AC 80030DAC 8D29000C */        lw $t1, %lo(MI_INTR_MASK_REG)($t1)
   /* 0319B0 80030DB0 1120000B */      beqz $t1, .L80030DE0
   /* 0319B4 80030DB4 00000000 */       nop 
   /* 0319B8 80030DB8 3C088004 */       lui $t0, %hi(D_8003D400)
@@ -55082,21 +55082,21 @@ glabel func_80030C80
   /* 031B34 80030F34 3C088004 */       lui $t0, %hi(D_8003D400)
   /* 031B38 80030F38 2508D400 */     addiu $t0, $t0, %lo(D_8003D400)
   /* 031B3C 80030F3C 8D080000 */        lw $t0, ($t0) # D_8003D400 + 0
-  /* 031B40 80030F40 3C11A430 */       lui $s1, %hi(D_NF_A4300008)
-  /* 031B44 80030F44 8E310008 */        lw $s1, %lo(D_NF_A4300008)($s1)
+  /* 031B40 80030F40 3C11A430 */       lui $s1, %hi(MI_INTR_REG)
+  /* 031B44 80030F44 8E310008 */        lw $s1, %lo(MI_INTR_REG)($s1)
   /* 031B48 80030F48 00084402 */       srl $t0, $t0, 0x10
   /* 031B4C 80030F4C 02288824 */       and $s1, $s1, $t0
   /* 031B50 80030F50 32290001 */      andi $t1, $s1, 1
   /* 031B54 80030F54 11200013 */      beqz $t1, .L80030FA4
   /* 031B58 80030F58 00000000 */       nop 
-  /* 031B5C 80030F5C 3C0CA404 */       lui $t4, %hi(D_NF_A4040010)
-  /* 031B60 80030F60 8D8C0010 */        lw $t4, %lo(D_NF_A4040010)($t4)
+  /* 031B5C 80030F5C 3C0CA404 */       lui $t4, %hi(SP_STATUS_REG)
+  /* 031B60 80030F60 8D8C0010 */        lw $t4, %lo(SP_STATUS_REG)($t4)
   /* 031B64 80030F64 34098008 */       ori $t1, $zero, 0x8008
-  /* 031B68 80030F68 3C01A404 */       lui $at, %hi(D_NF_A4040010)
+  /* 031B68 80030F68 3C01A404 */       lui $at, %hi(SP_STATUS_REG)
   /* 031B6C 80030F6C 318C0300 */      andi $t4, $t4, 0x300
   /* 031B70 80030F70 3231003E */      andi $s1, $s1, 0x3e
   /* 031B74 80030F74 11800007 */      beqz $t4, .L80030F94
-  /* 031B78 80030F78 AC290010 */        sw $t1, %lo(D_NF_A4040010)($at)
+  /* 031B78 80030F78 AC290010 */        sw $t1, %lo(SP_STATUS_REG)($at)
   /* 031B7C 80030F7C 0C00C469 */       jal func_800311A4
   /* 031B80 80030F80 24040020 */     addiu $a0, $zero, 0x20
   /* 031B84 80030F84 12200038 */      beqz $s1, .L80031068
@@ -55111,9 +55111,9 @@ glabel func_80030C80
   .L80030FA4:
   /* 031BA4 80030FA4 32290008 */      andi $t1, $s1, 8
   /* 031BA8 80030FA8 11200007 */      beqz $t1, .L80030FC8
-  /* 031BAC 80030FAC 3C01A440 */       lui $at, %hi(D_NF_A4400010)
+  /* 031BAC 80030FAC 3C01A440 */       lui $at, %hi(VI_CURRENT_REG__VI_V_CURRENT_LINE_REG)
   /* 031BB0 80030FB0 32310037 */      andi $s1, $s1, 0x37
-  /* 031BB4 80030FB4 AC200010 */        sw $zero, %lo(D_NF_A4400010)($at)
+  /* 031BB4 80030FB4 AC200010 */        sw $zero, %lo(VI_CURRENT_REG__VI_V_CURRENT_LINE_REG)($at)
   /* 031BB8 80030FB8 0C00C469 */       jal func_800311A4
   /* 031BBC 80030FBC 24040038 */     addiu $a0, $zero, 0x38
   /* 031BC0 80030FC0 12200029 */      beqz $s1, .L80031068
@@ -55123,9 +55123,9 @@ glabel func_80030C80
   /* 031BCC 80030FCC 11200009 */      beqz $t1, .L80030FF4
   /* 031BD0 80030FD0 00000000 */       nop 
   /* 031BD4 80030FD4 24090001 */     addiu $t1, $zero, 1
-  /* 031BD8 80030FD8 3C01A450 */       lui $at, %hi(D_NF_A450000C)
+  /* 031BD8 80030FD8 3C01A450 */       lui $at, %hi(AI_STATUS_REG)
   /* 031BDC 80030FDC 3231003B */      andi $s1, $s1, 0x3b
-  /* 031BE0 80030FE0 AC29000C */        sw $t1, %lo(D_NF_A450000C)($at)
+  /* 031BE0 80030FE0 AC29000C */        sw $t1, %lo(AI_STATUS_REG)($at)
   /* 031BE4 80030FE4 0C00C469 */       jal func_800311A4
   /* 031BE8 80030FE8 24040030 */     addiu $a0, $zero, 0x30
   /* 031BEC 80030FEC 1220001E */      beqz $s1, .L80031068
@@ -55133,9 +55133,9 @@ glabel func_80030C80
   .L80030FF4:
   /* 031BF4 80030FF4 32290002 */      andi $t1, $s1, 2
   /* 031BF8 80030FF8 11200007 */      beqz $t1, .L80031018
-  /* 031BFC 80030FFC 3C01A480 */       lui $at, %hi(D_NF_A4800018)
+  /* 031BFC 80030FFC 3C01A480 */       lui $at, %hi(SI_STATUS_REG)
   /* 031C00 80031000 3231003D */      andi $s1, $s1, 0x3d
-  /* 031C04 80031004 AC200018 */        sw $zero, %lo(D_NF_A4800018)($at)
+  /* 031C04 80031004 AC200018 */        sw $zero, %lo(SI_STATUS_REG)($at)
   /* 031C08 80031008 0C00C469 */       jal func_800311A4
   /* 031C0C 8003100C 24040028 */     addiu $a0, $zero, 0x28
   /* 031C10 80031010 12200015 */      beqz $s1, .L80031068
@@ -55145,9 +55145,9 @@ glabel func_80030C80
   /* 031C1C 8003101C 11200009 */      beqz $t1, .L80031044
   /* 031C20 80031020 00000000 */       nop 
   /* 031C24 80031024 24090002 */     addiu $t1, $zero, 2
-  /* 031C28 80031028 3C01A460 */       lui $at, %hi(D_NF_A4600010)
+  /* 031C28 80031028 3C01A460 */       lui $at, %hi(PI_STATUS_REG)
   /* 031C2C 8003102C 3231002F */      andi $s1, $s1, 0x2f
-  /* 031C30 80031030 AC290010 */        sw $t1, %lo(D_NF_A4600010)($at)
+  /* 031C30 80031030 AC290010 */        sw $t1, %lo(PI_STATUS_REG)($at)
   /* 031C34 80031034 0C00C469 */       jal func_800311A4
   /* 031C38 80031038 24040040 */     addiu $a0, $zero, 0x40
   /* 031C3C 8003103C 1220000A */      beqz $s1, .L80031068
@@ -55157,9 +55157,9 @@ glabel func_80030C80
   /* 031C48 80031048 11200007 */      beqz $t1, .L80031068
   /* 031C4C 8003104C 00000000 */       nop 
   /* 031C50 80031050 24090800 */     addiu $t1, $zero, 0x800
-  /* 031C54 80031054 3C01A430 */       lui $at, %hi(D_NF_A4300000)
+  /* 031C54 80031054 3C01A430 */       lui $at, %hi(MI_INIT_MODE_REG__MI_MODE_REG)
   /* 031C58 80031058 3231001F */      andi $s1, $s1, 0x1f
-  /* 031C5C 8003105C AC290000 */        sw $t1, %lo(D_NF_A4300000)($at)
+  /* 031C5C 8003105C AC290000 */        sw $t1, %lo(MI_INIT_MODE_REG__MI_MODE_REG)($at)
   /* 031C60 80031060 0C00C469 */       jal func_800311A4
   /* 031C64 80031064 24040048 */     addiu $a0, $zero, 0x48
   .L80031068:
@@ -55363,8 +55363,8 @@ glabel func_8003128C
   /* 031F34 80031334 0369D825 */        or $k1, $k1, $t1
   /* 031F38 80031338 ACBB0118 */        sw $k1, 0x118($a1)
   .L8003133C:
-  /* 031F3C 8003133C 3C1BA430 */       lui $k1, %hi(D_NF_A430000C)
-  /* 031F40 80031340 8F7B000C */        lw $k1, %lo(D_NF_A430000C)($k1)
+  /* 031F3C 8003133C 3C1BA430 */       lui $k1, %hi(MI_INTR_MASK_REG)
+  /* 031F40 80031340 8F7B000C */        lw $k1, %lo(MI_INTR_MASK_REG)($k1)
   /* 031F44 80031344 1360000B */      beqz $k1, .L80031374
   /* 031F48 80031348 00000000 */       nop 
   /* 031F4C 8003134C 3C1A8004 */       lui $k0, %hi(D_8003D400)
@@ -55503,9 +55503,9 @@ glabel func_800313E4
   /* 032134 80031534 275AF0E0 */     addiu $k0, $k0, %lo(D_8003F0E0)
   /* 032138 80031538 037AD821 */      addu $k1, $k1, $k0
   /* 03213C 8003153C 977B0000 */       lhu $k1, ($k1)
-  /* 032140 80031540 3C1AA430 */       lui $k0, %hi(D_NF_A430000C)
-  /* 032144 80031544 275A000C */     addiu $k0, $k0, %lo(D_NF_A430000C)
-  /* 032148 80031548 AF5B0000 */        sw $k1, ($k0) # D_NF_A430000C + 0
+  /* 032140 80031540 3C1AA430 */       lui $k0, %hi(MI_INTR_MASK_REG)
+  /* 032144 80031544 275A000C */     addiu $k0, $k0, %lo(MI_INTR_MASK_REG)
+  /* 032148 80031548 AF5B0000 */        sw $k1, ($k0) # MI_INTR_MASK_REG + 0
   /* 03214C 8003154C 00000000 */       nop 
   /* 032150 80031550 00000000 */       nop 
   /* 032154 80031554 00000000 */       nop 
@@ -56616,14 +56616,14 @@ glabel osInitialize
   /* 0330D4 800324D4 AC38D3F8 */        sw $t8, %lo(D_8003D3F8)($at)
   .L800324D8:
   /* 0330D8 800324D8 24080001 */     addiu $t0, $zero, 1
-  /* 0330DC 800324DC 3C19A450 */       lui $t9, %hi(D_NF_A4500008)
-  /* 0330E0 800324E0 AF280008 */        sw $t0, %lo(D_NF_A4500008)($t9)
+  /* 0330DC 800324DC 3C19A450 */       lui $t9, %hi(AI_CONTROL_REG)
+  /* 0330E0 800324E0 AF280008 */        sw $t0, %lo(AI_CONTROL_REG)($t9)
   /* 0330E4 800324E4 240A3FFF */     addiu $t2, $zero, 0x3fff
-  /* 0330E8 800324E8 3C0BA450 */       lui $t3, %hi(D_NF_A4500010)
-  /* 0330EC 800324EC AD6A0010 */        sw $t2, %lo(D_NF_A4500010)($t3)
+  /* 0330E8 800324E8 3C0BA450 */       lui $t3, %hi(AI_DACRATE_REG)
+  /* 0330EC 800324EC AD6A0010 */        sw $t2, %lo(AI_DACRATE_REG)($t3)
   /* 0330F0 800324F0 2409000F */     addiu $t1, $zero, 0xf
-  /* 0330F4 800324F4 3C0DA450 */       lui $t5, %hi(D_NF_A4500014)
-  /* 0330F8 800324F8 ADA90014 */        sw $t1, %lo(D_NF_A4500014)($t5)
+  /* 0330F4 800324F4 3C0DA450 */       lui $t5, %hi(AI_BITRATE_REG)
+  /* 0330F8 800324F8 ADA90014 */        sw $t1, %lo(AI_BITRATE_REG)($t5)
   /* 0330FC 800324FC 8FBF001C */        lw $ra, 0x1c($sp)
   /* 033100 80032500 8FB00018 */        lw $s0, 0x18($sp)
   /* 033104 80032504 27BD0038 */     addiu $sp, $sp, 0x38
@@ -56634,39 +56634,39 @@ glabel func_80032510
   /* 033110 80032510 240E0007 */     addiu $t6, $zero, 7
   /* 033114 80032514 3C01800A */       lui $at, %hi(D_8009F1F4)
   /* 033118 80032518 A02EF1F4 */        sb $t6, %lo(D_8009F1F4)($at)
-  /* 03311C 8003251C 3C0FA460 */       lui $t7, %hi(D_NF_A4600014)
-  /* 033120 80032520 8DF80014 */        lw $t8, %lo(D_NF_A4600014)($t7)
+  /* 03311C 8003251C 3C0FA460 */       lui $t7, %hi(PI_BSD_DOM1_LAT_REG)
+  /* 033120 80032520 8DF80014 */        lw $t8, %lo(PI_BSD_DOM1_LAT_REG)($t7)
   /* 033124 80032524 3C01800A */       lui $at, %hi(D_8009F1F5)
-  /* 033128 80032528 3C19A460 */       lui $t9, %hi(D_NF_A4600018)
+  /* 033128 80032528 3C19A460 */       lui $t9, %hi(PI_BSD_DOM1_PWD_REG)
   /* 03312C 8003252C A038F1F5 */        sb $t8, %lo(D_8009F1F5)($at)
-  /* 033130 80032530 8F280018 */        lw $t0, %lo(D_NF_A4600018)($t9)
+  /* 033130 80032530 8F280018 */        lw $t0, %lo(PI_BSD_DOM1_PWD_REG)($t9)
   /* 033134 80032534 3C01800A */       lui $at, %hi(D_8009F1F8)
-  /* 033138 80032538 3C09A460 */       lui $t1, %hi(D_NF_A460001C)
+  /* 033138 80032538 3C09A460 */       lui $t1, %hi(PI_BSD_DOM1_PGS_REG)
   /* 03313C 8003253C A028F1F8 */        sb $t0, %lo(D_8009F1F8)($at)
-  /* 033140 80032540 8D2A001C */        lw $t2, %lo(D_NF_A460001C)($t1)
+  /* 033140 80032540 8D2A001C */        lw $t2, %lo(PI_BSD_DOM1_PGS_REG)($t1)
   /* 033144 80032544 3C01800A */       lui $at, %hi(D_8009F1F6)
-  /* 033148 80032548 3C0BA460 */       lui $t3, %hi(D_NF_A4600020)
+  /* 033148 80032548 3C0BA460 */       lui $t3, %hi(PI_BSD_DOM1_RLS_REG)
   /* 03314C 8003254C A02AF1F6 */        sb $t2, %lo(D_8009F1F6)($at)
-  /* 033150 80032550 8D6C0020 */        lw $t4, %lo(D_NF_A4600020)($t3)
+  /* 033150 80032550 8D6C0020 */        lw $t4, %lo(PI_BSD_DOM1_RLS_REG)($t3)
   /* 033154 80032554 3C01800A */       lui $at, %hi(D_8009F1F7)
   /* 033158 80032558 240D0007 */     addiu $t5, $zero, 7
   /* 03315C 8003255C A02CF1F7 */        sb $t4, %lo(D_8009F1F7)($at)
   /* 033160 80032560 3C01800A */       lui $at, %hi(D_8009F26C)
   /* 033164 80032564 A02DF26C */        sb $t5, %lo(D_8009F26C)($at)
-  /* 033168 80032568 3C0EA460 */       lui $t6, %hi(D_NF_A4600024)
-  /* 03316C 8003256C 8DCF0024 */        lw $t7, %lo(D_NF_A4600024)($t6)
+  /* 033168 80032568 3C0EA460 */       lui $t6, %hi(PI_BSD_DOM2_LAT_REG)
+  /* 03316C 8003256C 8DCF0024 */        lw $t7, %lo(PI_BSD_DOM2_LAT_REG)($t6)
   /* 033170 80032570 3C01800A */       lui $at, %hi(D_8009F26D)
-  /* 033174 80032574 3C18A460 */       lui $t8, %hi(D_NF_A4600028)
+  /* 033174 80032574 3C18A460 */       lui $t8, %hi(PI_BSD_DOM2_PWD_REG)
   /* 033178 80032578 A02FF26D */        sb $t7, %lo(D_8009F26D)($at)
-  /* 03317C 8003257C 8F190028 */        lw $t9, %lo(D_NF_A4600028)($t8)
+  /* 03317C 8003257C 8F190028 */        lw $t9, %lo(PI_BSD_DOM2_PWD_REG)($t8)
   /* 033180 80032580 3C01800A */       lui $at, %hi(D_8009F270)
-  /* 033184 80032584 3C08A460 */       lui $t0, %hi(D_NF_A460002C)
+  /* 033184 80032584 3C08A460 */       lui $t0, %hi(PI_BSD_DOM2_PGS_REG)
   /* 033188 80032588 A039F270 */        sb $t9, %lo(D_8009F270)($at)
-  /* 03318C 8003258C 8D09002C */        lw $t1, %lo(D_NF_A460002C)($t0)
+  /* 03318C 8003258C 8D09002C */        lw $t1, %lo(PI_BSD_DOM2_PGS_REG)($t0)
   /* 033190 80032590 3C01800A */       lui $at, %hi(D_8009F26E)
-  /* 033194 80032594 3C0AA460 */       lui $t2, %hi(D_NF_A4600030)
+  /* 033194 80032594 3C0AA460 */       lui $t2, %hi(PI_BSD_DOM2_RLS_REG)
   /* 033198 80032598 A029F26E */        sb $t1, %lo(D_8009F26E)($at)
-  /* 03319C 8003259C 8D4B0030 */        lw $t3, %lo(D_NF_A4600030)($t2)
+  /* 03319C 8003259C 8D4B0030 */        lw $t3, %lo(PI_BSD_DOM2_RLS_REG)($t2)
   /* 0331A0 800325A0 3C01800A */       lui $at, %hi(D_8009F26F)
   /* 0331A4 800325A4 03E00008 */        jr $ra
   /* 0331A8 800325A8 A02BF26F */        sb $t3, %lo(D_8009F26F)($at)
@@ -56675,15 +56675,15 @@ glabel func_80032510
 
 # Likely start of new file
 glabel osPiRawReadIo
-  /* 0331B0 800325B0 3C0EA460 */       lui $t6, %hi(D_NF_A4600010)
-  /* 0331B4 800325B4 8DC60010 */        lw $a2, %lo(D_NF_A4600010)($t6)
+  /* 0331B0 800325B0 3C0EA460 */       lui $t6, %hi(PI_STATUS_REG)
+  /* 0331B4 800325B4 8DC60010 */        lw $a2, %lo(PI_STATUS_REG)($t6)
   /* 0331B8 800325B8 27BDFFF8 */     addiu $sp, $sp, -8
   /* 0331BC 800325BC 30CF0003 */      andi $t7, $a2, 3
   /* 0331C0 800325C0 11E00006 */      beqz $t7, .L800325DC
   /* 0331C4 800325C4 00000000 */       nop 
   .L800325C8:
-  /* 0331C8 800325C8 3C18A460 */       lui $t8, %hi(D_NF_A4600010)
-  /* 0331CC 800325CC 8F060010 */        lw $a2, %lo(D_NF_A4600010)($t8)
+  /* 0331C8 800325C8 3C18A460 */       lui $t8, %hi(PI_STATUS_REG)
+  /* 0331CC 800325CC 8F060010 */        lw $a2, %lo(PI_STATUS_REG)($t8)
   /* 0331D0 800325D0 30D90003 */      andi $t9, $a2, 3
   /* 0331D4 800325D4 1720FFFC */      bnez $t9, .L800325C8
   /* 0331D8 800325D8 00000000 */       nop 
@@ -56786,25 +56786,25 @@ glabel __osSpRawStartDma
   /* 0332F8 800326F8 2402FFFF */     addiu $v0, $zero, -1
   .L800326FC:
   /* 0332FC 800326FC 8FAE001C */        lw $t6, 0x1c($sp)
-  /* 033300 80032700 3C0FA404 */       lui $t7, %hi(D_NF_A4040000)
-  /* 033304 80032704 ADEE0000 */        sw $t6, %lo(D_NF_A4040000)($t7)
+  /* 033300 80032700 3C0FA404 */       lui $t7, %hi(SP_MEM_ADDR_REG)
+  /* 033304 80032704 ADEE0000 */        sw $t6, %lo(SP_MEM_ADDR_REG)($t7)
   /* 033308 80032708 0C00C854 */       jal osVirtualToPhysical
   /* 03330C 8003270C 8FA40020 */        lw $a0, 0x20($sp)
-  /* 033310 80032710 3C18A404 */       lui $t8, %hi(D_NF_A4040004)
-  /* 033314 80032714 AF020004 */        sw $v0, %lo(D_NF_A4040004)($t8)
+  /* 033310 80032710 3C18A404 */       lui $t8, %hi(SP_DRAM_ADDR_REG)
+  /* 033314 80032714 AF020004 */        sw $v0, %lo(SP_DRAM_ADDR_REG)($t8)
   /* 033318 80032718 8FB90018 */        lw $t9, 0x18($sp)
   /* 03331C 8003271C 17200006 */      bnez $t9, .L80032738
   /* 033320 80032720 00000000 */       nop 
   /* 033324 80032724 8FA80024 */        lw $t0, 0x24($sp)
-  /* 033328 80032728 3C0AA404 */       lui $t2, %hi(D_NF_A404000C)
+  /* 033328 80032728 3C0AA404 */       lui $t2, %hi(SP_WR_LEN_REG)
   /* 03332C 8003272C 2509FFFF */     addiu $t1, $t0, -1
   /* 033330 80032730 10000005 */         b .L80032748
-  /* 033334 80032734 AD49000C */        sw $t1, %lo(D_NF_A404000C)($t2)
+  /* 033334 80032734 AD49000C */        sw $t1, %lo(SP_WR_LEN_REG)($t2)
   .L80032738:
   /* 033338 80032738 8FAB0024 */        lw $t3, 0x24($sp)
-  /* 03333C 8003273C 3C0DA404 */       lui $t5, %hi(D_NF_A4040008)
+  /* 03333C 8003273C 3C0DA404 */       lui $t5, %hi(SP_RD_LEN_REG)
   /* 033340 80032740 256CFFFF */     addiu $t4, $t3, -1
-  /* 033344 80032744 ADAC0008 */        sw $t4, %lo(D_NF_A4040008)($t5)
+  /* 033344 80032744 ADAC0008 */        sw $t4, %lo(SP_RD_LEN_REG)($t5)
   .L80032748:
   /* 033348 80032748 00001025 */        or $v0, $zero, $zero
   .L8003274C:
@@ -56820,8 +56820,8 @@ glabel func_80032760
   /* 033360 80032760 27BDFFE8 */     addiu $sp, $sp, -0x18
   /* 033364 80032764 AFBF0014 */        sw $ra, 0x14($sp)
   /* 033368 80032768 AFA5001C */        sw $a1, 0x1c($sp)
-  /* 03336C 8003276C 3C0EA480 */       lui $t6, %hi(D_NF_A4800018)
-  /* 033370 80032770 8DCF0018 */        lw $t7, %lo(D_NF_A4800018)($t6)
+  /* 03336C 8003276C 3C0EA480 */       lui $t6, %hi(SI_STATUS_REG)
+  /* 033370 80032770 8DCF0018 */        lw $t7, %lo(SI_STATUS_REG)($t6)
   /* 033374 80032774 00803025 */        or $a2, $a0, $zero
   /* 033378 80032778 24010001 */     addiu $at, $zero, 1
   /* 03337C 8003277C 31F80003 */      andi $t8, $t7, 3
@@ -56841,19 +56841,19 @@ glabel func_80032760
   /* 0333AC 800327AC 0C00C854 */       jal osVirtualToPhysical
   /* 0333B0 800327B0 AFA60018 */        sw $a2, 0x18($sp)
   /* 0333B4 800327B4 8FA60018 */        lw $a2, 0x18($sp)
-  /* 0333B8 800327B8 3C19A480 */       lui $t9, %hi(D_NF_A4800000)
-  /* 0333BC 800327BC AF220000 */        sw $v0, %lo(D_NF_A4800000)($t9)
+  /* 0333B8 800327B8 3C19A480 */       lui $t9, %hi(SI_DRAM_ADDR_REG)
+  /* 0333BC 800327BC AF220000 */        sw $v0, %lo(SI_DRAM_ADDR_REG)($t9)
   /* 0333C0 800327C0 14C00006 */      bnez $a2, .L800327DC
   /* 0333C4 800327C4 3C0A1FC0 */       lui $t2, (0x1FC007C0 >> 16) # 532678592
   /* 0333C8 800327C8 3C081FC0 */       lui $t0, (0x1FC007C0 >> 16) # 532678592
   /* 0333CC 800327CC 350807C0 */       ori $t0, $t0, (0x1FC007C0 & 0xFFFF) # 532678592
-  /* 0333D0 800327D0 3C09A480 */       lui $t1, %hi(D_NF_A4800004)
+  /* 0333D0 800327D0 3C09A480 */       lui $t1, %hi(SI_PIF_ADDR_RD64B_REG)
   /* 0333D4 800327D4 10000004 */         b .L800327E8
-  /* 0333D8 800327D8 AD280004 */        sw $t0, %lo(D_NF_A4800004)($t1)
+  /* 0333D8 800327D8 AD280004 */        sw $t0, %lo(SI_PIF_ADDR_RD64B_REG)($t1)
   .L800327DC:
   /* 0333DC 800327DC 354A07C0 */       ori $t2, $t2, (0x1FC007C0 & 0xFFFF) # 532678592
-  /* 0333E0 800327E0 3C0BA480 */       lui $t3, %hi(D_NF_A4800010)
-  /* 0333E4 800327E4 AD6A0010 */        sw $t2, %lo(D_NF_A4800010)($t3)
+  /* 0333E0 800327E0 3C0BA480 */       lui $t3, %hi(SI_PIF_ADDR_WR64B_REG)
+  /* 0333E4 800327E4 AD6A0010 */        sw $t2, %lo(SI_PIF_ADDR_WR64B_REG)($t3)
   .L800327E8:
   /* 0333E8 800327E8 14C00003 */      bnez $a2, .L800327F8
   /* 0333EC 800327EC 8FA4001C */        lw $a0, 0x1c($sp)
@@ -57533,10 +57533,10 @@ glabel func_80032F20
   /* 033D44 80033144 8FAA002C */        lw $t2, 0x2c($sp)
   /* 033D48 80033148 240C0004 */     addiu $t4, $zero, 4
   /* 033D4C 8003314C 240F0002 */     addiu $t7, $zero, 2
-  /* 033D50 80033150 3C08A460 */       lui $t0, %hi(D_NF_A4600010)
+  /* 033D50 80033150 3C08A460 */       lui $t0, %hi(PI_STATUS_REG)
   /* 033D54 80033154 3C040010 */       lui $a0, (0x100C01 >> 16) # 1051649
   /* 033D58 80033158 AD4C0000 */        sw $t4, ($t2)
-  /* 033D5C 8003315C AD0F0010 */        sw $t7, %lo(D_NF_A4600010)($t0)
+  /* 033D5C 8003315C AD0F0010 */        sw $t7, %lo(PI_STATUS_REG)($t0)
   /* 033D60 80033160 0C00D478 */       jal __osSetGlobalIntMask
   /* 033D64 80033164 34840C01 */       ori $a0, $a0, (0x100C01 & 0xFFFF) # 1051649
   .L80033168:
@@ -57706,22 +57706,22 @@ glabel osPiRawStartDma
   /* 033FC4 800333C4 AFA70034 */        sw $a3, 0x34($sp)
   /* 033FC8 800333C8 AFB10018 */        sw $s1, 0x18($sp)
   /* 033FCC 800333CC AFB00014 */        sw $s0, 0x14($sp)
-  /* 033FD0 800333D0 3C0EA460 */       lui $t6, %hi(D_NF_A4600010)
-  /* 033FD4 800333D4 8DD00010 */        lw $s0, %lo(D_NF_A4600010)($t6)
+  /* 033FD0 800333D0 3C0EA460 */       lui $t6, %hi(PI_STATUS_REG)
+  /* 033FD4 800333D4 8DD00010 */        lw $s0, %lo(PI_STATUS_REG)($t6)
   /* 033FD8 800333D8 320F0003 */      andi $t7, $s0, 3
   /* 033FDC 800333DC 11E00006 */      beqz $t7, .L800333F8
   /* 033FE0 800333E0 00000000 */       nop 
   .L800333E4:
-  /* 033FE4 800333E4 3C18A460 */       lui $t8, %hi(D_NF_A4600010)
-  /* 033FE8 800333E8 8F100010 */        lw $s0, %lo(D_NF_A4600010)($t8)
+  /* 033FE4 800333E4 3C18A460 */       lui $t8, %hi(PI_STATUS_REG)
+  /* 033FE8 800333E8 8F100010 */        lw $s0, %lo(PI_STATUS_REG)($t8)
   /* 033FEC 800333EC 32190003 */      andi $t9, $s0, 3
   /* 033FF0 800333F0 1720FFFC */      bnez $t9, .L800333E4
   /* 033FF4 800333F4 00000000 */       nop 
   .L800333F8:
   /* 033FF8 800333F8 0C00C854 */       jal osVirtualToPhysical
   /* 033FFC 800333FC 8FA40030 */        lw $a0, 0x30($sp)
-  /* 034000 80033400 3C08A460 */       lui $t0, %hi(D_NF_A4600000)
-  /* 034004 80033404 AD020000 */        sw $v0, %lo(D_NF_A4600000)($t0)
+  /* 034000 80033400 3C08A460 */       lui $t0, %hi(PI_DRAM_ADDR_REG)
+  /* 034004 80033404 AD020000 */        sw $v0, %lo(PI_DRAM_ADDR_REG)($t0)
   /* 034008 80033408 3C098000 */       lui $t1, %hi(D_NF_80000308)
   /* 03400C 8003340C 8D290308 */        lw $t1, %lo(D_NF_80000308)($t1)
   /* 034010 80033410 8FAA002C */        lw $t2, 0x2c($sp)
@@ -57729,8 +57729,8 @@ glabel osPiRawStartDma
   /* 034018 80033418 3421FFFF */       ori $at, $at, (0x1FFFFFFF & 0xFFFF) # 536870911
   /* 03401C 8003341C 012A5825 */        or $t3, $t1, $t2
   /* 034020 80033420 01616024 */       and $t4, $t3, $at
-  /* 034024 80033424 3C0DA460 */       lui $t5, %hi(D_NF_A4600004)
-  /* 034028 80033428 ADAC0004 */        sw $t4, %lo(D_NF_A4600004)($t5)
+  /* 034024 80033424 3C0DA460 */       lui $t5, %hi(PI_CART_ADDR_REG)
+  /* 034028 80033428 ADAC0004 */        sw $t4, %lo(PI_CART_ADDR_REG)($t5)
   /* 03402C 8003342C 8FB10028 */        lw $s1, 0x28($sp)
   /* 034030 80033430 12200005 */      beqz $s1, .L80033448
   /* 034034 80033434 24010001 */     addiu $at, $zero, 1
@@ -57740,16 +57740,16 @@ glabel osPiRawStartDma
   /* 034044 80033444 00000000 */       nop 
   .L80033448:
   /* 034048 80033448 8FAE0034 */        lw $t6, 0x34($sp)
-  /* 03404C 8003344C 3C18A460 */       lui $t8, %hi(D_NF_A460000C)
+  /* 03404C 8003344C 3C18A460 */       lui $t8, %hi(PI_WR_LEN_REG)
   /* 034050 80033450 25CFFFFF */     addiu $t7, $t6, -1
   /* 034054 80033454 10000008 */         b .L80033478
-  /* 034058 80033458 AF0F000C */        sw $t7, %lo(D_NF_A460000C)($t8)
+  /* 034058 80033458 AF0F000C */        sw $t7, %lo(PI_WR_LEN_REG)($t8)
   .L8003345C:
   /* 03405C 8003345C 8FB90034 */        lw $t9, 0x34($sp)
-  /* 034060 80033460 3C09A460 */       lui $t1, %hi(D_NF_A4600008)
+  /* 034060 80033460 3C09A460 */       lui $t1, %hi(PI_RD_LEN_REG)
   /* 034064 80033464 2728FFFF */     addiu $t0, $t9, -1
   /* 034068 80033468 10000003 */         b .L80033478
-  /* 03406C 8003346C AD280008 */        sw $t0, %lo(D_NF_A4600008)($t1)
+  /* 03406C 8003346C AD280008 */        sw $t0, %lo(PI_RD_LEN_REG)($t1)
   .L80033470:
   /* 034070 80033470 10000002 */         b .L8003347C
   /* 034074 80033474 2402FFFF */     addiu $v0, $zero, -1
@@ -59060,8 +59060,8 @@ glabel osInvalDCache
 
 # Likely start of new file
 glabel __osSpDeviceBusy
-  /* 0351E0 800345E0 3C0EA404 */       lui $t6, %hi(D_NF_A4040010)
-  /* 0351E4 800345E4 8DC40010 */        lw $a0, %lo(D_NF_A4040010)($t6)
+  /* 0351E0 800345E0 3C0EA404 */       lui $t6, %hi(SP_STATUS_REG)
+  /* 0351E4 800345E4 8DC40010 */        lw $a0, %lo(SP_STATUS_REG)($t6)
   /* 0351E8 800345E8 27BDFFF8 */     addiu $sp, $sp, -8
   /* 0351EC 800345EC 308F001C */      andi $t7, $a0, 0x1c
   /* 0351F0 800345F0 11E00003 */      beqz $t7, .L80034600
@@ -59078,8 +59078,8 @@ glabel __osSpDeviceBusy
 
 # Likely start of new file
 glabel __osSiDeviceBusy
-  /* 035210 80034610 3C0EA480 */       lui $t6, %hi(D_NF_A4800018)
-  /* 035214 80034614 8DC40018 */        lw $a0, %lo(D_NF_A4800018)($t6)
+  /* 035210 80034610 3C0EA480 */       lui $t6, %hi(SI_STATUS_REG)
+  /* 035214 80034614 8DC40018 */        lw $a0, %lo(SI_STATUS_REG)($t6)
   /* 035218 80034618 27BDFFF8 */     addiu $sp, $sp, -8
   /* 03521C 8003461C 308F0003 */      andi $t7, $a0, 3
   /* 035220 80034620 11E00003 */      beqz $t7, .L80034630
@@ -59434,16 +59434,16 @@ glabel func_80034AF0
   /* 0356FC 80034AFC AFBF001C */        sw $ra, 0x1c($sp)
   /* 035700 80034B00 AFB00018 */        sw $s0, 0x18($sp)
   /* 035704 80034B04 AFA60028 */        sw $a2, 0x28($sp)
-  /* 035708 80034B08 8C620000 */        lw $v0, ($v1) # D_NF_A4600010 + 0
+  /* 035708 80034B08 8C620000 */        lw $v0, ($v1) # PI_STATUS_REG + 0
   /* 03570C 80034B0C 00808025 */        or $s0, $a0, $zero
   /* 035710 80034B10 304E0003 */      andi $t6, $v0, 3
   /* 035714 80034B14 51C00006 */      beql $t6, $zero, .L80034B30
   /* 035718 80034B18 92020009 */       lbu $v0, 9($s0)
-  /* 03571C 80034B1C 8C620000 */        lw $v0, ($v1) # D_NF_A4600010 + 0
+  /* 03571C 80034B1C 8C620000 */        lw $v0, ($v1) # PI_STATUS_REG + 0
   .L80034B20:
   /* 035720 80034B20 304F0003 */      andi $t7, $v0, 3
   /* 035724 80034B24 55E0FFFE */      bnel $t7, $zero, .L80034B20
-  /* 035728 80034B28 8C620000 */        lw $v0, ($v1) # D_NF_A4600010 + 0
+  /* 035728 80034B28 8C620000 */        lw $v0, ($v1) # PI_STATUS_REG + 0
   /* 03572C 80034B2C 92020009 */       lbu $v0, 9($s0)
   .L80034B30:
   /* 035730 80034B30 3C048004 */       lui $a0, %hi(D_8003D430)
@@ -59458,86 +59458,86 @@ glabel func_80034AF0
   /* 035754 80034B54 00801825 */        or $v1, $a0, $zero
   /* 035758 80034B58 92020005 */       lbu $v0, 5($s0)
   /* 03575C 80034B5C 90890005 */       lbu $t1, 5($a0)
-  /* 035760 80034B60 3C0AA460 */       lui $t2, %hi(D_NF_A4600014)
-  /* 035764 80034B64 3C0CA460 */       lui $t4, %hi(D_NF_A460001C)
+  /* 035760 80034B60 3C0AA460 */       lui $t2, %hi(PI_BSD_DOM1_LAT_REG)
+  /* 035764 80034B64 3C0CA460 */       lui $t4, %hi(PI_BSD_DOM1_PGS_REG)
   /* 035768 80034B68 10490002 */       beq $v0, $t1, .L80034B74
-  /* 03576C 80034B6C 3C0EA460 */       lui $t6, %hi(D_NF_A4600020)
-  /* 035770 80034B70 AD420014 */        sw $v0, %lo(D_NF_A4600014)($t2)
+  /* 03576C 80034B6C 3C0EA460 */       lui $t6, %hi(PI_BSD_DOM1_RLS_REG)
+  /* 035770 80034B70 AD420014 */        sw $v0, %lo(PI_BSD_DOM1_LAT_REG)($t2)
   .L80034B74:
   /* 035774 80034B74 92020006 */       lbu $v0, 6($s0)
-  /* 035778 80034B78 906B0006 */       lbu $t3, 6($v1) # D_NF_A4600010 + 6
-  /* 03577C 80034B7C 3C18A460 */       lui $t8, %hi(D_NF_A4600018)
+  /* 035778 80034B78 906B0006 */       lbu $t3, 6($v1) # PI_STATUS_REG + 6
+  /* 03577C 80034B7C 3C18A460 */       lui $t8, %hi(PI_BSD_DOM1_PWD_REG)
   /* 035780 80034B80 504B0003 */      beql $v0, $t3, .L80034B90
   /* 035784 80034B84 92020007 */       lbu $v0, 7($s0)
-  /* 035788 80034B88 AD82001C */        sw $v0, %lo(D_NF_A460001C)($t4)
+  /* 035788 80034B88 AD82001C */        sw $v0, %lo(PI_BSD_DOM1_PGS_REG)($t4)
   /* 03578C 80034B8C 92020007 */       lbu $v0, 7($s0)
   .L80034B90:
-  /* 035790 80034B90 906D0007 */       lbu $t5, 7($v1) # D_NF_A4600010 + 7
+  /* 035790 80034B90 906D0007 */       lbu $t5, 7($v1) # PI_STATUS_REG + 7
   /* 035794 80034B94 504D0003 */      beql $v0, $t5, .L80034BA4
   /* 035798 80034B98 92020008 */       lbu $v0, 8($s0)
-  /* 03579C 80034B9C ADC20020 */        sw $v0, %lo(D_NF_A4600020)($t6)
+  /* 03579C 80034B9C ADC20020 */        sw $v0, %lo(PI_BSD_DOM1_RLS_REG)($t6)
   /* 0357A0 80034BA0 92020008 */       lbu $v0, 8($s0)
   .L80034BA4:
-  /* 0357A4 80034BA4 906F0008 */       lbu $t7, 8($v1) # D_NF_A4600010 + 8
+  /* 0357A4 80034BA4 906F0008 */       lbu $t7, 8($v1) # PI_STATUS_REG + 8
   /* 0357A8 80034BA8 504F001B */      beql $v0, $t7, .L80034C18
   /* 0357AC 80034BAC 920F0004 */       lbu $t7, 4($s0)
   /* 0357B0 80034BB0 10000018 */         b .L80034C14
-  /* 0357B4 80034BB4 AF020018 */        sw $v0, %lo(D_NF_A4600018)($t8)
+  /* 0357B4 80034BB4 AF020018 */        sw $v0, %lo(PI_BSD_DOM1_PWD_REG)($t8)
   .L80034BB8:
   /* 0357B8 80034BB8 92020005 */       lbu $v0, 5($s0)
-  /* 0357BC 80034BBC 90790005 */       lbu $t9, 5($v1) # D_NF_A4600010 + 5
-  /* 0357C0 80034BC0 3C08A460 */       lui $t0, %hi(D_NF_A4600024)
-  /* 0357C4 80034BC4 3C0AA460 */       lui $t2, %hi(D_NF_A460002C)
+  /* 0357BC 80034BBC 90790005 */       lbu $t9, 5($v1) # PI_STATUS_REG + 5
+  /* 0357C0 80034BC0 3C08A460 */       lui $t0, %hi(PI_BSD_DOM2_LAT_REG)
+  /* 0357C4 80034BC4 3C0AA460 */       lui $t2, %hi(PI_BSD_DOM2_PGS_REG)
   /* 0357C8 80034BC8 10590002 */       beq $v0, $t9, .L80034BD4
-  /* 0357CC 80034BCC 3C0CA460 */       lui $t4, %hi(D_NF_A4600030)
-  /* 0357D0 80034BD0 AD020024 */        sw $v0, %lo(D_NF_A4600024)($t0)
+  /* 0357CC 80034BCC 3C0CA460 */       lui $t4, %hi(PI_BSD_DOM2_RLS_REG)
+  /* 0357D0 80034BD0 AD020024 */        sw $v0, %lo(PI_BSD_DOM2_LAT_REG)($t0)
   .L80034BD4:
   /* 0357D4 80034BD4 92020006 */       lbu $v0, 6($s0)
-  /* 0357D8 80034BD8 90690006 */       lbu $t1, 6($v1) # D_NF_A4600010 + 6
-  /* 0357DC 80034BDC 3C0EA460 */       lui $t6, %hi(D_NF_A4600028)
+  /* 0357D8 80034BD8 90690006 */       lbu $t1, 6($v1) # PI_STATUS_REG + 6
+  /* 0357DC 80034BDC 3C0EA460 */       lui $t6, %hi(PI_BSD_DOM2_PWD_REG)
   /* 0357E0 80034BE0 50490003 */      beql $v0, $t1, .L80034BF0
   /* 0357E4 80034BE4 92020007 */       lbu $v0, 7($s0)
-  /* 0357E8 80034BE8 AD42002C */        sw $v0, %lo(D_NF_A460002C)($t2)
+  /* 0357E8 80034BE8 AD42002C */        sw $v0, %lo(PI_BSD_DOM2_PGS_REG)($t2)
   /* 0357EC 80034BEC 92020007 */       lbu $v0, 7($s0)
   .L80034BF0:
-  /* 0357F0 80034BF0 906B0007 */       lbu $t3, 7($v1) # D_NF_A4600010 + 7
+  /* 0357F0 80034BF0 906B0007 */       lbu $t3, 7($v1) # PI_STATUS_REG + 7
   /* 0357F4 80034BF4 504B0003 */      beql $v0, $t3, .L80034C04
   /* 0357F8 80034BF8 92020008 */       lbu $v0, 8($s0)
-  /* 0357FC 80034BFC AD820030 */        sw $v0, %lo(D_NF_A4600030)($t4)
+  /* 0357FC 80034BFC AD820030 */        sw $v0, %lo(PI_BSD_DOM2_RLS_REG)($t4)
   /* 035800 80034C00 92020008 */       lbu $v0, 8($s0)
   .L80034C04:
-  /* 035804 80034C04 906D0008 */       lbu $t5, 8($v1) # D_NF_A4600010 + 8
+  /* 035804 80034C04 906D0008 */       lbu $t5, 8($v1) # PI_STATUS_REG + 8
   /* 035808 80034C08 504D0003 */      beql $v0, $t5, .L80034C18
   /* 03580C 80034C0C 920F0004 */       lbu $t7, 4($s0)
-  /* 035810 80034C10 ADC20028 */        sw $v0, %lo(D_NF_A4600028)($t6)
+  /* 035810 80034C10 ADC20028 */        sw $v0, %lo(PI_BSD_DOM2_PWD_REG)($t6)
   .L80034C14:
   /* 035814 80034C14 920F0004 */       lbu $t7, 4($s0)
   .L80034C18:
-  /* 035818 80034C18 A06F0004 */        sb $t7, 4($v1) # D_NF_A4600010 + 4
+  /* 035818 80034C18 A06F0004 */        sb $t7, 4($v1) # PI_STATUS_REG + 4
   /* 03581C 80034C1C 92180005 */       lbu $t8, 5($s0)
-  /* 035820 80034C20 A0780005 */        sb $t8, 5($v1) # D_NF_A4600010 + 5
+  /* 035820 80034C20 A0780005 */        sb $t8, 5($v1) # PI_STATUS_REG + 5
   /* 035824 80034C24 92190006 */       lbu $t9, 6($s0)
-  /* 035828 80034C28 A0790006 */        sb $t9, 6($v1) # D_NF_A4600010 + 6
+  /* 035828 80034C28 A0790006 */        sb $t9, 6($v1) # PI_STATUS_REG + 6
   /* 03582C 80034C2C 92080007 */       lbu $t0, 7($s0)
-  /* 035830 80034C30 A0680007 */        sb $t0, 7($v1) # D_NF_A4600010 + 7
+  /* 035830 80034C30 A0680007 */        sb $t0, 7($v1) # PI_STATUS_REG + 7
   /* 035834 80034C34 92090008 */       lbu $t1, 8($s0)
-  /* 035838 80034C38 A0690008 */        sb $t1, 8($v1) # D_NF_A4600010 + 8
+  /* 035838 80034C38 A0690008 */        sb $t1, 8($v1) # PI_STATUS_REG + 8
   /* 03583C 80034C3C 00E02025 */        or $a0, $a3, $zero
   .L80034C40:
   /* 035840 80034C40 0C00C854 */       jal osVirtualToPhysical
   /* 035844 80034C44 AFA50024 */        sw $a1, 0x24($sp)
   /* 035848 80034C48 8FA50024 */        lw $a1, 0x24($sp)
-  /* 03584C 80034C4C 3C0AA460 */       lui $t2, %hi(D_NF_A4600000)
-  /* 035850 80034C50 AD420000 */        sw $v0, %lo(D_NF_A4600000)($t2)
+  /* 03584C 80034C4C 3C0AA460 */       lui $t2, %hi(PI_DRAM_ADDR_REG)
+  /* 035850 80034C50 AD420000 */        sw $v0, %lo(PI_DRAM_ADDR_REG)($t2)
   /* 035854 80034C54 8FAC0028 */        lw $t4, 0x28($sp)
   /* 035858 80034C58 8E0B000C */        lw $t3, 0xc($s0)
   /* 03585C 80034C5C 3C011FFF */       lui $at, (0x1FFFFFFF >> 16) # 536870911
   /* 035860 80034C60 3421FFFF */       ori $at, $at, (0x1FFFFFFF & 0xFFFF) # 536870911
   /* 035864 80034C64 016C6825 */        or $t5, $t3, $t4
   /* 035868 80034C68 01A17024 */       and $t6, $t5, $at
-  /* 03586C 80034C6C 3C0FA460 */       lui $t7, %hi(D_NF_A4600004)
+  /* 03586C 80034C6C 3C0FA460 */       lui $t7, %hi(PI_CART_ADDR_REG)
   /* 035870 80034C70 10A00006 */      beqz $a1, .L80034C8C
-  /* 035874 80034C74 ADEE0004 */        sw $t6, %lo(D_NF_A4600004)($t7)
+  /* 035874 80034C74 ADEE0004 */        sw $t6, %lo(PI_CART_ADDR_REG)($t7)
   /* 035878 80034C78 24010001 */     addiu $at, $zero, 1
   /* 03587C 80034C7C 10A10008 */       beq $a1, $at, .L80034CA0
   /* 035880 80034C80 8FA90030 */        lw $t1, 0x30($sp)
@@ -59545,15 +59545,15 @@ glabel func_80034AF0
   /* 035888 80034C88 2402FFFF */     addiu $v0, $zero, -1
   .L80034C8C:
   /* 03588C 80034C8C 8FB80030 */        lw $t8, 0x30($sp)
-  /* 035890 80034C90 3C08A460 */       lui $t0, %hi(D_NF_A460000C)
+  /* 035890 80034C90 3C08A460 */       lui $t0, %hi(PI_WR_LEN_REG)
   /* 035894 80034C94 2719FFFF */     addiu $t9, $t8, -1
   /* 035898 80034C98 10000007 */         b .L80034CB8
-  /* 03589C 80034C9C AD19000C */        sw $t9, %lo(D_NF_A460000C)($t0)
+  /* 03589C 80034C9C AD19000C */        sw $t9, %lo(PI_WR_LEN_REG)($t0)
   .L80034CA0:
   /* 0358A0 80034CA0 252AFFFF */     addiu $t2, $t1, -1
-  /* 0358A4 80034CA4 3C0BA460 */       lui $t3, %hi(D_NF_A4600008)
+  /* 0358A4 80034CA4 3C0BA460 */       lui $t3, %hi(PI_RD_LEN_REG)
   /* 0358A8 80034CA8 10000003 */         b .L80034CB8
-  /* 0358AC 80034CAC AD6A0008 */        sw $t2, %lo(D_NF_A4600008)($t3)
+  /* 0358AC 80034CAC AD6A0008 */        sw $t2, %lo(PI_RD_LEN_REG)($t3)
   /* 0358B0 80034CB0 10000002 */         b .L80034CBC
   /* 0358B4 80034CB4 2402FFFF */     addiu $v0, $zero, -1
   .L80034CB8:
@@ -60468,24 +60468,24 @@ glabel func_80035860
   /* 036540 80035940 3C0D8004 */       lui $t5, %hi(D_8003D5B4)
   /* 036544 80035944 A58B0000 */        sh $t3, ($t4)
   /* 036548 80035948 8DADD5B4 */        lw $t5, %lo(D_8003D5B4)($t5)
-  /* 03654C 8003594C 3C0EA440 */       lui $t6, %hi(D_NF_A4400010)
+  /* 03654C 8003594C 3C0EA440 */       lui $t6, %hi(VI_CURRENT_REG__VI_V_CURRENT_LINE_REG)
   /* 036550 80035950 8DAF0008 */        lw $t7, 8($t5)
   /* 036554 80035954 8DF80004 */        lw $t8, 4($t7)
   /* 036558 80035958 ADB8000C */        sw $t8, 0xc($t5)
-  /* 03655C 8003595C 8DD90010 */        lw $t9, %lo(D_NF_A4400010)($t6)
+  /* 03655C 8003595C 8DD90010 */        lw $t9, %lo(VI_CURRENT_REG__VI_V_CURRENT_LINE_REG)($t6)
   /* 036560 80035960 2F21000B */     sltiu $at, $t9, 0xb
   /* 036564 80035964 14200006 */      bnez $at, .L80035980
   /* 036568 80035968 00000000 */       nop 
   .L8003596C:
-  /* 03656C 8003596C 3C08A440 */       lui $t0, %hi(D_NF_A4400010)
-  /* 036570 80035970 8D090010 */        lw $t1, %lo(D_NF_A4400010)($t0)
+  /* 03656C 8003596C 3C08A440 */       lui $t0, %hi(VI_CURRENT_REG__VI_V_CURRENT_LINE_REG)
+  /* 036570 80035970 8D090010 */        lw $t1, %lo(VI_CURRENT_REG__VI_V_CURRENT_LINE_REG)($t0)
   /* 036574 80035974 2D21000B */     sltiu $at, $t1, 0xb
   /* 036578 80035978 1020FFFC */      beqz $at, .L8003596C
   /* 03657C 8003597C 00000000 */       nop 
   .L80035980:
-  /* 036580 80035980 3C0AA440 */       lui $t2, %hi(D_NF_A4400000)
+  /* 036580 80035980 3C0AA440 */       lui $t2, %hi(VI_STATUS_REG__VI_CONTROL_REG)
   /* 036584 80035984 0C00D668 */       jal func_800359A0
-  /* 036588 80035988 AD400000 */        sw $zero, %lo(D_NF_A4400000)($t2)
+  /* 036588 80035988 AD400000 */        sw $zero, %lo(VI_STATUS_REG__VI_CONTROL_REG)($t2)
   /* 03658C 8003598C 8FBF0014 */        lw $ra, 0x14($sp)
   /* 036590 80035990 27BD0018 */     addiu $sp, $sp, 0x18
   /* 036594 80035994 03E00008 */        jr $ra
@@ -60499,9 +60499,9 @@ glabel func_800359A0
   /* 0365A4 800359A4 AFB00018 */        sw $s0, 0x18($sp)
   /* 0365A8 800359A8 AFBF001C */        sw $ra, 0x1c($sp)
   /* 0365AC 800359AC 3C108004 */       lui $s0, %hi(D_8003D5B4)
-  /* 0365B0 800359B0 3C0EA440 */       lui $t6, %hi(D_NF_A4400010)
+  /* 0365B0 800359B0 3C0EA440 */       lui $t6, %hi(VI_CURRENT_REG__VI_V_CURRENT_LINE_REG)
   /* 0365B4 800359B4 8E10D5B4 */        lw $s0, %lo(D_8003D5B4)($s0)
-  /* 0365B8 800359B8 8DCF0010 */        lw $t7, %lo(D_NF_A4400010)($t6)
+  /* 0365B8 800359B8 8DCF0010 */        lw $t7, %lo(VI_CURRENT_REG__VI_V_CURRENT_LINE_REG)($t6)
   /* 0365BC 800359BC 8E050008 */        lw $a1, 8($s0)
   /* 0365C0 800359C0 31F80001 */      andi $t8, $t7, 1
   /* 0365C4 800359C4 AFB8002C */        sw $t8, 0x2c($sp)
@@ -60638,47 +60638,47 @@ glabel func_800359A0
   /* 0367A8 80035BA8 8FA60024 */        lw $a2, 0x24($sp)
   /* 0367AC 80035BAC 8FA70038 */        lw $a3, 0x38($sp)
   /* 0367B0 80035BB0 00402025 */        or $a0, $v0, $zero
-  /* 0367B4 80035BB4 3C0FA440 */       lui $t7, %hi(D_NF_A4400020)
+  /* 0367B4 80035BB4 3C0FA440 */       lui $t7, %hi(VI_LEAP_REG__VI_H_SYNC_LEAP_REG)
   .L80035BB8:
-  /* 0367B8 80035BB8 ADE40004 */        sw $a0, %lo(D_NF_A4400004)($t7)
+  /* 0367B8 80035BB8 ADE40004 */        sw $a0, %lo(VI_ORIGIN_REG__VI_DRAM_ADDR_REG)($t7)
   /* 0367BC 80035BBC 8CB80008 */        lw $t8, 8($a1)
-  /* 0367C0 80035BC0 3C19A440 */       lui $t9, %hi(D_NF_A4400008)
-  /* 0367C4 80035BC4 3C09A440 */       lui $t1, %hi(D_NF_A4400014)
-  /* 0367C8 80035BC8 AF380008 */        sw $t8, %lo(D_NF_A4400008)($t9)
+  /* 0367C0 80035BC0 3C19A440 */       lui $t9, %hi(VI_WIDTH_REG__VI_H_WIDTH_REG)
+  /* 0367C4 80035BC4 3C09A440 */       lui $t1, %hi(VI_BURST_REG__VI_TIMING_REG)
+  /* 0367C8 80035BC8 AF380008 */        sw $t8, %lo(VI_WIDTH_REG__VI_H_WIDTH_REG)($t9)
   /* 0367CC 80035BCC 8CA8000C */        lw $t0, 0xc($a1)
-  /* 0367D0 80035BD0 3C0BA440 */       lui $t3, %hi(D_NF_A4400018)
-  /* 0367D4 80035BD4 3C0CA440 */       lui $t4, %hi(D_NF_A440001C)
-  /* 0367D8 80035BD8 AD280014 */        sw $t0, %lo(D_NF_A4400014)($t1)
+  /* 0367D0 80035BD0 3C0BA440 */       lui $t3, %hi(VI_V_SYNC_REG)
+  /* 0367D4 80035BD4 3C0CA440 */       lui $t4, %hi(VI_H_SYNC_REG)
+  /* 0367D8 80035BD8 AD280014 */        sw $t0, %lo(VI_BURST_REG__VI_TIMING_REG)($t1)
   /* 0367DC 80035BDC 8CAA0010 */        lw $t2, 0x10($a1)
-  /* 0367E0 80035BE0 3C18A440 */       lui $t8, %hi(D_NF_A4400034)
-  /* 0367E4 80035BE4 3C08A440 */       lui $t0, %hi(D_NF_A4400000)
-  /* 0367E8 80035BE8 AD6A0018 */        sw $t2, %lo(D_NF_A4400018)($t3)
+  /* 0367E0 80035BE0 3C18A440 */       lui $t8, %hi(VI_Y_SCALE_REG)
+  /* 0367E4 80035BE4 3C08A440 */       lui $t0, %hi(VI_STATUS_REG__VI_CONTROL_REG)
+  /* 0367E8 80035BE8 AD6A0018 */        sw $t2, %lo(VI_V_SYNC_REG)($t3)
   /* 0367EC 80035BEC 8CAD0014 */        lw $t5, 0x14($a1)
-  /* 0367F0 80035BF0 3C0AA440 */       lui $t2, %hi(D_NF_A440002C)
+  /* 0367F0 80035BF0 3C0AA440 */       lui $t2, %hi(VI_V_BURST_REG)
   /* 0367F4 80035BF4 3C028004 */       lui $v0, %hi(D_8003D5B0)
-  /* 0367F8 80035BF8 AD8D001C */        sw $t5, %lo(D_NF_A440001C)($t4)
+  /* 0367F8 80035BF8 AD8D001C */        sw $t5, %lo(VI_H_SYNC_REG)($t4)
   /* 0367FC 80035BFC 8CAE0018 */        lw $t6, 0x18($a1)
-  /* 036800 80035C00 3C0DA440 */       lui $t5, %hi(D_NF_A440000C)
+  /* 036800 80035C00 3C0DA440 */       lui $t5, %hi(VI_INTR_REG__VI_V_INTR_REG)
   /* 036804 80035C04 2442D5B0 */     addiu $v0, $v0, %lo(D_8003D5B0)
-  /* 036808 80035C08 ADEE0020 */        sw $t6, %lo(D_NF_A4400020)($t7)
-  /* 03680C 80035C0C AF070024 */        sw $a3, %lo(D_NF_A4400024)($t8)
+  /* 036808 80035C08 ADEE0020 */        sw $t6, %lo(VI_LEAP_REG__VI_H_SYNC_LEAP_REG)($t7)
+  /* 03680C 80035C0C AF070024 */        sw $a3, %lo(VI_H_START_REG__VI_H_VIDEO_REG)($t8)
   /* 036810 80035C10 8FB90034 */        lw $t9, 0x34($sp)
-  /* 036814 80035C14 3C0EA440 */       lui $t6, %hi(D_NF_A4400030)
+  /* 036814 80035C14 3C0EA440 */       lui $t6, %hi(VI_X_SCALE_REG)
   /* 036818 80035C18 3C038004 */       lui $v1, %hi(D_8003D5B4)
-  /* 03681C 80035C1C AD190028 */        sw $t9, %lo(D_NF_A4400028)($t0)
+  /* 03681C 80035C1C AD190028 */        sw $t9, %lo(VI_V_START_REG__VI_V_VIDEO_REG)($t0)
   /* 036820 80035C20 8CC90034 */        lw $t1, 0x34($a2)
   /* 036824 80035C24 2463D5B4 */     addiu $v1, $v1, %lo(D_8003D5B4)
-  /* 036828 80035C28 AD49002C */        sw $t1, %lo(D_NF_A440002C)($t2)
+  /* 036828 80035C28 AD49002C */        sw $t1, %lo(VI_V_BURST_REG)($t2)
   /* 03682C 80035C2C 8CCB0038 */        lw $t3, 0x38($a2)
-  /* 036830 80035C30 ADAB000C */        sw $t3, %lo(D_NF_A440000C)($t5)
+  /* 036830 80035C30 ADAB000C */        sw $t3, %lo(VI_INTR_REG__VI_V_INTR_REG)($t5)
   /* 036834 80035C34 8E0C0020 */        lw $t4, 0x20($s0)
   /* 036838 80035C38 02005825 */        or $t3, $s0, $zero
-  /* 03683C 80035C3C ADCC0030 */        sw $t4, %lo(D_NF_A4400030)($t6)
+  /* 03683C 80035C3C ADCC0030 */        sw $t4, %lo(VI_X_SCALE_REG)($t6)
   /* 036840 80035C40 8E0F002C */        lw $t7, 0x2c($s0)
   /* 036844 80035C44 260C0030 */     addiu $t4, $s0, 0x30
-  /* 036848 80035C48 AF0F0034 */        sw $t7, %lo(D_NF_A4400034)($t8)
+  /* 036848 80035C48 AF0F0034 */        sw $t7, %lo(VI_Y_SCALE_REG)($t8)
   /* 03684C 80035C4C 8E19000C */        lw $t9, 0xc($s0)
-  /* 036850 80035C50 AD190000 */        sw $t9, %lo(D_NF_A4400000)($t0)
+  /* 036850 80035C50 AD190000 */        sw $t9, %lo(VI_STATUS_REG__VI_CONTROL_REG)($t0)
   /* 036854 80035C54 8C4A0000 */        lw $t2, ($v0) # D_8003D5B0 + 0
   /* 036858 80035C58 AC500000 */        sw $s0, ($v0) # D_8003D5B0 + 0
   /* 03685C 80035C5C AC6A0000 */        sw $t2, ($v1) # D_8003D5B4 + 0
@@ -60902,29 +60902,29 @@ glabel osCartRomInit
   /* 036B40 80035F40 24050060 */     addiu $a1, $zero, 0x60
   /* 036B44 80035F44 3C03A460 */       lui $v1, (0xA4600010 >> 16) # 2757754896
   /* 036B48 80035F48 34630010 */       ori $v1, $v1, (0xA4600010 & 0xFFFF) # 2757754896
-  /* 036B4C 80035F4C 8C620000 */        lw $v0, ($v1) # D_NF_A4600010 + 0
+  /* 036B4C 80035F4C 8C620000 */        lw $v0, ($v1) # PI_STATUS_REG + 0
   /* 036B50 80035F50 3C04A460 */       lui $a0, (0xA4600014 >> 16) # 2757754900
   /* 036B54 80035F54 34840014 */       ori $a0, $a0, (0xA4600014 & 0xFFFF) # 2757754900
   /* 036B58 80035F58 30580003 */      andi $t8, $v0, 3
   /* 036B5C 80035F5C 13000005 */      beqz $t8, .L80035F74
   /* 036B60 80035F60 240500FF */     addiu $a1, $zero, 0xff
-  /* 036B64 80035F64 8C620000 */        lw $v0, ($v1) # D_NF_A4600010 + 0
+  /* 036B64 80035F64 8C620000 */        lw $v0, ($v1) # PI_STATUS_REG + 0
   .L80035F68:
   /* 036B68 80035F68 30590003 */      andi $t9, $v0, 3
   /* 036B6C 80035F6C 5720FFFE */      bnel $t9, $zero, .L80035F68
-  /* 036B70 80035F70 8C620000 */        lw $v0, ($v1) # D_NF_A4600010 + 0
+  /* 036B70 80035F70 8C620000 */        lw $v0, ($v1) # PI_STATUS_REG + 0
   .L80035F74:
   /* 036B74 80035F74 3C06A460 */       lui $a2, (0xA460001C >> 16) # 2757754908
   /* 036B78 80035F78 34C6001C */       ori $a2, $a2, (0xA460001C & 0xFFFF) # 2757754908
   /* 036B7C 80035F7C 3C07A460 */       lui $a3, (0xA4600020 >> 16) # 2757754912
-  /* 036B80 80035F80 AC850000 */        sw $a1, ($a0) # D_NF_A4600014 + 0
+  /* 036B80 80035F80 AC850000 */        sw $a1, ($a0) # PI_BSD_DOM1_LAT_REG + 0
   /* 036B84 80035F84 34E70020 */       ori $a3, $a3, (0xA4600020 & 0xFFFF) # 2757754912
   /* 036B88 80035F88 3C08A460 */       lui $t0, (0xA4600018 >> 16) # 2757754904
-  /* 036B8C 80035F8C ACC00000 */        sw $zero, ($a2) # D_NF_A460001C + 0
+  /* 036B8C 80035F8C ACC00000 */        sw $zero, ($a2) # PI_BSD_DOM1_PGS_REG + 0
   /* 036B90 80035F90 24090003 */     addiu $t1, $zero, 3
   /* 036B94 80035F94 35080018 */       ori $t0, $t0, (0xA4600018 & 0xFFFF) # 2757754904
-  /* 036B98 80035F98 ACE90000 */        sw $t1, ($a3) # D_NF_A4600020 + 0
-  /* 036B9C 80035F9C AD050000 */        sw $a1, ($t0) # D_NF_A4600018 + 0
+  /* 036B98 80035F98 ACE90000 */        sw $t1, ($a3) # PI_BSD_DOM1_RLS_REG + 0
+  /* 036B9C 80035F9C AD050000 */        sw $a1, ($t0) # PI_BSD_DOM1_PWD_REG + 0
   /* 036BA0 80035FA0 8E0A000C */        lw $t2, %lo(D_800A000C)($s0)
   /* 036BA4 80035FA4 3C01A000 */       lui $at, 0xa000
   /* 036BA8 80035FA8 3C038004 */       lui $v1, %hi(D_8003D430)
@@ -60941,13 +60941,13 @@ glabel osCartRomInit
   /* 036BD4 80035FD4 A2090007 */        sb $t1, %lo(D_800A0007)($s0)
   /* 036BD8 80035FD8 A2020005 */        sb $v0, %lo(D_800A0005)($s0)
   /* 036BDC 80035FDC 304A00FF */      andi $t2, $v0, 0xff
-  /* 036BE0 80035FE0 AC8A0000 */        sw $t2, ($a0) # D_NF_A4600014 + 0
+  /* 036BE0 80035FE0 AC8A0000 */        sw $t2, ($a0) # PI_BSD_DOM1_LAT_REG + 0
   /* 036BE4 80035FE4 920B0006 */       lbu $t3, %lo(D_800A0006)($s0)
-  /* 036BE8 80035FE8 ACCB0000 */        sw $t3, ($a2) # D_NF_A460001C + 0
+  /* 036BE8 80035FE8 ACCB0000 */        sw $t3, ($a2) # PI_BSD_DOM1_PGS_REG + 0
   /* 036BEC 80035FEC 920C0007 */       lbu $t4, %lo(D_800A0007)($s0)
-  /* 036BF0 80035FF0 ACEC0000 */        sw $t4, ($a3) # D_NF_A4600020 + 0
+  /* 036BF0 80035FF0 ACEC0000 */        sw $t4, ($a3) # PI_BSD_DOM1_RLS_REG + 0
   /* 036BF4 80035FF4 920D0008 */       lbu $t5, %lo(D_800A0008)($s0)
-  /* 036BF8 80035FF8 AD0D0000 */        sw $t5, ($t0) # D_NF_A4600018 + 0
+  /* 036BF8 80035FF8 AD0D0000 */        sw $t5, ($t0) # PI_BSD_DOM1_PWD_REG + 0
   /* 036BFC 80035FFC 920F0009 */       lbu $t7, %lo(D_800A0009)($s0)
   /* 036C00 80036000 920E0004 */       lbu $t6, %lo(D_800A0004)($s0)
   /* 036C04 80036004 000FC080 */       sll $t8, $t7, 2
@@ -61048,16 +61048,16 @@ glabel __osSetFpcCsr
 glabel func_80036150
   /* 036D50 80036150 3C03A460 */       lui $v1, (0xA4600010 >> 16) # 2757754896
   /* 036D54 80036154 34630010 */       ori $v1, $v1, (0xA4600010 & 0xFFFF) # 2757754896
-  /* 036D58 80036158 8C620000 */        lw $v0, ($v1) # D_NF_A4600010 + 0
+  /* 036D58 80036158 8C620000 */        lw $v0, ($v1) # PI_STATUS_REG + 0
   /* 036D5C 8003615C 00A03825 */        or $a3, $a1, $zero
   /* 036D60 80036160 304E0003 */      andi $t6, $v0, 3
   /* 036D64 80036164 51C00006 */      beql $t6, $zero, .L80036180
   /* 036D68 80036168 90820009 */       lbu $v0, 9($a0)
-  /* 036D6C 8003616C 8C620000 */        lw $v0, ($v1) # D_NF_A4600010 + 0
+  /* 036D6C 8003616C 8C620000 */        lw $v0, ($v1) # PI_STATUS_REG + 0
   .L80036170:
   /* 036D70 80036170 304F0003 */      andi $t7, $v0, 3
   /* 036D74 80036174 55E0FFFE */      bnel $t7, $zero, .L80036170
-  /* 036D78 80036178 8C620000 */        lw $v0, ($v1) # D_NF_A4600010 + 0
+  /* 036D78 80036178 8C620000 */        lw $v0, ($v1) # PI_STATUS_REG + 0
   /* 036D7C 8003617C 90820009 */       lbu $v0, 9($a0)
   .L80036180:
   /* 036D80 80036180 3C038004 */       lui $v1, %hi(D_8003D430)
@@ -61072,58 +61072,58 @@ glabel func_80036150
   /* 036DA4 800361A4 00602825 */        or $a1, $v1, $zero
   /* 036DA8 800361A8 90820005 */       lbu $v0, 5($a0)
   /* 036DAC 800361AC 90690005 */       lbu $t1, 5($v1)
-  /* 036DB0 800361B0 3C0AA460 */       lui $t2, %hi(D_NF_A4600014)
-  /* 036DB4 800361B4 3C0CA460 */       lui $t4, %hi(D_NF_A460001C)
+  /* 036DB0 800361B0 3C0AA460 */       lui $t2, %hi(PI_BSD_DOM1_LAT_REG)
+  /* 036DB4 800361B4 3C0CA460 */       lui $t4, %hi(PI_BSD_DOM1_PGS_REG)
   /* 036DB8 800361B8 10490002 */       beq $v0, $t1, .L800361C4
-  /* 036DBC 800361BC 3C0EA460 */       lui $t6, %hi(D_NF_A4600020)
-  /* 036DC0 800361C0 AD420014 */        sw $v0, %lo(D_NF_A4600014)($t2)
+  /* 036DBC 800361BC 3C0EA460 */       lui $t6, %hi(PI_BSD_DOM1_RLS_REG)
+  /* 036DC0 800361C0 AD420014 */        sw $v0, %lo(PI_BSD_DOM1_LAT_REG)($t2)
   .L800361C4:
   /* 036DC4 800361C4 90820006 */       lbu $v0, 6($a0)
   /* 036DC8 800361C8 90AB0006 */       lbu $t3, 6($a1)
-  /* 036DCC 800361CC 3C18A460 */       lui $t8, %hi(D_NF_A4600018)
+  /* 036DCC 800361CC 3C18A460 */       lui $t8, %hi(PI_BSD_DOM1_PWD_REG)
   /* 036DD0 800361D0 504B0003 */      beql $v0, $t3, .L800361E0
   /* 036DD4 800361D4 90820007 */       lbu $v0, 7($a0)
-  /* 036DD8 800361D8 AD82001C */        sw $v0, %lo(D_NF_A460001C)($t4)
+  /* 036DD8 800361D8 AD82001C */        sw $v0, %lo(PI_BSD_DOM1_PGS_REG)($t4)
   /* 036DDC 800361DC 90820007 */       lbu $v0, 7($a0)
   .L800361E0:
   /* 036DE0 800361E0 90AD0007 */       lbu $t5, 7($a1)
   /* 036DE4 800361E4 504D0003 */      beql $v0, $t5, .L800361F4
   /* 036DE8 800361E8 90820008 */       lbu $v0, 8($a0)
-  /* 036DEC 800361EC ADC20020 */        sw $v0, %lo(D_NF_A4600020)($t6)
+  /* 036DEC 800361EC ADC20020 */        sw $v0, %lo(PI_BSD_DOM1_RLS_REG)($t6)
   /* 036DF0 800361F0 90820008 */       lbu $v0, 8($a0)
   .L800361F4:
   /* 036DF4 800361F4 90AF0008 */       lbu $t7, 8($a1)
   /* 036DF8 800361F8 504F001B */      beql $v0, $t7, .L80036268
   /* 036DFC 800361FC 908F0004 */       lbu $t7, 4($a0)
   /* 036E00 80036200 10000018 */         b .L80036264
-  /* 036E04 80036204 AF020018 */        sw $v0, %lo(D_NF_A4600018)($t8)
+  /* 036E04 80036204 AF020018 */        sw $v0, %lo(PI_BSD_DOM1_PWD_REG)($t8)
   .L80036208:
   /* 036E08 80036208 90820005 */       lbu $v0, 5($a0)
   /* 036E0C 8003620C 90B90005 */       lbu $t9, 5($a1)
-  /* 036E10 80036210 3C08A460 */       lui $t0, %hi(D_NF_A4600024)
-  /* 036E14 80036214 3C0AA460 */       lui $t2, %hi(D_NF_A460002C)
+  /* 036E10 80036210 3C08A460 */       lui $t0, %hi(PI_BSD_DOM2_LAT_REG)
+  /* 036E14 80036214 3C0AA460 */       lui $t2, %hi(PI_BSD_DOM2_PGS_REG)
   /* 036E18 80036218 10590002 */       beq $v0, $t9, .L80036224
-  /* 036E1C 8003621C 3C0CA460 */       lui $t4, %hi(D_NF_A4600000)
-  /* 036E20 80036220 AD020024 */        sw $v0, %lo(D_NF_A4600024)($t0)
+  /* 036E1C 8003621C 3C0CA460 */       lui $t4, %hi(PI_DRAM_ADDR_REG)
+  /* 036E20 80036220 AD020024 */        sw $v0, %lo(PI_BSD_DOM2_LAT_REG)($t0)
   .L80036224:
   /* 036E24 80036224 90820006 */       lbu $v0, 6($a0)
   /* 036E28 80036228 90A90006 */       lbu $t1, 6($a1)
-  /* 036E2C 8003622C 3C0EA460 */       lui $t6, %hi(D_NF_A4600028)
+  /* 036E2C 8003622C 3C0EA460 */       lui $t6, %hi(PI_BSD_DOM2_PWD_REG)
   /* 036E30 80036230 50490003 */      beql $v0, $t1, .L80036240
   /* 036E34 80036234 90820007 */       lbu $v0, 7($a0)
-  /* 036E38 80036238 AD42002C */        sw $v0, %lo(D_NF_A460002C)($t2)
+  /* 036E38 80036238 AD42002C */        sw $v0, %lo(PI_BSD_DOM2_PGS_REG)($t2)
   /* 036E3C 8003623C 90820007 */       lbu $v0, 7($a0)
   .L80036240:
   /* 036E40 80036240 90AB0007 */       lbu $t3, 7($a1)
   /* 036E44 80036244 504B0003 */      beql $v0, $t3, .L80036254
   /* 036E48 80036248 90820008 */       lbu $v0, 8($a0)
-  /* 036E4C 8003624C AD820030 */        sw $v0, %lo(D_NF_A4600030)($t4)
+  /* 036E4C 8003624C AD820030 */        sw $v0, %lo(PI_BSD_DOM2_RLS_REG)($t4)
   /* 036E50 80036250 90820008 */       lbu $v0, 8($a0)
   .L80036254:
   /* 036E54 80036254 90AD0008 */       lbu $t5, 8($a1)
   /* 036E58 80036258 504D0003 */      beql $v0, $t5, .L80036268
   /* 036E5C 8003625C 908F0004 */       lbu $t7, 4($a0)
-  /* 036E60 80036260 ADC20028 */        sw $v0, %lo(D_NF_A4600028)($t6)
+  /* 036E60 80036260 ADC20028 */        sw $v0, %lo(PI_BSD_DOM2_PWD_REG)($t6)
   .L80036264:
   /* 036E64 80036264 908F0004 */       lbu $t7, 4($a0)
   .L80036268:
@@ -61142,7 +61142,7 @@ glabel func_80036150
   /* 036E94 80036294 00001025 */        or $v0, $zero, $zero
   /* 036E98 80036298 01475825 */        or $t3, $t2, $a3
   /* 036E9C 8003629C 01616025 */        or $t4, $t3, $at
-  /* 036EA0 800362A0 8D8D0000 */        lw $t5, %lo(D_NF_A4600000)($t4)
+  /* 036EA0 800362A0 8D8D0000 */        lw $t5, %lo(PI_DRAM_ADDR_REG)($t4)
   /* 036EA4 800362A4 03E00008 */        jr $ra
   /* 036EA8 800362A8 ACCD0000 */        sw $t5, ($a2)
 
@@ -62963,16 +62963,16 @@ glabel func_80037AE0
 glabel func_80037BB0
   /* 0387B0 80037BB0 3C03A460 */       lui $v1, (0xA4600010 >> 16) # 2757754896
   /* 0387B4 80037BB4 34630010 */       ori $v1, $v1, (0xA4600010 & 0xFFFF) # 2757754896
-  /* 0387B8 80037BB8 8C620000 */        lw $v0, ($v1) # D_NF_A4600010 + 0
+  /* 0387B8 80037BB8 8C620000 */        lw $v0, ($v1) # PI_STATUS_REG + 0
   /* 0387BC 80037BBC 00A03825 */        or $a3, $a1, $zero
   /* 0387C0 80037BC0 304E0003 */      andi $t6, $v0, 3
   /* 0387C4 80037BC4 51C00006 */      beql $t6, $zero, .L80037BE0
   /* 0387C8 80037BC8 90820009 */       lbu $v0, 9($a0)
-  /* 0387CC 80037BCC 8C620000 */        lw $v0, ($v1) # D_NF_A4600010 + 0
+  /* 0387CC 80037BCC 8C620000 */        lw $v0, ($v1) # PI_STATUS_REG + 0
   .L80037BD0:
   /* 0387D0 80037BD0 304F0003 */      andi $t7, $v0, 3
   /* 0387D4 80037BD4 55E0FFFE */      bnel $t7, $zero, .L80037BD0
-  /* 0387D8 80037BD8 8C620000 */        lw $v0, ($v1) # D_NF_A4600010 + 0
+  /* 0387D8 80037BD8 8C620000 */        lw $v0, ($v1) # PI_STATUS_REG + 0
   /* 0387DC 80037BDC 90820009 */       lbu $v0, 9($a0)
   .L80037BE0:
   /* 0387E0 80037BE0 3C038004 */       lui $v1, %hi(D_8003D430)
@@ -62987,58 +62987,58 @@ glabel func_80037BB0
   /* 038804 80037C04 00602825 */        or $a1, $v1, $zero
   /* 038808 80037C08 90820005 */       lbu $v0, 5($a0)
   /* 03880C 80037C0C 90690005 */       lbu $t1, 5($v1)
-  /* 038810 80037C10 3C0AA460 */       lui $t2, %hi(D_NF_A4600014)
-  /* 038814 80037C14 3C0CA460 */       lui $t4, %hi(D_NF_A460001C)
+  /* 038810 80037C10 3C0AA460 */       lui $t2, %hi(PI_BSD_DOM1_LAT_REG)
+  /* 038814 80037C14 3C0CA460 */       lui $t4, %hi(PI_BSD_DOM1_PGS_REG)
   /* 038818 80037C18 10490002 */       beq $v0, $t1, .L80037C24
-  /* 03881C 80037C1C 3C0EA460 */       lui $t6, %hi(D_NF_A4600020)
-  /* 038820 80037C20 AD420014 */        sw $v0, %lo(D_NF_A4600014)($t2)
+  /* 03881C 80037C1C 3C0EA460 */       lui $t6, %hi(PI_BSD_DOM1_RLS_REG)
+  /* 038820 80037C20 AD420014 */        sw $v0, %lo(PI_BSD_DOM1_LAT_REG)($t2)
   .L80037C24:
   /* 038824 80037C24 90820006 */       lbu $v0, 6($a0)
   /* 038828 80037C28 90AB0006 */       lbu $t3, 6($a1)
-  /* 03882C 80037C2C 3C18A460 */       lui $t8, %hi(D_NF_A4600018)
+  /* 03882C 80037C2C 3C18A460 */       lui $t8, %hi(PI_BSD_DOM1_PWD_REG)
   /* 038830 80037C30 504B0003 */      beql $v0, $t3, .L80037C40
   /* 038834 80037C34 90820007 */       lbu $v0, 7($a0)
-  /* 038838 80037C38 AD82001C */        sw $v0, %lo(D_NF_A460001C)($t4)
+  /* 038838 80037C38 AD82001C */        sw $v0, %lo(PI_BSD_DOM1_PGS_REG)($t4)
   /* 03883C 80037C3C 90820007 */       lbu $v0, 7($a0)
   .L80037C40:
   /* 038840 80037C40 90AD0007 */       lbu $t5, 7($a1)
   /* 038844 80037C44 504D0003 */      beql $v0, $t5, .L80037C54
   /* 038848 80037C48 90820008 */       lbu $v0, 8($a0)
-  /* 03884C 80037C4C ADC20020 */        sw $v0, %lo(D_NF_A4600020)($t6)
+  /* 03884C 80037C4C ADC20020 */        sw $v0, %lo(PI_BSD_DOM1_RLS_REG)($t6)
   /* 038850 80037C50 90820008 */       lbu $v0, 8($a0)
   .L80037C54:
   /* 038854 80037C54 90AF0008 */       lbu $t7, 8($a1)
   /* 038858 80037C58 504F001B */      beql $v0, $t7, .L80037CC8
   /* 03885C 80037C5C 908F0004 */       lbu $t7, 4($a0)
   /* 038860 80037C60 10000018 */         b .L80037CC4
-  /* 038864 80037C64 AF020018 */        sw $v0, %lo(D_NF_A4600018)($t8)
+  /* 038864 80037C64 AF020018 */        sw $v0, %lo(PI_BSD_DOM1_PWD_REG)($t8)
   .L80037C68:
   /* 038868 80037C68 90820005 */       lbu $v0, 5($a0)
   /* 03886C 80037C6C 90B90005 */       lbu $t9, 5($a1)
-  /* 038870 80037C70 3C08A460 */       lui $t0, %hi(D_NF_A4600024)
-  /* 038874 80037C74 3C0AA460 */       lui $t2, %hi(D_NF_A460002C)
+  /* 038870 80037C70 3C08A460 */       lui $t0, %hi(PI_BSD_DOM2_LAT_REG)
+  /* 038874 80037C74 3C0AA460 */       lui $t2, %hi(PI_BSD_DOM2_PGS_REG)
   /* 038878 80037C78 10590002 */       beq $v0, $t9, .L80037C84
-  /* 03887C 80037C7C 3C0CA460 */       lui $t4, %hi(D_NF_A4600000)
-  /* 038880 80037C80 AD020024 */        sw $v0, %lo(D_NF_A4600024)($t0)
+  /* 03887C 80037C7C 3C0CA460 */       lui $t4, %hi(PI_DRAM_ADDR_REG)
+  /* 038880 80037C80 AD020024 */        sw $v0, %lo(PI_BSD_DOM2_LAT_REG)($t0)
   .L80037C84:
   /* 038884 80037C84 90820006 */       lbu $v0, 6($a0)
   /* 038888 80037C88 90A90006 */       lbu $t1, 6($a1)
-  /* 03888C 80037C8C 3C0EA460 */       lui $t6, %hi(D_NF_A4600028)
+  /* 03888C 80037C8C 3C0EA460 */       lui $t6, %hi(PI_BSD_DOM2_PWD_REG)
   /* 038890 80037C90 50490003 */      beql $v0, $t1, .L80037CA0
   /* 038894 80037C94 90820007 */       lbu $v0, 7($a0)
-  /* 038898 80037C98 AD42002C */        sw $v0, %lo(D_NF_A460002C)($t2)
+  /* 038898 80037C98 AD42002C */        sw $v0, %lo(PI_BSD_DOM2_PGS_REG)($t2)
   /* 03889C 80037C9C 90820007 */       lbu $v0, 7($a0)
   .L80037CA0:
   /* 0388A0 80037CA0 90AB0007 */       lbu $t3, 7($a1)
   /* 0388A4 80037CA4 504B0003 */      beql $v0, $t3, .L80037CB4
   /* 0388A8 80037CA8 90820008 */       lbu $v0, 8($a0)
-  /* 0388AC 80037CAC AD820030 */        sw $v0, %lo(D_NF_A4600030)($t4)
+  /* 0388AC 80037CAC AD820030 */        sw $v0, %lo(PI_BSD_DOM2_RLS_REG)($t4)
   /* 0388B0 80037CB0 90820008 */       lbu $v0, 8($a0)
   .L80037CB4:
   /* 0388B4 80037CB4 90AD0008 */       lbu $t5, 8($a1)
   /* 0388B8 80037CB8 504D0003 */      beql $v0, $t5, .L80037CC8
   /* 0388BC 80037CBC 908F0004 */       lbu $t7, 4($a0)
-  /* 0388C0 80037CC0 ADC20028 */        sw $v0, %lo(D_NF_A4600028)($t6)
+  /* 0388C0 80037CC0 ADC20028 */        sw $v0, %lo(PI_BSD_DOM2_PWD_REG)($t6)
   .L80037CC4:
   /* 0388C4 80037CC4 908F0004 */       lbu $t7, 4($a0)
   .L80037CC8:
@@ -63058,7 +63058,7 @@ glabel func_80037BB0
   /* 0388F8 80037CF8 01475825 */        or $t3, $t2, $a3
   /* 0388FC 80037CFC 01616025 */        or $t4, $t3, $at
   /* 038900 80037D00 03E00008 */        jr $ra
-  /* 038904 80037D04 AD860000 */        sw $a2, %lo(D_NF_A4600000)($t4)
+  /* 038904 80037D04 AD860000 */        sw $a2, %lo(PI_DRAM_ADDR_REG)($t4)
 
   /* 038908 80037D08 00000000 */       nop 
   /* 03890C 80037D0C 00000000 */       nop 
@@ -64256,18 +64256,18 @@ glabel osDpSetNextBuffer
   /* 039958 80038D58 2402FFFF */     addiu $v0, $zero, -1
   .L80038D5C:
   /* 03995C 80038D5C 240E0001 */     addiu $t6, $zero, 1
-  /* 039960 80038D60 3C0FA410 */       lui $t7, %hi(D_NF_A410000C)
-  /* 039964 80038D64 ADEE000C */        sw $t6, %lo(D_NF_A410000C)($t7)
+  /* 039960 80038D60 3C0FA410 */       lui $t7, %hi(DPC_STATUS_REG)
+  /* 039964 80038D64 ADEE000C */        sw $t6, %lo(DPC_STATUS_REG)($t7)
   .L80038D68:
-  /* 039968 80038D68 3C18A410 */       lui $t8, %hi(D_NF_A410000C)
-  /* 03996C 80038D6C 8F10000C */        lw $s0, %lo(D_NF_A410000C)($t8)
+  /* 039968 80038D68 3C18A410 */       lui $t8, %hi(DPC_STATUS_REG)
+  /* 03996C 80038D6C 8F10000C */        lw $s0, %lo(DPC_STATUS_REG)($t8)
   /* 039970 80038D70 32190001 */      andi $t9, $s0, 1
   /* 039974 80038D74 1720FFFC */      bnez $t9, .L80038D68
   /* 039978 80038D78 00000000 */       nop 
   /* 03997C 80038D7C 0C00C854 */       jal osVirtualToPhysical
   /* 039980 80038D80 8FA40028 */        lw $a0, 0x28($sp)
-  /* 039984 80038D84 3C08A410 */       lui $t0, %hi(D_NF_A4100000)
-  /* 039988 80038D88 AD020000 */        sw $v0, %lo(D_NF_A4100000)($t0)
+  /* 039984 80038D84 3C08A410 */       lui $t0, %hi(DPC_START_REG)
+  /* 039988 80038D88 AD020000 */        sw $v0, %lo(DPC_START_REG)($t0)
   /* 03998C 80038D8C 0C00C854 */       jal osVirtualToPhysical
   /* 039990 80038D90 8FA40028 */        lw $a0, 0x28($sp)
   /* 039994 80038D94 8FAD0034 */        lw $t5, 0x34($sp)
@@ -64278,8 +64278,8 @@ glabel osDpSetNextBuffer
   /* 0399A8 80038DA8 01ED082B */      sltu $at, $t7, $t5
   /* 0399AC 80038DAC 002A7021 */      addu $t6, $at, $t2
   /* 0399B0 80038DB0 01E04825 */        or $t1, $t7, $zero
-  /* 0399B4 80038DB4 3C18A410 */       lui $t8, %hi(D_NF_A4100004)
-  /* 0399B8 80038DB8 AF090004 */        sw $t1, %lo(D_NF_A4100004)($t8)
+  /* 0399B4 80038DB4 3C18A410 */       lui $t8, %hi(DPC_END_REG)
+  /* 0399B8 80038DB8 AF090004 */        sw $t1, %lo(DPC_END_REG)($t8)
   /* 0399BC 80038DBC 00001025 */        or $v0, $zero, $zero
   /* 0399C0 80038DC0 01CC7021 */      addu $t6, $t6, $t4
   .L80038DC4:
@@ -64294,8 +64294,8 @@ glabel osDpSetNextBuffer
 
 # Likely start of new file
 glabel __osDpDeviceBusy
-  /* 0399E0 80038DE0 3C0EA410 */       lui $t6, %hi(D_NF_A410000C)
-  /* 0399E4 80038DE4 8DC4000C */        lw $a0, %lo(D_NF_A410000C)($t6)
+  /* 0399E0 80038DE0 3C0EA410 */       lui $t6, %hi(DPC_STATUS_REG)
+  /* 0399E4 80038DE4 8DC4000C */        lw $a0, %lo(DPC_STATUS_REG)($t6)
   /* 0399E8 80038DE8 27BDFFF8 */     addiu $sp, $sp, -8
   /* 0399EC 80038DEC 308F0100 */      andi $t7, $a0, 0x100
   /* 0399F0 80038DF0 11E00003 */      beqz $t7, .L80038E00
@@ -64312,17 +64312,17 @@ glabel __osDpDeviceBusy
 
 # Likely start of new file
 glabel __osSpSetStatus
-  /* 039A10 80038E10 3C0EA404 */       lui $t6, %hi(D_NF_A4040010)
+  /* 039A10 80038E10 3C0EA404 */       lui $t6, %hi(SP_STATUS_REG)
   /* 039A14 80038E14 03E00008 */        jr $ra
-  /* 039A18 80038E18 ADC40010 */        sw $a0, %lo(D_NF_A4040010)($t6)
+  /* 039A18 80038E18 ADC40010 */        sw $a0, %lo(SP_STATUS_REG)($t6)
 
   /* 039A1C 80038E1C 00000000 */       nop 
 
 # Likely start of new file
 glabel __osSpGetStatus
-  /* 039A20 80038E20 3C0EA404 */       lui $t6, %hi(D_NF_A4040010)
+  /* 039A20 80038E20 3C0EA404 */       lui $t6, %hi(SP_STATUS_REG)
   /* 039A24 80038E24 03E00008 */        jr $ra
-  /* 039A28 80038E28 8DC20010 */        lw $v0, %lo(D_NF_A4040010)($t6)
+  /* 039A28 80038E28 8DC20010 */        lw $v0, %lo(SP_STATUS_REG)($t6)
 
   /* 039A2C 80038E2C 00000000 */       nop 
 
@@ -64884,12 +64884,12 @@ glabel func_80039550
   .L800395C4:
   /* 03A1C4 800395C4 0C00C854 */       jal osVirtualToPhysical
   /* 03A1C8 800395C8 8FA4001C */        lw $a0, 0x1c($sp)
-  /* 03A1CC 800395CC 3C0CA450 */       lui $t4, %hi(D_NF_A4500000)
-  /* 03A1D0 800395D0 AD820000 */        sw $v0, %lo(D_NF_A4500000)($t4)
+  /* 03A1CC 800395CC 3C0CA450 */       lui $t4, %hi(AI_DRAM_ADDR_REG)
+  /* 03A1D0 800395D0 AD820000 */        sw $v0, %lo(AI_DRAM_ADDR_REG)($t4)
   /* 03A1D4 800395D4 8FAD0024 */        lw $t5, 0x24($sp)
-  /* 03A1D8 800395D8 3C0FA450 */       lui $t7, %hi(D_NF_A4500004)
+  /* 03A1D8 800395D8 3C0FA450 */       lui $t7, %hi(AI_LEN_REG)
   /* 03A1DC 800395DC 00001025 */        or $v0, $zero, $zero
-  /* 03A1E0 800395E0 ADED0004 */        sw $t5, %lo(D_NF_A4500004)($t7)
+  /* 03A1E0 800395E0 ADED0004 */        sw $t5, %lo(AI_LEN_REG)($t7)
   .L800395E4:
   /* 03A1E4 800395E4 8FBF0014 */        lw $ra, 0x14($sp)
   /* 03A1E8 800395E8 27BD0020 */     addiu $sp, $sp, 0x20
@@ -64902,8 +64902,8 @@ glabel func_80039550
 
 # Likely start of new file
 glabel __osAiDeviceBusy
-  /* 03A200 80039600 3C0EA450 */       lui $t6, %hi(D_NF_A450000C)
-  /* 03A204 80039604 8DC4000C */        lw $a0, %lo(D_NF_A450000C)($t6)
+  /* 03A200 80039600 3C0EA450 */       lui $t6, %hi(AI_STATUS_REG)
+  /* 03A204 80039604 8DC4000C */        lw $a0, %lo(AI_STATUS_REG)($t6)
   /* 03A208 80039608 3C018000 */       lui $at, 0x8000
   /* 03A20C 8003960C 27BDFFF8 */     addiu $sp, $sp, -8
   /* 03A210 80039610 00817824 */       and $t7, $a0, $at
@@ -64936,8 +64936,8 @@ glabel func_80039630
   /* 03A26C 8003966C 27BD0028 */     addiu $sp, $sp, 0x28
 
 glabel __osSpSetPc
-  /* 03A270 80039670 3C0EA404 */       lui $t6, %hi(D_NF_A4040010)
-  /* 03A274 80039674 8DC50010 */        lw $a1, %lo(D_NF_A4040010)($t6)
+  /* 03A270 80039670 3C0EA404 */       lui $t6, %hi(SP_STATUS_REG)
+  /* 03A274 80039674 8DC50010 */        lw $a1, %lo(SP_STATUS_REG)($t6)
   /* 03A278 80039678 27BDFFF8 */     addiu $sp, $sp, -8
   /* 03A27C 8003967C 30AF0001 */      andi $t7, $a1, 1
   /* 03A280 80039680 15E00003 */      bnez $t7, .L80039690
@@ -64945,8 +64945,8 @@ glabel __osSpSetPc
   /* 03A288 80039688 10000004 */         b .L8003969C
   /* 03A28C 8003968C 2402FFFF */     addiu $v0, $zero, -1
   .L80039690:
-  /* 03A290 80039690 3C18A408 */       lui $t8, %hi(D_NF_A4080000)
-  /* 03A294 80039694 AF040000 */        sw $a0, %lo(D_NF_A4080000)($t8)
+  /* 03A290 80039690 3C18A408 */       lui $t8, %hi(SP_PC)
+  /* 03A294 80039694 AF040000 */        sw $a0, %lo(SP_PC)($t8)
   /* 03A298 80039698 00001025 */        or $v0, $zero, $zero
   .L8003969C:
   /* 03A29C 8003969C 03E00008 */        jr $ra
