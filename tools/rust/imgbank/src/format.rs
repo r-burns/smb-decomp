@@ -1,5 +1,5 @@
+use anyhow::{anyhow, Error};
 use byteorder::{ByteOrder, BE};
-use failure::{format_err, Error};
 use libgfx::{BitDepth, ImageFormat};
 use serde::{Deserialize, Deserializer, Serialize, Serializer};
 use std::convert::{From, TryFrom};
@@ -155,7 +155,7 @@ impl TryFrom<u32> for BankFormat {
             2 => Ok(CI),
             3 => Ok(IA),
             4 => Ok(I),
-            _ => Err(format_err!("unknown image format: {}", v)),
+            _ => Err(anyhow!("unknown image format: {}", v)),
         }
     }
 }
@@ -262,7 +262,7 @@ impl TryFrom<u32> for BankDepth {
             1 => Ok(B8),
             2 => Ok(B16),
             3 => Ok(B32),
-            _ => Err(format_err!("unknown bit depth: {}", v)),
+            _ => Err(anyhow!("unknown bit depth: {}", v)),
         }
     }
 }

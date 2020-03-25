@@ -1,5 +1,5 @@
 use crate::format::{BankFormat, EntryConfig};
-use failure::{format_err, Error, ResultExt};
+use anyhow::{anyhow, Context, Error};
 use std::ffi::OsStr;
 use std::fmt::Write;
 use std::fs;
@@ -112,7 +112,7 @@ fn create_offset_incbin_str(
             let mut filename = file
                 .file_stem()
                 .map(OsStr::to_string_lossy)
-                .ok_or_else(|| format_err!("{} was not a file", file.display()))?;
+                .ok_or_else(|| anyhow!("{} was not a file", file.display()))?;
 
             if !filename.ends_with(ext) {
                 filename.to_mut().push('.');

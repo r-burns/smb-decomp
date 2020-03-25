@@ -5,8 +5,8 @@ authors = ["SSB64d team <unknown>"]
 edition = "2018"
 
 [dependencies]
-structopt = {version = "0.2.15", default-features = false}
+structopt = {version = "0.3.12", default-features = false}
 libgfx = {path = "../libgfx"}
-failure = "0.1.5" 
-lodepng = "2.4.2"
+anyhow = "1.0.27"
+lodepng = "2.5.0"
 

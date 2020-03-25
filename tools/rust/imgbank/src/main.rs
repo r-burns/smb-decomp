@@ -1,4 +1,3 @@
-use failure::Error;
 use std::path::PathBuf;
 use structopt::StructOpt;
 
@@ -60,16 +59,12 @@ enum Opts {
 fn main() {
     let opts = Opts::from_args();
     if let Err(e) = run(opts) {
-        eprintln!("Error: {}", e);
-        for c in e.iter_causes() {
-            eprintln!("caused by: {}", c);
-        }
-
-        ::std::process::exit(1);
+        eprintln!("{:?}", e);
+        std::process::exit(1);
     }
 }
 
-fn run(opts: Opts) -> Result<(), Error> {
+fn run(opts: Opts) -> anyhow::Result<()> {
     match opts {
         Opts::Unpack {
             bank,

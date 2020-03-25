@@ -1,5 +1,5 @@
 use crate::Decode;
-use failure::{bail, Error, ResultExt};
+use anyhow::{anyhow, Context, Error};
 use libgfx::{BitDepth, ImageFormat};
 use lodepng;
 use std::fs::File;
@@ -30,7 +30,7 @@ pub fn decode_binary(opts: Decode) -> Result<(), Error> {
     let indexed_png = !convert_palette;
 
     if format == ImageFormat::CI && palette.is_none() {
-        bail!("No palette offset for CI image!");
+        return Err(anyhow!("No palette offset for CI image!"));
     }
 
     let mut rdr = BufReader::new(File::open(&input)?);

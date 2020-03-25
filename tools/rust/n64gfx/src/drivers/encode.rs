@@ -1,5 +1,5 @@
 use crate::Encode;
-use failure::{format_err, Error, ResultExt};
+use anyhow::{anyhow, Context, Error};
 use libgfx::{self, BitDepth, ImageFormat};
 use lodepng;
 use std::fs;
@@ -40,9 +40,9 @@ pub fn encode_binary(opts: Encode) -> Result<(), Error> {
 fn append_to_filename(file: &Path, s: &str) -> Result<PathBuf, Error> {
     let mut name = file
         .file_stem()
-        .ok_or(format_err!("no file stem"))?
+        .ok_or(anyhow!("no file stem"))?
         .to_os_string();
-    let ext = file.extension().ok_or(format_err!("no file extension"))?;
+    let ext = file.extension().ok_or(anyhow!("no file extension"))?;
 
     name.push(".");
     name.push(s);
@@ -71,7 +71,7 @@ fn convert_to_intensity(
     // TODO: convert from RGBA png as well (with rgba_to_raw(bytes, format, depth))
     let bitmap = lodepng::decode_file(&file, GREY_ALPHA, 8).map(|res| match res {
         Image::GreyAlpha(bits) => Ok(bits),
-        _ => Err(format_err!("couldn't read input png as grey alpha image")),
+        _ => Err(anyhow!("couldn't read input png as grey alpha image")),
     })??;
 
     Ok(libgfx::gray_to_raw(&bitmap.buffer, format, depth))
@@ -86,7 +86,7 @@ fn convert_to_ci(file: PathBuf, depth: BitDepth) -> Result<(Vec<u8>, Option<Vec<
 
     let indices = state.decode_file(&file).map(|res| match res {
         Image::RawData(bits) => Ok(bits),
-        _ => Err(format_err!("couldn't read input png as paletted png")),
+        _ => Err(anyhow!("couldn't read input png as paletted png")),
     })??;
 
     let palette = state.info_png_mut().color.palette();

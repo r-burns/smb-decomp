@@ -23,20 +23,8 @@ pub enum VpkError {
     BadTreeEncoding,
 
     #[error(display = "{}", _0)]
-    Utf8Error(#[cause] str::Utf8Error),
+    Utf8Error(#[source] str::Utf8Error),
 
     #[error(display = "{}", _0)]
-    Io(#[cause] io::Error),
-}
-
-impl From<io::Error> for VpkError {
-    fn from(error: io::Error) -> Self {
-        VpkError::Io(error)
-    }
-}
-
-impl From<str::Utf8Error> for VpkError {
-    fn from(error: str::Utf8Error) -> Self {
-        VpkError::Utf8Error(error)
-    }
+    Io(#[source] io::Error),
 }

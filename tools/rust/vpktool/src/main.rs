@@ -1,4 +1,4 @@
-use failure::{Error, ResultExt};
+use anyhow::{self, Context};
 use libvpk::{self, LzssSettings};
 use std::{
     fs::{self, File},
@@ -40,16 +40,12 @@ fn main() {
     let opts = Opts::from_args();
 
     if let Err(e) = run(opts) {
-        eprintln!("Error: {}", e);
-        for c in e.iter_causes() {
-            eprintln!("caused by: {}", c);
-        }
-
-        ::std::process::exit(1);
+        eprintln!("{:?}", e);
+        std::process::exit(1);
     }
 }
 
-fn run(opts: Opts) -> Result<(), Error> {
+fn run(opts: Opts) -> anyhow::Result<()> {
     match opts {
         Opts::Encode { input } => compress_vpk(input),
         Opts::Decomp { input, output } => decompress_vpk(input, output),
@@ -57,7 +53,7 @@ fn run(opts: Opts) -> Result<(), Error> {
     }
 }
 
-fn compress_vpk(input: PathBuf) -> Result<(), Error> {
+fn compress_vpk(input: PathBuf) -> anyhow::Result<()> {
     let rdr =
         BufReader::new(File::open(&input).context("reading input binary file for compression")?);
     let settings = LzssSettings::new(16, 16, 2);
@@ -66,7 +62,7 @@ fn compress_vpk(input: PathBuf) -> Result<(), Error> {
     Ok(())
 }
 
-fn decompress_vpk(input: PathBuf, output: PathBuf) -> Result<(), Error> {
+fn decompress_vpk(input: PathBuf, output: PathBuf) -> anyhow::Result<()> {
     let rdr =
         BufReader::new(File::open(&input).context("reading input vpk file for decompression")?);
     let decompressed = libvpk::decode(rdr).context("decompressing vpk file")?;
@@ -75,7 +71,7 @@ fn decompress_vpk(input: PathBuf, output: PathBuf) -> Result<(), Error> {
     Ok(())
 }
 
-fn print_vpk_info(input: PathBuf, output: Option<PathBuf>) -> Result<(), Error> {
+fn print_vpk_info(input: PathBuf, output: Option<PathBuf>) -> anyhow::Result<()> {
     let rdr = BufReader::new(File::open(&input)?);
     let wtr = BufWriter::new(
         output

@@ -1,6 +1,6 @@
 use crate::format::{BankConfig, BankDepth, BankFormat, Entry, EntryConfig, Header};
+use anyhow::{Context, Error};
 use byteorder::{ByteOrder, BE};
-use failure::{Error, ResultExt};
 use libgfx::{self, BitDepth, ImageFormat};
 use lodepng::{
     self,

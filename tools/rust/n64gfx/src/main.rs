@@ -1,4 +1,4 @@
-use failure::{format_err, Error};
+use anyhow::{anyhow, Error};
 use libgfx::{BitDepth, ImageFormat};
 use std::path::PathBuf;
 use structopt::StructOpt;
@@ -26,10 +26,10 @@ pub struct Encode {
     #[structopt(short, long, parse(from_os_str))]
     output: PathBuf,
     /// RGBA, CI, I, or IA
-    #[structopt(short, long, parse(try_from_str = "arg_format"))]
+    #[structopt(short, long, parse(try_from_str = arg_format))]
     format: ImageFormat,
     /// 4, 8, 16, or 32
-    #[structopt(short = "d", long, parse(try_from_str = "arg_bitdepth"))]
+    #[structopt(short = "d", long, parse(try_from_str = arg_bitdepth))]
     bitdepth: BitDepth,
     /// A custom output filename for a CI image palette binary
     #[structopt(long = "palette", short, parse(from_os_str))]
@@ -45,23 +45,23 @@ pub struct Decode {
     #[structopt(short, long, parse(from_os_str))]
     output: PathBuf,
     /// RGBA, CI, I, or IA
-    #[structopt(short, long, parse(try_from_str = "arg_format"))]
+    #[structopt(short, long, parse(try_from_str = arg_format))]
     format: ImageFormat,
     /// 4, 8, 16, or 32
-    #[structopt(short = "d", long, parse(try_from_str = "arg_bitdepth"))]
+    #[structopt(short = "d", long, parse(try_from_str = arg_bitdepth))]
     bitdepth: BitDepth,
     #[structopt(short, long)]
     height: u32,
     #[structopt(short, long)]
     width: u32,
     /// Location of image data in input binary
-    #[structopt(long, parse(try_from_str = "possible_hex"))]
+    #[structopt(long, parse(try_from_str = possible_hex))]
     offset: Option<u64>,
     /// Convert a CI palette into RGBA PNG (default is paletted PNG)
     #[structopt(long = "convert-palette")]
     convert_palette: bool,
     /// Location of palette data (RBGA16 array) for CI image
-    #[structopt(short, long, parse(try_from_str = "possible_hex"))]
+    #[structopt(short, long, parse(try_from_str = possible_hex))]
     palette: Option<u64>,
 }
 
@@ -69,12 +69,8 @@ fn main() {
     let opts = Opts::from_args();
 
     if let Err(e) = run(opts) {
-        eprintln!("Error: {}", e);
-        for c in e.iter_causes() {
-            eprintln!("caused by: {}", c);
-        }
-
-        ::std::process::exit(1);
+        eprintln!("{:?}", e);
+        std::process::exit(1);
     }
 }
 
@@ -93,7 +89,7 @@ fn arg_format(s: &str) -> Result<ImageFormat, Error> {
         "ci" | "CI" => Ok(CI),
         "i" | "I" => Ok(I),
         "ia" | "IA" => Ok(IA),
-        _ => Err(format_err!("unknown image format {}", s)),
+        _ => Err(anyhow!("unknown image format {}", s)),
     }
 }
 
@@ -105,7 +101,7 @@ fn arg_bitdepth(s: &str) -> Result<BitDepth, Error> {
         "8" => Ok(Bit8),
         "16" => Ok(Bit16),
         "32" => Ok(Bit32),
-        _ => Err(format_err!("unknown bitdepth {}", s)),
+        _ => Err(anyhow!("unknown bitdepth {}", s)),
     }
 }
 

@@ -25,7 +25,7 @@ SHA1SUM := shasum
 
 # defer actual building to tup
 # by default, all versions are built, as that's how tup works
-all: | $(BUILD_DIRS)
+all: tools | $(BUILD_DIRS)
 	$(RUN_TUP)
 ifeq ($(COMPARE), 1) 
 	@$(SHA1SUM) -c $(subst z64,sha1,$(TARGETS))
@@ -33,6 +33,9 @@ endif
 
 clean:
 	rm -rf $(BUILD_DIRS)
+
+tools:
+	make -C tools/
 
 ## Create rules for initializing a tup variant (game version)
 ## can call `make VERSION` to build only that version
@@ -42,7 +45,7 @@ define TUPVARIANT
 $(call fmt_build_dir, $(1)):
 	$(RUN_TUP) variant $(call fmt_tup_config, $(1))
 
-$(1): |$(call fmt_build_dir, $(1))
+$(1): tools |$(call fmt_build_dir, $(1))
 	$(RUN_TUP) $(notdir $(call fmt_build_dir, $(1)))
 ifeq ($(COMPARE), 1) 
 	$(SHA1SUM) -c $(call fmt_target, $(v)).sha1 
@@ -53,7 +56,7 @@ $(foreach v, $(VERSIONS), $(eval $(call TUPVARIANT, $(v))))
 
 # maybe generate the tup rules file? to avoid double defining CC, AS, etc.?
 
-.PHONY: all clean default $(VERSIONS)
+.PHONY: all clean default tools $(VERSIONS)
 
 # Debug Print [`make print-VARIABLE`]
 print-% : ; $(info $* is a $(flavor $*) variable set to [$($*)]) @true
