@@ -13,6 +13,7 @@ glabel D_800396C0 #F3DEX boot?
 
 # F3DEX fifo 2.04H
 # F3DEX2 bin @ 0x39F20 in system.raw.bin
+#   to 0x3B2B0?
 # Audio bin after?
 glabel D_8003A320 
   .incbin "system.raw.bin", 0x39F20, 0xF4

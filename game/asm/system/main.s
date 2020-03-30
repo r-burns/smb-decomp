@@ -312,7 +312,7 @@ glabel ssb_main
   /* 001484 80000884 3C018004 */       lui $at, %hi(D_8003FB0C)
   /* 001488 80000888 AC2EFB08 */        sw $t6, %lo(D_8003FB08)($at)
   /* 00148C 8000088C AC2FFB0C */        sw $t7, %lo(D_8003FB0C)($at)
-  /* 001490 80000890 0C00E5AC */       jal set_cop0_watchlo
+  /* 001490 80000890 0C00E5AC */       jal __osSetWatchLo
   /* 001494 80000894 3C040490 */       lui $a0, 0x490
   /* 001498 80000898 0C00C894 */       jal osInitialize
   /* 00149C 8000089C 00000000 */       nop 
