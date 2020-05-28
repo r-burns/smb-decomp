@@ -389,7 +389,7 @@ glabel func_ovl36_8018D614
   /* 166C90 8018D660 3C108019 */       lui $s0, %hi(D_ovl36_8018E1D0)
   /* 166C94 8018D664 2610E1D0 */     addiu $s0, $s0, %lo(D_ovl36_8018E1D0)
   .L8018D668:
-  /* 166C98 8018D668 0C008D89 */       jal func_80023624
+  /* 166C98 8018D668 0C008D89 */       jal fatal_printf
   /* 166C9C 8018D66C 02002025 */        or $a0, $s0, $zero
   /* 166CA0 8018D670 0C028C10 */       jal func_800A3040
   /* 166CA4 8018D674 00000000 */       nop 

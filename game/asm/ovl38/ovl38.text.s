@@ -421,7 +421,7 @@ glabel func_ovl38_8018D614
   /* 168F3C 8018D6CC 3C108019 */       lui $s0, %hi(D_ovl38_8018E240)
   /* 168F40 8018D6D0 2610E240 */     addiu $s0, $s0, %lo(D_ovl38_8018E240)
   .L8018D6D4:
-  /* 168F44 8018D6D4 0C008D89 */       jal func_80023624
+  /* 168F44 8018D6D4 0C008D89 */       jal fatal_printf
   /* 168F48 8018D6D8 02002025 */        or $a0, $s0, $zero
   /* 168F4C 8018D6DC 0C028C10 */       jal func_800A3040
   /* 168F50 8018D6E0 00000000 */       nop 

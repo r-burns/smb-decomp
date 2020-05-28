@@ -2,9 +2,17 @@
 *.z64
 
 #build directores
+build/
 game/build-*/
+utils/stamps/
+utils/tarballs/
+utils/binutils-*
+utils/gcc-*
 
 # external programs
 .vscode/
+.doit.db
+__pycache__/
 
-
+# os
+.DS_STORE

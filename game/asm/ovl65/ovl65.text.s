@@ -256,7 +256,7 @@ glabel func_ovl65_8018D3D8
   /* 10BC70 8018D410 02002025 */        or $a0, $s0, $zero
   /* 10BC74 8018D414 02202025 */        or $a0, $s1, $zero
   /* 10BC78 8018D418 02002825 */        or $a1, $s0, $zero
-  /* 10BC7C 8018D41C 0C008D89 */       jal func_80023624
+  /* 10BC7C 8018D41C 0C008D89 */       jal fatal_printf
   /* 10BC80 8018D420 00403025 */        or $a2, $v0, $zero
   /* 10BC84 8018D424 0C028C10 */       jal func_800A3040
   /* 10BC88 8018D428 00000000 */       nop 
@@ -293,7 +293,7 @@ glabel func_ovl65_8018D45C
   /* 10BCF4 8018D494 26102E38 */     addiu $s0, $s0, %lo(D_ovl65_80192E38)
   /* 10BCF8 8018D498 02002025 */        or $a0, $s0, $zero
   .L8018D49C:
-  /* 10BCFC 8018D49C 0C008D89 */       jal func_80023624
+  /* 10BCFC 8018D49C 0C008D89 */       jal fatal_printf
   /* 10BD00 8018D4A0 02202825 */        or $a1, $s1, $zero
   /* 10BD04 8018D4A4 0C028C10 */       jal func_800A3040
   /* 10BD08 8018D4A8 00000000 */       nop 

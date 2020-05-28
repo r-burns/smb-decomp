@@ -1,0 +1,63 @@
+.include "macros.inc"
+
+.section .bss
+
+# main.bss
+glabel D_8003FAD0
+    .space 56
+glabel D_8003FB08
+    .space 4
+glabel D_8003FB0C
+    .space 452
+glabel D_8003FCD0
+    .space 488
+glabel D_8003FEB8
+    .space 4
+glabel D_8003FEBC
+    .space 196
+glabel D_8003FF80
+    .space 160
+glabel D_80040020
+    .space 32
+glabel D_80040040
+    .space 296
+glabel D_80040168
+    .space 4
+glabel D_8004016C
+    .space 964
+glabel D_80040530
+    .space 488
+glabel D_80040718
+    .space 4
+glabel D_8004071C
+    .space 1476
+glabel D_80040CE0
+    .space 432
+glabel D_80040E90
+    .space 56
+glabel D_80040EC8
+    .space 4
+glabel D_80040ECC
+    .space 13252
+glabel D_80044290
+    .space 488
+glabel D_80044478
+    .space 4
+glabel D_8004447C
+    .space 1988
+glabel D_80044C40
+    .space 256
+glabel D_80044D40
+    .space 1
+glabel D_80044D41
+    .space 3
+glabel D_80044D44
+    .space 4
+glabel D_80044D48
+    .space 24
+glabel D_80044D60
+    .space 200
+glabel D_80044E28
+    .space 24
+glabel D_80044E40
+    .space 128

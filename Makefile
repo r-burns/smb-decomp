@@ -34,6 +34,10 @@ endif
 clean:
 	rm -rf $(BUILD_DIRS)
 
+superclean: clean
+	make -C tools/ superclean
+	rm -rf $(TUP_DIR)/.tup
+
 tools:
 	make -C tools/
 
