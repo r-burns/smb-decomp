@@ -1,3 +1,0 @@
-include_rules
-
-: foreach *.s |> !as |> | ../<asm_objs>

@@ -1,8 +1,0 @@
-include_rules
-
-# Temporarily convert and pack raw binary resource files
-: foreach tempbins/files/* |> !tempres2o |> | <resbins>
-: tempbins/templink.ld | <resbins> |> $(LD) -T %f -r -o %o %<resbins> |> resourcefiles.o | ../<resources>
-
-# Temporarily convert the file table and packed files into objects
-: foreach tempbins/*.bin |> !tempbin2o |> | ../<resources>

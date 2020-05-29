@@ -1,4 +1,0 @@
-include_rules
-
-# Temporarily convert the unstructured binaries into objects for linking
-: foreach tempbins/* |> !tempaudio2o |> | ../<audio_objs>

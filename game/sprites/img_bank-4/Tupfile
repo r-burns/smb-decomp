@@ -1,7 +1,0 @@
-include_rules
-
-# specific file for generating the image bank object
-# have to use this overide the *.toml rule for each entry in the bank
-
-: *.toml |> !genlink |> {script}
-: {script} |> !linkbank |>

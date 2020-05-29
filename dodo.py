@@ -5,21 +5,24 @@ import sys
 
 sys.path.append('utils')
 from doit_parsemk import parse_mk_dependencies
+from doit_toolchain import ToolChain
 
 DOIT_CONFIG = {'default_tasks': ['compare'], 'reporter': 'executed-only'}
 
 config = {
-    'cc': get_var('CC', 'ido'),
-    'qemu': get_var('QEMU_IRIX', 'qemu-irix'),
+    'tc': get_var('TOOLCHAIN', 'ido'),
+    'qemu': get_var('QEMU_IRIX', None),
     'version': get_var('VERSION', 'us'),
-    'matching': get_var('MATCHING', True),
+    'no-match': get_var('NON_MATCHING', False),
     'avoid_ub': get_var('AVOID_UB', False),
 }
 
-if config['cc'] == 'ido':
+tc = ToolChain(config)
+
+if config['tc'] == 'ido':
     version = config['version']
 else:
-    version = config['version'] + "-" + config['cc']
+    version = config['version'] + "-" + config['tc']
 
 # Helper Functions (make module)
 def append_suffix(src, ext):
@@ -72,29 +75,6 @@ rust_tools = [n64gfx, imgbank]
 rust_dir = tool_dir / 'rust'
 rust_manifest = rust_dir / 'Cargo.toml'
 rust_output_dir = rust_dir / 'target' / 'release'
-
-# Setup toolchain (also turn into a module)
-cross = 'mips64-elf-' # todo: check for mips-linux-gnu-
-# probably turn into a ToolChain class 
-if config['cc'] == "ido":
-    tc = {
-        'cc': [config['qemu'], '-silent', '-L', ido7_1, (ido7_1 / 'usr' / 'bin' / 'cc'), '-c'],
-        'cc_flags': ['-G', '0', '-non_shared', '-Xfullwarn', '-Xcpluscomm'],
-        'mips_ver': ['-mips2'],
-        'as': f"{cross}as",
-        'as_flags': ["-march=vr4300", "-mabi=32"],
-        'ld': f"{cross}ld",
-        'cpp': f"{cross}cpp",
-        'objcopy': f"{cross}objcopy",
-    }
-elif config['cc'] == "gcc":
-    tc = {
-        'cc': f"{cross}gcc",
-        'as': f"{cross}as",
-        'ld': f"{cross}ld",
-    }
-else:
-    raise Exception(f"Unsupported toolchain \"{config['cc']}\"")
 
 
 def task_tools():
@@ -190,24 +170,13 @@ def task_build_rom():
     """
     
 
-    link_rom = [
-        tc['ld'], 
-        '--no-check-sections',
-        '-Map', rom_map,
-        '-T', ssb_lds,
-        '-T'] + \
-        unk_symbols + \
-        ['-o', rom_elf,
-        '-L', build_dir ]
+    link_rom = tc.LD                                                      \
+        + ['--no-check-sections', '-Map', rom_map, '-T', ssb_lds, '-T', ] \
+        + unk_symbols                                                     \
+        + ['-o', rom_elf, '-L', build_dir]
     
-    copy_rom = [
-        tc['objcopy'], 
-        '--pad-to=0x1000000',
-        '--gap-fill=0xFF',
-        '-O', 'binary',
-        rom_elf,
-        rom
-    ]
+    copy_rom = tc.OBJCOPY \
+        + ['--pad-to=0x1000000', '--gap-fill=0xFF', '-O', 'binary', rom_elf, rom]
 
     return { 
         'actions': [link_rom, copy_rom],
@@ -227,7 +196,7 @@ def task_preproc_ldscript():
     ''' Run C preprocessor on game ldscript '''
     return {
         'actions': [
-            [tc['cpp'], '-P', '-o', ssb_lds, ssb_lds_in]
+            tc.CPP + ['-P', '-o', ssb_lds, ssb_lds_in]
         ],
         'file_dep': [ssb_lds_in],
         'targets': [ssb_lds],
@@ -245,12 +214,11 @@ def task_assemble():
         else:
             deps = found_deps[o]
 
+        invoke_as = tc.invoke_as([inc_dir, asm_dir, f.parent])
+
         yield {
             'name': o,
-            'actions': [ 
-                [ tc['as'] ]
-                + tc['as_flags']
-                + [
+            'actions': [ invoke_as + [
                     '-I', inc_dir,
                     '-I', asm_dir,
                     '-I', f.parent,
@@ -266,8 +234,9 @@ def task_assemble():
 def task_cc():
     ''' Compile .c files into .o '''
 
-    invoke_cc = tc['cc'] + tc['cc_flags'] + tc['mips_ver'] + ['-O2', '-I', inc_dir, '-I', c_dir]
-
+    #invoke_cc = tc['cc'] + tc['cc_flags'] + tc['mips_ver'] + ['-O2', '-I', inc_dir, '-I', c_dir]
+    invoke_cc = tc.invoke_cc([inc_dir, c_dir])
+    #invoke_check = tc.invoke_cc_check([inc_dir, c_dir])
     for f, o in zip(c_files, c_objs):
         d = o.with_suffix('.d')
         found_deps = parse_mk_dependencies(d)
@@ -278,7 +247,10 @@ def task_cc():
         
         yield {
             'name': o,
-            'actions': [invoke_cc + ['-o', o, f]],
+            'actions': [
+                tc.invoke_cc_check([inc_dir, c_dir], f, o, d),
+                invoke_cc + ['-o', o, f]
+            ],
             'file_dep': deps,
             'targets': [o, d],
         }
@@ -298,7 +270,7 @@ def task_link_resources():
     return {
         # $(LD) -T %f -r -o %o %<resbins> 
         'actions': [
-            [tc['ld'], '-T', res_link, '-r', '-o', res_archive] + res_tempbins_o
+            tc.LD + ['-T', res_link, '-r', '-o', res_archive] + res_tempbins_o
         ],
         'file_dep': [res_link] + res_tempbins_o,
         'targets': [res_archive]
@@ -394,17 +366,11 @@ def task_assemble_sprite_bank_entry():
         else:
             deps = found_deps[o]
 
+        invoke_as = tc.invoke_as([s.parent])
         yield {
             'name': o,
             'actions': [                
-                [ tc['as'] ]
-                + tc['as_flags']
-                + [
-                    '-I', s.parent,
-                    '--MD', d,
-                    '-o', o,
-                    s,
-                ]
+                invoke_as + ['--MD', d, '-o', o, s]
             ],
             'file_dep': deps,
             'task_dep': ['convert_sprite_pngs'],
@@ -440,7 +406,7 @@ def task_link_sprite_bank():
         # no relink (want symbols to be resolved)
         yield {
             'name': o,
-            'actions': [[tc['ld'], '-d', '-T', lds, '-L', obj_dir, '-o', o]],
+            'actions': [tc.LD + ['-d', '-T', lds, '-L', obj_dir, '-o', o]],
             'file_dep': [lds] + bank_objs,
             'targets': [o],
         }    
@@ -468,7 +434,7 @@ def task_temp_bin_obj():
         converted to real source files
     '''
 
-    invoke_ld = [tc['ld'], '-r', '-b', 'binary', '-o']
+    invoke_ld = tc.LD + ['-r', '-b', 'binary', '-o']
 
     for b, o in zip(temp_audio_bins, temp_audio_o):
         yield {

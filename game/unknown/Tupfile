@@ -1,5 +1,0 @@
-include_rules
-# What are these files? code? us version specific files?
-
-# Temporarily convert these unknown files. 
-: foreach tempbins/*.bin |> !tempbin2o |> | ../<unknowns>
