@@ -20,10 +20,10 @@ glabel entry
         bnez $t1, .LzeroNoLoad
         addi $t0, $t0, 8
          lui $t2, %hi(ssb_main)
-         lui $sp, %hi(D_8003FCD0)
+         lui $sp, %hi(sThread1)
        addiu $t2, $t2, %lo(ssb_main)
           jr $t2
-       addiu $sp, $sp, %lo(D_8003FCD0)
+       addiu $sp, $sp, %lo(sThread1)
          nop 
          nop 
          nop 

@@ -40,15 +40,14 @@ SECTIONS
     _systemSegNoloadSizeHi = SIZEOF(.system.noload) >> 16;
     _systemSegNoloadSizeLo = SIZEOF(.system.noload) & 0xFFFF;
 
-    BEGIN_SEG(system, 0x80000400) 
+    BEGIN_SEG(system, 0x80000400)
     {
         asm/system/entry.o(.text);
         src/sys/main.o(.text);
-        asm/system/main.o(.text);
         asm/system/system.text.o(.text);
         asm/system/rsp.o(.text);
 
-        asm/system/main.data.o(.data);
+        src/sys/main.o(.data);
         asm/system/system.data.o(.data);
         src/sys/main.o(.rodata);
         asm/system/system.rodata.o(.rodata);
@@ -57,7 +56,7 @@ SECTIONS
     END_SEG(system)
     BEGIN_NOLOAD(system)
     {
-        asm/system/main.bss.o(.bss);
+        src/sys/main.o(.bss);
         asm/system/system.bss.o(.bss);
         /* Entry code assumes 8-byte aligned bss section */
         . = ALIGN(8);
@@ -66,7 +65,9 @@ SECTIONS
     
     BEGIN_SEG(loadovl, 0x800A1980)
     {
+        _loadovlTextStart = ABSOLUTE(.);
         asm/loadovl/loadovl.text.o(.text);
+        _loadovlDataStart = ABSOLUTE(.);
         asm/loadovl/loadovl.data.o(.data);
     }
     END_SEG(loadovl)

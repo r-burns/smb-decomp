@@ -234,9 +234,8 @@ def task_assemble():
 def task_cc():
     ''' Compile .c files into .o '''
 
-    #invoke_cc = tc['cc'] + tc['cc_flags'] + tc['mips_ver'] + ['-O2', '-I', inc_dir, '-I', c_dir]
     invoke_cc = tc.invoke_cc([inc_dir, c_dir])
-    #invoke_check = tc.invoke_cc_check([inc_dir, c_dir])
+    
     for f, o in zip(c_files, c_objs):
         d = o.with_suffix('.d')
         found_deps = parse_mk_dependencies(d)

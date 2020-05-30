@@ -84,7 +84,7 @@ glabel D_80045034
     .space 1
 glabel D_80045035
     .space 11
-glabel D_80045040
+glabel gPiHandle
     .space 8
 glabel D_80045048
     .space 20

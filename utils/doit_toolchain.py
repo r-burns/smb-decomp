@@ -5,6 +5,7 @@ import sys
 
 tool_dir = Path('tools')
 ido5_3 = tool_dir / 'ido5.3'
+ido5_3_cc = ido5_3 / 'usr' / 'bin' / 'cc'
 ido7_1 = tool_dir / 'ido7.1'
 ido7_1_cc = ido7_1 / 'usr' / 'bin' / 'cc'
 
@@ -78,7 +79,7 @@ class ToolChain:
         if possible_tc == 'ido':
             qemu = _find_qemu_irix(config['qemu'])
             self.CC = [qemu, '-silent', '-L', ido7_1, ido7_1_cc, '-c']
-            self.CFLAGS = ['-Wab,-r4300_mul', '-G', '0', '-non_shared', 
+            self.CFLAGS = ['-Wab,-r4300_mul', '-G', '0', '-non_shared',
                 '-Xfullwarn', '-Xcpluscomm', '-signed']
             self.CC_ALT = {
                 'ido7.1': {
@@ -86,8 +87,8 @@ class ToolChain:
                     'flags': self.CFLAGS,
                 },
                 'ido5.3':{
-                    'cc':None,
-                    'flags':None,
+                    'cc': None,
+                    'flags': None,
                 },
             }
         elif possible_tc == 'gcc':
@@ -115,5 +116,6 @@ class ToolChain:
     
     def invoke_cc_check(self, includes, input, output, depfile):
         incs = list(_append_intersperse(includes, '-I'))
-        return self.CC_CHECK + incs + self.C_DEFINES + ['-MMD', '-MP', '-MT', output, '-MF', depfile, input]
+        outputs = ['-MMD', '-MP', '-MT', output, '-MF', depfile, input]
+        return self.CC_CHECK + incs + self.C_DEFINES + outputs
             

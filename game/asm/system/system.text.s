@@ -2307,8 +2307,8 @@ glabel thread3_scheduler
   /* 0034B8 800028B8 02402825 */        or $a1, $s2, $zero
   /* 0034BC 800028BC 0C00CD28 */       jal osSetEventMesg
   /* 0034C0 800028C0 24060063 */     addiu $a2, $zero, 0x63
-  /* 0034C4 800028C4 3C048004 */       lui $a0, %hi(D_80044D48)
-  /* 0034C8 800028C8 24844D48 */     addiu $a0, $a0, %lo(D_80044D48)
+  /* 0034C4 800028C4 3C048004 */       lui $a0, %hi(gThreadingQueue)
+  /* 0034C8 800028C8 24844D48 */     addiu $a0, $a0, %lo(gThreadingQueue)
   /* 0034CC 800028CC 24050001 */     addiu $a1, $zero, 1
   /* 0034D0 800028D0 0C00C000 */       jal osSendMesg
   /* 0034D4 800028D4 00003025 */        or $a2, $zero, $zero
@@ -2563,14 +2563,14 @@ glabel load_overlay
   /* 003844 80002C44 8E050000 */        lw $a1, ($s0)
   .L80002C48:
   /* 003848 80002C48 8E190004 */        lw $t9, 4($s0)
-  /* 00384C 80002C4C 3C048004 */       lui $a0, %hi(D_80045040)
+  /* 00384C 80002C4C 3C048004 */       lui $a0, %hi(gPiHandle)
   /* 003850 80002C50 03253823 */      subu $a3, $t9, $a1
   /* 003854 80002C54 50E00006 */      beql $a3, $zero, .L80002C70
   /* 003858 80002C58 8E02001C */        lw $v0, 0x1c($s0)
   /* 00385C 80002C5C 8E060008 */        lw $a2, 8($s0)
   /* 003860 80002C60 AFA00010 */        sw $zero, 0x10($sp)
   /* 003864 80002C64 0C000AA4 */       jal ssb_data_dma
-  /* 003868 80002C68 8C845040 */        lw $a0, %lo(D_80045040)($a0)
+  /* 003868 80002C68 8C845040 */        lw $a0, %lo(gPiHandle)($a0)
   /* 00386C 80002C6C 8E02001C */        lw $v0, 0x1c($s0)
   .L80002C70:
   /* 003870 80002C70 8E080020 */        lw $t0, 0x20($s0)
@@ -2594,9 +2594,9 @@ glabel ssb_rom_copy_no_writeback
   /* 0038AC 80002CAC AFA40020 */        sw $a0, 0x20($sp)
   /* 0038B0 80002CB0 AFBF001C */        sw $ra, 0x1c($sp)
   /* 0038B4 80002CB4 00C03825 */        or $a3, $a2, $zero
-  /* 0038B8 80002CB8 3C048004 */       lui $a0, %hi(D_80045040)
+  /* 0038B8 80002CB8 3C048004 */       lui $a0, %hi(gPiHandle)
   /* 0038BC 80002CBC 8FA60024 */        lw $a2, 0x24($sp)
-  /* 0038C0 80002CC0 8C845040 */        lw $a0, %lo(D_80045040)($a0)
+  /* 0038C0 80002CC0 8C845040 */        lw $a0, %lo(gPiHandle)($a0)
   /* 0038C4 80002CC4 0C000AA4 */       jal ssb_data_dma
   /* 0038C8 80002CC8 AFA00010 */        sw $zero, 0x10($sp)
   /* 0038CC 80002CCC 8FBF001C */        lw $ra, 0x1c($sp)
@@ -2610,11 +2610,11 @@ glabel ssb_rom_copy_writeback
   /* 0038E4 80002CE4 00803025 */        or $a2, $a0, $zero
   /* 0038E8 80002CE8 AFA40020 */        sw $a0, 0x20($sp)
   /* 0038EC 80002CEC AFBF001C */        sw $ra, 0x1c($sp)
-  /* 0038F0 80002CF0 3C048004 */       lui $a0, %hi(D_80045040)
+  /* 0038F0 80002CF0 3C048004 */       lui $a0, %hi(gPiHandle)
   /* 0038F4 80002CF4 240E0001 */     addiu $t6, $zero, 1
   /* 0038F8 80002CF8 AFAE0010 */        sw $t6, 0x10($sp)
   /* 0038FC 80002CFC 0C000AA4 */       jal ssb_data_dma
-  /* 003900 80002D00 8C845040 */        lw $a0, %lo(D_80045040)($a0)
+  /* 003900 80002D00 8C845040 */        lw $a0, %lo(gPiHandle)($a0)
   /* 003904 80002D04 8FBF001C */        lw $ra, 0x1c($sp)
   /* 003908 80002D08 27BD0020 */     addiu $sp, $sp, 0x20
   /* 00390C 80002D0C 03E00008 */        jr $ra
@@ -4521,8 +4521,8 @@ glabel thread6
   /* 0053B4 800047B4 02C02825 */        or $a1, $s6, $zero
   /* 0053B8 800047B8 0C000276 */       jal func_800009D8
   /* 0053BC 800047BC 24070007 */     addiu $a3, $zero, 7
-  /* 0053C0 800047C0 3C048004 */       lui $a0, %hi(D_80044D48)
-  /* 0053C4 800047C4 24844D48 */     addiu $a0, $a0, %lo(D_80044D48)
+  /* 0053C0 800047C0 3C048004 */       lui $a0, %hi(gThreadingQueue)
+  /* 0053C4 800047C4 24844D48 */     addiu $a0, $a0, %lo(gThreadingQueue)
   /* 0053C8 800047C8 24050001 */     addiu $a1, $zero, 1
   /* 0053CC 800047CC 0C00C000 */       jal osSendMesg
   /* 0053D0 800047D0 00003025 */        or $a2, $zero, $zero
@@ -34026,10 +34026,10 @@ glabel func_8001E91C
   /* 01F544 8001E944 8FB90038 */        lw $t9, 0x38($sp)
   /* 01F548 8001E948 3C0E800A */       lui $t6, %hi(D_8009D328)
   /* 01F54C 8001E94C 25CED328 */     addiu $t6, $t6, %lo(D_8009D328)
-  /* 01F550 8001E950 3C048004 */       lui $a0, %hi(D_80045040)
+  /* 01F550 8001E950 3C048004 */       lui $a0, %hi(gPiHandle)
   /* 01F554 8001E954 A3A0001A */        sb $zero, 0x1a($sp)
   /* 01F558 8001E958 AFAE001C */        sw $t6, 0x1c($sp)
-  /* 01F55C 8001E95C 8C845040 */        lw $a0, %lo(D_80045040)($a0)
+  /* 01F55C 8001E95C 8C845040 */        lw $a0, %lo(gPiHandle)($a0)
   /* 01F560 8001E960 27A50018 */     addiu $a1, $sp, 0x18
   /* 01F564 8001E964 00003025 */        or $a2, $zero, $zero
   /* 01F568 8001E968 AFAF0020 */        sw $t7, 0x20($sp)
@@ -34108,10 +34108,10 @@ glabel func_8001E99C
   /* 01F678 8001EA78 ACB0000C */        sw $s0, 0xc($a1)
   /* 01F67C 8001EA7C ACAB0008 */        sw $t3, 8($a1)
   /* 01F680 8001EA80 8C580010 */        lw $t8, 0x10($v0)
-  /* 01F684 8001EA84 3C048004 */       lui $a0, %hi(D_80045040)
+  /* 01F684 8001EA84 3C048004 */       lui $a0, %hi(gPiHandle)
   /* 01F688 8001EA88 25390001 */     addiu $t9, $t1, 1
   /* 01F68C 8001EA8C ACB80010 */        sw $t8, 0x10($a1)
-  /* 01F690 8001EA90 8C845040 */        lw $a0, %lo(D_80045040)($a0)
+  /* 01F690 8001EA90 8C845040 */        lw $a0, %lo(gPiHandle)($a0)
   /* 01F694 8001EA94 24420008 */     addiu $v0, $v0, 8
   /* 01F698 8001EA98 AD590000 */        sw $t9, ($t2) # D_8003CB20 + 0
   /* 01F69C 8001EA9C 00003025 */        or $a2, $zero, $zero
@@ -35603,8 +35603,8 @@ glabel func_80020000
   /* 020C34 80020034 AD4DFFFC */        sw $t5, -4($t2) # D_8003CB3C + -4
   /* 020C38 80020038 8D6D0000 */        lw $t5, ($t3) # D_8009D988 + 0
   /* 020C3C 8002003C 8D6C0004 */        lw $t4, 4($t3) # D_8009D988 + 4
-  /* 020C40 80020040 3C048004 */       lui $a0, %hi(D_80044D48)
-  /* 020C44 80020044 24844D48 */     addiu $a0, $a0, %lo(D_80044D48)
+  /* 020C40 80020040 3C048004 */       lui $a0, %hi(gThreadingQueue)
+  /* 020C44 80020044 24844D48 */     addiu $a0, $a0, %lo(gThreadingQueue)
   /* 020C48 80020048 24050001 */     addiu $a1, $zero, 1
   /* 020C4C 8002004C 00003025 */        or $a2, $zero, $zero
   /* 020C50 80020050 AD4D0000 */        sw $t5, ($t2) # D_8003CB3C + 0
@@ -36147,12 +36147,12 @@ glabel func_80020800
   /* 021428 80020828 8D0E0000 */        lw $t6, ($t0) # D_8009D988 + 0
   /* 02142C 8002082C 8D190004 */        lw $t9, 4($t0) # D_8009D988 + 4
   /* 021430 80020830 3C018004 */       lui $at, %hi(D_8003CB1C)
-  /* 021434 80020834 3C048004 */       lui $a0, %hi(D_80044D48)
+  /* 021434 80020834 3C048004 */       lui $a0, %hi(gThreadingQueue)
   /* 021438 80020838 ADEE0000 */        sw $t6, ($t7) # D_8003CB3C + 0
   /* 02143C 8002083C ADF90004 */        sw $t9, 4($t7) # D_8003CB3C + 4
   /* 021440 80020840 AC20CB1C */        sw $zero, %lo(D_8003CB1C)($at)
   /* 021444 80020844 AFA00078 */        sw $zero, 0x78($sp)
-  /* 021448 80020848 24844D48 */     addiu $a0, $a0, %lo(D_80044D48)
+  /* 021448 80020848 24844D48 */     addiu $a0, $a0, %lo(gThreadingQueue)
   /* 02144C 8002084C 24050001 */     addiu $a1, $zero, 1
   /* 021450 80020850 0C00C000 */       jal osSendMesg
   /* 021454 80020854 00003025 */        or $a2, $zero, $zero
@@ -36758,16 +36758,16 @@ glabel func_80021048
 
   /* 021C6C 8002106C 27BDFFE8 */     addiu $sp, $sp, -0x18
   /* 021C70 80021070 AFBF0014 */        sw $ra, 0x14($sp)
-  /* 021C74 80021074 3C048004 */       lui $a0, %hi(D_80044D48)
-  /* 021C78 80021078 24844D48 */     addiu $a0, $a0, %lo(D_80044D48)
+  /* 021C74 80021074 3C048004 */       lui $a0, %hi(gThreadingQueue)
+  /* 021C78 80021078 24844D48 */     addiu $a0, $a0, %lo(gThreadingQueue)
   /* 021C7C 8002107C 00002825 */        or $a1, $zero, $zero
   /* 021C80 80021080 0C00C084 */       jal osRecvMesg
   /* 021C84 80021084 00003025 */        or $a2, $zero, $zero
   /* 021C88 80021088 240E0001 */     addiu $t6, $zero, 1
   /* 021C8C 8002108C 3C018004 */       lui $at, %hi(D_8003CB1C)
-  /* 021C90 80021090 3C048004 */       lui $a0, %hi(D_80044D48)
+  /* 021C90 80021090 3C048004 */       lui $a0, %hi(gThreadingQueue)
   /* 021C94 80021094 AC2ECB1C */        sw $t6, %lo(D_8003CB1C)($at)
-  /* 021C98 80021098 24844D48 */     addiu $a0, $a0, %lo(D_80044D48)
+  /* 021C98 80021098 24844D48 */     addiu $a0, $a0, %lo(gThreadingQueue)
   /* 021C9C 8002109C 00002825 */        or $a1, $zero, $zero
   /* 021CA0 800210A0 0C00C084 */       jal osRecvMesg
   /* 021CA4 800210A4 24060001 */     addiu $a2, $zero, 1
@@ -39299,8 +39299,8 @@ glabel fileloader_thread8_crash
   /* 0240E8 800234E8 24040404 */     addiu $a0, $zero, 0x404
   /* 0240EC 800234EC 0C008A42 */       jal func_80022908
   /* 0240F0 800234F0 00002825 */        or $a1, $zero, $zero
-  /* 0240F4 800234F4 3C048004 */       lui $a0, %hi(D_80040CE0)
-  /* 0240F8 800234F8 24840CE0 */     addiu $a0, $a0, %lo(D_80040CE0)
+  /* 0240F4 800234F4 3C048004 */       lui $a0, %hi(sThread5)
+  /* 0240F8 800234F8 24840CE0 */     addiu $a0, $a0, %lo(sThread5)
   /* 0240FC 800234FC 0C008A61 */       jal func_80022984
   /* 024100 80023500 24050001 */     addiu $a1, $zero, 1
   /* 024104 80023504 8E6F0000 */        lw $t7, ($s3) # D_8009E3D8 + 0
