@@ -12,7 +12,7 @@
 void __osSetWatchLo(s32);
 
 #define STACK_PROBE_MAGIC 0xFEDCBA98
-// size of stack in u64 (8 byte)
+// size of stack in double words (u64, 8 bytes)
 #define THREAD0_STACK_SIZE 57
 #define THREAD1_STACK_SIZE 25
 #define THREAD3_STACK_SIZE 121
@@ -64,7 +64,7 @@ u64 sThread4Stack[THREAD4_STACK_SIZE];
 OSThread sThread5;
 u8 sUkn80040E90[56];
 u64 sThread5Stack[THREAD5_STACK_SIZE];
-OSThread sThread6; //thread 6
+OSThread sThread6;
 u8 sUnref8004440[56];
 u64 sThread6Stack[THREAD6_STACK_SIZE];
 u64 D_80044C40[0x20]; //IP3 font?

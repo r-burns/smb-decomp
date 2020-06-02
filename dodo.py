@@ -2,6 +2,7 @@ from doit import get_var
 from pathlib import Path
 import subprocess
 import sys
+import shutil
 
 sys.path.append('utils')
 from doit_parsemk import parse_mk_dependencies
@@ -80,20 +81,6 @@ rust_output_dir = rust_dir / 'target' / 'release'
 def task_tools():
     ''' Compile all tooling required for building the ROM '''
 
-    class checkRustUpToDate:
-        def __init__(self, bin_path):
-            self.path = bin_path
-            self.mtime = bin_path.stat().st_mtime
-        
-        def __call__(self, task, values):
-            def save_mtime():
-                return {'mtime': self.mtime}
-            task.value_savers.append(save_mtime)
-            prev_mtime = values.get('mtime', None)
-            if prev_mtime is None:
-                return False
-            return self.path.stat().st_mtime <= prev_mtime
-
     for prog in rust_tools:
         prog_name = prog.name
         cargo_out = rust_output_dir.joinpath(prog_name)
@@ -103,9 +90,9 @@ def task_tools():
             'actions': [
                 ['cp', cargo_out, prog],
             ],
+            'file_dep': [cargo_out],
             'task_dep': [f'run_cargo:{prog_name}'],
             'targets': [prog],
-            'uptodate': [checkRustUpToDate(cargo_out)]
         }
 
 
@@ -168,8 +155,7 @@ def task_build_rom():
     MATCHING => {True, False}
     AVOID_UB => {True, False}
     """
-    
-
+ 
     link_rom = tc.LD                                                      \
         + ['--no-check-sections', '-Map', rom_map, '-T', ssb_lds, '-T', ] \
         + unk_symbols                                                     \
@@ -180,7 +166,7 @@ def task_build_rom():
 
     return { 
         'actions': [link_rom, copy_rom],
-        'file_dep': [ssb_lds] + unk_symbols + c_objs + s_objs,
+        'file_dep': [ssb_lds] + unk_symbols + c_objs + s_objs + temp_objs,
         'task_dep': [
             'assemble',
             'cc', 
@@ -189,10 +175,10 @@ def task_build_rom():
             'temp_bin_obj'
         ],
         'targets': [rom_elf, rom_map, rom],
-        'clean': True,
+        'clean': [f'rm -rf {build_base}'],
     }
 
-def task_preproc_ldscript():
+def task_preprocess_ldscript():
     ''' Run C preprocessor on game ldscript '''
     return {
         'actions': [
@@ -272,7 +258,7 @@ def task_link_resources():
             tc.LD + ['-T', res_link, '-r', '-o', res_archive] + res_tempbins_o
         ],
         'file_dep': [res_link] + res_tempbins_o,
-        'targets': [res_archive]
+        'targets': [res_archive],
     }
 
 
@@ -312,7 +298,7 @@ def gfx_encode_cmd(f, o):
     elif fmt == 'i4':
         cmd.extend(['-f', 'i', '-d', '4', '-o', o])
     else:
-        raise Exception(f"Unknown image format '{fmt}' (from file: s)")
+        raise Exception(f"Unknown image format '{fmt}' (from file: {f})")
     
     return (cmd, out)
 
@@ -331,7 +317,6 @@ def task_convert_sprite_pngs():
             'name': o,
             'actions': [invocation],
             'file_dep': [f, n64gfx],
-            #'task_dep': ['tools:n64gfx'],
             'targets': outs,
         }
 
@@ -408,7 +393,7 @@ def task_link_sprite_bank():
             'actions': [tc.LD + ['-d', '-T', lds, '-L', obj_dir, '-o', o]],
             'file_dep': [lds] + bank_objs,
             'targets': [o],
-        }    
+        }
 
 temp_sprbank_bins = list(sprite_dir.glob('tempbins/*'))
 temp_sprbank_o = list(
@@ -420,12 +405,14 @@ temp_audio_bins = list(base_dir.glob('audio/tempbins/*'))
 temp_audio_o = list(map(lambda b: to_output_path(up_one_dir(b), '.o', True), temp_audio_bins))
 
 # Temporary .bin handling
-
 temp_unk_bins = list(base_dir.glob('unknown/tempbins/*'))
 temp_unk_o = list(
     map(lambda b: to_output_path(b, '.o'),
     map(up_one_dir, temp_unk_bins))
 )
+
+# all temporary objects
+temp_objs = temp_sprbank_o + temp_audio_o + temp_unk_o
 
 def task_temp_bin_obj():
     ''' Convert a raw binary to a linkable .o file 
@@ -461,7 +448,7 @@ def task_temp_bin_obj():
             invoke_ld + [res_table_o, res_table],
         ],
         'file_dep': [res_table],
-        'targets': [res_table_o]
+        'targets': [res_table_o],
     }
 
     for b, o in zip(temp_sprbank_bins, temp_sprbank_o):

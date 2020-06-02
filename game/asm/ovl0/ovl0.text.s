@@ -7507,6 +7507,7 @@ glabel func_ovl0_800CE418
   /* 049EBC 800CE4DC 03E00008 */        jr $ra
   /* 049EC0 800CE4E0 27BD0020 */     addiu $sp, $sp, 0x20
 
+# render sprite bank sprite?
 glabel func_ovl0_800CE4E4
   /* 049EC4 800CE4E4 3C08800D */       lui $t0, %hi(D_ovl0_800D6350)
   /* 049EC8 800CE4E8 25086350 */     addiu $t0, $t0, %lo(D_ovl0_800D6350)

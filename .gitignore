@@ -13,6 +13,7 @@ utils/gcc-*
 .vscode/
 .doit.db
 __pycache__/
+*.pyc
 
 # os
 .DS_STORE

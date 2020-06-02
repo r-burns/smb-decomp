@@ -80,7 +80,7 @@ class ToolChain:
             qemu = _find_qemu_irix(config['qemu'])
             self.CC = [qemu, '-silent', '-L', ido7_1, ido7_1_cc, '-c']
             self.CFLAGS = ['-Wab,-r4300_mul', '-G', '0', '-non_shared',
-                '-Xfullwarn', '-Xcpluscomm', '-signed']
+                '-Xfullwarn', '-Xcpluscomm', '-signed', '-32']
             self.CC_ALT = {
                 'ido7.1': {
                     'cc': self.CC,

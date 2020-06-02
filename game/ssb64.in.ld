@@ -45,12 +45,15 @@ SECTIONS
         asm/system/entry.o(.text);
         src/sys/main.o(.text);
         asm/system/system.text.o(.text);
+        asm/system/libultra.text.o(.text);
         asm/system/rsp.o(.text);
 
         src/sys/main.o(.data);
         asm/system/system.data.o(.data);
+        asm/system/libultra.data.o(.data);
         src/sys/main.o(.rodata);
         asm/system/system.rodata.o(.rodata);
+        asm/system/libultra.rodata.o(.rodata);
         asm/system/rsp.o(.rodata);
     }
     END_SEG(system)
@@ -58,6 +61,7 @@ SECTIONS
     {
         src/sys/main.o(.bss);
         asm/system/system.bss.o(.bss);
+        asm/system/libultra.bss.o(.bss);
         /* Entry code assumes 8-byte aligned bss section */
         . = ALIGN(8);
     }
