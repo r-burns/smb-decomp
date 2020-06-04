@@ -7638,6 +7638,7 @@ glabel func_ovl0_800CE4E4
   /* 04A090 800CE6B0 03E00008 */        jr $ra
   /* 04A094 800CE6B4 00000000 */       nop 
 
+# copy sprite bank struct onto stack
 glabel func_ovl0_800CE6B8
   /* 04A098 800CE6B8 30A20007 */      andi $v0, $a1, 7
   /* 04A09C 800CE6BC 27BDFFB0 */     addiu $sp, $sp, -0x50
@@ -8237,6 +8238,7 @@ glabel func_ovl0_800CEEB8
   /* 04A924 800CEF44 03E00008 */        jr $ra
   /* 04A928 800CEF48 00000000 */       nop 
 
+# read sprite bank commands? byte code?
 glabel func_ovl0_800CEF4C
   /* 04A92C 800CEF4C 27BDFF58 */     addiu $sp, $sp, -0xa8
   /* 04A930 800CEF50 AFBF0024 */        sw $ra, 0x24($sp)
@@ -13125,6 +13127,7 @@ glabel func_ovl0_800D353C
   /* 04EFB4 800D35D4 03E00008 */        jr $ra
   /* 04EFB8 800D35D8 00000000 */       nop 
 
+# render sprite info?
 glabel func_ovl0_800D35DC
   /* 04EFBC 800D35DC 30820007 */      andi $v0, $a0, 7
   /* 04EFC0 800D35E0 27BDFFD0 */     addiu $sp, $sp, -0x30
