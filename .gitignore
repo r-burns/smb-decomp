@@ -3,6 +3,7 @@
 
 #build directores
 build/
+expected/
 game/build-*/
 utils/stamps/
 utils/tarballs/

@@ -44,7 +44,8 @@ SECTIONS
     {
         asm/system/entry.o(.text);
         src/sys/main.o(.text);
-        asm/system/thread3.text.o(.text);
+        src/sys/thread3.asm.o(.text);
+        /* asm/system/thread3.o(.text); */
         asm/system/system.text.o(.text);
         asm/system/libultra.text.o(.text);
         asm/system/rsp.o(.text);

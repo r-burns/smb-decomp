@@ -220,8 +220,8 @@ def task_assemble():
 def task_cc():
     ''' Compile .c files into .o '''
 
-    invoke_cc = tc.invoke_cc([inc_dir, c_dir])
-    
+    includes = [inc_dir, c_dir]
+
     for f, o in zip(c_files, c_objs):
         d = o.with_suffix('.d')
         found_deps = parse_mk_dependencies(d)
@@ -230,12 +230,16 @@ def task_cc():
         else:
             deps = found_deps[o]
         
+        actions = [tc.invoke_cc_check(includes, f, o, d)]
+        # if the input needs to have asm processed
+        if f.name.endswith('.asm.c'):
+            actions += tc.invoke_asm_processor(includes, f, o)
+        else:
+            actions.append(tc.invoke_cc(includes, f, o))
+
         yield {
             'name': o,
-            'actions': [
-                tc.invoke_cc_check([inc_dir, c_dir], f, o, d),
-                invoke_cc + ['-o', o, f]
-            ],
+            'actions': actions,
             'file_dep': deps,
             'targets': [o, d],
         }

@@ -1,7 +1,9 @@
 from pathlib import Path
 from shutil import which
+from doit.action import CmdAction
 import os
 import sys
+import subprocess
 
 tool_dir = Path('tools')
 ido5_3 = tool_dir / 'ido5.3'
@@ -91,6 +93,11 @@ class ToolChain:
                     'flags': None,
                 },
             }
+            self.CC_ASMPROC = {
+                'proc': 'utils/asm-processor/asm_processor.py',
+                'cin': 'utils/asm-processor/include-stdin.c',
+                'prelude': 'utils/asm-processor/prelude.s',
+            }
         elif possible_tc == 'gcc':
             self.CC = [cross + 'gcc']
             self.CFLAGS = ['-march=vr4300', '-mfix4300', '-mabi=32', 
@@ -99,6 +106,7 @@ class ToolChain:
                 '-mno-abicalls', '-fno-strict-aliasing', '-fno-inline-functions', 
                 '-ffreestanding', '-fwrapv', '-Wall', '-Wextra']
             self.CC_ALT = None
+            self.CC_ASMPROC = None
         else:
             raise Exception(f"Unknown toolchain {possible_tc}")
     
@@ -107,15 +115,33 @@ class ToolChain:
         incs = list(_append_intersperse(includes, '-I'))
         return self.AS + self.ASFLAGS + incs
     
-    def invoke_cc(self, includes, opt="O2"):
+    def invoke_cc(self, includes, input, output, opt="O2"):
         # TODO: add defines
         incs = list(_append_intersperse(includes, '-I'))
         opt = ['-'+opt]
+        invocation = self.CC + self.CFLAGS + self.MIPSISET + self.C_DEFINES + opt + incs
 
-        return self.CC + self.CFLAGS + self.MIPSISET + self.C_DEFINES + opt + incs
+        return invocation + ['-o', output, input]
     
     def invoke_cc_check(self, includes, input, output, depfile):
         incs = list(_append_intersperse(includes, '-I'))
         outputs = ['-MMD', '-MP', '-MT', output, '-MF', depfile, input]
         return self.CC_CHECK + incs + self.C_DEFINES + outputs
+    
+    def invoke_asm_processor(self, includes, input, output, opt="O2"):
+        if self.CC_ASMPROC is None:
+            return [self.invoke_cc(includes, input, output, opt)]
+
+        cc = self.invoke_cc(includes, self.CC_ASMPROC['cin'], output, opt)
+        gas = self.invoke_as([])
+        asmproc_flags = ['-'+opt, input, '--input-enc', 'utf-8', '--output-enc', 'utf-8']
+
+        compile_cmd = map(str, [self.CC_ASMPROC['proc']] + asmproc_flags + ['|'] + cc)
+        shell_str = " ".join(compile_cmd)
+        gas_str = " ".join(map(str, gas))
+        return [
+            shell_str,
+            [self.CC_ASMPROC['proc']] + asmproc_flags + ['--post-process', output, 
+            '--asm-prelude', self.CC_ASMPROC['prelude'], '--assembler', gas_str]
+        ]
             
