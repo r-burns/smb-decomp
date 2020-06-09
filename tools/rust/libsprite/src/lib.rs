@@ -1,9 +1,28 @@
-use anyhow::{anyhow, Error};
+//! Types for dealing with the sprite bank files in SSB64
+
 use byteorder::{ByteOrder, BE};
 use libgfx::{BitDepth, ImageFormat};
 use serde::{Deserialize, Deserializer, Serialize, Serializer};
 use std::convert::{From, TryFrom};
 use std::fmt;
+
+/// Errors from this library
+#[derive(Debug)]
+pub enum LibSpriteErr {
+    UnkImgFormat(u32),
+    UnkImgBitdepth(u32),
+}
+
+impl fmt::Display for LibSpriteErr {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match self {
+            Self::UnkImgFormat(v) => write!(f, "unknown image format: {}", v),
+            Self::UnkImgBitdepth(v) => write!(f, "unknown image format: {}", v),
+        }
+    }
+}
+
+impl std::error::Error for LibSpriteErr {}
 
 /// Bank file header that has offsets each set of images
 #[derive(Debug)]
@@ -146,7 +165,7 @@ impl Into<ImageFormat> for BankFormat {
 }
 
 impl TryFrom<u32> for BankFormat {
-    type Error = Error;
+    type Error = LibSpriteErr;
     fn try_from(v: u32) -> Result<Self, Self::Error> {
         use BankFormat::*;
         match v {
@@ -155,7 +174,7 @@ impl TryFrom<u32> for BankFormat {
             2 => Ok(CI),
             3 => Ok(IA),
             4 => Ok(I),
-            _ => Err(anyhow!("unknown image format: {}", v)),
+            _ => Err(LibSpriteErr::UnkImgFormat(v)),
         }
     }
 }
@@ -254,7 +273,7 @@ impl<'de> Deserialize<'de> for BankDepth {
 }
 
 impl TryFrom<u32> for BankDepth {
-    type Error = Error;
+    type Error = LibSpriteErr;
     fn try_from(v: u32) -> Result<Self, Self::Error> {
         use BankDepth::*;
         match v {
@@ -262,7 +281,7 @@ impl TryFrom<u32> for BankDepth {
             1 => Ok(B8),
             2 => Ok(B16),
             3 => Ok(B32),
-            _ => Err(anyhow!("unknown bit depth: {}", v)),
+            _ => Err(LibSpriteErr::UnkImgBitdepth(v)),
         }
     }
 }

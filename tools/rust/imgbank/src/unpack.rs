@@ -1,7 +1,7 @@
-use crate::format::{BankConfig, BankDepth, BankFormat, Entry, EntryConfig, Header};
 use anyhow::{Context, Error};
 use byteorder::{ByteOrder, BE};
 use libgfx::{self, BitDepth, ImageFormat};
+use libsprite::{img_file_name, BankConfig, BankDepth, BankFormat, Entry, EntryConfig, Header};
 use lodepng::{
     self,
     ffi::{

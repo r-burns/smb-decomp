@@ -1,5 +1,5 @@
-use crate::format::{BankFormat, EntryConfig};
 use anyhow::{anyhow, Context, Error};
+use libsprite::{BankFormat, EntryConfig};
 use std::ffi::OsStr;
 use std::fmt::Write;
 use std::fs;

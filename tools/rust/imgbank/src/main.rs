@@ -1,8 +1,6 @@
 use std::path::PathBuf;
 use structopt::StructOpt;
 
-#[macro_use]
-mod format;
 mod link;
 mod pack;
 mod unpack;

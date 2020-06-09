@@ -1,5 +1,5 @@
-use crate::format::BankConfig;
 use anyhow::{Context, Error};
+use libsprite::BankConfig;
 use std::fmt::Write;
 use std::fs;
 use std::path::PathBuf;

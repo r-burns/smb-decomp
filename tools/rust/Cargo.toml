@@ -5,4 +5,5 @@ members = [
     "n64gfx",
     "libvpk",
     "vpktool",
+    "libsprite",
 ]

@@ -15,7 +15,7 @@ config = {
     'qemu': get_var('QEMU_IRIX', None),
     'version': get_var('VERSION', 'us'),
     'no-match': get_var('NON_MATCHING', False),
-    'avoid_ub': get_var('AVOID_UB', False),
+    'avoid-ub': get_var('AVOID_UB', False),
 }
 
 tc = ToolChain(config)
@@ -91,7 +91,6 @@ def task_tools():
                 ['cp', cargo_out, prog],
             ],
             'file_dep': [cargo_out],
-            'task_dep': [f'run_cargo:{prog_name}'],
             'targets': [prog],
         }
 
@@ -337,8 +336,7 @@ def task_pack_sprite_bank_entry():
         yield {
             'name': s,
             'actions': [[imgbank, 'pack-entry', t, '-o', s]],
-            'file_dep': [t],
-            'task_dep': ['tools:imgbank'],
+            'file_dep': [t, imgbank],
             'targets': [s],
         }
 
@@ -376,8 +374,7 @@ def task_generate_sprite_bank_link():
         yield {
             'name': lds,
             'actions': [[imgbank, 'link', t, '-o', lds]],
-            'file_dep': [t],
-            'task_dep': ['tools:imgbank'],
+            'file_dep': [t, imgbank],
             'targets': [lds],
         }
 
