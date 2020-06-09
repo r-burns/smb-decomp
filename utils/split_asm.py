@@ -49,6 +49,9 @@ def id_routines(input):
 def write_split_files(nm_dir, c_out, routines):
     # routineName => routineNonMatchingFile
     with open(c_out, "w+") as cf:
+        cf.write('#pragma GCC diagnostic push\n')
+        cf.write('#pragma GCC diagnostic ignored "-Wunknown-pragmas"\n')
+
         for (routine, text) in routines.items():
             nm_out = nm_dir / Path(routine).with_suffix('.s')
 
@@ -57,6 +60,8 @@ def write_split_files(nm_dir, c_out, routines):
             f.close()
 
             cf.write(f'\n#pragma GLOBAL_ASM("{nm_out}")\n')
+        
+        cf.write('#pragma GCC diagnostic pop\n')
 
 def main():
     s_in = Path(sys.argv[1])

@@ -2706,9 +2706,9 @@ glabel func_ovl34_80134318
   /* 164E70 80134330 1000002F */         b .L801343F0
   /* 164E74 80134334 24020001 */     addiu $v0, $zero, 1
   .L80134338:
-  /* 164E78 80134338 0C00C9A4 */       jal osViGetCurrentFramebuffer
+  /* 164E78 80134338 0C00C9A4 */       jal osViGetNextFramebuffer
   /* 164E7C 8013433C 00000000 */       nop 
-  /* 164E80 80134340 0C00E58C */       jal func_80039630
+  /* 164E80 80134340 0C00E58C */       jal osViGetCurrentFramebuffer
   /* 164E84 80134344 AFA2001C */        sw $v0, 0x1c($sp)
   /* 164E88 80134348 3C038004 */       lui $v1, %hi(D_80044FA8)
   /* 164E8C 8013434C 8C634FA8 */        lw $v1, %lo(D_80044FA8)($v1)

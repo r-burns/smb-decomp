@@ -16909,7 +16909,8 @@ glabel __osGetSR
   /* 03328C 8003268C 00000000 */       nop 
 
 # Likely start of new file
-glabel osViGetCurrentFramebuffer
+# originally "osViGetCurrentFramebuffer"; this seems to be the next based on pointer location
+glabel osViGetNextFramebuffer
   /* 033290 80032690 27BDFFD8 */     addiu $sp, $sp, -0x28
   /* 033294 80032694 AFBF001C */        sw $ra, 0x1c($sp)
   /* 033298 80032698 0C00D608 */       jal __osDisableInt
@@ -25074,7 +25075,7 @@ glabel __osAiDeviceBusy
   /* 03A228 80039628 03E00008 */        jr $ra
   /* 03A22C 8003962C 27BD0008 */     addiu $sp, $sp, 8
 
-glabel func_80039630
+glabel osViGetCurrentFramebuffer
   /* 03A230 80039630 27BDFFD8 */     addiu $sp, $sp, -0x28
   /* 03A234 80039634 AFBF001C */        sw $ra, 0x1c($sp)
   /* 03A238 80039638 0C00D608 */       jal __osDisableInt

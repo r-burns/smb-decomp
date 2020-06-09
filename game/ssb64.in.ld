@@ -45,7 +45,6 @@ SECTIONS
         asm/system/entry.o(.text);
         src/sys/main.o(.text);
         src/sys/thread3.asm.o(.text);
-        /* asm/system/thread3.o(.text); */
         asm/system/system.text.o(.text);
         asm/system/libultra.text.o(.text);
         asm/system/rsp.o(.text);
@@ -63,7 +62,7 @@ SECTIONS
     BEGIN_NOLOAD(system)
     {
         src/sys/main.o(.bss);
-        asm/system/thread3.bss.o(.bss);
+        src/sys/thread3.asm.o(.bss);
         asm/system/system.bss.o(.bss);
         asm/system/libultra.bss.o(.bss);
         /* Entry code assumes 8-byte aligned bss section */

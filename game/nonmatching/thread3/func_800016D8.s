@@ -7,9 +7,9 @@ glabel func_800016D8
   /* 0022EC 800016EC AFBF0014 */        sw $ra, 0x14($sp)
   /* 0022F0 800016F0 51CF0019 */      beql $t6, $t7, .L80001758
   /* 0022F4 800016F4 8FBF0014 */        lw $ra, 0x14($sp)
-  /* 0022F8 800016F8 0C00C9A4 */       jal osViGetCurrentFramebuffer
+  /* 0022F8 800016F8 0C00C9A4 */       jal osViGetNextFramebuffer
   /* 0022FC 800016FC 00000000 */       nop 
-  /* 002300 80001700 0C00E58C */       jal func_80039630
+  /* 002300 80001700 0C00E58C */       jal osViGetCurrentFramebuffer
   /* 002304 80001704 AFA20018 */        sw $v0, 0x18($sp)
   /* 002308 80001708 8FB80018 */        lw $t8, 0x18($sp)
   /* 00230C 8000170C 3C198004 */       lui $t9, %hi(D_80045035)

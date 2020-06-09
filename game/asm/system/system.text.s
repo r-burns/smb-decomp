@@ -35706,7 +35706,7 @@ glabel func_800223F4
   /* 023000 80022400 00E08025 */        or $s0, $a3, $zero
   /* 023004 80022404 AFA40020 */        sw $a0, 0x20($sp)
   /* 023008 80022408 AFA50024 */        sw $a1, 0x24($sp)
-  /* 02300C 8002240C 0C00E58C */       jal func_80039630
+  /* 02300C 8002240C 0C00E58C */       jal osViGetCurrentFramebuffer
   /* 023010 80022410 AFA60028 */        sw $a2, 0x28($sp)
   /* 023014 80022414 3C058004 */       lui $a1, %hi(D_80046678)
   /* 023018 80022418 8CA56678 */        lw $a1, %lo(D_80046678)($a1)
@@ -35774,7 +35774,7 @@ glabel func_800224C0
   /* 0230F0 800224F0 0000C012 */      mflo $t8
   /* 0230F4 800224F4 0018C880 */       sll $t9, $t8, 2
   /* 0230F8 800224F8 032D3821 */      addu $a3, $t9, $t5
-  /* 0230FC 800224FC 0C00E58C */       jal func_80039630
+  /* 0230FC 800224FC 0C00E58C */       jal osViGetCurrentFramebuffer
   /* 023100 80022500 AFA7001C */        sw $a3, 0x1c($sp)
   /* 023104 80022504 3C0C8004 */       lui $t4, %hi(D_80046678)
   /* 023108 80022508 258C6678 */     addiu $t4, $t4, %lo(D_80046678)
@@ -36087,7 +36087,7 @@ glabel func_80022908
   /* 023538 80022938 00000000 */       nop 
   /* 02353C 8002293C 52000008 */      beql $s0, $zero, .L80022960
   /* 023540 80022940 964E0000 */       lhu $t6, ($s2) # D_80045470 + 0
-  /* 023544 80022944 0C00E58C */       jal func_80039630
+  /* 023544 80022944 0C00E58C */       jal osViGetCurrentFramebuffer
   /* 023548 80022948 00000000 */       nop 
   /* 02354C 8002294C 50500004 */      beql $v0, $s0, .L80022960
   /* 023550 80022950 964E0000 */       lhu $t6, ($s2) # D_80045470 + 0
@@ -37021,7 +37021,7 @@ glabel fatal_printf
   /* 0242E8 800236E8 2401FFFC */     addiu $at, $zero, -4
   /* 0242EC 800236EC 02218824 */       and $s1, $s1, $at
   .L800236F0:
-  /* 0242F0 800236F0 0C00E58C */       jal func_80039630
+  /* 0242F0 800236F0 0C00E58C */       jal osViGetCurrentFramebuffer
   /* 0242F4 800236F4 00000000 */       nop 
   /* 0242F8 800236F8 00408025 */        or $s0, $v0, $zero
   /* 0242FC 800236FC 24040019 */     addiu $a0, $zero, 0x19
@@ -37072,7 +37072,7 @@ glabel func_80023778
   /* 0243A8 800237A8 0C00D1E4 */       jal osSetThreadPri
   /* 0243AC 800237AC 240500FA */     addiu $a1, $zero, 0xfa
   .L800237B0:
-  /* 0243B0 800237B0 0C00E58C */       jal func_80039630
+  /* 0243B0 800237B0 0C00E58C */       jal osViGetCurrentFramebuffer
   /* 0243B4 800237B4 00000000 */       nop 
   /* 0243B8 800237B8 00408025 */        or $s0, $v0, $zero
   /* 0243BC 800237BC 24040019 */     addiu $a0, $zero, 0x19

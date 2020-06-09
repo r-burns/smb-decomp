@@ -107,7 +107,7 @@ void check_sp_dmem(void) {
 void fatal_thread_stack_overflow(s32 tid) {
     fatal_printf("thread stack overflow  id = %d\n", tid);
 
-    while (TRUE) ;
+    while (TRUE) {}
 }
 
 void check_stack_probes(void) {

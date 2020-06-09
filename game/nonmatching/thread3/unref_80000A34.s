@@ -1,28 +1,4 @@
-glabel func_800009D8
-  /* 0015D8 800009D8 27BDFFC0 */     addiu $sp, $sp, -0x40
-  /* 0015DC 800009DC AFA40040 */        sw $a0, 0x40($sp)
-  /* 0015E0 800009E0 AFA50044 */        sw $a1, 0x44($sp)
-  /* 0015E4 800009E4 00A02025 */        or $a0, $a1, $zero
-  /* 0015E8 800009E8 AFBF0014 */        sw $ra, 0x14($sp)
-  /* 0015EC 800009EC AFA60048 */        sw $a2, 0x48($sp)
-  /* 0015F0 800009F0 00C02825 */        or $a1, $a2, $zero
-  /* 0015F4 800009F4 0C00D120 */       jal osCreateMesgQueue
-  /* 0015F8 800009F8 00E03025 */        or $a2, $a3, $zero
-  /* 0015FC 800009FC 8FA20040 */        lw $v0, 0x40($sp)
-  /* 001600 80000A00 8FAE0044 */        lw $t6, 0x44($sp)
-  /* 001604 80000A04 240F0003 */     addiu $t7, $zero, 3
-  /* 001608 80000A08 24180064 */     addiu $t8, $zero, 0x64
-  /* 00160C 80000A0C AC4E0004 */        sw $t6, 4($v0)
-  /* 001610 80000A10 AFAF0018 */        sw $t7, 0x18($sp)
-  /* 001614 80000A14 AFB8001C */        sw $t8, 0x1c($sp)
-  /* 001618 80000A18 27A40018 */     addiu $a0, $sp, 0x18
-  /* 00161C 80000A1C 0C00025C */       jal func_80000970
-  /* 001620 80000A20 AFA2003C */        sw $v0, 0x3c($sp)
-  /* 001624 80000A24 8FBF0014 */        lw $ra, 0x14($sp)
-  /* 001628 80000A28 27BD0040 */     addiu $sp, $sp, 0x40
-  /* 00162C 80000A2C 03E00008 */        jr $ra
-  /* 001630 80000A30 00000000 */       nop 
-
+glabel unref_80000A34
   /* 001634 80000A34 3C078004 */       lui $a3, %hi(D_80044F9C)
   /* 001638 80000A38 24E74F9C */     addiu $a3, $a3, %lo(D_80044F9C)
   /* 00163C 80000A3C 8CEE0000 */        lw $t6, ($a3) # D_80044F9C + 0
@@ -40,9 +16,9 @@ glabel func_800009D8
   /* 001668 80000A68 10000036 */         b .L80000B44
   /* 00166C 80000A6C 00001025 */        or $v0, $zero, $zero
   .L80000A70:
-  /* 001670 80000A70 0C00C9A4 */       jal osViGetCurrentFramebuffer
+  /* 001670 80000A70 0C00C9A4 */       jal osViGetNextFramebuffer
   /* 001674 80000A74 00000000 */       nop 
-  /* 001678 80000A78 0C00E58C */       jal func_80039630
+  /* 001678 80000A78 0C00E58C */       jal osViGetCurrentFramebuffer
   /* 00167C 80000A7C AFA2001C */        sw $v0, 0x1c($sp)
   /* 001680 80000A80 8FB80028 */        lw $t8, 0x28($sp)
   /* 001684 80000A84 3C078004 */       lui $a3, %hi(D_80044F9C)
