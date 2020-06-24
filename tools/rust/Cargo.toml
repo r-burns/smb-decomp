@@ -6,4 +6,5 @@ members = [
     "libvpk",
     "vpktool",
     "libsprite",
+    "extract",
 ]

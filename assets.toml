@@ -1,0 +1,34 @@
+[raw]
+"testgame/audio/S1_music.sbk" = {size = 0x1000, us = 0xB277B0}
+"testgame/audio/B1_sounds1.ctl" = {size = 0x1000, us = 0xB4E5C0}
+"testgame/audio/B1_sounds1.tbl" = {size = 0x1000, us = 0xB54CE0}
+"testgame/audio/B1_sounds2.ctl" = {size = 0x1000, us = 0xC6B650}
+"testgame/audio/B1_sounds2.tbl" = {size = 0x1000, us = 0xC7B1F0}
+"testgame/unknown/F573D0.bin" = {size = 0x1000, us = 0xF573D0}
+"testgame/unknown/F57BF0.bin" = {size = 0x1000, us = 0xF57BF0}
+"testgame/unknown/F5A9C0.bin" = {size = 0x1000, us = 0xF5A9C0}
+
+[spriteBanks]
+dir = "testgame/sprites"
+[[spriteBanks.us]]
+    name = "bank1"
+    spriteInfo = [0xAC7340, 0xAC9DE0]
+    spriteBank = [0xAC9DE0, 0xB16C80]
+[[spriteBanks.us]]
+    name = "bank2"
+    spriteInfo = [0xB16C80, 0xB17060]
+    spriteBank = [0xB17060, 0xB174A0]
+    entries = [
+        "rock",
+        "sphere",
+        "particle",
+    ]
+[[spriteBanks.us]]
+    name = "bank5"
+    spriteInfo = [0xB1BCA0, 0xB1BDE0]
+    spriteBank = [0xB1BDE0, 0xB1E640]
+
+[resources]
+dir = "testgame/resources"
+[resources.us]
+    table = [0x1AC870, 0x1B2C6C]
