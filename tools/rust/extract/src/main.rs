@@ -4,13 +4,14 @@ use structopt::StructOpt;
 
 mod config;
 mod extract;
+mod local;
 
 /// Extract neccessary resources from SSB64 rom image
 #[derive(Debug, StructOpt)]
 enum Opts {
     /// extract files into repo
     Extract(Extract),
-    /// Generate new or add to exisit .gitignore the extracted files
+    /// Generate new or add to existing .gitignore the extracted files
     GitIgnore,
 }
 
@@ -25,7 +26,10 @@ struct Extract {
     /// path to assets.toml
     #[structopt(short, long, parse(from_os_str))]
     assets: PathBuf,
-    /// replace any existing .toml files (default is to keep)
+    /// path to local assets file (info on version and already extracted assets)
+    #[structopt(short, long, parse(from_os_str))]
+    local: PathBuf,
+    /// replace any already extracted files (default is to do nothing)
     #[structopt(short, long)]
     force: bool,
     /// show files to be extracted, but do not extract

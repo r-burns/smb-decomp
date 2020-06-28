@@ -1,9 +1,13 @@
 use crate::config::{SpriteBank, SpriteBankInfo};
 use crate::extract::{ExtractContext, ToExtract};
+use anyhow::{anyhow, Error, bail};
 use libgfx::{BitDepth, ImageFormat};
-use libsprite::{BankConfig, Entry, EntryConfig, Header};
+use libsprite::{BankConfig, Entry, Header}; //EntryConfig
+use std::borrow::Cow;
 use std::convert::TryInto;
+use std::iter;
 use std::path::{Path, PathBuf};
+use std::fs;
 
 pub(super) fn todo<'a>(
     bank_info: &'a SpriteBankInfo,
@@ -15,6 +19,22 @@ pub(super) fn todo<'a>(
             .map(move |b| read_bank(b, &bank_info.output_dir, ctx))
             .flatten()
     })
+}
+
+pub(super) fn extract(task: &ToExtract<'_>) -> Result<(), Error> {
+    use ToExtract::SpriteBank;
+
+    match task {
+        SpriteBank{out, ..} => {
+            let config = gen_bank_config(task)?;
+            let toml = toml::to_string_pretty(&config)?;
+
+            fs::write(out, toml)?;
+        },
+        _ => bail!("Not a sprite extraction {:?}", task),
+    };
+
+    Ok(())
 }
 
 /// Parse the components (image store + information/animations) of sprite bank
@@ -36,13 +56,7 @@ fn read_bank<'a>(
     let imgs_raw = &ctx.rom[img_s..img_e];
     let header = Header::from(imgs_raw);
 
-    let bank_config = gen_bank_config(
-        bank.entries.as_deref(),
-        &header,
-        imgs_raw,
-        ctx.force,
-        bank_toml,
-    );
+    let bank_config = store_bank_config(bank.entries.as_deref(), &header, imgs_raw, bank_toml);
     let info = Some(read_sprite_info(&bank, &bank_base_dir, ctx.rom));
     let entries = header
         .offsets
@@ -53,11 +67,9 @@ fn read_bank<'a>(
                 .map(|e| (i, e))
                 .ok()
         })
-        .flat_map(move |(i, entry)| {
-            read_entry(i, entry, bank, imgs_raw, ctx, bank_base_dir.clone())
-        });
+        .flat_map(move |(i, entry)| read_entry(i, entry, bank, imgs_raw, bank_base_dir.clone()));
 
-    bank_config.into_iter().chain(entries).chain(info)
+    iter::once(bank_config).chain(entries).chain(info)
 }
 
 // TODO: actually parse the sprite info binary
@@ -73,42 +85,60 @@ fn read_sprite_info<'a>(bank: &SpriteBank, base: &Path, rom: &'a [u8]) -> ToExtr
     ToExtract::SpriteInfo { out, data }
 }
 
-/// Create the `BankConfig` structure that has information on the entries for this bank
-fn gen_bank_config<'a>(
-    names: Option<&[String]>,
+/// Store the information necessary to create a `BankConfig` file
+fn store_bank_config<'a>(
+    entry_names: Option<&'a [String]>,
     hdr: &Header,
-    raw: &[u8],
-    force: bool,
+    bank_data: &'a [u8],
     out: PathBuf,
-) -> Option<ToExtract<'a>> {
-    if force || !out.is_file() {
+) -> ToExtract<'a> {
+    let entries = hdr.offsets.clone();
+
+    ToExtract::SpriteBank {
+        out,
+        entry_names,
+        entries,
+        bank_data,
+    }
+}
+
+/// Create a `BankConfig` structure with the stored info from `store_bank_config`
+fn gen_bank_config<'a>(info: &ToExtract<'a>) -> Result<BankConfig, Error> {
+    if let ToExtract::SpriteBank {
+        entry_names,
+        entries,
+        bank_data,
+        ..
+    } = info
+    {
         // num entries + count field (all u32)
-        let hdr_end = (hdr.count as usize + 1) * 4;
+        let hdr_end = (entries.len() + 1) * 4;
         // check after the last word to see if there is a garbage word (bank 5 in US version)
         // this word is an offset to the end of the bank (where another entry would be located)
-        let extra_entry = raw
+        let extra_entry = bank_data
             .get(hdr_end..hdr_end + 4)
             .map(|bytes| u32::from_be_bytes(bytes.try_into().unwrap()))
-            .map_or(false, |w| w as usize == raw.len());
+            .map_or(false, |w| w as usize == bank_data.len());
 
-        let entry_names = hdr
-            .offsets
+        let names = entries
             .iter()
             .enumerate()
             .map(|(i, &o)| {
-                names
-                    .and_then(|names| names.get(i))
+                entry_names
+                    .and_then(|user_names| user_names.get(i))
                     .map(String::clone)
                     .unwrap_or_else(|| generic_entry_name(o))
             })
             .collect::<Vec<_>>();
 
-        let mut config = BankConfig::from(entry_names);
+        let mut config = BankConfig::from(names);
         config.include_end = extra_entry;
 
-        Some(ToExtract::SpriteBank { out, config })
+        Ok(config)
     } else {
-        None
+        Err(anyhow!(
+            "Created a BankConfig from the wrong ToExtract variant"
+        ))
     }
 }
 
@@ -119,23 +149,18 @@ fn read_entry<'a>(
     entry: Entry,
     bank: &'a SpriteBank,
     bank_raw: &'a [u8],
-    ctx: ExtractContext<'a>,
     out_dir: PathBuf,
 ) -> impl Iterator<Item = ToExtract<'a>> + 'a {
-    let entry_name = bank.entries.as_ref().and_then(|names| names.get(i));
+    let entry_name = bank
+        .entries
+        .as_ref()
+        .and_then(|names| names.get(i))
+        .map(Cow::from)
+        .unwrap_or_else(|| Cow::from(generic_entry_name(entry.entry_offset)));
     let (entry_dir, entry_toml) = {
-        let buf;
-        let name = if let Some(n) = entry_name {
-            n
-        } else {
-            buf = generic_entry_name(entry.entry_offset);
-            &buf
-        };
-
-        let d = out_dir.join(name);
-        let mut t = d.join(name);
+        let d = out_dir.join(&*entry_name);
+        let mut t = d.join(&*entry_name);
         t.set_extension("toml");
-
         (d, t)
     };
 
@@ -152,42 +177,15 @@ fn read_entry<'a>(
     let format: ImageFormat = format_raw.into();
     let bitdepth: BitDepth = bitdepth_raw.into();
 
-    let gen_img_name = move |img_offset, i| {
-        if let Some(name) = entry_name {
-            format!("{}_{}.{}{}.png", name, i, format, bitdepth as u8)
-        } else {
-            format!("{:06X}.{}{}.png", img_offset, format, bitdepth as u8)
-        }
-    };
-    let gen_img_out = move |offset, i| {
-        let name = gen_img_name(offset, i);
-
-        entry_dir.join(name)
-    };
-
-    let entry_config = if ctx.force || !entry_toml.is_file() {
-        let images = image_offsets
-            .iter()
-            .map(|&o| o as usize)
-            .enumerate()
-            .map(|(i, o)| gen_img_name(o, i))
-            .collect();
-
-        let config = EntryConfig {
-            format: format_raw,
-            bitdepth: bitdepth_raw,
-            width,
-            height,
-            images: Some(images),
-        };
-
-        Some(ToExtract::SpriteImgEntry {
-            out: entry_toml,
-            entry: config,
-        })
-    } else {
-        None
-    };
+    let entry_config = image_entry_config(
+        entry_toml,
+        entry_name.clone(),
+        width,
+        height,
+        format,
+        bitdepth,
+        image_offsets.clone(),
+    );
 
     let images_iter = image_offsets
         .into_iter()
@@ -200,7 +198,7 @@ fn read_entry<'a>(
             (i, o, p)
         })
         .map(move |(i, o, p)| {
-            let out = gen_img_out(o, i);
+            let out = gen_frame_filename(&entry_dir, o, i, &entry_name, format, bitdepth);
             let palette = p.map(|p| {
                 let p = p as usize;
                 let plen = (1 << bitdepth as usize) * 2;
@@ -219,9 +217,61 @@ fn read_entry<'a>(
             }
         });
 
-    entry_config.into_iter().chain(images_iter)
+    iter::once(entry_config).chain(images_iter)
+}
+
+fn image_entry_config<'a>(
+    out: PathBuf,
+    name: Cow<'a, str>,
+    width: u32,
+    height: u32,
+    format: ImageFormat,
+    bitdepth: BitDepth,
+    frame_offsets: Vec<u32>,
+) -> ToExtract<'a> {
+    ToExtract::SpriteImgEntry {
+        out,
+        name,
+        width,
+        height,
+        format,
+        bitdepth,
+        frame_offsets,
+    }
 }
 
 fn generic_entry_name(offset: u32) -> String {
     format!("{:06X}", offset)
+}
+
+/// name the frames in an image entry based if a user provided a name
+/// user supplied name if the `Cow` is borrowed
+fn gen_frame_name<'a>(
+    frame_offset: usize,
+    frame_num: usize,
+    prefix: &Cow<'a, str>,
+    format: ImageFormat,
+    bitdepth: BitDepth,
+) -> String {
+    if let Cow::Borrowed(name) = prefix {
+        // name sequentially if user provided name
+        format!("{}_{}.{}{}.png", name, frame_num, format, bitdepth as u8)
+    } else {
+        // name by offset if no name provided
+        format!("{:06X}.{}{}.png", frame_offset, format, bitdepth as u8)
+    }
+}
+
+/// output path for a frame in an image entry
+fn gen_frame_filename<'a>(
+    entry_dir: &Path,
+    frame_offset: usize,
+    frame_num: usize,
+    prefix: &Cow<'a, str>,
+    format: ImageFormat,
+    bitdepth: BitDepth,
+) -> PathBuf {
+    let name = gen_frame_name(frame_offset, frame_num, prefix, format, bitdepth);
+
+    entry_dir.join(name)
 }
