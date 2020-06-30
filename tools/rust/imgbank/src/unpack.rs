@@ -126,12 +126,12 @@ fn write_entry_images(entry: &Entry, outdir: &PathBuf, data: &[u8]) -> Result<()
                         state
                             .info_raw_mut()
                             .palette_add(p)
-                            .context("adding CI color to raw pallet")?;
+                            .context("adding CI color to raw palette")?;
                         state
                             .info_png_mut()
                             .color
                             .palette_add(p)
-                            .context("adding CI color to png pallet")?;
+                            .context("adding CI color to png palette")?;
                     }
                     // finally, write the png
                     state.encode_file(&output_file, &img, width as usize, height as usize)?;

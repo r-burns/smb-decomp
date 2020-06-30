@@ -1,6 +1,8 @@
 use crate::config::{ResTable, Resources};
-use crate::extract::{ExtractContext, ToExtract};
+use crate::extract::{usize_range, ExtractContext, ExtractTask, ToExtract};
+use anyhow::{bail, Error};
 use std::convert::TryInto;
+use std::fs;
 use std::iter::{self, Peekable};
 use std::ops::Range;
 use std::path::Path;
@@ -14,14 +16,27 @@ pub(super) fn todo<'a>(
 
     res.tables[ctx.version].as_ref().map(|tbl| {
         let filename = "resource-filetable.bin";
-        let range = tbl.offset.start as usize..tbl.offset.end as usize;
-        let table_bin = ToExtract::ResourceTable {
-            out: res.output_dir.join(filename),
-            data: &ctx.rom[range],
+        let range = usize_range(&tbl.offset);
+        let table_bin = ToExtract {
+            out: res.output_dir.join(filename).into(),
+            info: ExtractTask::ResourceTable(&ctx.rom[range]),
         };
 
         iter::once(table_bin).chain(read_table(tbl))
     })
+}
+
+pub(super) fn extract<'a>(out: &Path, task: &ExtractTask) -> Result<(), Error> {
+    use ExtractTask::{Resource, ResourceReq, ResourceTable};
+
+    match task {
+        ResourceTable(data) | Resource(data) | ResourceReq(data) => {
+            fs::write(out, data)?;
+        }
+        _ => bail!("Not a resource extraction: {:?}", task),
+    }
+
+    Ok(())
 }
 
 fn read_res_table<'a>(
@@ -49,11 +64,14 @@ fn read_res_table<'a>(
 
                 let reqs = details.reqs.map(|data| {
                     let out = file_dir.join(format!("{}-req.bin", &filename));
-                    ToExtract::ResourceReq { out, data }
+                    ToExtract {
+                        out: out.into(),
+                        info: ExtractTask::ResourceReq(data),
+                    }
                 });
-                let file = ToExtract::Resource {
-                    out,
-                    data: details.file,
+                let file = ToExtract {
+                    out: out.into(),
+                    info: ExtractTask::Resource(details.file),
                 };
                 iter::once(file).chain(reqs)
             })

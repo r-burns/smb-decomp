@@ -39,7 +39,9 @@ impl LocalAssets {
     }
     /// Parse the file at `p`. If `p` does not exist, return `None`
     pub fn from_path(p: &Path) -> Result<Option<Self>, Error> {
-        OpenOptions::new().read(true).open(p)
+        OpenOptions::new()
+            .read(true)
+            .open(p)
             .map(BufReader::new)
             .map(Some)
             .or_else(|e| match e.kind() {
@@ -50,10 +52,13 @@ impl LocalAssets {
     }
 
     pub fn update_version(self, updated: Vec<Box<Path>>) -> Self {
-        let Self {mut list, .. } = self; 
+        let Self { mut list, .. } = self;
         list.extend(updated);
 
-        Self { version: CURRENT_VERSION, list }
+        Self {
+            version: CURRENT_VERSION,
+            list,
+        }
     }
 
     fn serialize(&self, mut wtr: BufWriter<File>) -> io::Result<()> {
@@ -68,7 +73,11 @@ impl LocalAssets {
     }
 
     pub fn write_to_path(&self, p: &Path) -> io::Result<()> {
-        let f = OpenOptions::new().write(true).create(true).truncate(true).open(p)?;
+        let f = OpenOptions::new()
+            .write(true)
+            .create(true)
+            .truncate(true)
+            .open(p)?;
         let wtr = BufWriter::new(f);
 
         self.serialize(wtr)
@@ -77,7 +86,10 @@ impl LocalAssets {
 
 impl From<Vec<Box<Path>>> for LocalAssets {
     fn from(v: Vec<Box<Path>>) -> Self {
-        Self { version: CURRENT_VERSION, list: v.into_iter().collect() }
+        Self {
+            version: CURRENT_VERSION,
+            list: v.into_iter().collect(),
+        }
     }
 }
 

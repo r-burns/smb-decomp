@@ -1,13 +1,15 @@
 use crate::config::{SpriteBank, SpriteBankInfo};
-use crate::extract::{ExtractContext, ToExtract};
-use anyhow::{anyhow, Error, bail};
-use libgfx::{BitDepth, ImageFormat};
-use libsprite::{BankConfig, Entry, Header}; //EntryConfig
+use crate::extract::{
+    usize_range, ExtractContext, ExtractTask, SpriteImg, SpriteImgEntry, ToExtract,
+};
+use anyhow::{anyhow, bail, Error};
+use libgfx::{BitDepth, ImageFormat, N64ToPng};
+use libsprite::{BankConfig, BankDepth, BankFormat, Entry, EntryConfig, Header};
 use std::borrow::Cow;
 use std::convert::TryInto;
+use std::fs;
 use std::iter;
 use std::path::{Path, PathBuf};
-use std::fs;
 
 pub(super) fn todo<'a>(
     bank_info: &'a SpriteBankInfo,
@@ -21,16 +23,25 @@ pub(super) fn todo<'a>(
     })
 }
 
-pub(super) fn extract(task: &ToExtract<'_>) -> Result<(), Error> {
-    use ToExtract::SpriteBank;
-
+pub(super) fn extract(out: &Path, task: &ExtractTask<'_>) -> Result<(), Error> {
     match task {
-        SpriteBank{out, ..} => {
+        ExtractTask::SpriteBank { .. } => {
             let config = gen_bank_config(task)?;
             let toml = toml::to_string_pretty(&config)?;
 
             fs::write(out, toml)?;
-        },
+        }
+        ExtractTask::SpriteImgEntry(entry) => {
+            let config = gen_img_entry_config(entry);
+            let toml = toml::to_string_pretty(&config)?;
+
+            fs::write(out, toml)?;
+        }
+        ExtractTask::SpriteImg(img) => {
+            N64ToPng::new(img.data, img.width, img.height, img.format, img.bitdepth)
+                .maybe_with_palette(img.palette)
+                .to_file(out)?;
+        }
         _ => bail!("Not a sprite extraction {:?}", task),
     };
 
@@ -51,9 +62,7 @@ fn read_bank<'a>(
         b
     };
 
-    let img_s = bank.imgbank.start as usize;
-    let img_e = bank.imgbank.end as usize;
-    let imgs_raw = &ctx.rom[img_s..img_e];
+    let imgs_raw = &ctx.rom[usize_range(&bank.imgbank)];
     let header = Header::from(imgs_raw);
 
     let bank_config = store_bank_config(bank.entries.as_deref(), &header, imgs_raw, bank_toml);
@@ -80,9 +89,12 @@ fn read_sprite_info<'a>(bank: &SpriteBank, base: &Path, rom: &'a [u8]) -> ToExtr
     let end = bank.info.end as usize;
     let data = &rom[start..end];
     let name = format!("{}-info.bin", &bank.name);
-    let out = base.join(name);
+    let out = base.join(name).into();
 
-    ToExtract::SpriteInfo { out, data }
+    ToExtract {
+        out,
+        info: ExtractTask::SpriteInfo(data),
+    }
 }
 
 /// Store the information necessary to create a `BankConfig` file
@@ -94,21 +106,22 @@ fn store_bank_config<'a>(
 ) -> ToExtract<'a> {
     let entries = hdr.offsets.clone();
 
-    ToExtract::SpriteBank {
-        out,
-        entry_names,
-        entries,
-        bank_data,
+    ToExtract {
+        out: out.into(),
+        info: ExtractTask::SpriteBank {
+            entry_names,
+            entries,
+            bank_data,
+        },
     }
 }
 
 /// Create a `BankConfig` structure with the stored info from `store_bank_config`
-fn gen_bank_config<'a>(info: &ToExtract<'a>) -> Result<BankConfig, Error> {
-    if let ToExtract::SpriteBank {
+fn gen_bank_config<'a>(info: &ExtractTask<'a>) -> Result<BankConfig, Error> {
+    if let ExtractTask::SpriteBank {
         entry_names,
         entries,
         bank_data,
-        ..
     } = info
     {
         // num entries + count field (all u32)
@@ -136,9 +149,7 @@ fn gen_bank_config<'a>(info: &ToExtract<'a>) -> Result<BankConfig, Error> {
 
         Ok(config)
     } else {
-        Err(anyhow!(
-            "Created a BankConfig from the wrong ToExtract variant"
-        ))
+        Err(anyhow!("Incorrect ExtractTask variant"))
     }
 }
 
@@ -166,24 +177,24 @@ fn read_entry<'a>(
 
     let len = entry.bytesize() as usize;
     let Entry {
-        format: format_raw,
-        bitdepth: bitdepth_raw,
+        format: format_bank,
+        bitdepth: bitdepth_bank,
         width,
         height,
         image_offsets,
         palette_offsets,
         ..
     } = entry;
-    let format: ImageFormat = format_raw.into();
-    let bitdepth: BitDepth = bitdepth_raw.into();
+    let format: ImageFormat = format_bank.into();
+    let bitdepth: BitDepth = bitdepth_bank.into();
 
-    let entry_config = image_entry_config(
+    let entry_config = store_img_entry_info(
         entry_toml,
         entry_name.clone(),
         width,
         height,
-        format,
-        bitdepth,
+        format_bank,
+        bitdepth_bank,
         image_offsets.clone(),
     );
 
@@ -205,38 +216,79 @@ fn read_entry<'a>(
                 &bank_raw[p..p + plen]
             });
             let data = &bank_raw[o..o + len];
-
-            ToExtract::SpriteImg {
-                out,
+            let img_info = SpriteImg {
                 format,
                 bitdepth,
                 width,
                 height,
                 data,
                 palette,
+            };
+
+            ToExtract {
+                out: out.into(),
+                info: ExtractTask::SpriteImg(img_info),
             }
         });
 
     iter::once(entry_config).chain(images_iter)
 }
 
-fn image_entry_config<'a>(
+/// Store information necessary for lazy creation of a `libsprite::EntryConfig`
+fn store_img_entry_info<'a>(
     out: PathBuf,
     name: Cow<'a, str>,
     width: u32,
     height: u32,
-    format: ImageFormat,
-    bitdepth: BitDepth,
+    format: BankFormat,
+    bitdepth: BankDepth,
     frame_offsets: Vec<u32>,
 ) -> ToExtract<'a> {
-    ToExtract::SpriteImgEntry {
-        out,
+    let entry = SpriteImgEntry {
         name,
         width,
         height,
         format,
         bitdepth,
         frame_offsets,
+    };
+
+    ToExtract {
+        out: out.into(),
+        info: ExtractTask::SpriteImgEntry(entry),
+    }
+}
+
+fn gen_img_entry_config<'a>(info: &SpriteImgEntry) -> EntryConfig {
+    let name_frame = |(i, offset)| {
+        gen_frame_name(
+            offset as usize,
+            i,
+            &info.name,
+            info.format.into(),
+            info.bitdepth.into(),
+        )
+    };
+
+    let format = info.format.into();
+    let bitdepth = info.bitdepth.into();
+    let width = info.width;
+    let height = info.height;
+    let images = Some(
+        info.frame_offsets
+            .iter()
+            .copied()
+            .enumerate()
+            .map(name_frame)
+            .collect(),
+    );
+
+    EntryConfig {
+        format,
+        bitdepth,
+        width,
+        height,
+        images,
     }
 }
 

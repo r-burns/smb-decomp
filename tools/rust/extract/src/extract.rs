@@ -1,14 +1,16 @@
-use crate::config::{Assets, SimpleBin, Version};
+use crate::config::{Assets, Version};
+use crate::local::LocalAssets;
 use anyhow::{Context, Error};
 use libgfx::{BitDepth, ImageFormat};
+use libsprite::{BankDepth, BankFormat};
 use std::borrow::Cow;
 use std::fmt::{self};
 use std::fs;
 use std::io::{self, Write};
 use std::ops::Range;
-use std::path::{Path, PathBuf};
-use crate::local::LocalAssets;
+use std::path::Path;
 
+mod binaries;
 mod resources;
 mod sprites;
 
@@ -21,6 +23,8 @@ struct ExtractContext<'a> {
 }
 
 pub(crate) fn extract_assets(info: crate::Extract) -> Result<(), Error> {
+    use ExtractTask::*;
+
     let assets = fs::read_to_string(&info.assets).context("Reading assets toml file")?;
     let assets = Assets::from_toml_str(&assets).context("parsing assets toml file")?;
     let rom = fs::read(&info.rom).context("reading rom file")?;
@@ -30,9 +34,8 @@ pub(crate) fn extract_assets(info: crate::Extract) -> Result<(), Error> {
         rom: &rom,
     };
     let local_assets = LocalAssets::from_path(&info.local).context("reading local assets")?;
-    println!("{:#?}", local_assets);
 
-    let bins = todo_binaries(&assets.simple_bins, ctx);
+    let bins = binaries::todo(&assets.simple_bins, ctx);
     let sprites = sprites::todo(&assets.sprite_banks, ctx)
         .into_iter()
         .flatten();
@@ -40,16 +43,19 @@ pub(crate) fn extract_assets(info: crate::Extract) -> Result<(), Error> {
         .into_iter()
         .flatten();
 
-    let mut todo = bins
-        .chain(sprites)
-        .chain(resources)
-        .filter(|task| {
-            if ctx.force { return true; }
+    let mut todo = bins.chain(sprites).chain(resources).filter(|task| {
+        if ctx.force {
+            return true;
+        }
 
-            if task.is_preserved() { return !task.output_file().is_file(); }
-        
-            local_assets.as_ref().map_or(true, |la| !la.list.contains(task.output_file()))
-        });
+        if task.is_preserved() {
+            return !task.out.is_file();
+        }
+        // check for discrepancies (file in local assets, but no file on fs)
+        local_assets
+            .as_ref()
+            .map_or(true, |la| !la.list.contains(&*task.out))
+    });
 
     if info.dry_run {
         let mut stdout = io::stdout();
@@ -60,120 +66,113 @@ pub(crate) fn extract_assets(info: crate::Extract) -> Result<(), Error> {
 
     let mut fresh = Vec::new();
     for task in todo {
-        // check local assets here
-        let new_file = task.output_file().display();
-        ensure_parent_dir(task.output_file())
+        let ToExtract { out, info } = task;
+        let new_file = out.display();
+        ensure_parent_dir(&out)
             .with_context(|| format!("creating directory structure for {}", &new_file))?;
-        match task {
-            ToExtract::Binary { out, data } => {
-                binaries_extract(&out, data).map(|_| {fresh.push(out.to_path_buf().into_boxed_path());})
-            }
-            ToExtract::SpriteBank{..} => {
-                sprites::extract(&task).map(|_| {fresh.push(task.output_file().to_path_buf().into_boxed_path());})
-            }
+
+        match info {
+            Binary(data) => binaries::extract(&out, data),
+            SpriteBank { .. } | SpriteImgEntry(..) | SpriteImg(..) => sprites::extract(&out, &info),
+            ResourceTable(..) | Resource(..) | ResourceReq(..) => resources::extract(&out, &info),
             _ => Ok(()), //println!("not ready => {}", task),
-        }.with_context(|| format!("extracting file {}", &new_file))?;
+        }
+        .with_context(|| format!("extracting file {}", &new_file))?;
+
+        fresh.push(out.into_owned().into_boxed_path());
     }
 
-    let fresh_assets = match local_assets {
+    // Output updated list of extracted assets
+    match local_assets {
         Some(la) => la.update_version(fresh),
-        None => fresh.into()
-    };
-    
-    fresh_assets.write_to_path(&info.local).context("writing new local assets file")?;
+        None => fresh.into(),
+    }
+    .write_to_path(&info.local)
+    .context("writing new local assets file")?;
 
     Ok(())
 }
 
 #[derive(Debug)]
+struct ToExtract<'a> {
+    out: Cow<'a, Path>,
+    info: ExtractTask<'a>,
+}
+
+#[derive(Debug)]
 /// Information on what to extract
-enum ToExtract<'a> {
-    Binary {
-        out: &'a Path,
-        data: &'a [u8],
-    },
+enum ExtractTask<'a> {
+    Binary(&'a [u8]),
     SpriteBank {
-        out: PathBuf,
         entry_names: Option<&'a [String]>,
         entries: Vec<u32>,
         bank_data: &'a [u8],
     },
-    SpriteImgEntry {
-        out: PathBuf,
-        name: Cow<'a, str>,
-        width: u32,
-        height: u32,
-        format: ImageFormat,
-        bitdepth: BitDepth,
-        frame_offsets: Vec<u32>,
-    },
-    SpriteImg {
-        out: PathBuf,
-        width: u32,
-        height: u32,
-        format: ImageFormat,
-        bitdepth: BitDepth,
-        data: &'a [u8],
-        palette: Option<&'a [u8]>,
-    },
+    SpriteImgEntry(SpriteImgEntry<'a>),
+    SpriteImg(SpriteImg<'a>),
     // right now, don't parse the data...
-    SpriteInfo {
-        out: PathBuf,
-        data: &'a [u8],
-    },
+    SpriteInfo(&'a [u8]),
     // parse later
-    ResourceTable {
-        out: PathBuf,
-        data: &'a [u8],
-    },
+    ResourceTable(&'a [u8]),
     // parse later...? Probably need different variants
-    Resource {
-        out: PathBuf,
-        data: &'a [u8],
-    },
+    Resource(&'a [u8]),
     // parse later..? should be part of the compiling of the resource file
-    ResourceReq {
-        out: PathBuf,
-        data: &'a [u8],
-    },
+    ResourceReq(&'a [u8]),
+}
+
+#[derive(Debug)]
+struct SpriteImgEntry<'a> {
+    name: Cow<'a, str>,
+    width: u32,
+    height: u32,
+    format: BankFormat,
+    bitdepth: BankDepth,
+    frame_offsets: Vec<u32>,
+}
+
+#[derive(Debug, Copy, Clone)]
+struct SpriteImg<'a> {
+    width: u32,
+    height: u32,
+    format: ImageFormat,
+    bitdepth: BitDepth,
+    data: &'a [u8],
+    palette: Option<&'a [u8]>,
 }
 
 impl<'a> fmt::Display for ToExtract<'a> {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        match self {
-            Self::Binary { out, data } => {
-                write!(f, "Binary: {} [{} bytes]", out.display(), data.len())
-            }
-            Self::SpriteBank { out, .. } => write!(f, "Sprite Image Bank: {}", out.display()),
-            Self::SpriteImgEntry {
-                out, frame_offsets, ..
-            } => write!(
+        use ExtractTask::*;
+
+        let Self { out, info } = self;
+
+        match info {
+            Binary(data) => write!(f, "Binary: {} [{} bytes]", out.display(), data.len()),
+            SpriteBank { .. } => write!(f, "Sprite Image Bank: {}", out.display()),
+            SpriteImgEntry(entry) => write!(
                 f,
                 "Sprite Image Entry: {} [{} frame{}]",
                 out.display(),
-                frame_offsets.len(),
-                if frame_offsets.len() != 1 { "s" } else { "" }
+                entry.frame_offsets.len(),
+                if entry.frame_offsets.len() != 1 {
+                    "s"
+                } else {
+                    ""
+                }
             ),
-            Self::SpriteImg {
-                out,
-                width,
-                height,
-                format,
-                bitdepth,
-                ..
-            } => write!(
+            SpriteImg(img) => write!(
                 f,
                 "Sprite Image: {} [{}x{} {}{}]",
                 out.display(),
-                width,
-                height,
-                format,
-                *bitdepth as u8
+                img.width,
+                img.height,
+                img.format,
+                img.bitdepth as u8
             ),
-            Self::SpriteInfo { out, .. } => write!(f, "Sprite Info: {}", out.display()),
-            Self::ResourceTable { out, .. } => write!(f, "Resource Table: {}", out.display()),
-            Self::Resource { out, .. } => write!(f, "Resource: {}", out.display()),
-            Self::ResourceReq { out, .. } => write!(f, "Resource Req: {}", out.display()),
+            SpriteInfo { .. } => write!(f, "Sprite Info: {}", out.display()),
+            ResourceTable(..) => write!(f, "Resource Table: {}", out.display()),
+            Resource { .. } => write!(f, "Resource: {}", out.display()),
+            ResourceReq { .. } => write!(f, "Resource Req: {}", out.display()),
         }
     }
 }
@@ -182,28 +181,15 @@ impl<'a> ToExtract<'a> {
     /// certain configuration files are saved in git, so they should not be replaced
     /// if a file already exists
     fn is_preserved(&self) -> bool {
-        match self {
-            Self::SpriteBank { .. } => true,
-            Self::SpriteImgEntry { .. } => true,
-            Self::Binary { .. } => false,
-            Self::SpriteImg { .. } => false,
-            Self::SpriteInfo { .. } => false,
-            Self::ResourceTable { .. } => false,
-            Self::Resource { .. } => false,
-            Self::ResourceReq { .. } => false,
-        }
-    }
-
-    fn output_file(&self) -> &Path {
-        match self {
-            Self::SpriteBank { out, .. } => &out,
-            Self::Binary { out, .. } => &out,
-            Self::SpriteImgEntry { out, .. } => &out,
-            Self::SpriteImg { out, .. } => &out,
-            Self::SpriteInfo { out, .. } => &out,
-            Self::ResourceTable { out, .. } => &out,
-            Self::Resource { out, .. } => &out,
-            Self::ResourceReq { out, .. } => &out,
+        match self.info {
+            ExtractTask::SpriteBank { .. } => true,
+            ExtractTask::SpriteImgEntry { .. } => true,
+            ExtractTask::Binary(..) => false,
+            ExtractTask::SpriteImg { .. } => false,
+            ExtractTask::SpriteInfo { .. } => false,
+            ExtractTask::ResourceTable(..) => false,
+            ExtractTask::Resource { .. } => false,
+            ExtractTask::ResourceReq { .. } => false,
         }
     }
 }
@@ -215,22 +201,4 @@ fn usize_range(r: &Range<u32>) -> Range<usize> {
 fn ensure_parent_dir(p: &Path) -> io::Result<()> {
     p.parent()
         .map_or(Ok(()), |parent| fs::create_dir_all(parent))
-}
-
-fn todo_binaries<'a>(
-    bins: &'a [SimpleBin],
-    ctx: ExtractContext<'a>,
-) -> impl Iterator<Item = ToExtract<'a>> {
-    bins.iter().filter_map(move |bin| {
-        bin.offset[ctx.version]
-            .as_ref()
-            .map(|offset| ToExtract::Binary {
-                out: &bin.path,
-                data: &ctx.rom[usize_range(offset)],
-            })
-    })
-}
-
-fn binaries_extract(out: &Path, data: &[u8]) -> Result<(), Error> {
-    fs::write(out, data).map_err(Into::into)
 }
