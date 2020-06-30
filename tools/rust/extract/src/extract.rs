@@ -43,19 +43,10 @@ pub(crate) fn extract_assets(info: crate::Extract) -> Result<(), Error> {
         .into_iter()
         .flatten();
 
-    let mut todo = bins.chain(sprites).chain(resources).filter(|task| {
-        if ctx.force {
-            return true;
-        }
-
-        if task.is_preserved() {
-            return !task.out.is_file();
-        }
-        // check for discrepancies (file in local assets, but no file on fs)
-        local_assets
-            .as_ref()
-            .map_or(true, |la| !la.list.contains(&*task.out))
-    });
+    let mut todo = bins
+        .chain(sprites)
+        .chain(resources)
+        .filter(|task| ctx.force || check_for_work(task, local_assets.as_ref()));
 
     if info.dry_run {
         let mut stdout = io::stdout();
@@ -64,8 +55,9 @@ pub(crate) fn extract_assets(info: crate::Extract) -> Result<(), Error> {
             .context("Writing dry-run todo list");
     }
 
-    let mut fresh = Vec::new();
+    let mut fresh_assets = Vec::new();
     for task in todo {
+        let perserved = task.is_preserved();
         let ToExtract { out, info } = task;
         let new_file = out.display();
         ensure_parent_dir(&out)
@@ -73,24 +65,50 @@ pub(crate) fn extract_assets(info: crate::Extract) -> Result<(), Error> {
 
         match info {
             Binary(data) => binaries::extract(&out, data),
-            SpriteBank { .. } | SpriteImgEntry(..) | SpriteImg(..) => sprites::extract(&out, &info),
+            SpriteBank { .. } | SpriteImgEntry(..) | SpriteImg(..) | SpriteInfo(..) => {
+                sprites::extract(&out, &info)
+            }
             ResourceTable(..) | Resource(..) | ResourceReq(..) => resources::extract(&out, &info),
-            _ => Ok(()), //println!("not ready => {}", task),
         }
         .with_context(|| format!("extracting file {}", &new_file))?;
 
-        fresh.push(out.into_owned().into_boxed_path());
+        // if file is not managed by this program (since the user might make changes)
+        // don't add the file to the extracted assets list
+        if !perserved {
+            fresh_assets.push(out.into_owned().into_boxed_path());
+        }
     }
 
     // Output updated list of extracted assets
     match local_assets {
-        Some(la) => la.update_version(fresh),
-        None => fresh.into(),
+        Some(la) => la.update_version(fresh_assets),
+        None => fresh_assets.into(),
     }
     .write_to_path(&info.local)
     .context("writing new local assets file")?;
 
     Ok(())
+}
+
+fn check_for_work(task: &ToExtract, already_extracted: Option<&LocalAssets>) -> bool {
+    if task.is_preserved() {
+        return !task.out.is_file();
+    }
+    // check for discrepancies (file in local assets, but no file on fs)
+    already_extracted
+        .map(|la| {
+            let done = la.list.contains(&*task.out);
+            let exists = task.out.is_file();
+            if done && !exists {
+                eprintln!(
+                    "Asset '{}' was recorded as extracted, but not found",
+                    task.out.display()
+                );
+            }
+
+            !exists || !done
+        })
+        .unwrap_or(true)
 }
 
 #[derive(Debug)]
@@ -199,6 +217,5 @@ fn usize_range(r: &Range<u32>) -> Range<usize> {
 }
 
 fn ensure_parent_dir(p: &Path) -> io::Result<()> {
-    p.parent()
-        .map_or(Ok(()), |parent| fs::create_dir_all(parent))
+    p.parent().map_or(Ok(()), fs::create_dir_all)
 }

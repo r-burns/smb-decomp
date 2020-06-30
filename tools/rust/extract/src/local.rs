@@ -104,7 +104,7 @@ fn parse_line(s: &str) -> Result<AssetLine, Error> {
     if s.is_empty() {
         return Ok(AssetLine::Empty);
     }
-    if s.starts_with("#") {
+    if s.starts_with('#') {
         return Ok(AssetLine::Comment);
     }
 
@@ -113,11 +113,7 @@ fn parse_line(s: &str) -> Result<AssetLine, Error> {
             .split_whitespace()
             .nth(1)
             .ok_or_else(|| anyhow!("no version in version field"))
-            .and_then(|sub| {
-                sub.parse()
-                    .map(|ver| AssetLine::Version(ver))
-                    .map_err(Into::into)
-            });
+            .and_then(|sub| sub.parse().map(AssetLine::Version).map_err(Into::into));
     }
 
     Ok(AssetLine::Asset(PathBuf::from(s).into_boxed_path()))

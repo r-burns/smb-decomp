@@ -26,7 +26,7 @@ pub(super) fn todo<'a>(
     })
 }
 
-pub(super) fn extract<'a>(out: &Path, task: &ExtractTask) -> Result<(), Error> {
+pub(super) fn extract(out: &Path, task: &ExtractTask) -> Result<(), Error> {
     use ExtractTask::{Resource, ResourceReq, ResourceTable};
 
     match task {

@@ -42,6 +42,9 @@ pub(super) fn extract(out: &Path, task: &ExtractTask<'_>) -> Result<(), Error> {
                 .maybe_with_palette(img.palette)
                 .to_file(out)?;
         }
+        ExtractTask::SpriteInfo(data) => {
+            fs::write(out, data)?;
+        }
         _ => bail!("Not a sprite extraction {:?}", task),
     };
 
@@ -259,7 +262,7 @@ fn store_img_entry_info<'a>(
     }
 }
 
-fn gen_img_entry_config<'a>(info: &SpriteImgEntry) -> EntryConfig {
+fn gen_img_entry_config(info: &SpriteImgEntry) -> EntryConfig {
     let name_frame = |(i, offset)| {
         gen_frame_name(
             offset as usize,
@@ -270,8 +273,8 @@ fn gen_img_entry_config<'a>(info: &SpriteImgEntry) -> EntryConfig {
         )
     };
 
-    let format = info.format.into();
-    let bitdepth = info.bitdepth.into();
+    let format = info.format;
+    let bitdepth = info.bitdepth;
     let width = info.width;
     let height = info.height;
     let images = Some(

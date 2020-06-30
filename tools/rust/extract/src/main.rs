@@ -2,6 +2,7 @@ use anyhow::Error;
 use std::path::PathBuf;
 use structopt::StructOpt;
 
+mod clean;
 mod config;
 mod extract;
 mod local;
@@ -13,6 +14,11 @@ enum Opts {
     Extract(Extract),
     /// Generate new or add to existing .gitignore the extracted files
     GitIgnore,
+    Clean {
+        /// path to local assets file
+        #[structopt(parse(from_os_str))]
+        assets: PathBuf,
+    },
 }
 
 #[derive(Debug, StructOpt)]
@@ -50,5 +56,6 @@ fn run(opts: Opts) -> Result<(), Error> {
     match opts {
         Opts::Extract(info) => extract::extract_assets(info),
         Opts::GitIgnore => Ok(()),
+        Opts::Clean { assets } => clean::clean_assets(&assets),
     }
 }
