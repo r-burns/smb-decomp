@@ -5,6 +5,7 @@ use structopt::StructOpt;
 mod clean;
 mod config;
 mod extract;
+mod ignore;
 mod local;
 
 /// Extract neccessary resources from SSB64 rom image
@@ -13,11 +14,11 @@ enum Opts {
     /// extract files into repo
     Extract(Extract),
     /// Generate new or add to existing .gitignore the extracted files
-    GitIgnore,
+    Ignore(GitIgnore),
     Clean {
         /// path to local assets file
         #[structopt(parse(from_os_str))]
-        assets: PathBuf,
+        local: PathBuf,
     },
 }
 
@@ -43,6 +44,19 @@ struct Extract {
     dry_run: bool,
 }
 
+#[derive(Debug, StructOpt)]
+struct GitIgnore {
+    /// path to rom
+    #[structopt(short, long, parse(from_os_str))]
+    rom: PathBuf,
+    /// path to assets.toml
+    #[structopt(short, long, parse(from_os_str))]
+    assets: PathBuf,
+    /// path to .gitignore, or path for new .gitignore
+    #[structopt(short, long, parse(from_os_str))]
+    ignore: PathBuf,
+}
+
 fn main() {
     let opts = Opts::from_args();
 
@@ -55,7 +69,7 @@ fn main() {
 fn run(opts: Opts) -> Result<(), Error> {
     match opts {
         Opts::Extract(info) => extract::extract_assets(info),
-        Opts::GitIgnore => Ok(()),
-        Opts::Clean { assets } => clean::clean_assets(&assets),
+        Opts::Ignore(info) => ignore::modify_gitignore(info),
+        Opts::Clean { local } => clean::clean_assets(&local),
     }
 }

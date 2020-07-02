@@ -16,17 +16,16 @@ mod sprites;
 
 /// Common variables passed to extraction functions
 #[derive(Debug, Copy, Clone)]
-struct ExtractContext<'a> {
-    version: Version,
-    force: bool,
-    rom: &'a [u8],
+pub(crate) struct ExtractContext<'a> {
+    pub version: Version,
+    pub force: bool,
+    pub rom: &'a [u8],
 }
 
 pub(crate) fn extract_assets(info: crate::Extract) -> Result<(), Error> {
     use ExtractTask::*;
 
-    let assets = fs::read_to_string(&info.assets).context("Reading assets toml file")?;
-    let assets = Assets::from_toml_str(&assets).context("parsing assets toml file")?;
+    let assets = Assets::from_path(&info.assets).context("parsing assets toml file")?;
     let rom = fs::read(&info.rom).context("reading rom file")?;
     let ctx = ExtractContext {
         version: info.version,
@@ -35,17 +34,7 @@ pub(crate) fn extract_assets(info: crate::Extract) -> Result<(), Error> {
     };
     let local_assets = LocalAssets::from_path(&info.local).context("reading local assets")?;
 
-    let bins = binaries::todo(&assets.simple_bins, ctx);
-    let sprites = sprites::todo(&assets.sprite_banks, ctx)
-        .into_iter()
-        .flatten();
-    let resources = resources::todo(&assets.resources, ctx)
-        .into_iter()
-        .flatten();
-
-    let mut todo = bins
-        .chain(sprites)
-        .chain(resources)
+    let mut todo = generate_todos(&assets, ctx)
         .filter(|task| ctx.force || check_for_work(task, local_assets.as_ref()));
 
     if info.dry_run {
@@ -90,6 +79,22 @@ pub(crate) fn extract_assets(info: crate::Extract) -> Result<(), Error> {
     Ok(())
 }
 
+/// Iterator over all of the possible assets to extract, given `ctx` (mainly `Version`)
+pub(crate) fn generate_todos<'a>(
+    assets: &'a Assets,
+    ctx: ExtractContext<'a>,
+) -> impl Iterator<Item = ToExtract<'a>> {
+    let bins = binaries::todo(&assets.simple_bins, ctx);
+    let sprites = sprites::todo(&assets.sprite_banks, ctx)
+        .into_iter()
+        .flatten();
+    let resources = resources::todo(&assets.resources, ctx)
+        .into_iter()
+        .flatten();
+
+    bins.chain(sprites).chain(resources)
+}
+
 fn check_for_work(task: &ToExtract, already_extracted: Option<&LocalAssets>) -> bool {
     if task.is_preserved() {
         return !task.out.is_file();
@@ -112,8 +117,8 @@ fn check_for_work(task: &ToExtract, already_extracted: Option<&LocalAssets>) -> 
 }
 
 #[derive(Debug)]
-struct ToExtract<'a> {
-    out: Cow<'a, Path>,
+pub(crate) struct ToExtract<'a> {
+    pub out: Cow<'a, Path>,
     info: ExtractTask<'a>,
 }
 
@@ -198,7 +203,7 @@ impl<'a> fmt::Display for ToExtract<'a> {
 impl<'a> ToExtract<'a> {
     /// certain configuration files are saved in git, so they should not be replaced
     /// if a file already exists
-    fn is_preserved(&self) -> bool {
+    pub(crate) fn is_preserved(&self) -> bool {
         match self.info {
             ExtractTask::SpriteBank { .. } => true,
             ExtractTask::SpriteImgEntry { .. } => true,
@@ -209,6 +214,10 @@ impl<'a> ToExtract<'a> {
             ExtractTask::Resource { .. } => false,
             ExtractTask::ResourceReq { .. } => false,
         }
+    }
+    /// get solely the filename for this task
+    pub(crate) fn into_filename(self) -> Box<Path> {
+        self.out.into_owned().into_boxed_path()
     }
 }
 

@@ -66,7 +66,7 @@ unk_symbols = list(asm_dir.rglob('*.unresolved.ld')) + [base_dir / 'hardware-reg
 
 # Tools
 tool_dir = Path('tools')
-ido5_3 = Path('tools', 'ido5.3')
+ido5_3 = tool_dir / 'ido5.3'
 ido7_1 = tool_dir / 'ido7.1'
 n64gfx = tool_dir / 'n64gfx'
 imgbank = tool_dir / 'imgbank'

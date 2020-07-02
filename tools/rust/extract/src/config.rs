@@ -2,8 +2,9 @@ use anyhow::{anyhow, Context, Error};
 use serde::Deserialize;
 use std::collections::HashMap;
 use std::fmt::Debug;
+use std::fs;
 use std::ops::{Index, Range};
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 use std::str::FromStr;
 
 // TODO: Check names for valid gas label (for incbin)
@@ -23,6 +24,12 @@ impl FromStr for Version {
             "us" => Ok(Self::US),
             _ => Err(anyhow!("Unknown version: {}", s)),
         }
+    }
+}
+
+impl Version {
+    pub fn iter() -> impl Iterator<Item = Self> {
+        [Self::US].iter().copied()
     }
 }
 
@@ -238,8 +245,11 @@ impl Assets {
     }
 
     pub fn from_toml_str(s: &str) -> Result<Self, Error> {
-        let raw_assets: AssetsRaw = toml::from_str(s).context("parsing assets toml")?;
+        toml::from_str(s).map(Self::from_raw).map_err(Into::into)
+    }
 
-        Ok(Self::from_raw(raw_assets))
+    pub fn from_path(p: &Path) -> Result<Self, Error> {
+        let s = fs::read_to_string(p).context("reading asset toml file")?;
+        Self::from_toml_str(&s)
     }
 }
