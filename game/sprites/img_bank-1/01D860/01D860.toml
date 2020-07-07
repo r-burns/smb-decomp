@@ -1,9 +1,0 @@
-format = 'ci'
-bitdepth = 4
-width = 16
-height = 16
-images = [
-    '01D890.ci4.png',
-    '01D910.ci4.png',
-    '01D990.ci4.png',
-]

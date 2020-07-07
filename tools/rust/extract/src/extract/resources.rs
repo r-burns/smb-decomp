@@ -63,7 +63,7 @@ fn read_res_table<'a>(
                 }
 
                 let reqs = details.reqs.map(|data| {
-                    let out = file_dir.join(format!("{}-req.bin", &filename));
+                    let out = file_dir.join(format!("{}req.bin", &filename));
                     ToExtract {
                         out: out.into(),
                         info: ExtractTask::ResourceReq(data),
@@ -136,7 +136,9 @@ impl<'a> ResourceEntry<'a> {
             };
             let internal_ptrs = check_ptr(read_u16(4..6));
             let external_ptrs = check_ptr(read_u16(8..10));
-            let r = tbl_end + offset..tbl_end + offset + size;
+            // used compressed size if compressed
+            let real_size = compressed_size.unwrap_or(size);
+            let r = tbl_end + offset..tbl_end + offset + real_size;
             let file = &rom[r];
 
             Some(ResourceDetails {

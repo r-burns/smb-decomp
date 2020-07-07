@@ -25,7 +25,8 @@ if config['tc'] == 'ido':
 else:
     version = config['version'] + "-" + config['tc']
 
-# Helper Functions (make module)
+# Path Helper Functions
+# maybe make into module with to_output_path in Config class, others in doit_paths
 def append_suffix(src, ext):
     return src.parent / (src.name + ext)
 
@@ -70,9 +71,10 @@ ido5_3 = tool_dir / 'ido5.3'
 ido7_1 = tool_dir / 'ido7.1'
 n64gfx = tool_dir / 'n64gfx'
 imgbank = tool_dir / 'imgbank'
+extract_assets = tool_dir / 'extract'
 shasum = 'shasum'
 
-rust_tools = [n64gfx, imgbank]
+rust_tools = [n64gfx, imgbank, extract_assets]
 rust_dir = tool_dir / 'rust'
 rust_manifest = rust_dir / 'Cargo.toml'
 rust_output_dir = rust_dir / 'target' / 'release'
@@ -245,12 +247,12 @@ def task_cc():
 
 # Resource table
 res_dir = base_dir / 'resources'
-res_tempbins = list(res_dir.glob('tempbins/files/*'))
+res_tempbins = list(res_dir.glob('temp/files/*'))
 res_tempbins_o = list(map(lambda f: to_output_path(f, '.o'), res_tempbins))
-res_table = res_dir / 'tempbins' / 'resfiletable.bin'
-res_table_o = build_dir / 'resources' / 'resfiletable.o'
-res_link  = res_dir / 'tempbins' / 'templink.ld'
-res_archive = to_output_path(res_dir / 'resourcefiles.o', '.o')
+res_table = res_dir / 'temp' / 'resource-filetable.bin'
+res_table_o = to_output_path(up_one_dir(res_table), '.o')
+res_link  = res_dir / 'templink.ld'
+res_archive = to_output_path(res_dir / 'resource-files.o', '.o')
 
 def task_link_resources():
     ''' Link resource files into a relocatable binary for linking '''
@@ -396,7 +398,7 @@ def task_link_sprite_bank():
             'targets': [o],
         }
 
-temp_sprbank_bins = list(sprite_dir.glob('tempbins/*'))
+temp_sprbank_bins = list(sprite_dir.glob('*/*.bin'))
 temp_sprbank_o = list(
     map(lambda b: to_output_path(up_one_dir(b), '.o'), temp_sprbank_bins)
 )

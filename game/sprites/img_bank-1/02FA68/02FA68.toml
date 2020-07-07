@@ -1,8 +1,0 @@
-format = 'ci'
-bitdepth = 4
-width = 64
-height = 16
-images = [
-    '02FA90.ci4.png',
-    '02FC90.ci4.png',
-]

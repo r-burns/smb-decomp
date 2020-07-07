@@ -1,15 +1,15 @@
 [raw]
-"testgame/audio/S1_music.sbk" = {size = 0x1000, us = 0xB277B0}
-"testgame/audio/B1_sounds1.ctl" = {size = 0x1000, us = 0xB4E5C0}
-"testgame/audio/B1_sounds1.tbl" = {size = 0x1000, us = 0xB54CE0}
-"testgame/audio/B1_sounds2.ctl" = {size = 0x1000, us = 0xC6B650}
-"testgame/audio/B1_sounds2.tbl" = {size = 0x1000, us = 0xC7B1F0}
-"testgame/unknown/F573D0.bin" = {size = 0x1000, us = 0xF573D0}
-"testgame/unknown/F57BF0.bin" = {size = 0x1000, us = 0xF57BF0}
-"testgame/unknown/F5A9C0.bin" = {size = 0x1000, us = 0xF5A9C0}
+"game/audio/tempbins/S1_music.sbk" = {size = 0x26E10, us = 0xB277B0}
+"game/audio/tempbins/B1_sounds1.ctl" = {size = 0x6720, us = 0xB4E5C0}
+"game/audio/tempbins/B1_sounds1.tbl" = {size = 0x116970, us = 0xB54CE0}
+"game/audio/tempbins/B1_sounds2.ctl" = {size = 0xFBA0, us = 0xC6B650}
+"game/audio/tempbins/B1_sounds2.tbl" = {size = 0x2DC1E0, us = 0xC7B1F0}
+"game/unknown/tempbins/F573D0.bin" = {size = 0x820, us = 0xF573D0}
+"game/unknown/tempbins/F57BF0.bin" = {size = 0x2DD0, us = 0xF57BF0}
+"game/unknown/tempbins/F5A9C0.bin" = {size = 0x4B20, us = 0xF5A9C0}
 
 [spriteBanks]
-dir = "testgame/sprites"
+dir = "game/sprites"
 [[spriteBanks.us]]
     name = "bank1"
     spriteInfo = [0xAC7340, 0xAC9DE0]
@@ -24,11 +24,35 @@ dir = "testgame/sprites"
         "particle",
     ]
 [[spriteBanks.us]]
+    name = "bank3"
+    spriteInfo = [0xB174A0, 0xB176A0]
+    spriteBank = [0xB176A0, 0xB19700]
+[[spriteBanks.us]]
+    name = "bank4"
+    spriteInfo = [0xB19700, 0xB19850]
+    spriteBank = [0xB19850, 0xB1BCA0]
+[[spriteBanks.us]]
     name = "bank5"
     spriteInfo = [0xB1BCA0, 0xB1BDE0]
     spriteBank = [0xB1BDE0, 0xB1E640]
+[[spriteBanks.us]]
+    name = "bank6"
+    spriteInfo = [0xB1E640, 0xB1E7E0]
+    spriteBank = [0xB1E7E0, 0xB1F960]
+[[spriteBanks.us]]
+    name = "bank7"
+    spriteInfo = [0xB1F960, 0xB1FC80]
+    spriteBank = [0xB1FC80, 0xB22980]
+[[spriteBanks.us]]
+    name = "bank8"
+    spriteInfo = [0xB22980, 0xB22A00]
+    spriteBank = [0xB22A00, 0xB22C30]
+[[spriteBanks.us]]
+    name = "bank9"
+    spriteInfo = [0xB22C30, 0xB22D40]
+    spriteBank = [0xB22D40, 0xB277B0]
 
 [resources]
-dir = "testgame/resources"
+dir = "game/resources/temp"
 [resources.us]
     table = [0x1AC870, 0x1B2C6C]

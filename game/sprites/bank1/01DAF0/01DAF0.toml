@@ -1,0 +1,26 @@
+format = 'i'
+bitdepth = 4
+width = 32
+height = 32
+images = [
+    '01DAF0_0.i4.png',
+    '01DAF0_1.i4.png',
+    '01DAF0_2.i4.png',
+    '01DAF0_3.i4.png',
+    '01DAF0_4.i4.png',
+    '01DAF0_5.i4.png',
+    '01DAF0_6.i4.png',
+    '01DAF0_7.i4.png',
+    '01DAF0_8.i4.png',
+    '01DAF0_9.i4.png',
+    '01DAF0_10.i4.png',
+    '01DAF0_11.i4.png',
+    '01DAF0_12.i4.png',
+    '01DAF0_13.i4.png',
+    '01DAF0_14.i4.png',
+    '01DAF0_15.i4.png',
+    '01DAF0_16.i4.png',
+    '01DAF0_17.i4.png',
+    '01DAF0_18.i4.png',
+    '01DAF0_19.i4.png',
+]

@@ -212,7 +212,7 @@ fn read_entry<'a>(
             (i, o, p)
         })
         .map(move |(i, o, p)| {
-            let out = gen_frame_filename(&entry_dir, o, i, &entry_name, format, bitdepth);
+            let out = gen_frame_filename(&entry_dir, i, &entry_name, format, bitdepth);
             let palette = p.map(|p| {
                 let p = p as usize;
                 let plen = (1 << bitdepth as usize) * 2;
@@ -263,15 +263,8 @@ fn store_img_entry_info<'a>(
 }
 
 fn gen_img_entry_config(info: &SpriteImgEntry) -> EntryConfig {
-    let name_frame = |(i, offset)| {
-        gen_frame_name(
-            offset as usize,
-            i,
-            &info.name,
-            info.format.into(),
-            info.bitdepth.into(),
-        )
-    };
+    let name_frame =
+        |(i, _offset)| gen_frame_name(i, &info.name, info.format.into(), info.bitdepth.into());
 
     let format = info.format;
     let bitdepth = info.bitdepth;
@@ -299,34 +292,25 @@ fn generic_entry_name(offset: u32) -> String {
     format!("{:06X}", offset)
 }
 
-/// name the frames in an image entry based if a user provided a name
-/// user supplied name if the `Cow` is borrowed
-fn gen_frame_name<'a>(
-    frame_offset: usize,
+/// name the frames in an image entry based on frame number
+fn gen_frame_name(
     frame_num: usize,
-    prefix: &Cow<'a, str>,
+    prefix: &str,
     format: ImageFormat,
     bitdepth: BitDepth,
 ) -> String {
-    if let Cow::Borrowed(name) = prefix {
-        // name sequentially if user provided name
-        format!("{}_{}.{}{}.png", name, frame_num, format, bitdepth as u8)
-    } else {
-        // name by offset if no name provided
-        format!("{:06X}.{}{}.png", frame_offset, format, bitdepth as u8)
-    }
+    format!("{}_{}.{}{}.png", prefix, frame_num, format, bitdepth as u8)
 }
 
 /// output path for a frame in an image entry
-fn gen_frame_filename<'a>(
+fn gen_frame_filename(
     entry_dir: &Path,
-    frame_offset: usize,
     frame_num: usize,
-    prefix: &Cow<'a, str>,
+    prefix: &str,
     format: ImageFormat,
     bitdepth: BitDepth,
 ) -> PathBuf {
-    let name = gen_frame_name(frame_offset, frame_num, prefix, format, bitdepth);
+    let name = gen_frame_name(frame_num, prefix, format, bitdepth);
 
     entry_dir.join(name)
 }

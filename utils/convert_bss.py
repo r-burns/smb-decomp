@@ -6,7 +6,7 @@ import sys
 from pathlib import Path
 
 if len(sys.argv) != 2:
-    print(f"Usage: {sys.argv[0]} <.bss .s file>")
+    print(f"Usage: {sys.argv[0]} <.bss.s file>")
     exit()
 
 def parse_int(s):

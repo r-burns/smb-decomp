@@ -1,8 +1,0 @@
-format = 'ia'
-bitdepth = 8
-width = 64
-height = 64
-images = [
-    '000030.ia8.png',
-    '001030.ia8.png',
-]

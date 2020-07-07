@@ -1,0 +1,21 @@
+format = 'ci'
+bitdepth = 4
+width = 16
+height = 16
+images = [
+    '01CE70_0.ci4.png',
+    '01CE70_1.ci4.png',
+    '01CE70_2.ci4.png',
+    '01CE70_3.ci4.png',
+    '01CE70_4.ci4.png',
+    '01CE70_5.ci4.png',
+    '01CE70_6.ci4.png',
+    '01CE70_7.ci4.png',
+    '01CE70_8.ci4.png',
+    '01CE70_9.ci4.png',
+    '01CE70_10.ci4.png',
+    '01CE70_11.ci4.png',
+    '01CE70_12.ci4.png',
+    '01CE70_13.ci4.png',
+    '01CE70_14.ci4.png',
+]

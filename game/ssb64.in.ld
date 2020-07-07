@@ -880,31 +880,31 @@ SECTIONS
 
     BEGIN_SEG(resources, 0)
     {
-        resources/resfiletable.o(.data);
-        resources/resourcefiles.o(.data);
+        resources/resource-filetable.o(.data);
+        resources/resource-files.o(.data);
     }
     END_SEG(resources)
 
     BEGIN_SEG(imgbank, 0)
     {
-        sprites/spr_bank-1.o(.data);
-        sprites/img_bank-1.o(.header .rodata);
-        sprites/spr_bank-2.o(.data);
-        sprites/img_bank-2.o(.header .rodata);
-        sprites/spr_bank-3.o(.data);
-        sprites/img_bank-3.o(.header .rodata);
-        sprites/spr_bank-4.o(.data);
-        sprites/img_bank-4.o(.header .rodata);
-        sprites/spr_bank-5.o(.data);
-        sprites/img_bank-5.o(.header .rodata);
-        sprites/spr_bank-6.o(.data);
-        sprites/img_bank-6.o(.header .rodata);
-        sprites/spr_bank-7.o(.data);
-        sprites/img_bank-7.o(.header .rodata);
-        sprites/spr_bank-8.o(.data);
-        sprites/img_bank-8.o(.header .rodata);
-        sprites/spr_bank-9.o(.data);
-        sprites/img_bank-9.o(.header .rodata);
+        sprites/bank1-info.o(.data);
+        sprites/bank1.o(.header .rodata);
+        sprites/bank2-info.o(.data);
+        sprites/bank2.o(.header .rodata);
+        sprites/bank3-info.o(.data);
+        sprites/bank3.o(.header .rodata);
+        sprites/bank4-info.o(.data);
+        sprites/bank4.o(.header .rodata);
+        sprites/bank5-info.o(.data);
+        sprites/bank5.o(.header .rodata);
+        sprites/bank6-info.o(.data);
+        sprites/bank6.o(.header .rodata);
+        sprites/bank7-info.o(.data);
+        sprites/bank7.o(.header .rodata);
+        sprites/bank8-info.o(.data);
+        sprites/bank8.o(.header .rodata);
+        sprites/bank9-info.o(.data);
+        sprites/bank9.o(.header .rodata);
     }
     END_SEG(imgbank)
 
