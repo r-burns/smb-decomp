@@ -99,22 +99,17 @@ def task_tools():
 
 def task_run_cargo():
     ''' Run Cargo to check if a rust based tool is outdated '''
-
+    cmd = ['cargo', 'build', '--release', '--manifest-path', rust_manifest]
+    outputs = []
     for prog in rust_tools:
-        prog_name = prog.name
-        cargo_out = rust_output_dir.joinpath(prog_name)
+        name = prog.name
+        cmd.extend(['-p', name])
+        outputs.append(rust_output_dir.joinpath(name))
 
-        yield {
-            'name': prog_name,
-            'actions': [
-                ['cargo', 'build', 
-                '--release', 
-                '--manifest-path', rust_manifest,
-                '-p', prog_name
-                ]
-            ],
-            'targets': [cargo_out],
-        }
+    return {
+        'actions': [cmd],
+        'targets': outputs
+    }
 
 
 ####### Files and Outputs #######

@@ -111,6 +111,13 @@ fn check_for_work(task: &ToExtract, already_extracted: Option<&LocalAssets>) -> 
                 );
             }
 
+            if !done && exists {
+                eprintln!(
+                    "Asset '{}' was not recorded as extracted, but it was found",
+                    task.out.display()
+                );
+            }
+
             !exists || !done
         })
         .unwrap_or(true)
