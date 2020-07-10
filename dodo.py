@@ -71,10 +71,9 @@ ido5_3 = tool_dir / 'ido5.3'
 ido7_1 = tool_dir / 'ido7.1'
 n64gfx = tool_dir / 'n64gfx'
 imgbank = tool_dir / 'imgbank'
-extract_assets = tool_dir / 'extract'
 shasum = 'shasum'
 
-rust_tools = [n64gfx, imgbank, extract_assets]
+rust_tools = [n64gfx, imgbank]
 rust_dir = tool_dir / 'rust'
 rust_manifest = rust_dir / 'Cargo.toml'
 rust_output_dir = rust_dir / 'target' / 'release'
