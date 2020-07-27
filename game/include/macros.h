@@ -11,6 +11,16 @@
 #define UNUSED
 #endif
 
+#define GLUE(a, b) a ## b
+#define GLUE2(a, b) GLUE(a, b)
+
+// Static assertions
+#ifdef __GNUC__
+#define STATIC_ASSERT(cond, msg) _Static_assert(cond, msg)
+#else
+#define STATIC_ASSERT(cond, msg) typedef char GLUE2(static_assertion_failed, __LINE__)[(cond) ? 1 : -1]
+#endif
+
 /// Convert from a physical addresss to a ROM (0xB0) address
 #define PHYSICAL_TO_ROM(x) ((uintptr_t)(x) + 0xB0000000)
 

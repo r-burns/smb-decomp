@@ -12,13 +12,14 @@ u32 D_80044ED0;
 struct Unk80044ED4 *D_80044ED4;
 struct Unk80044ED4 *D_80044ED8;
 struct Unk80044ED4 *D_80044EDC;
-u32 D_80044EE0;
+struct Unk80044ED4 *D_80044EE0;
 struct Unk80044ED4 *D_80044EE4;
-u8 D_80044EE8[80];
-u32 D_80044F38;
-u32 D_80044F3C;
-u8 extend_D_80044F3C[72];
-u8 D_80044F88[8];
+OSViMode D_80044EE8; //u8 D_80044EE8[80];
+//u32 D_80044F38;
+//u32 D_80044F3C;
+//u8 extend_D_80044F3C[72];
+OSViMode D_80044F38;
+u32 D_80044F88[2];
 void *D_80044F90[3];
 void *D_80044F9C[1];
 void *D_80044FA0;
@@ -28,7 +29,7 @@ u32 D_80044FAC;
 u32 D_80044FB0;
 u32 D_80044FB4;
 u32 D_80044FB8;
-u32 D_80044FBC;
+u32 D_80044FBC; //bitflags? union?
 u8 D_80044FC0[8];
 u32 D_80044FC8;
 u32 D_80044FCC;
@@ -165,8 +166,8 @@ struct Unk80044ED4 {
     /* 0x00 */ s32 unk00;
     /* 0x04 */ s32 unk04;
     /* 0x08 */ u8 pad08[4];
-    /* 0x0C */ struct Unk80044ED4 *unk0C;
-    /* 0x10 */ struct Unk80044ED4 *unk10;
+    /* 0x0C */ struct Unk80044ED4 *unk0C; // next
+    /* 0x10 */ struct Unk80044ED4 *unk10; // prev
 };
 
 s32 func_80000B54(UNUSED s32 arg0) {
@@ -291,11 +292,39 @@ void func_80000DD4(struct Unk80044ED4 *arg0) {
     }
 }
 
-#pragma GLOBAL_ASM("game/nonmatching/thread3/func_80000E24.s")
+void func_80000E24(struct Unk80044ED4 *arg0) {
+    arg0->unk0C = NULL;
+    arg0->unk10 = D_80044EE0;
+    if (D_80044EE0 != NULL) {
+        D_80044EE0->unk0C = arg0;
+    } else {
+        D_80044EDC = arg0;
+    }
+    D_80044EE0 = arg0;
+}
 
-#pragma GLOBAL_ASM("game/nonmatching/thread3/func_80000E5C.s")
+void func_80000E5C(struct Unk80044ED4 *arg0) {
+    if (arg0->unk10 != NULL) {
+        arg0->unk10->unk0C = arg0->unk0C;
+    } else {
+        D_80044EDC = arg0->unk0C;
+    }
 
-#pragma GLOBAL_ASM("game/nonmatching/thread3/func_80000EAC.s")
+    if (arg0->unk0C != NULL) {
+        arg0->unk0C->unk10 = arg0->unk10;
+    } else {
+        D_80044EE0 = arg0->unk10;
+    }
+}
+
+void func_80000EAC(void) {
+    D_80044EE8 = D_80044F38;
+    osViSetMode(&D_80044EE8);
+   
+    // probably bitfield
+    osViBlack((D_80044FBC << 4) >> 31);
+    D_80044F88[0] = 0;
+}
 
 #pragma GLOBAL_ASM("game/nonmatching/thread3/func_80000F30.s")
 
