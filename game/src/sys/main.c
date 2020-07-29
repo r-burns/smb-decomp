@@ -29,21 +29,24 @@ void __osSetWatchLo(s32);
 // generate an overlay_symbols.h?
 extern u32 _loadovlSegRomStart;
 extern u32 _loadovlSegRomEnd;
+extern void *_loadovlLoadStart;
+extern void *_loadovlLoadEnd;
 extern void *_loadovlTextStart;
+extern void *_loadovlTextEnd;
 extern void *_loadovlDataStart;
+extern void *_loadovlDataEnd;
 extern void *_loadovlSegNoloadStart;
 extern void *_loadovlSegNoloadEnd;
 
 // data
-//extern struct Overlay ovlOvlManager;
-static struct Overlay ovlOvlManager = {
+static struct Overlay OverlayManager = {
     (u32) &_loadovlSegRomStart,
     (u32) &_loadovlSegRomEnd,
+    &_loadovlLoadStart,
     &_loadovlTextStart,
-    &_loadovlTextStart,
+    &_loadovlTextEnd,
     &_loadovlDataStart,
-    &_loadovlDataStart,
-    &_loadovlSegNoloadStart,
+    &_loadovlDataEnd,
     &_loadovlSegNoloadStart,
     &_loadovlSegNoloadEnd
 };
@@ -165,7 +168,7 @@ void thread5_main(UNUSED void *arg) {
     osRecvMesg(&gThreadingQueue, NULL, OS_MESG_BLOCK);
 
     func_80006B80();
-    load_overlay(&ovlOvlManager);
+    load_overlay(&OverlayManager);
     load_overlay_set(0);
 }
 

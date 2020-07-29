@@ -7,16 +7,17 @@
 #include <PR/os.h>
 
 // loadovl.h? or a generic overlay header?
+// all ends are exclusive [start..end)
 struct Overlay {
     u32 romStart;
-    u32 romEnd; //exclusive [romStart..romEnd)
+    u32 romEnd;
+    void *ramLoadStart;
     void *ramTextStart;
-    void *ramTextStart2;
+    void *ramTextEnd;
     void *ramDataStart;
-    void *ramDataStart2;
-    void *ramBssStart;
-    void *ramBssStart2;
-    void *ramBssEnd;
+    void *ramDataEnd;
+    void *ramNoloadStart;
+    void *ramNoloadEnd;
 };
 
 extern void fatal_printf(const char *fmt, ...);

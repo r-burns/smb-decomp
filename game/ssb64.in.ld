@@ -21,6 +21,23 @@
 #define END_NOLOAD(name) \
     _##name##SegNoloadEnd = ADDR(.name.noload) + SIZEOF(.name.noload);
 
+#define BEGIN_OVERLAY_LOAD(name) \
+    _##name##LoadStart = ABSOLUTE(.);
+
+#define END_OVERLAY_LOAD(name) \
+    _##name##LoadEnd = ABSOLUTE(.); \
+
+#define BEGIN_OVERLAY_TEXT(name) \
+    _##name##TextStart = ABSOLUTE(.);
+
+#define END_OVERLAY_TEXT(name) \
+    _##name##TextEnd = ABSOLUTE(.);
+
+#define BEGIN_OVERLAY_DATA(name) \
+    _##name##DataStart = ABSOLUTE(.);
+
+#define END_OVERLAY_DATA(name) \
+    _##name##DataEnd = ABSOLUTE(.);
 
 /* Start of Linker Script */
 SECTIONS 
@@ -72,10 +89,15 @@ SECTIONS
     
     BEGIN_SEG(loadovl, 0x800A1980)
     {
-        _loadovlTextStart = ABSOLUTE(.);
+        BEGIN_OVERLAY_LOAD(loadovl)
+        BEGIN_OVERLAY_TEXT(loadovl)
         asm/loadovl/loadovl.text.o(.text);
-        _loadovlDataStart = ABSOLUTE(.);
+        END_OVERLAY_TEXT(loadovl)
+
+        BEGIN_OVERLAY_DATA(loadovl)
         asm/loadovl/loadovl.data.o(.data);
+        END_OVERLAY_DATA(loadovl)
+        END_OVERLAY_LOAD(loadovl)
     }
     END_SEG(loadovl)
     BEGIN_NOLOAD(loadovl)
