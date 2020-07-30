@@ -1,15 +1,8 @@
-from pathlib import Path
 from shutil import which
 from doit.action import CmdAction
 import os
 import sys
 import subprocess
-
-tool_dir = Path('tools')
-ido5_3 = tool_dir / 'ido5.3'
-ido5_3_cc = ido5_3 / 'usr' / 'bin' / 'cc'
-ido7_1 = tool_dir / 'ido7.1'
-ido7_1_cc = ido7_1 / 'usr' / 'bin' / 'cc'
 
 class MissingGNUToolchain(Exception):
     def __init__(self):
@@ -77,9 +70,13 @@ class ToolChain:
         self.C_DEFINES = ['-D_LANGUAGE_C']
         
         # Compiler specific
-        possible_tc = config['tc']
+        possible_tc = config.toolchain
         if possible_tc == 'ido':
-            qemu = _find_qemu_irix(config['qemu'])
+            qemu = _find_qemu_irix(config.qemu)
+            ido5_3 = config.tools / 'ido5.3'
+            ido5_3_cc = ido5_3 / 'usr' / 'bin' / 'cc'
+            ido7_1 = config.tools / 'ido7.1'
+            ido7_1_cc = ido7_1 / 'usr' / 'bin' / 'cc'
             self.CC = [qemu, '-silent', '-L', ido7_1, ido7_1_cc, '-c']
             self.CFLAGS = ['-Wab,-r4300_mul', '-G', '0', '-non_shared',
                 '-Xfullwarn', '-Xcpluscomm', '-signed', '-32']
@@ -89,8 +86,8 @@ class ToolChain:
                     'flags': self.CFLAGS,
                 },
                 'ido5.3':{
-                    'cc': None,
-                    'flags': None,
+                    'cc': [qemu, '-silent', '-L', ido5_3, ido5_3_cc, '-c'],
+                    'flags': self.CFLAGS,
                 },
             }
             self.CC_ASMPROC = {

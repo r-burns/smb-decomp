@@ -4,80 +4,36 @@ import subprocess
 import sys
 import shutil
 
-sys.path.append('utils')
-from doit_parsemk import parse_mk_dependencies
-from doit_toolchain import ToolChain
+import extract_assets
 
+sys.path.append('doit')
+from parsemk import parse_mk_dependencies
+from toolchain import ToolChain
+from config import Config
+from pathutil import append_suffix, up_one_dir
+
+
+############ Configuration ###########################
 DOIT_CONFIG = {'default_tasks': ['compare'], 'reporter': 'executed-only'}
 
-config = {
-    'tc': get_var('TOOLCHAIN', 'ido'),
-    'qemu': get_var('QEMU_IRIX', None),
-    'version': get_var('VERSION', 'us'),
-    'no-match': get_var('NON_MATCHING', False),
-    'avoid-ub': get_var('AVOID_UB', False),
-}
-
+# Read CLI options to configure this build
+config = Config(
+    Path('build'), # Output location for build artifacts. 
+    Path('game'),  # Location for all game source files
+    Path('tools')  # Location for supporting tool binaries and scripts
+)
+# Toolchain (cc, as, ld, objcopy) based on user config
 tc = ToolChain(config)
 
-if config['tc'] == 'ido':
-    version = config['version']
-else:
-    version = config['version'] + "-" + config['tc']
-
-# Path Helper Functions
-# maybe make into module with to_output_path in Config class, others in doit_paths
-def append_suffix(src, ext):
-    return src.parent / (src.name + ext)
-
-def to_output_path(src, out_ext, append_sufix=False):
-    ''' Take an input Path and convert an output path with
-        `out_ext` in the proper build directory
-        This will also ensure that the all output directories
-        are created
-    '''
-    t = build_dir.joinpath(src.relative_to(base_dir))
-    if append_sufix:
-        o = append_suffix(t, out_ext)
-    else:
-        o = t.with_suffix(out_ext)
-    o.parent.mkdir(parents=True, exist_ok=True)
-
-    return o
-
-def up_one_dir(src, out_ext=None):
-    ''' Return `src` Path with the file up one directory
-        If there is an `out_ext`, the `src` file's extension is changed
-    '''
-    if not (out_ext is None):
-        src = src.with_suffix(out_ext)
-    
-    gp = src.parents[1]
-    return gp.joinpath(src.name)
-
-
-# Paths and Files
-build_base = Path('build')
-build_dir = build_base / version
-base_dir = Path('game')
-inc_dir = base_dir / 'include'
-asm_dir = base_dir / 'asm'
-c_dir = base_dir / 'src'
-unk_symbols = list(asm_dir.rglob('*.unresolved.ld')) + [base_dir / 'hardware-registers.ld', base_dir / 'not-found-sym.ld']
-
-# Tools
-tool_dir = Path('tools')
-ido5_3 = tool_dir / 'ido5.3'
-ido7_1 = tool_dir / 'ido7.1'
-n64gfx = tool_dir / 'n64gfx'
-imgbank = tool_dir / 'imgbank'
+########## Tools #####################################
+n64gfx = config.tools / 'n64gfx'
+imgbank = config.tools / 'imgbank'
 shasum = 'shasum'
 
 rust_tools = [n64gfx, imgbank]
-rust_dir = tool_dir / 'rust'
+rust_dir = config.tools / 'rust'
 rust_manifest = rust_dir / 'Cargo.toml'
 rust_output_dir = rust_dir / 'target' / 'release'
-
 
 def task_tools():
     ''' Compile all tooling required for building the ROM '''
@@ -95,7 +51,6 @@ def task_tools():
             'targets': [prog],
         }
 
-
 def task_run_cargo():
     ''' Run Cargo to check if a rust based tool is outdated '''
     cmd = ['cargo', 'build', '--release', '--manifest-path', rust_manifest]
@@ -111,23 +66,43 @@ def task_run_cargo():
     }
 
 
-####### Files and Outputs #######
+########## Files and Outputs #########################
+# Assembly Files
+asm_dir = config.game_dir / 'asm'
+s_files = list(asm_dir.rglob('*.s'))
+s_objs = list(map(lambda f: config.to_output(f, '.o'), s_files))
+
+# C Files
+inc_dir = config.game_dir / 'include'
+c_dir = config.game_dir / 'src'
+c_files = list(c_dir.rglob('*.c'))
+c_objs = list(map(lambda f: config.to_output(f, '.o'), c_files))
+
 # Linker Scripts
-ssb_lds_in = base_dir / 'ssb64.in.ld'
-ssb_lds = build_dir / 'ssb64.ld'
+ssb_lds_in = config.game_dir / 'ssb64.in.ld'
+ssb_lds = config.to_output(ssb_lds_in, ".ld")
+unk_symbols = [
+    config.game_dir / 'hardware-registers.ld',
+    config.game_dir / 'not-found-sym.ld',
+] + list(asm_dir.rglob('*.unresolved.ld'))
+
 # ROM and Build Artifacts
-rom_name = f"ssb64.{version}"
-rom_elf = build_dir / (rom_name + '.elf')
+rom_name = f"ssb64.{config.target_version}"
+rom_elf = config.build_dir / (rom_name + '.elf')
 rom_map = rom_elf.with_suffix('.map')
 rom = rom_elf.with_suffix('.z64')
 
-# Assembly Files
-s_files = list(asm_dir.rglob('*.s'))
-s_objs = list(map(lambda f: to_output_path(f, '.o'), s_files))
+def task_distclean():
+    ''' Remove all possible build artifacts '''
 
-# C Files
-c_files = list(c_dir.rglob('*.c'))
-c_objs = list(map(lambda f: to_output_path(f, '.o'), c_files))
+    # Asset remove must happen before tool cleaning
+    return {
+        'actions': [
+            (extract_assets.clean, [None], None),
+            f'rm -rf {config.all_builds}',
+            f'cargo clean --manifest-path {rust_manifest}',
+        ]
+    }
 
 def task_compare():
     ''' Build SS64 ROM and compare to known sha1 checksum '''
@@ -141,20 +116,12 @@ def task_compare():
     }
 
 def task_build_rom():
-    """Build an SSB ROM
-    
-    Options:
-    CC => {ido, gcc}
-    QEMU_IRIX => Path to `qemu-irix` binary if not in Path
-    VERSION => {us}
-    MATCHING => {True, False}
-    AVOID_UB => {True, False}
-    """
+    """ Build the ROM """
  
     link_rom = tc.LD                                                      \
         + ['--no-check-sections', '-Map', rom_map, '-T', ssb_lds, '-T', ] \
         + unk_symbols                                                     \
-        + ['-o', rom_elf, '-L', build_dir]
+        + ['-o', rom_elf, '-L', config.build_dir]
     
     copy_rom = tc.OBJCOPY \
         + ['--pad-to=0x1000000', '--gap-fill=0xFF', '-O', 'binary', rom_elf, rom]
@@ -170,7 +137,7 @@ def task_build_rom():
             'temp_bin_obj'
         ],
         'targets': [rom_elf, rom_map, rom],
-        'clean': [f'rm -rf {build_base}'],
+        'clean': [f'rm -rf {config.all_builds}'],
     }
 
 def task_preprocess_ldscript():
@@ -189,11 +156,7 @@ def task_assemble():
     for f, o in zip(s_files, s_objs):
         d = o.with_suffix('.d')
         found_deps = parse_mk_dependencies(d)
-        # No .d file for `f` (not generated yet)
-        if found_deps is None:
-            deps = [f]
-        else:
-            deps = found_deps[o]
+        deps = found_deps[o] if found_deps is not None else [f]
 
         invoke_as = tc.invoke_as([inc_dir, asm_dir, f.parent])
 
@@ -220,10 +183,7 @@ def task_cc():
     for f, o in zip(c_files, c_objs):
         d = o.with_suffix('.d')
         found_deps = parse_mk_dependencies(d)
-        if found_deps is None:
-            deps = [f]
-        else:
-            deps = found_deps[o]
+        deps = found_deps[o] if found_deps is not None else [f]
         
         actions = [tc.invoke_cc_check(includes, f, o, d)]
         # if the input needs to have asm processed
@@ -239,14 +199,14 @@ def task_cc():
             'targets': [o, d],
         }
 
-# Resource table
-res_dir = base_dir / 'resources'
+########## Resource Table ############################
+res_dir = config.game_dir / 'resources'
 res_tempbins = list(res_dir.glob('temp/files/*'))
-res_tempbins_o = list(map(lambda f: to_output_path(f, '.o'), res_tempbins))
+res_tempbins_o = list(map(lambda f: config.to_output(f, '.o'), res_tempbins))
 res_table = res_dir / 'temp' / 'resource-filetable.bin'
-res_table_o = to_output_path(up_one_dir(res_table), '.o')
+res_table_o = config.to_output(up_one_dir(res_table), '.o')
 res_link  = res_dir / 'templink.ld'
-res_archive = to_output_path(res_dir / 'resource-files.o', '.o')
+res_archive = config.to_output(res_dir / 'resource-files.o', '.o')
 
 def task_link_resources():
     ''' Link resource files into a relocatable binary for linking '''
@@ -261,7 +221,7 @@ def task_link_resources():
     }
 
 
-# Sprites
+########## Sprites ###################################
 def gfx_encode_cmd(f, o):
     ''' Assuming `img-name.(format)(bitdepth).png` 
         Returns ([cmd], [outputs])
@@ -301,10 +261,10 @@ def gfx_encode_cmd(f, o):
     
     return (cmd, out)
 
-sprite_dir = base_dir / 'sprites'
-sprite_output = build_dir / 'sprites'
+sprite_dir = config.game_dir / 'sprites'
+sprite_output = config.build_dir / 'sprites'
 sprite_pngs = list(sprite_dir.rglob('*.*.png'))
-sprite_bins = list(map(lambda f: to_output_path(f, ''), sprite_pngs))
+sprite_bins = list(map(lambda f: config.to_output(f, ''), sprite_pngs))
 
 def task_convert_sprite_pngs():
     ''' Convert sprite.format.png into sprite.format.bin ''' 
@@ -320,7 +280,7 @@ def task_convert_sprite_pngs():
         }
 
 imgbank_entry_tomls = list(sprite_dir.glob('*/*/*.toml'))
-imgbank_entry_s = list(map(lambda f: to_output_path(f, '.s'), imgbank_entry_tomls))
+imgbank_entry_s = list(map(lambda f: config.to_output(f, '.s'), imgbank_entry_tomls))
 imgbank_entry_o = list(map(lambda f: up_one_dir(f, '.o'), imgbank_entry_s))
 
 def task_pack_sprite_bank_entry():
@@ -360,7 +320,7 @@ def task_assemble_sprite_bank_entry():
         }
 
 imgbank_tomls = list(sprite_dir.glob('*/*.toml'))
-imgbank_ldscripts = list(map(lambda f: to_output_path(f, '.ld'), imgbank_tomls))
+imgbank_ldscripts = list(map(lambda f: config.to_output(f, '.ld'), imgbank_tomls))
 imgbank_o = list(map(lambda f: up_one_dir(f, '.o'), imgbank_ldscripts))
 
 def task_generate_sprite_bank_link():
@@ -394,17 +354,17 @@ def task_link_sprite_bank():
 
 temp_sprbank_bins = list(sprite_dir.glob('*/*.bin'))
 temp_sprbank_o = list(
-    map(lambda b: to_output_path(up_one_dir(b), '.o'), temp_sprbank_bins)
+    map(lambda b: config.to_output(up_one_dir(b), '.o'), temp_sprbank_bins)
 )
 
-# Audio
-temp_audio_bins = list(base_dir.glob('audio/tempbins/*'))
-temp_audio_o = list(map(lambda b: to_output_path(up_one_dir(b), '.o', True), temp_audio_bins))
+########## Audio #####################################
+temp_audio_bins = list(config.game_dir.glob('audio/tempbins/*'))
+temp_audio_o = list(map(lambda b: config.to_output(up_one_dir(b), '.o', True), temp_audio_bins))
 
-# Temporary .bin handling
-temp_unk_bins = list(base_dir.glob('unknown/tempbins/*'))
+########## Temporary .bin handling ####################
+temp_unk_bins = list(config.game_dir.glob('unknown/tempbins/*'))
 temp_unk_o = list(
-    map(lambda b: to_output_path(b, '.o'),
+    map(lambda b: config.to_output(b, '.o'),
     map(up_one_dir, temp_unk_bins))
 )
 

@@ -7,8 +7,8 @@
 import argparse
 import sys
 import subprocess
-sys.path.append('utils')
-from doit_config import ALL_VERSIONS
+sys.path.append('doit')
+from config import ALL_VERSIONS
 
 BASE = [
     'cargo', 'run', '--release', 
