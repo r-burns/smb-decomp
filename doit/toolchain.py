@@ -20,7 +20,7 @@ class MissingQemuIrix(Exception):
         self.message = """
             Missing path to qemu-irix binary. 
             Ensure that one of these is true:
-              * Pass a path to the binary on CLI (QEMU_IRIX=<path>)
+              * Pass a path to the binary on CLI (doit QEMU_IRIX=<path>)
               * Define env variable 'QEMU_IRIX' with a path to the binary
               * Put directory containing 'qemu-irix' in PATH
             """
@@ -123,7 +123,8 @@ class ToolChain:
     def invoke_cc_check(self, includes, input, output, depfile):
         incs = list(_append_intersperse(includes, '-I'))
         outputs = ['-MMD', '-MP', '-MT', output, '-MF', depfile, input]
-        return self.CC_CHECK + incs + self.C_DEFINES + outputs
+        special = ['-DIGNORE_SYNTAX_CHECK']
+        return self.CC_CHECK + incs + self.C_DEFINES + special + outputs
     
     def invoke_asm_processor(self, includes, input, output, opt="O2"):
         if self.CC_ASMPROC is None:

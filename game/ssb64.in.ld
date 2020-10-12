@@ -70,7 +70,7 @@ SECTIONS
         asm/system/system.data.o(.data);
         asm/system/libultra.data.o(.data);
         src/sys/main.o(.rodata);
-        asm/system/thread3.rodata.o(.rodata);
+        src/sys/thread3.asm.o(.rodata);
         asm/system/system.rodata.o(.rodata);
         asm/system/libultra.rodata.o(.rodata);
         asm/system/rsp.o(.rodata);

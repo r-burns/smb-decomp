@@ -1,3 +1,10 @@
+.rdata 
+glabel D_8003D670
+  /* 3D270 03E270 8003D670 */
+  .asciz "rdp_output_buff over !! size = %d\n byte"
+  .balign 4
+
+.text
 glabel func_800020D0
   /* 002CD0 800020D0 3C028004 */       lui $v0, %hi(D_80044ED0)
   /* 002CD4 800020D4 8C424ED0 */        lw $v0, %lo(D_80044ED0)($v0)
