@@ -3,7 +3,8 @@
 #include <PR/sptask.h>
 
 #include "macros.h"
-#include "ssb64_types.h"
+#include "ssb_types.h"
+#include "sys/system.h"
 
 struct Weird80000F30 {
     u32 b00: 8;
@@ -11,17 +12,27 @@ struct Weird80000F30 {
     u32 b10: 1;
 };
 
+struct Unk80044EC0 {
+    /* 0x00 */ struct Unk80044EC0 *next;
+    /* 0x04 */ OSMesgQueue *mq;
+};
+
+struct Temp3 {
+    /* 0x00 */ s32 pad00;
+    /* 0x04 */ s32 unk04; 
+};
+
 // bss
-u32 *D_80044EC0;
-struct Unk80044ED4 *D_80044EC4;
-struct Unk80044ED4 *D_80044EC8;
-struct Unk80044ED4 *D_80044ECC;
-struct Unk80044ED4 *D_80044ED0;
-struct Unk80044ED4 *D_80044ED4;
-struct Unk80044ED4 *D_80044ED8;
-struct Unk80044ED4 *D_80044EDC;
-struct Unk80044ED4 *D_80044EE0;
-struct Unk80044ED4 *D_80044EE4;
+struct Unk80044EC0 *D_80044EC0;
+struct SpTaskNode *D_80044EC4;
+struct SpTaskNode *D_80044EC8;
+struct SpTaskNode *D_80044ECC;
+struct SpTaskNode *D_80044ED0;
+struct SpTaskNode *D_80044ED4;
+struct SpTaskNode *D_80044ED8;
+struct SpTaskNode *D_80044EDC;
+struct SpTaskNode *D_80044EE0;
+struct SpTaskNode *D_80044EE4;
 OSViMode D_80044EE8;
 OSViMode D_80044F38;
 u32 D_80044F88[2];
@@ -29,14 +40,14 @@ void *D_80044F90[3];
 void *D_80044F9C[1];
 void *D_80044FA0;
 u32 D_80044FA4;
-s32 D_80044FA8;
+void *D_80044FA8;
 u32 D_80044FAC;
 u32 D_80044FB0;
 u32 D_80044FB4;
 u32 D_80044FB8;
 u32 D_80044FBC; //bitflags? union?
-u8 D_80044FC0[8];
-u64 *D_80044FC8;
+s64 D_80044FC0;
+s32 *D_80044FC8;
 u32 D_80044FCC; //index into D_80044FC8?
 u32 D_80044FD0; // unknown
 u8 unref_80044FD4[4];
@@ -70,7 +81,7 @@ s32 func_8000092C(void) {
 }
 
 void unref_80000938(void) {
-    struct Unk80044ED4 *i = D_80044ECC, *j = D_80044EE4, *k = D_80044EDC;
+    struct SpTaskNode *i = D_80044ECC, *j = D_80044EE4, *k = D_80044EDC;
     
     do {
 
@@ -168,28 +179,34 @@ s32 unref_80000A34(struct Unk80000A34 *arg0) {
 #pragma GLOBAL_ASM("game/nonmatching/thread3/unref_80000A34.s")
 #endif /* NON_MATCHING */
 
-struct Unk80044ED4 {
+struct SpTaskNode {
     /* 0x00 */ s32 unk00;
     /* 0x04 */ s32 unk04;
     /* 0x08 */ s32 unk08;
-    /* 0x0C */ struct Unk80044ED4 *unk0C; // next
-    /* 0x10 */ struct Unk80044ED4 *unk10; // prev
-    /* 0x14 */ s32 (*func)(struct Unk80044ED4 *);
-    /* 0x18 */ u8 pad18[0x4];
+    /* 0x0C */ struct SpTaskNode *unk0C; // next
+    /* 0x10 */ struct SpTaskNode *unk10; // prev
+    /* 0x14 */ s32 (*func)(struct SpTaskNode *);
+    /* 0x18 */ s32 unk18;
     /* 0x1C */ s32 unk1C;
     /* 0x20 */ OSMesgQueue *unk20;
-    /* 0x24 */ s32 *unk24;
+    /* 0x24 */ s32 *unk24; // checked type? (-1 is meaningfull)
     /* 0x28 */ OSTask task;
     /* 0x68 */ s32 *unk68;
-    /* 0x6C */ s32 *unk6C;
+    /* 0x6C */ s32 *unk6C; // checked type? (-1 is meaningfull)
     /* 0x70 */ u8 pad70[0x04];
     /* 0x74 */ s32 unk74;
-    /* 0x78 */ u8 pad78[0x08];
+    /* 0x78 */ s32 unk78;
+    /* 0x7C */ s32 unk7C;
     /* 0x80 */ u32 unk80;
 };
 
+union CheckedPtr {
+    void *ptr;
+    intptr_t tag;
+};
+
 s32 func_80000B54(UNUSED s32 arg0) {
-    struct Unk80044ED4 *temp_v0;
+    struct SpTaskNode *temp_v0;
     const s32 CHECK = 1;
 
     if (D_80044ECC != NULL && D_80044ECC->unk00 == CHECK) {
@@ -232,8 +249,8 @@ s32 func_80000B54(UNUSED s32 arg0) {
 }
 
 
-void func_80000C64(struct Unk80044ED4 *arg0) {
-    struct Unk80044ED4 *temp_v0;
+void func_80000C64(struct SpTaskNode *arg0) {
+    struct SpTaskNode *temp_v0;
 
     temp_v0 = D_80044EC8;
     while (temp_v0 != NULL && temp_v0->unk04 < arg0->unk04) {
@@ -257,7 +274,7 @@ void func_80000C64(struct Unk80044ED4 *arg0) {
     }
 }
 
-void func_80000CF4(struct Unk80044ED4 *arg0) {
+void func_80000CF4(struct SpTaskNode *arg0) {
     if (arg0->unk10 != NULL) {
         arg0->unk10->unk0C = arg0->unk0C;
     } else {
@@ -271,8 +288,8 @@ void func_80000CF4(struct Unk80044ED4 *arg0) {
     }
 }
 
-void func_80000D44(struct Unk80044ED4 *arg0) {
-    struct Unk80044ED4 *temp_v0;
+void func_80000D44(struct SpTaskNode *arg0) {
+    struct SpTaskNode *temp_v0;
 
     temp_v0 = D_80044ED8;
     while (temp_v0 != NULL && temp_v0->unk04 < arg0->unk04) {
@@ -296,7 +313,7 @@ void func_80000D44(struct Unk80044ED4 *arg0) {
     }
 }
 
-void func_80000DD4(struct Unk80044ED4 *arg0) {
+void func_80000DD4(struct SpTaskNode *arg0) {
     if (arg0->unk10 != NULL) {
         arg0->unk10->unk0C = arg0->unk0C;
     } else {
@@ -310,7 +327,7 @@ void func_80000DD4(struct Unk80044ED4 *arg0) {
     }
 }
 
-void func_80000E24(struct Unk80044ED4 *arg0) {
+void func_80000E24(struct SpTaskNode *arg0) {
     arg0->unk0C = NULL;
     arg0->unk10 = D_80044EE0;
     if (D_80044EE0 != NULL) {
@@ -321,7 +338,7 @@ void func_80000E24(struct Unk80044ED4 *arg0) {
     D_80044EE0 = arg0;
 }
 
-void func_80000E5C(struct Unk80044ED4 *arg0) {
+void func_80000E5C(struct SpTaskNode *arg0) {
     if (arg0->unk10 != NULL) {
         arg0->unk10->unk0C = arg0->unk0C;
     } else {
@@ -664,9 +681,8 @@ void func_80001764(void *arg0) {
     func_800016D8();
 }
 
-/// could be (void *arg0) -> void
-/// checks for arg0 == -1, though
-void func_800017B8(s32 arg0) {
+// arg0 is frame buffer pointer?
+void func_800017B8(void *arg0) {
     void *temp;
 
     if (D_80044F88[0] != 0) {
@@ -677,20 +693,20 @@ void func_800017B8(s32 arg0) {
 
     if (D_80045010 != 0) {
         osSendMesg(D_80045014, (OSMesg)1, OS_MESG_NOBLOCK);
-        if (arg0 == -1) {
-            D_80044FA8 = (s32)(uintptr_t) D_80044F9C[0];
+        if ((intptr_t)arg0 == -1) {
+            D_80044FA8 = D_80044F9C[0];
             D_80044F9C[0] = NULL;
         } else {
             D_80044FA8 = arg0;
         }
     } else {
-        if (arg0 == -1) {
+        if ((intptr_t)arg0 == -1) {
             func_80001764(D_80044F9C[0]);
             // permutater solution
             temp = D_80044F9C[0]; if (temp == D_80044FA0) { 
                 D_80044FA4 = 1; 
             }
-            D_80044FA8 = (s32)(uintptr_t) temp;
+            D_80044FA8 = temp;
             D_80044F9C[0] = NULL;
         } else {
             func_80001764((void *)arg0);
@@ -701,7 +717,7 @@ void func_800017B8(s32 arg0) {
     D_80044FB4 = (u32) ((u32) (osGetCount() - D_80044FAC) / 0xB9BU);
 }
 
-void func_800018E0(struct Unk80044ED4 *arg0) {
+void func_800018E0(struct SpTaskNode *arg0) {
     if (D_80044ECC != 0) {
         osSpTaskYield();
         D_80044ECC->unk08 = 4;
@@ -714,7 +730,7 @@ void func_800018E0(struct Unk80044ED4 *arg0) {
     D_80044ECC = arg0;
 }
 
-void func_80001968(struct Unk80044ED4 *arg0) {
+void func_80001968(struct SpTaskNode *arg0) {
     D_80044FB0 = osGetCount();
 
     if ((D_80044ECC != NULL) && (D_80044ECC->unk08 == 2)) {
@@ -751,7 +767,7 @@ void func_80001968(struct Unk80044ED4 *arg0) {
 
 #ifdef NON_MATCHING
 
-s32 func_80001A00(struct Unk80044ED4 *arg0) {
+s32 func_80001A00(struct SpTaskNode *arg0) {
     s32 sp4C = 0;
 
     switch (arg0->unk00) {
@@ -767,7 +783,7 @@ s32 func_80001A00(struct Unk80044ED4 *arg0) {
             }
             // L80001A98
             if (arg0->unk74 == 1) {
-                osInvalDCache(D_80044FC0, sizeof(D_80044FC0));
+                osInvalDCache(&D_80044FC0, sizeof(D_80044FC0));
             }
             // L80001AB4
             func_800018E0(arg0);
@@ -779,7 +795,7 @@ s32 func_80001A00(struct Unk80044ED4 *arg0) {
             sp4C = 1;
             break;
         case 3:
-            *arg0->unk24 = *D_80044EC0;
+            *arg0->unk24 = (s32 *)D_80044EC0;
             D_80044EC0 = (u32 *)arg0->unk24;
             if (arg0->unk20 != NULL) {
                 osSendMesg(arg0->unk20, (OSMesg)arg0->unk1C, OS_MESG_NOBLOCK);
@@ -818,8 +834,8 @@ s32 func_80001A00(struct Unk80044ED4 *arg0) {
         case 6:
             // really big
             {
-            struct Unk80044ED4 *v1 = NULL;
-            struct Unk80044ED4 *v0;
+            struct SpTaskNode *v1 = NULL;
+            struct SpTaskNode *v0;
             // a0 = D_80044ECC;
             if (D_80044ECC != NULL) {
                 if (D_80044ECC->unk00 == 1) {
@@ -913,8 +929,8 @@ s32 func_80001A00(struct Unk80044ED4 *arg0) {
             break;
         case 11:
             {
-            struct Unk80044ED4 *a0 = D_80044EC4;
-            //struct Unk80044ED4 *sp34;
+            struct SpTaskNode *a0 = D_80044EC4;
+            //struct SpTaskNode *sp34;
             while (a0 != NULL) {
                 if (a0->unk00 == 1 || a0->unk00 == 4) {
                     //sp34 = a0->unk0C;
@@ -937,7 +953,7 @@ s32 func_80001A00(struct Unk80044ED4 *arg0) {
     return sp4C;
 }
 #else 
-s32 func_80001A00(struct Unk80044ED4 *arg0);
+s32 func_80001A00(struct SpTaskNode *arg0);
 #pragma GLOBAL_ASM("game/nonmatching/thread3/func_80001A00.s")
 #endif /* NON_MATCHING */
 
@@ -945,8 +961,8 @@ void func_80001E64(void) {
     s32 phi_a0;
     s32 phi_v0;
     s32 phi_v1;
-    struct Unk80044ED4 *phi_s0;
-    struct Unk80044ED4 *temp_s1;
+    struct SpTaskNode *phi_s0;
+    struct SpTaskNode *temp_s1;
     s32 phi_s2 = 0;
     s32 phi_s4;
     s32 phi_s7;
@@ -1005,13 +1021,195 @@ void func_80001E64(void) {
     }
 }
 
-#pragma GLOBAL_ASM("game/nonmatching/thread3/func_80001FF4.s")
+void func_80001FF4(void) {
+    if (D_80044EE4 == NULL && D_80044EDC != NULL) {
+        D_80044EE4 = D_80044EDC;
+        func_80000E5C(D_80044EDC);
+        D_80044EE4->unk08 = 2;
+        osDpSetNextBuffer(D_80044EE4->task.t.output_buff, D_80044EE4->unk78);
+    }
+}
 
-#pragma GLOBAL_ASM("game/nonmatching/thread3/func_8000205C.s")
+void func_8000205C(void) {
+    struct Unk80044EC0 *cur;
+    // temp usages are needed to match
+    struct Unk80044EC0 *temp;
 
+    D_8004501C += 1;
+    cur = D_80044EC0;
+    while (cur != NULL) {
+        temp = cur;
+        osSendMesg(temp->mq, (OSMesg) 1, 0);
+        cur = cur->next;
+        
+        if (temp->mq) { }
+    }
+
+    func_800016D8();
+    func_80001E64();
+}
+
+#ifdef NON_MATCHING
+void func_800020D0(void) {
+    s32 t6;
+
+    if (D_80044ED0 != NULL && D_80044ED0->unk08 == 2) {
+        osSendMesg(D_80044ED0->unk20, (OSMesg)0, OS_MESG_NOBLOCK);
+        D_80044ED0 = NULL;
+        func_80001E64();
+        D_80044FB8 = (osGetCount() - D_80044FB0) / 2971;
+
+        return;
+    }
+    // L8000213C
+    if (D_80044ECC != NULL && D_80044ECC->unk08 == 4) {
+        if (osSpTaskYielded(&D_80044ECC->task) == OS_TASK_YIELDED) {
+            D_80044ECC->unk08 = 5;
+            func_80000D44(D_80044ECC);
+            D_80044ECC = NULL;
+        } else {
+            //L80002198
+            D_80044ECC->unk08 = 6;
+        }
+        // L800021A4
+        osSpTaskStart(&D_80044ED0->task);
+        D_80044ED0->unk08 = 2;
+    }
+    // L800021DC
+    if (D_80044ECC != NULL && D_80044ECC->unk18 == 1 && D_80044ECC->unk08 != 5) {
+        if (D_80044ECC->unk00 == 1 && D_80044ECC->unk74 == 1) {
+            osInvalDCache(&D_80044FC0, sizeof(D_80044FC0));
+            D_80044ECC->unk78 = D_80044FC0;
+            /*
+            t5 = D_80044FC8[0];
+            t6 = D_80044FC0 upper;
+            t7 = D_80044FC0 lower;
+            a2 = 1;
+            t2 = t5 + t7;
+            t1 = t2 + 15;
+            // store t6 to stack sp + 18
+            t0 = (sp + 18);
+            t4 = t1 >> 4;
+            t6 = t4 << 4;
+            t8 = t6 >> 0x1f;
+            *D_80044FC8 = t2;
+            *D_80044FC8 = t6;
+            // store t7 to stack (sp + 1c)
+            */
+
+           
+           //sp18 = D_80044FC0.pad00;
+           //t6 = ((((u32)D_80044FC8 + D_80044FC0.unk04 + 15) << 4) >> 4);
+           //sp1C = D_80044FC0.unk04;
+           //sp1C = *((u64 *)&D_80044FC0);
+           t6 = (((*D_80044FC8 + (u32)D_80044FC0) + 15) << 4) >> 4;
+           *D_80044FC8 = *D_80044FC8 + (u32)D_80044FC0;
+           *D_80044FC8 = t6;
+
+            if (D_80044FC0 < t6) {
+                fatal_printf("rdp_output_buff over !! size = %d\n byte", t6);
+                while (TRUE) { }
+            }
+            /*
+            if ( sp18 >= (t6 >> 31)) {
+                if (sp18 >= (t6 >> 31)) {
+                    if (t6 < sp1C) {
+                        fatal_printf("rdp_output_buff over !! size = %d\n byte", t6);
+                        while (TRUE) { }
+                    }
+
+                } 
+                // L800022BC
+            }*/
+
+            // L800022BC
+            D_80044ECC->unk08 = 1;
+            func_80000E24(D_80044ECC);
+            func_80001FF4();
+        }
+        // L800022D4
+        D_80044ECC = NULL;
+        func_80001E64();
+        return;
+    }
+    // L800022E8
+    if (D_80044ECC != NULL && D_80044ECC->unk18 == 2) {
+        if (D_80044ECC->unk00 == 1) {
+            D_80044ECC->unk08 = 6;
+            if (D_80044ECC->unk7C & 2) {
+                D_80044ECC->unk7C |= 1;
+            }
+        }
+    }
+    // L80002330
+
+}
+#else
+void func_800020D0(void);
 #pragma GLOBAL_ASM("game/nonmatching/thread3/func_800020D0.s")
+#endif /* NON_MATCHING */
 
-#pragma GLOBAL_ASM("game/nonmatching/thread3/func_80002340.s")
+void func_80002340(void) {
+    union CheckedPtr checked; // could just be a void *temp
+    
+    if (D_80044ECC != NULL && D_80044ECC->unk18 == 2) {
+        if (D_80044ECC->unk00 == 1) {
+            checked.ptr = D_80044ECC->unk6C;
+            if (checked.ptr != NULL) {
+                func_800017B8(checked.ptr);
+            }
+            // L80002398
+            if (D_80044ECC->unk20 != NULL) {
+                osSendMesg(D_80044ECC->unk20, (OSMesg)D_80044ECC->unk1C, OS_MESG_NOBLOCK);
+            }
+            // L800023B8
+            if (D_80044ECC->unk08 == 4) {
+                osSpTaskStart(&D_80044ED0->task);
+                D_80044ED0->unk08 = 2;
+            }
+        }
+        // L800023F4
+        D_80044ECC = NULL;
+        func_80001E64();
+
+        return;
+
+    }
+    // L80002408
+    if (D_80044EE4 != NULL) {
+        checked.ptr = D_80044EE4->unk6C;
+        if (checked.ptr != NULL) {
+            func_800017B8(checked.ptr);
+        }
+        // L8000243C
+        if (D_80044EE4->unk20 != NULL) {
+            osSendMesg(D_80044EE4->unk20, (OSMesg)D_80044EE4->unk1C, OS_MESG_NOBLOCK);
+        }
+        //L80002450
+        D_80044EE4 = NULL;
+        func_80001FF4();
+        return;
+
+    }
+    //L80002464
+    if (D_80044ED4 != NULL && D_80044ED4->unk18 == 2) {
+        if (D_80044ED4->unk00 == 1) {
+            checked.ptr = D_80044ED4->unk6C;
+            if (checked.ptr != NULL) {
+                func_800017B8(checked.ptr);
+            }
+            // L800024B0
+            if (D_80044ED4->unk20 != NULL) {
+                osSendMesg(D_80044ED4->unk20, (OSMesg)D_80044ED4->unk1C, OS_MESG_NOBLOCK);
+            }
+            //L800024CC
+            func_80000DD4(D_80044ED4);
+        }
+        //L800024D4
+        func_80001E64();
+    }
+
+}
 
 #pragma GLOBAL_ASM("game/nonmatching/thread3/func_800024EC.s")
 

@@ -4,5 +4,6 @@
 #include <PR/ultratypes.h>
 
 typedef u32 uintptr_t;
+typedef s32 intptr_t;
 
 #endif /* SSB64_TYPES_H */

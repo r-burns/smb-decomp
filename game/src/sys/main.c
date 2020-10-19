@@ -3,7 +3,7 @@
 #include <PR/rcp.h>
 #include <PR/R4300.h>
 #include <macros.h>
-#include <ssb64_types.h>
+#include <ssb_types.h>
 
 #include "sys/system.h"
 #include "loadovl/loader.h"

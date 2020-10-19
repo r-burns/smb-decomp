@@ -42,7 +42,7 @@ glabel func_800020D0
   /* 002D50 80002150 24010004 */     addiu $at, $zero, 4
   /* 002D54 80002154 15010021 */       bne $t0, $at, .L800021DC
   /* 002D58 80002158 00000000 */       nop 
-  /* 002D5C 8000215C 0C00D334 */       jal osSpTaskYieled
+  /* 002D5C 8000215C 0C00D334 */       jal osSpTaskYielded
   /* 002D60 80002160 24440028 */     addiu $a0, $v0, 0x28
   /* 002D64 80002164 24010001 */     addiu $at, $zero, 1
   /* 002D68 80002168 1441000B */       bne $v0, $at, .L80002198

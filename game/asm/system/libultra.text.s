@@ -19722,7 +19722,7 @@ glabel __osEPiRawStartDma
   /* 0358C8 80034CC8 03E00008 */        jr $ra
   /* 0358CC 80034CCC 00000000 */       nop 
 
-glabel osSpTaskYieled
+glabel osSpTaskYielded
   /* 0358D0 80034CD0 27BDFFE0 */     addiu $sp, $sp, -0x20
   /* 0358D4 80034CD4 AFBF0014 */        sw $ra, 0x14($sp)
   /* 0358D8 80034CD8 0C00E388 */       jal __osSpGetStatus

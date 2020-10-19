@@ -72,7 +72,9 @@ class _ParseMkDeps():
             # targets.deps should be > 0
                 
             for target in tardeps.targets:
-                deps = set(tardeps.deps)
+                # grab only dependants that exist 
+                # e.g., get rid of deleted dependancies
+                deps = set(filter(lambda p: p.exists(), tardeps.deps))
                 if target not in output:
                     output[target] = deps
                 else:
