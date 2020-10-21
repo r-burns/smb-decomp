@@ -6,6 +6,7 @@
 #include <ssb_types.h>
 
 #include "sys/main.h"
+#include "sys/thread3.h"
 #include "sys/system.h"
 #include "loadovl/loader.h"
 

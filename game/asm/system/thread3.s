@@ -54,8 +54,8 @@ glabel func_80000970
   /* 001590 80000990 8FA50038 */        lw $a1, 0x38($sp)
   /* 001594 80000994 240E0001 */     addiu $t6, $zero, 1
   /* 001598 80000998 27AF001C */     addiu $t7, $sp, 0x1c
-  /* 00159C 8000099C 3C048004 */       lui $a0, %hi(D_80044FF8)
-  /* 0015A0 800009A0 24844FF8 */     addiu $a0, $a0, %lo(D_80044FF8)
+  /* 00159C 8000099C 3C048004 */       lui $a0, %hi(gScheduleTaskQueue)
+  /* 0015A0 800009A0 24844FF8 */     addiu $a0, $a0, %lo(gScheduleTaskQueue)
   /* 0015A4 800009A4 00003025 */        or $a2, $zero, $zero
   /* 0015A8 800009A8 ACA00014 */        sw $zero, 0x14($a1)
   /* 0015AC 800009AC ACAE001C */        sw $t6, 0x1c($a1)
@@ -2262,8 +2262,8 @@ glabel thread3_scheduler
   /* 003410 80002810 3C028004 */       lui $v0, %hi(D_80044FBC)
   /* 003414 80002814 24424FBC */     addiu $v0, $v0, %lo(D_80044FBC)
   /* 003418 80002818 90590000 */       lbu $t9, ($v0) # D_80044FBC + 0
-  /* 00341C 8000281C 3C128004 */       lui $s2, %hi(D_80044FF8)
-  /* 003420 80002820 26524FF8 */     addiu $s2, $s2, %lo(D_80044FF8)
+  /* 00341C 8000281C 3C128004 */       lui $s2, %hi(gScheduleTaskQueue)
+  /* 003420 80002820 26524FF8 */     addiu $s2, $s2, %lo(gScheduleTaskQueue)
   /* 003424 80002824 372E0080 */       ori $t6, $t9, 0x80
   /* 003428 80002828 31D800BF */      andi $t8, $t6, 0xbf
   /* 00342C 8000282C A04E0000 */        sb $t6, ($v0) # D_80044FBC + 0

@@ -2624,9 +2624,9 @@ glabel func_80004E90
   /* 005AD4 80004ED4 AC990024 */        sw $t9, 0x24($a0)
   /* 005AD8 80004ED8 8D086630 */        lw $t0, %lo(D_80046630)($t0)
   /* 005ADC 80004EDC AC880028 */        sw $t0, 0x28($a0)
-  /* 005AE0 80004EE0 3C048004 */       lui $a0, %hi(D_80044FF8)
+  /* 005AE0 80004EE0 3C048004 */       lui $a0, %hi(gScheduleTaskQueue)
   /* 005AE4 80004EE4 0C00C000 */       jal osSendMesg
-  /* 005AE8 80004EE8 24844FF8 */     addiu $a0, $a0, %lo(D_80044FF8)
+  /* 005AE8 80004EE8 24844FF8 */     addiu $a0, $a0, %lo(gScheduleTaskQueue)
   /* 005AEC 80004EEC 8FBF0014 */        lw $ra, 0x14($sp)
   /* 005AF0 80004EF0 27BD0018 */     addiu $sp, $sp, 0x18
   /* 005AF4 80004EF4 03E00008 */        jr $ra
@@ -2826,8 +2826,8 @@ glabel func_80005018
   /* 005DB0 800051B0 AE0E0064 */        sw $t6, 0x64($s0)
   /* 005DB4 800051B4 0C00E458 */       jal osWritebackDCacheAll
   /* 005DB8 800051B8 AE090058 */        sw $t1, 0x58($s0)
-  /* 005DBC 800051BC 3C048004 */       lui $a0, %hi(D_80044FF8)
-  /* 005DC0 800051C0 24844FF8 */     addiu $a0, $a0, %lo(D_80044FF8)
+  /* 005DBC 800051BC 3C048004 */       lui $a0, %hi(gScheduleTaskQueue)
+  /* 005DC0 800051C0 24844FF8 */     addiu $a0, $a0, %lo(gScheduleTaskQueue)
   /* 005DC4 800051C4 02002825 */        or $a1, $s0, $zero
   /* 005DC8 800051C8 0C00C000 */       jal osSendMesg
   /* 005DCC 800051CC 00003025 */        or $a2, $zero, $zero
@@ -3567,11 +3567,11 @@ glabel func_80005BFC
   /* 006828 80005C28 27180B54 */     addiu $t8, $t8, %lo(func_80000B54)
   /* 00682C 80005C2C 24190001 */     addiu $t9, $zero, 1
   /* 006830 80005C30 27A80018 */     addiu $t0, $sp, 0x18
-  /* 006834 80005C34 3C048004 */       lui $a0, %hi(D_80044FF8)
+  /* 006834 80005C34 3C048004 */       lui $a0, %hi(gScheduleTaskQueue)
   /* 006838 80005C38 AFB80048 */        sw $t8, 0x48($sp)
   /* 00683C 80005C3C AFB90050 */        sw $t9, 0x50($sp)
   /* 006840 80005C40 AFA80054 */        sw $t0, 0x54($sp)
-  /* 006844 80005C44 24844FF8 */     addiu $a0, $a0, %lo(D_80044FF8)
+  /* 006844 80005C44 24844FF8 */     addiu $a0, $a0, %lo(gScheduleTaskQueue)
   /* 006848 80005C48 27A50034 */     addiu $a1, $sp, 0x34
   /* 00684C 80005C4C 0C00C000 */       jal osSendMesg
   /* 006850 80005C50 00003025 */        or $a2, $zero, $zero
@@ -4937,9 +4937,9 @@ glabel func_80006F5C
   /* 007B88 80006F88 AC800020 */        sw $zero, 0x20($a0)
   /* 007B8C 80006F8C 0C001BBD */       jal func_80006EF4
   /* 007B90 80006F90 AFA50018 */        sw $a1, 0x18($sp)
-  /* 007B94 80006F94 3C048004 */       lui $a0, %hi(D_80044FF8)
+  /* 007B94 80006F94 3C048004 */       lui $a0, %hi(gScheduleTaskQueue)
   /* 007B98 80006F98 8FA50018 */        lw $a1, 0x18($sp)
-  /* 007B9C 80006F9C 24844FF8 */     addiu $a0, $a0, %lo(D_80044FF8)
+  /* 007B9C 80006F9C 24844FF8 */     addiu $a0, $a0, %lo(gScheduleTaskQueue)
   /* 007BA0 80006FA0 0C00C000 */       jal osSendMesg
   /* 007BA4 80006FA4 00003025 */        or $a2, $zero, $zero
   .L80006FA8:
@@ -33452,8 +33452,8 @@ glabel func_80020000
   .L80020428:
   /* 021028 80020428 0C00E458 */       jal osWritebackDCacheAll
   /* 02102C 8002042C 00000000 */       nop 
-  /* 021030 80020430 3C048004 */       lui $a0, %hi(D_80044FF8)
-  /* 021034 80020434 24844FF8 */     addiu $a0, $a0, %lo(D_80044FF8)
+  /* 021030 80020430 3C048004 */       lui $a0, %hi(gScheduleTaskQueue)
+  /* 021034 80020434 24844FF8 */     addiu $a0, $a0, %lo(gScheduleTaskQueue)
   /* 021038 80020438 8FC50000 */        lw $a1, ($fp) # D_8009D940 + 0
   /* 02103C 8002043C 0C00C000 */       jal osSendMesg
   /* 021040 80020440 00003025 */        or $a2, $zero, $zero

@@ -60,7 +60,7 @@ glabel D_80044FD0
     .space 8
 glabel D_80044FD8
     .space 32
-glabel D_80044FF8
+glabel gScheduleTaskQueue
     .space 24
 glabel D_80045010
     .space 4

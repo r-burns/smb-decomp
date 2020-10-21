@@ -7,6 +7,7 @@
 #include <ssb_types.h>
 
 #include "sys/main.h"
+#include "sys/thread3.h"
 #include "sys/system.h"
 
 struct MqListNode {
@@ -112,7 +113,7 @@ u32 D_80044FCC; //index into D_80044FC8?
 u32 D_80044FD0; // unknown
 u8 unref_80044FD4[4];
 OSMesg D_80044FD8[8];
-OSMesgQueue D_80044FF8;
+OSMesgQueue gScheduleTaskQueue;
 u32 D_80045010;
 OSMesgQueue *D_80045014;
 void (*D_80045018)(void);
@@ -129,8 +130,6 @@ u8 extend_D_80045038[8];
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wunknown-pragmas"
-
-//#pragma GLOBAL_ASM("game/nonmatching/thread3/weird_nops.s")
 
 void func_80000920(s32 val) {
     D_8004501C = val;
@@ -156,7 +155,7 @@ void func_80000970(struct SpMqInfo *arg0) {
     arg0->func = NULL;
     arg0->unk1C = 1;
     arg0->unk20 = &mq;
-    osSendMesg(&D_80044FF8, (OSMesg)arg0, OS_MESG_NOBLOCK);
+    osSendMesg(&gScheduleTaskQueue, (OSMesg)arg0, OS_MESG_NOBLOCK);
     osRecvMesg(&mq, NULL, OS_MESG_BLOCK);
 }
 
@@ -1192,6 +1191,7 @@ void func_80002340(void) {
     }
 }
 
+// might only take a struct SpTaskInfo *
 void func_800024EC(struct SpTaskQueue *arg0) {
     arg0->info.unk08 = 1;
     func_80000C64(arg0);
@@ -1257,16 +1257,16 @@ void thread3_scheduler(UNUSED void *arg) {
     D_80044FBC.dither_filter = TRUE;
     D_80044FBC.divot = TRUE;
 
-    osCreateMesgQueue(&D_80044FF8, D_80044FD8, ARRAY_COUNT(D_80044FD8));
-    // 
-    osViSetEvent(&D_80044FF8, (OSMesg)INTR_VRETRACE, 1);
-    osSetEventMesg(OS_EVENT_SP, &D_80044FF8, (OSMesg)INTR_SP_TASK_DONE);
-    osSetEventMesg(OS_EVENT_DP, &D_80044FF8, (OSMesg)INTR_DP_FULL_SYNC);
-    osSetEventMesg(OS_EVENT_PRENMI, &D_80044FF8, (OSMesg)INTR_SOFT_RESET);
+    osCreateMesgQueue(&gScheduleTaskQueue, D_80044FD8, ARRAY_COUNT(D_80044FD8));
+    osViSetEvent(&gScheduleTaskQueue, (OSMesg)INTR_VRETRACE, 1);
+    osSetEventMesg(OS_EVENT_SP, &gScheduleTaskQueue, (OSMesg)INTR_SP_TASK_DONE);
+    osSetEventMesg(OS_EVENT_DP, &gScheduleTaskQueue, (OSMesg)INTR_DP_FULL_SYNC);
+    osSetEventMesg(OS_EVENT_PRENMI, &gScheduleTaskQueue, (OSMesg)INTR_SOFT_RESET);
+
     osSendMesg(&gThreadingQueue, (OSMesg)1, OS_MESG_NOBLOCK);
 
     while (TRUE) {
-        osRecvMesg(&D_80044FF8, &intrMsg, OS_MESG_BLOCK);
+        osRecvMesg(&gScheduleTaskQueue, &intrMsg, OS_MESG_BLOCK);
 
         switch ((uintptr_t)intrMsg) {
             case INTR_VRETRACE:
@@ -1288,6 +1288,7 @@ void thread3_scheduler(UNUSED void *arg) {
                 break;
             default:
                 if (D_80045020 == 0) {
+                    // is this a pointer to only the info struct?
                     func_800024EC((struct SpTaskQueue *)intrMsg);
                 }
         }
