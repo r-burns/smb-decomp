@@ -1,43 +1,103 @@
 #include <PR/ultratypes.h>
 #include <PR/os.h>
 #include <PR/sptask.h>
+#include <PR/rcp.h>
+#include <missing_libultra.h>
+#include <macros.h>
+#include <ssb_types.h>
 
-#include "macros.h"
-#include "ssb_types.h"
+#include "sys/main.h"
 #include "sys/system.h"
 
-struct Weird80000F30 {
-    u32 b00: 8;
-    u32 b08: 8;
-    u32 b10: 1;
-};
-
-struct Unk80044EC0 {
-    /* 0x00 */ struct Unk80044EC0 *next;
+struct MqListNode {
+    /* 0x00 */ struct MqListNode *next;
     /* 0x04 */ OSMesgQueue *mq;
 };
 
-struct Temp3 {
-    /* 0x00 */ s32 pad00;
-    /* 0x04 */ s32 unk04; 
+struct SpMqInfo {
+    /* 0x00 */ s32 unk00;
+    /* 0x04 */ s32 unk04;
+    /* 0x08 */ s32 unk08;
+    /* 0x0C */ struct SpTaskQueue *unk0C; // next; should these point to the combined type, or just this info type?
+    /* 0x10 */ struct SpTaskQueue *unk10; // prev
+    /* 0x14 */ s32 (*func)(struct SpTaskQueue *);
+    /* 0x18 */ s32 unk18;
+    /* 0x1C */ s32 unk1C;
+    /* 0x20 */ OSMesgQueue *unk20;
+    /* 0x24 */ struct MqListNode *unk24; // checked type? (-1 is meaningful)
 };
 
+struct SpTaskQueue {
+    /* 0x00 */ struct SpMqInfo info;
+    /* 0x28 */ OSTask task;
+    /* 0x68 */ s32 *unk68;
+    /* 0x6C */ s32 *unk6C; // checked type? (-1 is meaningful)
+    /* 0x70 */ u8 pad70[0x04];
+    /* 0x74 */ s32 unk74;
+    /* 0x78 */ s32 unk78;
+    /* 0x7C */ s32 unk7C;
+    /* 0x80 */ u32 unk80;
+};
+
+/*
+	28 00 u32	type;
+	2C 04 u32	flags;
+	30 08 u64	*ucode_boot;
+	34 0c u32	ucode_boot_size;
+
+	38 10 u64	*ucode;
+	3c 14 u32	ucode_size;
+	40 18 u64	*ucode_data;
+	44 1c u32	ucode_data_size;
+
+	48 20 u64	*dram_stack;
+	4c 24 u32	dram_stack_size;
+	50 28 u64	*output_buff;
+	54 2c u64	*output_buff_size;
+
+	58 30 u64	*data_ptr;
+	5c 34 u32	data_size;
+	60 38 u64	*yield_data_ptr;
+	64 3c u32	yield_data_size;
+*/
+
+union CheckedPtr {
+    void *ptr;
+    intptr_t tag;
+};
+
+struct ViSettings {
+    u8 unk_b80 : 1;       // b0 0 80 => unknown game control (arg2 & 0x1) [aa & resamp enabled?]
+    u8 serrate : 1;       // b1 0 40 => serrate enabled (bool)
+    u8 pixelSize32 : 1;   // b2   20 => type_32 enabled
+    u8 gamma : 1;         // b3   10 => gamma on
+    u8 blackout : 1;      // b4   08 => unknown game control (arg2 & 0x100) [blackout ?]
+    u8 unk_b04 : 1;       // b5   04 => unknown game control (arg2 & 0x400)
+    u8 gamma_dither : 1;  // b6   02 => gamma dither on
+    u8 dither_filter : 1; // b7   01 => dither filter
+    u8 divot : 1;         // b8 1 80 => divot on
+                          // b9 1 40 
+};
+
+
+
+
 // bss
-struct Unk80044EC0 *D_80044EC0;
-struct SpTaskNode *D_80044EC4;
-struct SpTaskNode *D_80044EC8;
-struct SpTaskNode *D_80044ECC;
-struct SpTaskNode *D_80044ED0;
-struct SpTaskNode *D_80044ED4;
-struct SpTaskNode *D_80044ED8;
-struct SpTaskNode *D_80044EDC;
-struct SpTaskNode *D_80044EE0;
-struct SpTaskNode *D_80044EE4;
+struct MqListNode *D_80044EC0;
+struct SpTaskQueue *D_80044EC4;
+struct SpTaskQueue *D_80044EC8;
+struct SpTaskQueue *D_80044ECC;
+struct SpTaskQueue *D_80044ED0;
+struct SpTaskQueue *D_80044ED4;
+struct SpTaskQueue *D_80044ED8;
+struct SpTaskQueue *D_80044EDC;
+struct SpTaskQueue *D_80044EE0;
+struct SpTaskQueue *D_80044EE4;
 OSViMode D_80044EE8;
 OSViMode D_80044F38;
 u32 D_80044F88[2];
 void *D_80044F90[3];
-void *D_80044F9C[1];
+void *D_80044F9C;
 void *D_80044FA0;
 u32 D_80044FA4;
 void *D_80044FA8;
@@ -45,20 +105,20 @@ u32 D_80044FAC;
 u32 D_80044FB0;
 u32 D_80044FB4;
 u32 D_80044FB8;
-u32 D_80044FBC; //bitflags? union?
+struct ViSettings D_80044FBC; //bitflags? union?
 s64 D_80044FC0;
 s32 *D_80044FC8;
 u32 D_80044FCC; //index into D_80044FC8?
 u32 D_80044FD0; // unknown
 u8 unref_80044FD4[4];
-u8 D_80044FD8[32];
+OSMesg D_80044FD8[8];
 OSMesgQueue D_80044FF8;
 u32 D_80045010;
 OSMesgQueue *D_80045014;
-u32 D_80045018;
+void (*D_80045018)(void);
 s32 D_8004501C;
-u32 *D_80045020;
-u32 D_80045024;
+s32 D_80045020;
+s32 D_80045024; // return of osAfterPreNMI
 void *D_80045028[3];
 u8 D_80045034;
 u8 D_80045035;
@@ -70,7 +130,7 @@ u8 extend_D_80045038[8];
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wunknown-pragmas"
 
-#pragma GLOBAL_ASM("game/nonmatching/thread3/weird_nops.s")
+//#pragma GLOBAL_ASM("game/nonmatching/thread3/weird_nops.s")
 
 void func_80000920(s32 val) {
     D_8004501C = val;
@@ -81,43 +141,27 @@ s32 func_8000092C(void) {
 }
 
 void unref_80000938(void) {
-    struct SpTaskNode *i = D_80044ECC, *j = D_80044EE4, *k = D_80044EDC;
+    struct SpTaskQueue *i = D_80044ECC, *j = D_80044EE4, *k = D_80044EDC;
     
     do {
 
     } while ( i || j || k );
 }
 
-struct Unk80000970 {
-    /* 0x00 */ s32 unk00;
-    /* 0x04 */ s32 unk04;
-    /* 0x08 */ u8 pad08[0xc];
-    /* 0x14 */ s32 unk14;
-    /* 0x18 */ s32 pad18;
-    /* 0x1C */ s32 unk1C;
-    /* 0x20 */ OSMesgQueue *mq;
-    /* 0x24 */ struct Unk800009D8 *unk24;
-};
-
-void func_80000970(struct Unk80000970 *arg0) {
+void func_80000970(struct SpMqInfo *arg0) {
     OSMesg msgs[1];
     OSMesgQueue mq;
 
     osCreateMesgQueue(&mq, msgs, ARRAY_COUNT(msgs));
-    arg0->unk14 = 0;
+    arg0->func = NULL;
     arg0->unk1C = 1;
-    arg0->mq = &mq;
+    arg0->unk20 = &mq;
     osSendMesg(&D_80044FF8, (OSMesg)arg0, OS_MESG_NOBLOCK);
     osRecvMesg(&mq, NULL, OS_MESG_BLOCK);
 }
 
-struct Unk800009D8 {
-    /* 0x00 */ u8 pad00[4];
-    /* 0x04 */ OSMesgQueue *mq;
-};
-
-void func_800009D8(struct Unk800009D8 *arg0, OSMesgQueue *mq, OSMesg *msg, u32 count) {
-    struct Unk80000970 sp18;
+void func_800009D8(struct MqListNode *arg0, OSMesgQueue *mq, OSMesg *msg, u32 count) {
+    struct SpMqInfo sp18;
     
     osCreateMesgQueue(mq, msg, count);
     arg0->mq = mq;
@@ -141,7 +185,7 @@ s32 unref_80000A34(struct Unk80000A34 *arg0) {
     void *tempA0; // a0
     s32 i; // a0_2]
 
-    if (!D_80044F9C[0]) {
+    if (!D_80044F9C) {
         return 1;
     } 
     if (!D_80044FA0) {
@@ -154,7 +198,7 @@ s32 unref_80000A34(struct Unk80000A34 *arg0) {
     if (arg0->unk70 != -1) {
         tempA0 = D_80044F90[arg0->unk70];
         if (tempA0 && tempA0 != curFb && tempA0 != nextFb) {
-            D_80044F9C[0] = tempA0;
+            D_80044F9C = tempA0;
             D_80044FA0 = tempA0;
             D_80044FC8 = 0;
             D_80044FAC = osGetCount();
@@ -165,7 +209,7 @@ s32 unref_80000A34(struct Unk80000A34 *arg0) {
         for (i = 0; i < ARRAY_COUNT(D_80044F90); i++) {
             tempA0_2 = D_80044F90[i];
             if (tempA0_2 && tempA0_2 != curFb && tempA0_2 != nextFb) {
-                D_80044F9C[0] = tempA0_2;
+                D_80044F9C = tempA0_2;
                 D_80044FC8 = 0;
                 D_80044FAC = osGetCount();
                 return 1;
@@ -179,66 +223,41 @@ s32 unref_80000A34(struct Unk80000A34 *arg0) {
 #pragma GLOBAL_ASM("game/nonmatching/thread3/unref_80000A34.s")
 #endif /* NON_MATCHING */
 
-struct SpTaskNode {
-    /* 0x00 */ s32 unk00;
-    /* 0x04 */ s32 unk04;
-    /* 0x08 */ s32 unk08;
-    /* 0x0C */ struct SpTaskNode *unk0C; // next
-    /* 0x10 */ struct SpTaskNode *unk10; // prev
-    /* 0x14 */ s32 (*func)(struct SpTaskNode *);
-    /* 0x18 */ s32 unk18;
-    /* 0x1C */ s32 unk1C;
-    /* 0x20 */ OSMesgQueue *unk20;
-    /* 0x24 */ s32 *unk24; // checked type? (-1 is meaningfull)
-    /* 0x28 */ OSTask task;
-    /* 0x68 */ s32 *unk68;
-    /* 0x6C */ s32 *unk6C; // checked type? (-1 is meaningfull)
-    /* 0x70 */ u8 pad70[0x04];
-    /* 0x74 */ s32 unk74;
-    /* 0x78 */ s32 unk78;
-    /* 0x7C */ s32 unk7C;
-    /* 0x80 */ u32 unk80;
-};
-
-union CheckedPtr {
-    void *ptr;
-    intptr_t tag;
-};
 
 s32 func_80000B54(UNUSED s32 arg0) {
-    struct SpTaskNode *temp_v0;
+    struct SpTaskQueue *temp_v0;
     const s32 CHECK = 1;
 
-    if (D_80044ECC != NULL && D_80044ECC->unk00 == CHECK) {
+    if (D_80044ECC != NULL && D_80044ECC->info.unk00 == CHECK) {
         return 0;
     }
 
     temp_v0 = D_80044ED4;
     while (temp_v0 != NULL) {
-        if (temp_v0->unk00 == CHECK) {
+        if (temp_v0->info.unk00 == CHECK) {
             return 0;
         }
-        temp_v0 = temp_v0->unk0C;
+        temp_v0 = temp_v0->info.unk0C;
     }
 
     temp_v0 = D_80044EC4;
     while (temp_v0 != NULL) {
-        if (temp_v0->unk00 == CHECK) {
+        if (temp_v0->info.unk00 == CHECK) {
             return 0;
         }
-        temp_v0 = temp_v0->unk0C;
+        temp_v0 = temp_v0->info.unk0C;
     }
 
-    if (D_80044EE4 != NULL && D_80044EE4->unk00 == CHECK) {
+    if (D_80044EE4 != NULL && D_80044EE4->info.unk00 == CHECK) {
         return 0;
     }
 
     temp_v0 = D_80044EDC;
     while (temp_v0 != NULL) {
-        if (temp_v0->unk00 == CHECK) {
+        if (temp_v0->info.unk00 == CHECK) {
             return 0;
         }
-        temp_v0 = temp_v0->unk0C;
+        temp_v0 = temp_v0->info.unk0C;
     }
 
     if (D_80045034 != D_80045035) {
@@ -249,106 +268,106 @@ s32 func_80000B54(UNUSED s32 arg0) {
 }
 
 
-void func_80000C64(struct SpTaskNode *arg0) {
-    struct SpTaskNode *temp_v0;
+void func_80000C64(struct SpTaskQueue *arg0) {
+    struct SpTaskQueue *temp_v0;
 
     temp_v0 = D_80044EC8;
-    while (temp_v0 != NULL && temp_v0->unk04 < arg0->unk04) {
-        temp_v0 = temp_v0->unk10;
+    while (temp_v0 != NULL && temp_v0->info.unk04 < arg0->info.unk04) {
+        temp_v0 = temp_v0->info.unk10;
     }
 
-    arg0->unk10 = temp_v0;
+    arg0->info.unk10 = temp_v0;
     if (temp_v0 != NULL) {
-        arg0->unk0C = temp_v0->unk0C;
-        temp_v0->unk0C = arg0;
+        arg0->info.unk0C = temp_v0->info.unk0C;
+        temp_v0->info.unk0C = arg0;
     } else {
-        arg0->unk0C = D_80044EC4;
+        arg0->info.unk0C = D_80044EC4;
         D_80044EC4 = arg0;
     }
 
-    temp_v0 = arg0->unk0C;
+    temp_v0 = arg0->info.unk0C;
     if (temp_v0 != NULL) {
-        temp_v0->unk10 = arg0;
+        temp_v0->info.unk10 = arg0;
     } else {
         D_80044EC8 = arg0;
     }
 }
 
-void func_80000CF4(struct SpTaskNode *arg0) {
-    if (arg0->unk10 != NULL) {
-        arg0->unk10->unk0C = arg0->unk0C;
+void func_80000CF4(struct SpTaskQueue *arg0) {
+    if (arg0->info.unk10 != NULL) {
+        arg0->info.unk10->info.unk0C = arg0->info.unk0C;
     } else {
-        D_80044EC4 = arg0->unk0C;
+        D_80044EC4 = arg0->info.unk0C;
     }
 
-    if (arg0->unk0C != NULL) {
-        arg0->unk0C->unk10 = arg0->unk10;
+    if (arg0->info.unk0C != NULL) {
+        arg0->info.unk0C->info.unk10 = arg0->info.unk10;
     } else {
-        D_80044EC8 = arg0->unk10;
+        D_80044EC8 = arg0->info.unk10;
     }
 }
 
-void func_80000D44(struct SpTaskNode *arg0) {
-    struct SpTaskNode *temp_v0;
+void func_80000D44(struct SpTaskQueue *arg0) {
+    struct SpTaskQueue *temp_v0;
 
     temp_v0 = D_80044ED8;
-    while (temp_v0 != NULL && temp_v0->unk04 < arg0->unk04) {
-        temp_v0 = temp_v0->unk10;
+    while (temp_v0 != NULL && temp_v0->info.unk04 < arg0->info.unk04) {
+        temp_v0 = temp_v0->info.unk10;
     }
 
-    arg0->unk10 = temp_v0;
+    arg0->info.unk10 = temp_v0;
     if (temp_v0 != NULL) {
-        arg0->unk0C = temp_v0->unk0C;
-        temp_v0->unk0C = arg0;
+        arg0->info.unk0C = temp_v0->info.unk0C;
+        temp_v0->info.unk0C = arg0;
     } else {
-        arg0->unk0C = D_80044ED4;
+        arg0->info.unk0C = D_80044ED4;
         D_80044ED4 = arg0;
     }
 
-    temp_v0 = arg0->unk0C;
+    temp_v0 = arg0->info.unk0C;
     if (temp_v0 != NULL){
-        temp_v0->unk10 = arg0;
+        temp_v0->info.unk10 = arg0;
     } else {
         D_80044ED8 = arg0;
     }
 }
 
-void func_80000DD4(struct SpTaskNode *arg0) {
-    if (arg0->unk10 != NULL) {
-        arg0->unk10->unk0C = arg0->unk0C;
+void func_80000DD4(struct SpTaskQueue *arg0) {
+    if (arg0->info.unk10 != NULL) {
+        arg0->info.unk10->info.unk0C = arg0->info.unk0C;
     } else {
-        D_80044ED4 = arg0->unk0C;
+        D_80044ED4 = arg0->info.unk0C;
     }
 
-    if (arg0->unk0C != NULL) {
-        arg0->unk0C->unk10 = arg0->unk10;
+    if (arg0->info.unk0C != NULL) {
+        arg0->info.unk0C->info.unk10 = arg0->info.unk10;
     } else {
-        D_80044ED8 = arg0->unk10;
+        D_80044ED8 = arg0->info.unk10;
     }
 }
 
-void func_80000E24(struct SpTaskNode *arg0) {
-    arg0->unk0C = NULL;
-    arg0->unk10 = D_80044EE0;
+void func_80000E24(struct SpTaskQueue *arg0) {
+    arg0->info.unk0C = NULL;
+    arg0->info.unk10 = D_80044EE0;
     if (D_80044EE0 != NULL) {
-        D_80044EE0->unk0C = arg0;
+        D_80044EE0->info.unk0C = arg0;
     } else {
         D_80044EDC = arg0;
     }
     D_80044EE0 = arg0;
 }
 
-void func_80000E5C(struct SpTaskNode *arg0) {
-    if (arg0->unk10 != NULL) {
-        arg0->unk10->unk0C = arg0->unk0C;
+void func_80000E5C(struct SpTaskQueue *arg0) {
+    if (arg0->info.unk10 != NULL) {
+        arg0->info.unk10->info.unk0C = arg0->info.unk0C;
     } else {
-        D_80044EDC = arg0->unk0C;
+        D_80044EDC = arg0->info.unk0C;
     }
 
-    if (arg0->unk0C != NULL) {
-        arg0->unk0C->unk10 = arg0->unk10;
+    if (arg0->info.unk0C != NULL) {
+        arg0->info.unk0C->info.unk10 = arg0->info.unk10;
     } else {
-        D_80044EE0 = arg0->unk10;
+        D_80044EE0 = arg0->info.unk10;
     }
 }
 
@@ -357,7 +376,8 @@ void func_80000EAC(void) {
     osViSetMode(&D_80044EE8);
    
     // probably bitfield
-    osViBlack((D_80044FBC << 4) >> 31);
+    //osViBlack((D_80044FBC << 4) >> 31);
+    osViBlack(D_80044FBC.blackout);
     D_80044F88[0] = 0;
 }
 
@@ -534,7 +554,7 @@ block_47:
         phi_a0 = 1;
     }
     D_80044F38.comRegs.width = (u32) (phi_a0 * arg0);
-    if (D_NF_80000300 == 1) {
+    if (osTvType == 1) {
         D_80044F38.comRegs.burst = 0x3E52239U;
         D_80044F38.comRegs.vSync = 0x20CU;
         D_80044F38.comRegs.hSync = 0xC15U;
@@ -543,7 +563,7 @@ block_47:
         D_80044F38.unk30 = 0x2501FFU;
         D_80044F38.unk34 = 0xE0204;
     }
-    if (2 == D_NF_80000300) {
+    if (2 == osTvType) {
         D_80044F38.comRegs.burst = 0x4651E39U;
         D_80044F38.comRegs.vSync = 0x20CU;
         D_80044F38.comRegs.hSync = 0xC10U;
@@ -601,18 +621,18 @@ block_47:
     D_80044F38.unk48 = (s32) D_80044F38.unk34;
     if ((phi_t2 != 0) && (phi_v1 != 0)) {
         D_80044F38.comRegs.vSync = (u32) (D_80044F38.comRegs.vSync + 1);
-        if (2 == D_NF_80000300) {
+        if (2 == osTvType) {
             D_80044F38.comRegs.hSync = (u32) (D_80044F38.comRegs.hSync + 0x40001);
         }
-        if (2 == D_NF_80000300) {
+        if (2 == osTvType) {
             D_80044F38.comRegs.leap = (u32) (D_80044F38.comRegs.leap + 0xFFFCFFFE);
         }
     } else {
         D_80044F38.unk30 = (u32) (D_80044F38.unk30 + 0xFFFDFFFE);
-        if (2 == D_NF_80000300) {
+        if (2 == osTvType) {
             D_80044F38.unk34 = (s32) (D_80044F38.unk34 + 0xFFFCFFFE);
         }
-        if (D_NF_80000300 == 0) {
+        if (osTvType == 0) {
             D_80044F38.unk48 = (s32) (D_80044F38.unk48 + 0x2FFFE);
         }
     }
@@ -654,8 +674,8 @@ block_47:
 #pragma GLOBAL_ASM("game/nonmatching/thread3/func_80000F30.s")
 
 void func_800016D8(void) {
-    void * cur;
-    void * next;
+    void *cur;
+    void *next;
 
     if (D_80045035 != D_80045034) {
         next = osViGetNextFramebuffer();
@@ -686,7 +706,7 @@ void func_800017B8(void *arg0) {
     void *temp;
 
     if (D_80044F88[0] != 0) {
-        if (D_80045020 == NULL) {
+        if (D_80045020 == 0) {
             func_80000EAC();
         }
     }
@@ -694,20 +714,20 @@ void func_800017B8(void *arg0) {
     if (D_80045010 != 0) {
         osSendMesg(D_80045014, (OSMesg)1, OS_MESG_NOBLOCK);
         if ((intptr_t)arg0 == -1) {
-            D_80044FA8 = D_80044F9C[0];
-            D_80044F9C[0] = NULL;
+            D_80044FA8 = D_80044F9C;
+            D_80044F9C = NULL;
         } else {
             D_80044FA8 = arg0;
         }
     } else {
         if ((intptr_t)arg0 == -1) {
-            func_80001764(D_80044F9C[0]);
+            func_80001764(D_80044F9C);
             // permutater solution
-            temp = D_80044F9C[0]; if (temp == D_80044FA0) { 
+            temp = D_80044F9C; if (temp == D_80044FA0) { 
                 D_80044FA4 = 1; 
             }
             D_80044FA8 = temp;
-            D_80044F9C[0] = NULL;
+            D_80044F9C = NULL;
         } else {
             func_80001764((void *)arg0);
             D_80044FA8 = arg0;
@@ -717,63 +737,43 @@ void func_800017B8(void *arg0) {
     D_80044FB4 = (u32) ((u32) (osGetCount() - D_80044FAC) / 0xB9BU);
 }
 
-void func_800018E0(struct SpTaskNode *arg0) {
+void func_800018E0(struct SpTaskQueue *arg0) {
     if (D_80044ECC != 0) {
         osSpTaskYield();
-        D_80044ECC->unk08 = 4;
+        D_80044ECC->info.unk08 = 4;
         func_80000D44(D_80044ECC);
-        arg0->unk08 = 3;
+        arg0->info.unk08 = 3;
     } else {
         osSpTaskStart(&arg0->task);
-        arg0->unk08 = 2;
+        arg0->info.unk08 = 2;
     }
     D_80044ECC = arg0;
 }
 
-void func_80001968(struct SpTaskNode *arg0) {
+void func_80001968(struct SpTaskQueue *arg0) {
     D_80044FB0 = osGetCount();
 
-    if ((D_80044ECC != NULL) && (D_80044ECC->unk08 == 2)) {
+    if ((D_80044ECC != NULL) && (D_80044ECC->info.unk08 == 2)) {
         osSpTaskYield();
-        D_80044ECC->unk08 = 4;
-        arg0->unk08 = 3;
+        D_80044ECC->info.unk08 = 4;
+        arg0->info.unk08 = 3;
     } else {
         osSpTaskStart(&arg0->task);
-        arg0->unk08 = 2;
+        arg0->info.unk08 = 2;
     }
     D_80044ED0 = arg0;
 }
-/*
-	28 00 u32	type;
-	2C 04 u32	flags;
-	30 08 u64	*ucode_boot;
-	34 0c u32	ucode_boot_size;
 
-	38 10 u64	*ucode;
-	3c 14 u32	ucode_size;
-	40 18 u64	*ucode_data;
-	44 1c u32	ucode_data_size;
 
-	48 20 u64	*dram_stack;
-	4c 24 u32	dram_stack_size;
-	50 28 u64	*output_buff;
-	54 2c u64	*output_buff_size;
-
-	58 30 u64	*data_ptr;
-	5c 34 u32	data_size;
-	60 38 u64	*yield_data_ptr;
-	64 3c u32	yield_data_size;
-*/
-
+s32 func_80001A00(struct SpTaskQueue *arg0);
 #ifdef NON_MATCHING
-
-s32 func_80001A00(struct SpTaskNode *arg0) {
+s32 func_80001A00(struct SpTaskQueue *arg0) {
     s32 sp4C = 0;
 
-    switch (arg0->unk00) {
+    switch (arg0->info.unk00) {
         case 1:
             if (arg0->unk68 != NULL) {
-                *arg0->unk68 |= (s32) D_80044F9C[0];
+                arg0->unk68 = D_80044F9C;
                 osWritebackDCache(arg0->unk68, sizeof(s32 *));
             }
             //L80001A6C
@@ -795,15 +795,15 @@ s32 func_80001A00(struct SpTaskNode *arg0) {
             sp4C = 1;
             break;
         case 3:
-            *arg0->unk24 = (s32 *)D_80044EC0;
-            D_80044EC0 = (u32 *)arg0->unk24;
-            if (arg0->unk20 != NULL) {
-                osSendMesg(arg0->unk20, (OSMesg)arg0->unk1C, OS_MESG_NOBLOCK);
+            arg0->info.unk24 = D_80044EC0;
+            D_80044EC0 = arg0->info.unk24;
+            if (arg0->info.unk20 != NULL) {
+                osSendMesg(arg0->info.unk20, (OSMesg)arg0->info.unk1C, OS_MESG_NOBLOCK);
             }
             break;
         case 4:
             func_80000F30(
-                arg0->unk24, 
+                arg0->info.unk24, 
                 arg0->task.t.type,
                 arg0->task.t.flags,
                 ((s16 *) &arg0->task.t.ucode_boot)[0],
@@ -812,8 +812,8 @@ s32 func_80001A00(struct SpTaskNode *arg0) {
                 ((s16 *) &arg0->task.t.ucode_boot_size)[1]
             );
 
-            if (arg0->unk20 != NULL) {
-                osSendMesg(arg0->unk20, (OSMesg)arg0->unk1C, OS_MESG_NOBLOCK);
+            if (arg0->info.unk20 != NULL) {
+                osSendMesg(arg0->info.unk20, (OSMesg)arg0->info.unk1C, OS_MESG_NOBLOCK);
             }
             break;
         case 5:
@@ -824,21 +824,21 @@ s32 func_80001A00(struct SpTaskNode *arg0) {
             {
             s32 i;
             for (i = 0; i < ARRAY_COUNT(D_80044F90); i++) {
-                D_80044F90[i] = arg0[i].unk24;
+                D_80044F90[i] = arg0[i].info.unk24;
             }
             }
-            if (arg0->unk20 != NULL) {
-                osSendMesg(arg0->unk20, (OSMesg)arg0->unk1C, OS_MESG_NOBLOCK);
+            if (arg0->info.unk20 != NULL) {
+                osSendMesg(arg0->info.unk20, (OSMesg)arg0->info.unk1C, OS_MESG_NOBLOCK);
             }
             break;
         case 6:
             // really big
             {
-            struct SpTaskNode *v1 = NULL;
-            struct SpTaskNode *v0;
+            struct SpTaskQueue *v1 = NULL;
+            struct SpTaskQueue *v0;
             // a0 = D_80044ECC;
             if (D_80044ECC != NULL) {
-                if (D_80044ECC->unk00 == 1) {
+                if (D_80044ECC->info.unk00 == 1) {
                     if (arg0->task.t.type == D_80044ECC->unk80) {
                         v1 = D_80044ECC;
                     }
@@ -847,29 +847,29 @@ s32 func_80001A00(struct SpTaskNode *arg0) {
             // L80001BEC
             v0 = D_80044ED4;
             while (v0 != NULL) {
-                if (v0->unk00 == 1) {
+                if (v0->info.unk00 == 1) {
                     if (arg0->task.t.type == v0->unk80) {
                         v1 = v0;
                     }
                 }
                 // L80001C20
-                v0 = v0->unk0C;
+                v0 = v0->info.unk0C;
             }
             //L80001C28
             v0 = D_80044EC4;
             while (v0 != NULL) {
-                if (v0->unk00 == 1) {
+                if (v0->info.unk00 == 1) {
                     if (arg0->task.t.type == v0->unk80) {
                         v1 = v0;
                     }
                 }
                 //L80001C5C
-                v0 = v0->unk0C;
+                v0 = v0->info.unk0C;
             }
             //L80001C64
             v0 = D_80044EE4;
             if (v0 != NULL) {
-                if (v0->unk00 == 1) {
+                if (v0->info.unk00 == 1) {
                     if (arg0->task.t.type == D_80044ECC->unk80) {
                         v1 = v0;
                     }
@@ -878,73 +878,73 @@ s32 func_80001A00(struct SpTaskNode *arg0) {
             // L80001C94
             v0 = D_80044EDC;
             while (v0 != NULL) {
-                if (v0->unk00 == 1) {
+                if (v0->info.unk00 == 1) {
                     if (arg0->task.t.type == v0->unk80) {
                         v1 = v0;
                     }
                 }
-                v0 = v0->unk0C;
+                v0 = v0->info.unk0C;
             }
             // L80001CD0
             if (v1 != NULL) {
-                v1->unk1C = arg0->unk1C;
-                v1->unk20 = arg0->unk20;
-                v1->unk6C = arg0->unk24;
+                v1->info.unk1C = arg0->info.unk1C;
+                v1->info.unk20 = arg0->info.unk20;
+                v1->unk6C = arg0->info.unk24;
             } else {
                 //L80001CF8
-                if (arg0->unk24 != NULL) {
-                    func_800017B8(arg0->unk20);
+                if (arg0->info.unk24 != NULL) {
+                    func_800017B8(arg0->info.unk20);
                 }
                 //L80001D0C
-                if (arg0->unk20 != NULL) {
-                    osSendMesg(arg0->unk20, (OSMesg)arg0->unk1C, OS_MESG_NOBLOCK);
+                if (arg0->info.unk20 != NULL) {
+                    osSendMesg(arg0->info.unk20, (OSMesg)arg0->info.unk1C, OS_MESG_NOBLOCK);
                 }
             }
             }
             break;
         case 7:
-            if (arg0->unk20 != NULL) {
-                osSendMesg(arg0->unk20, (OSMesg)arg0->unk1C, OS_MESG_NOBLOCK);
+            if (arg0->info.unk20 != NULL) {
+                osSendMesg(arg0->info.unk20, (OSMesg)arg0->info.unk1C, OS_MESG_NOBLOCK);
             }
             break;
         case 8:
-            D_80044FCC = (uintptr_t)arg0->unk24;
+            D_80044FCC = (uintptr_t)arg0->info.unk24;
             D_80044FD0 = arg0->task.t.type;
-            if (arg0->unk20 != NULL) {
-                osSendMesg(arg0->unk20, (OSMesg)arg0->unk1C, OS_MESG_NOBLOCK);
+            if (arg0->info.unk20 != NULL) {
+                osSendMesg(arg0->info.unk20, (OSMesg)arg0->info.unk1C, OS_MESG_NOBLOCK);
             }
             break;
         case 9:
             D_80045010 = 1;
-            D_80045014 = (OSMesgQueue *)arg0->unk24;
-            if (arg0->unk20 != NULL) {
-                osSendMesg(arg0->unk20, (OSMesg)arg0->unk1C, OS_MESG_NOBLOCK);
+            D_80045014 = (OSMesgQueue *)arg0->info.unk24;
+            if (arg0->info.unk20 != NULL) {
+                osSendMesg(arg0->info.unk20, (OSMesg)arg0->info.unk1C, OS_MESG_NOBLOCK);
             }
             break;
         case 10:
             D_80045010 = 0;
-            if (arg0->unk20 != NULL) {
-                osSendMesg(arg0->unk20, (OSMesg)arg0->unk1C, OS_MESG_NOBLOCK);
+            if (arg0->info.unk20 != NULL) {
+                osSendMesg(arg0->info.unk20, (OSMesg)arg0->info.unk1C, OS_MESG_NOBLOCK);
             }
             break;
         case 11:
             {
-            struct SpTaskNode *a0 = D_80044EC4;
-            //struct SpTaskNode *sp34;
+            struct SpTaskQueue *a0 = D_80044EC4;
+            //struct SpTaskQueue *sp34;
             while (a0 != NULL) {
-                if (a0->unk00 == 1 || a0->unk00 == 4) {
+                if (a0->info.unk00 == 1 || a0->info.unk00 == 4) {
                     //sp34 = a0->unk0C;
                     func_80000CF4(a0);
                     //a0 = sp34;
                 } 
                 // L80001E28
-                a0 = a0->unk0C;
+                a0 = a0->info.unk0C;
             }
             }
             // L80001E30
             D_80044FA0 = NULL;
-            if (arg0->unk20 != NULL) {
-                osSendMesg(arg0->unk20, (OSMesg)arg0->unk1C, OS_MESG_NOBLOCK);
+            if (arg0->info.unk20 != NULL) {
+                osSendMesg(arg0->info.unk20, (OSMesg)arg0->info.unk1C, OS_MESG_NOBLOCK);
             }
             break;
     }
@@ -953,7 +953,6 @@ s32 func_80001A00(struct SpTaskNode *arg0) {
     return sp4C;
 }
 #else 
-s32 func_80001A00(struct SpTaskNode *arg0);
 #pragma GLOBAL_ASM("game/nonmatching/thread3/func_80001A00.s")
 #endif /* NON_MATCHING */
 
@@ -961,29 +960,25 @@ void func_80001E64(void) {
     s32 phi_a0;
     s32 phi_v0;
     s32 phi_v1;
-    struct SpTaskNode *phi_s0;
-    struct SpTaskNode *temp_s1;
+    struct SpTaskQueue *phi_s0;
+    struct SpTaskQueue *temp_s1;
     s32 phi_s2 = 0;
     s32 phi_s4;
     s32 phi_s7;
 
 
-    phi_s7 = D_80044ECC != NULL ? D_80044ECC->unk04 : -1;
+    phi_s7 = D_80044ECC != NULL ? D_80044ECC->info.unk04 : -1;
 
-    // L80001EB0
     if (D_80044ED0 != NULL) {
-        phi_s7 = D_80044ED0->unk04;
+        phi_s7 = D_80044ED0->info.unk04;
     }
-    // L80001ECC
-    phi_s4 = D_80044ED4 != NULL ? D_80044ED4->unk04 : -1;
 
-    // L80001EE8
+    phi_s4 = D_80044ED4 != NULL ? D_80044ED4->info.unk04 : -1;
+
     phi_s0 = D_80044EC4;
     while (phi_s2 == 0) {
-        // L80001EEC
-        phi_v0 = phi_s0 != NULL ? phi_s0->unk04 : - 1;
+        phi_v0 = phi_s0 != NULL ? phi_s0->info.unk04 : - 1;
 
-        // L80001EFC
         if (phi_s4 >= phi_v0) {
             phi_v1 = 0;
             phi_a0 = phi_s4;
@@ -991,31 +986,28 @@ void func_80001E64(void) {
             phi_v1 = 1;
             phi_a0 = phi_v0;
         }
-        // L80001F18
+   
         if (phi_s7 >= phi_a0) {
             phi_s2 = 1;
         } else {
             switch (phi_v1) {
                 case 0:
-                    // L80001F48
                     osSpTaskStart(&D_80044ED4->task);
                     phi_s2 = 1;
-                    D_80044ED4->unk08 = 2;
+                    D_80044ED4->info.unk08 = 2;
                     D_80044ECC = D_80044ED4;
                     func_80000DD4(D_80044ED4);
-                    break;
+                break;
                 case 1: 
-                    // L80001F80
-                    if (phi_s0->func == NULL || phi_s0->func(phi_s0) != 0) {
-                        // L80001F98
+                    if (phi_s0->info.func == NULL || phi_s0->info.func(phi_s0) != 0) {
                         phi_s2 = func_80001A00(phi_s0);
-                        temp_s1 = phi_s0->unk0C;
+                        temp_s1 = phi_s0->info.unk0C;
                         func_80000CF4(phi_s0);
                         phi_s0 = temp_s1;
                     } else {
-                        phi_s0 = phi_s0->unk0C;
+                        phi_s0 = phi_s0->info.unk0C;
                     }
-                    break;
+                break;
             }
         }
     }
@@ -1025,15 +1017,15 @@ void func_80001FF4(void) {
     if (D_80044EE4 == NULL && D_80044EDC != NULL) {
         D_80044EE4 = D_80044EDC;
         func_80000E5C(D_80044EDC);
-        D_80044EE4->unk08 = 2;
+        D_80044EE4->info.unk08 = 2;
         osDpSetNextBuffer(D_80044EE4->task.t.output_buff, D_80044EE4->unk78);
     }
 }
 
 void func_8000205C(void) {
-    struct Unk80044EC0 *cur;
+    struct MqListNode *cur;
     // temp usages are needed to match
-    struct Unk80044EC0 *temp;
+    struct MqListNode *temp;
 
     D_8004501C += 1;
     cur = D_80044EC0;
@@ -1049,12 +1041,13 @@ void func_8000205C(void) {
     func_80001E64();
 }
 
+void func_800020D0(void);
 #ifdef NON_MATCHING
 void func_800020D0(void) {
     s32 t6;
 
-    if (D_80044ED0 != NULL && D_80044ED0->unk08 == 2) {
-        osSendMesg(D_80044ED0->unk20, (OSMesg)0, OS_MESG_NOBLOCK);
+    if (D_80044ED0 != NULL && D_80044ED0->info.unk08 == 2) {
+        osSendMesg(D_80044ED0->info.unk20, (OSMesg)0, OS_MESG_NOBLOCK);
         D_80044ED0 = NULL;
         func_80001E64();
         D_80044FB8 = (osGetCount() - D_80044FB0) / 2971;
@@ -1062,22 +1055,22 @@ void func_800020D0(void) {
         return;
     }
     // L8000213C
-    if (D_80044ECC != NULL && D_80044ECC->unk08 == 4) {
+    if (D_80044ECC != NULL && D_80044ECC->info.unk08 == 4) {
         if (osSpTaskYielded(&D_80044ECC->task) == OS_TASK_YIELDED) {
-            D_80044ECC->unk08 = 5;
+            D_80044ECC->info.unk08 = 5;
             func_80000D44(D_80044ECC);
             D_80044ECC = NULL;
         } else {
             //L80002198
-            D_80044ECC->unk08 = 6;
+            D_80044ECC->info.unk08 = 6;
         }
         // L800021A4
         osSpTaskStart(&D_80044ED0->task);
-        D_80044ED0->unk08 = 2;
+        D_80044ED0->info.unk08 = 2;
     }
     // L800021DC
-    if (D_80044ECC != NULL && D_80044ECC->unk18 == 1 && D_80044ECC->unk08 != 5) {
-        if (D_80044ECC->unk00 == 1 && D_80044ECC->unk74 == 1) {
+    if (D_80044ECC != NULL && D_80044ECC->info.unk18 == 1 && D_80044ECC->info.unk08 != 5) {
+        if (D_80044ECC->info.unk00 == 1 && D_80044ECC->unk74 == 1) {
             osInvalDCache(&D_80044FC0, sizeof(D_80044FC0));
             D_80044ECC->unk78 = D_80044FC0;
             /*
@@ -1123,7 +1116,7 @@ void func_800020D0(void) {
             }*/
 
             // L800022BC
-            D_80044ECC->unk08 = 1;
+            D_80044ECC->info.unk08 = 1;
             func_80000E24(D_80044ECC);
             func_80001FF4();
         }
@@ -1133,9 +1126,9 @@ void func_800020D0(void) {
         return;
     }
     // L800022E8
-    if (D_80044ECC != NULL && D_80044ECC->unk18 == 2) {
-        if (D_80044ECC->unk00 == 1) {
-            D_80044ECC->unk08 = 6;
+    if (D_80044ECC != NULL && D_80044ECC->info.unk18 == 2) {
+        if (D_80044ECC->info.unk00 == 1) {
+            D_80044ECC->info.unk08 = 6;
             if (D_80044ECC->unk7C & 2) {
                 D_80044ECC->unk7C |= 1;
             }
@@ -1145,76 +1138,179 @@ void func_800020D0(void) {
 
 }
 #else
-void func_800020D0(void);
 #pragma GLOBAL_ASM("game/nonmatching/thread3/func_800020D0.s")
 #endif /* NON_MATCHING */
 
 void func_80002340(void) {
     union CheckedPtr checked; // could just be a void *temp
     
-    if (D_80044ECC != NULL && D_80044ECC->unk18 == 2) {
-        if (D_80044ECC->unk00 == 1) {
+    if (D_80044ECC != NULL && D_80044ECC->info.unk18 == 2) {
+        if (D_80044ECC->info.unk00 == 1) {
             checked.ptr = D_80044ECC->unk6C;
             if (checked.ptr != NULL) {
                 func_800017B8(checked.ptr);
             }
-            // L80002398
-            if (D_80044ECC->unk20 != NULL) {
-                osSendMesg(D_80044ECC->unk20, (OSMesg)D_80044ECC->unk1C, OS_MESG_NOBLOCK);
+
+            if (D_80044ECC->info.unk20 != NULL) {
+                osSendMesg(D_80044ECC->info.unk20, (OSMesg)D_80044ECC->info.unk1C, OS_MESG_NOBLOCK);
             }
-            // L800023B8
-            if (D_80044ECC->unk08 == 4) {
+            
+            if (D_80044ECC->info.unk08 == 4) {
                 osSpTaskStart(&D_80044ED0->task);
-                D_80044ED0->unk08 = 2;
+                D_80044ED0->info.unk08 = 2;
             }
         }
-        // L800023F4
+        
         D_80044ECC = NULL;
         func_80001E64();
-
-        return;
-
-    }
-    // L80002408
-    if (D_80044EE4 != NULL) {
+    } else if (D_80044EE4 != NULL) {
         checked.ptr = D_80044EE4->unk6C;
         if (checked.ptr != NULL) {
             func_800017B8(checked.ptr);
         }
-        // L8000243C
-        if (D_80044EE4->unk20 != NULL) {
-            osSendMesg(D_80044EE4->unk20, (OSMesg)D_80044EE4->unk1C, OS_MESG_NOBLOCK);
+        
+        if (D_80044EE4->info.unk20 != NULL) {
+            osSendMesg(D_80044EE4->info.unk20, (OSMesg)D_80044EE4->info.unk1C, OS_MESG_NOBLOCK);
         }
-        //L80002450
+        
         D_80044EE4 = NULL;
         func_80001FF4();
-        return;
-
-    }
-    //L80002464
-    if (D_80044ED4 != NULL && D_80044ED4->unk18 == 2) {
-        if (D_80044ED4->unk00 == 1) {
+    } else if (D_80044ED4 != NULL && D_80044ED4->info.unk18 == 2) {
+        if (D_80044ED4->info.unk00 == 1) {
             checked.ptr = D_80044ED4->unk6C;
             if (checked.ptr != NULL) {
                 func_800017B8(checked.ptr);
             }
-            // L800024B0
-            if (D_80044ED4->unk20 != NULL) {
-                osSendMesg(D_80044ED4->unk20, (OSMesg)D_80044ED4->unk1C, OS_MESG_NOBLOCK);
+
+            if (D_80044ED4->info.unk20 != NULL) {
+                osSendMesg(D_80044ED4->info.unk20, (OSMesg)D_80044ED4->info.unk1C, OS_MESG_NOBLOCK);
             }
-            //L800024CC
+
             func_80000DD4(D_80044ED4);
         }
-        //L800024D4
         func_80001E64();
     }
-
 }
 
-#pragma GLOBAL_ASM("game/nonmatching/thread3/func_800024EC.s")
+void func_800024EC(struct SpTaskQueue *arg0) {
+    arg0->info.unk08 = 1;
+    func_80000C64(arg0);
+    func_80001E64();
+}
 
-#pragma GLOBAL_ASM("game/nonmatching/thread3/thread3_scheduler.s")
+// forward dec
+void func_800029D8(void);
 
-#pragma GLOBAL_ASM("game/nonmatching/thread3/func_800029D8.s")
+#define INTR_VRETRACE 1
+#define INTR_SP_TASK_DONE 2
+#define INTR_DP_FULL_SYNC 3
+#define INTR_SOFT_RESET 99
+
+void thread3_scheduler(UNUSED void *arg) {
+    OSMesg intrMsg;
+    UNUSED u32 pad;
+    OSViMode mode;
+    
+    // the wonders of matching
+    D_80044EC0 = NULL;
+    D_80044EC4 = D_80044EC8 = D_80044ECC = D_80044ED0 = D_80044ED4 = D_80044ED8 = NULL;
+    D_80044EE4 = D_80044EDC = D_80044EE0 = NULL;
+    D_80044F88[0] = 0;
+    D_80044FA8 = D_80044F9C = D_80044FA0 = NULL;
+    D_80045010 = 0;
+    D_80045018 = func_800029D8;
+    D_80045020 = 0;
+    D_80045024 = -1;
+    D_8004501C = 0;
+    D_80045034 = D_80045035 = 0;
+
+    switch (osTvType) {
+        case OS_TV_NTSC:
+            mode = osViModeNtscLan1;
+            D_80044EE8 = mode;
+            D_80044F38 = mode;
+            break;
+        case OS_TV_PAL:
+            while (TRUE) { }
+            break;
+        case OS_TV_MPAL:
+            mode = osViModeMpalLan1;
+            D_80044EE8 = mode;
+            D_80044F38 = mode;
+            break;
+    }
+    // 0x10016
+    D_80044EE8.comRegs.ctrl = VI_CTRL_TYPE_16 | VI_CTRL_GAMMA_DITHER_ON | 
+                              VI_CTRL_DIVOT_ON | VI_CTRL_DITHER_FILTER_ON;
+    D_80044F38.comRegs.ctrl = VI_CTRL_TYPE_16 | VI_CTRL_GAMMA_DITHER_ON | 
+                              VI_CTRL_DIVOT_ON | VI_CTRL_DITHER_FILTER_ON;
+    osViSetMode(&D_80044EE8);
+    osViBlack(TRUE);
+    
+    D_80044FBC.unk_b80 = TRUE;
+    D_80044FBC.serrate = FALSE;
+    D_80044FBC.pixelSize32 = FALSE;
+    D_80044FBC.gamma = FALSE;
+    D_80044FBC.blackout = TRUE;
+    D_80044FBC.unk_b04 = FALSE;
+    D_80044FBC.gamma_dither = TRUE;
+    D_80044FBC.dither_filter = TRUE;
+    D_80044FBC.divot = TRUE;
+
+    osCreateMesgQueue(&D_80044FF8, D_80044FD8, ARRAY_COUNT(D_80044FD8));
+    // 
+    osViSetEvent(&D_80044FF8, (OSMesg)INTR_VRETRACE, 1);
+    osSetEventMesg(OS_EVENT_SP, &D_80044FF8, (OSMesg)INTR_SP_TASK_DONE);
+    osSetEventMesg(OS_EVENT_DP, &D_80044FF8, (OSMesg)INTR_DP_FULL_SYNC);
+    osSetEventMesg(OS_EVENT_PRENMI, &D_80044FF8, (OSMesg)INTR_SOFT_RESET);
+    osSendMesg(&gThreadingQueue, (OSMesg)1, OS_MESG_NOBLOCK);
+
+    while (TRUE) {
+        osRecvMesg(&D_80044FF8, &intrMsg, OS_MESG_BLOCK);
+
+        switch ((uintptr_t)intrMsg) {
+            case INTR_VRETRACE:
+                func_8000205C();
+                break;
+            case INTR_SP_TASK_DONE:
+                func_800020D0();
+                if (D_80045020 == 1 && D_80045024 == -1) {
+                    D_80045024 = osAfterPreNMI();
+                }
+                break;
+            case INTR_DP_FULL_SYNC:
+                func_80002340();
+                break;
+            case INTR_SOFT_RESET:
+                if (D_80045018 != NULL) {
+                    D_80045018();
+                }
+                break;
+            default:
+                if (D_80045020 == 0) {
+                    func_800024EC((struct SpTaskQueue *)intrMsg);
+                }
+        }
+    }
+}
+
+void func_800029D8(void) {
+    uintptr_t i;
+
+    D_80045020 = 1;
+    osViSetYScale(1.0);
+    osViBlack(TRUE);
+
+    for (i = 0; i < 4; i++) {
+        func_800044B4(i);
+        func_80004494(i);
+    }
+
+    D_80045024 = osAfterPreNMI();
+}
+
+void unref_80002A50(void (*fn)(void)) {
+    D_80045018 = fn;
+}
 
 #pragma GCC diagnostic pop

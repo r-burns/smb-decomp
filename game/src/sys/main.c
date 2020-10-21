@@ -5,6 +5,7 @@
 #include <macros.h>
 #include <ssb_types.h>
 
+#include "sys/main.h"
 #include "sys/system.h"
 #include "loadovl/loader.h"
 

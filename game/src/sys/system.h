@@ -32,4 +32,7 @@ extern void load_overlay(struct Overlay *ovl);
 extern void start_thread8(void);
 extern OSPiHandle *gPiHandle; // 80045040
 
+void func_800044B4(s32);
+void func_80004494(s32);
+
 #endif /* TEMP_SYSTEM_H */

@@ -126,10 +126,10 @@ glabel D_8003D4A0
   /* 3D0A0 03E0A0 8003D4A0 */  .4byte D_800A0550
   .incbin "system.raw.bin", 0x3D0A4, 0xC
 
-glabel D_8003D4B0
+glabel osViModeNtscLan1
   .incbin "system.raw.bin", 0x3D0B0, 0x50
 
-glabel D_8003D500
+glabel osViModeMpalLan1
   .incbin "system.raw.bin", 0x3D100, 0x50
 
 glabel D_8003D550
