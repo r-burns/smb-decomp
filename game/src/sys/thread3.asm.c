@@ -74,8 +74,8 @@ struct ViSettings {
     u8 gamma : 1;         // b3   10 => gamma on
     u8 blackout : 1;      // b4   08 => unknown game control (arg2 & 0x100) [blackout ?]
     u8 unk_b04 : 1;       // b5   04 => unknown game control (arg2 & 0x400)
-    u8 gamma_dither : 1;  // b6   02 => gamma dither on
-    u8 dither_filter : 1; // b7   01 => dither filter
+    u8 gammaDither : 1;   // b6   02 => gamma dither on
+    u8 ditherFilter : 1;  // b7   01 => dither filter
     u8 divot : 1;         // b8 1 80 => divot on
                           // b9 1 40 
 };
@@ -426,22 +426,22 @@ void func_80000F30(u32 arg0, u32 arg1, s32 arg2, s16 arg3, s16 arg4, s16 arg5, s
     }
     // L80001070
     if (arg2 & 0x01000) {
-        D_80044FBC.gamma_dither = TRUE;
+        D_80044FBC.gammaDither = TRUE;
         D_80044F38.comRegs.ctrl |= VI_CTRL_GAMMA_DITHER_ON;
     }
     // L80001094
     if (arg2 & 0x02000) {
-        D_80044FBC.gamma_dither = FALSE;
+        D_80044FBC.gammaDither = FALSE;
         D_80044F38.comRegs.ctrl &= ~VI_CTRL_GAMMA_DITHER_ON;
     }
     // L800010BC
     if (arg2 & 0x04000) {
-        D_80044FBC.dither_filter = TRUE;
+        D_80044FBC.ditherFilter = TRUE;
         D_80044F38.comRegs.ctrl |= VI_CTRL_DITHER_FILTER_ON;
     }
     //L800010E4
     if (arg2 & 0x08000) {
-        D_80044FBC.dither_filter = FALSE;
+        D_80044FBC.ditherFilter = FALSE;
         D_80044F38.comRegs.ctrl &= ~VI_CTRL_DITHER_FILTER_ON;
     }
     // L80001110
@@ -1252,8 +1252,8 @@ void thread3_scheduler(UNUSED void *arg) {
     D_80044FBC.gamma = FALSE;
     D_80044FBC.blackout = TRUE;
     D_80044FBC.unk_b04 = FALSE;
-    D_80044FBC.gamma_dither = TRUE;
-    D_80044FBC.dither_filter = TRUE;
+    D_80044FBC.gammaDither = TRUE;
+    D_80044FBC.ditherFilter = TRUE;
     D_80044FBC.divot = TRUE;
 
     osCreateMesgQueue(&gScheduleTaskQueue, D_80044FD8, ARRAY_COUNT(D_80044FD8));
