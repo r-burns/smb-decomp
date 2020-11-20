@@ -1,14 +1,200 @@
-from shutil import which
-from doit.action import CmdAction
 import os
-import sys
-import subprocess
+from dataclasses import dataclass
+from pathlib import Path
+from typing import List, Union, Tuple
+from shutil import which
+
+@dataclass
+class Compiler:
+    CC: List[Union[str, Path]]
+    CFLAGS: List[str]
+    needsAsmPrepoc: bool = False
+
+@dataclass
+class CXX:
+    CXX: List[Union[str, Path]]
+    CXXFLAGS: List[str]
+
+@dataclass
+class Assembler:
+    AS: List[Union[str, Path]]
+    ASFLAGS: List[str]
+
+@dataclass
+class Binutils:
+    LD: List[Union[str, Path]]
+    OBJCOPY: List[Union[str, Path]]
+    AR: List[Union[str, Path]]
+
+@dataclass
+class SystemTools:
+    c: Compiler
+    cxx: CXX
+    CPP: List[Union[str, Path]]
+
+@dataclass
+class CrossTools:
+    c: Compiler
+    assembler: Assembler
+    utils: Binutils
+
+# Game cross toolchain flags
+IDO_CC_FLAGS = [
+    '-Wab,-r4300_mul', '-G', '0', '-non_shared', '-Xfullwarn', '-Xcpluscomm', 
+    '-signed', '-32', '-mips2',
+    '-D_LANGUAGE_C'
+]
+GCC_AS_FLAGS = ['-march=vr4300', '-mabi=32']
+C_SYNTAX_CHECK_FLAGS = [
+    '-fsyntax-only', '-fsigned-char', '-fno-builtin',
+    '-std=gnu90', '-m32', 
+    '-Wall', '-Wextra', '-Wno-format-security', '-Wno-main', 
+    '-D_LANGUAGE_C', '-DNON_MATCHING', '-DAVOID_UB', '-DIGNORE_SYNTAX_CHECK'
+]
+
+# ASM processor for IDO
+# TODO: dynamic under config tools direction?
+IDO_ASMPROC = {
+    'proc': 'utils/asm-processor/asm_processor.py',
+    'cin': 'utils/asm-processor/include-stdin.c',
+    'prelude': 'utils/asm-processor/prelude.s',
+}
+
+@dataclass
+class ToolChain:
+    system: SystemTools
+    game: CrossTools
+    libultra: CrossTools
+    user_defines: List[str] # NON_MATCHING, AVOID_UB, VERSION_XX, TARGET_YY, etc.
+
+    def from_config(config):
+        # Configure system C/C++ compiler
+        sys_cc = Compiler(['gcc'], ['-O2'])
+        sys_cxx = CXX(['g++'], ['-O2'])
+        # TODO: check for gcc cpp on clang/apple builds
+        #       or remove once there's a linker spec file tool...
+        system = SystemTools(sys_cc, sys_cxx, ['cpp-9'])
+        # Configure cross toolchain for game
+        game = _get_cross_toolchain(config.toolchain, config)
+        # Configure libultra cross toolchain for game
+        libultra = _get_cross_toolchain(config.libultra, config)
+        # TODO: Encode user CLI options
+        defines = []
+
+        return ToolChain(system, game, libultra, defines)
+    
+    def invoke_as(self, includes, depfile, input, output):
+        ''' create a list for calling the current game cross-assembler '''
+        incs = list(_prefix_it(includes, '-I'))
+        files = ['--MD', depfile, '-o', output, input]
+        tc = self.game.assembler
+
+        return tc.AS + tc.ASFLAGS + incs + files
+    
+    def invoke_cc(self, includes, input, output, opt = 'O2'):
+        ''' create a list for calling the current game cross-compiler '''
+        incs = list(_prefix_it(includes, '-I'))
+        # TODO: do this once when creating user_defines?
+        defines = ['-D'+d for d in self.user_defines]
+        opt = ['-'+opt]
+        files = ['-o', output, input]
+        tc = self.game.c
+
+        return tc.CC + tc.CFLAGS + incs + defines + opt + files
+
+    def invoke_cc_check(self, includes, depfile, input, output):
+        ''' use the system CC to check syntax and to create dependency files '''
+        incs = list(_prefix_it(includes, '-I'))
+        files = ['-MMD', '-MP', '-MT', output, '-MF', depfile, input]
+        tc = self.system.c
+
+        return tc.CC + C_SYNTAX_CHECK_FLAGS + incs + files
+
+    def invoke_asm_prepoc(self, includes, input, output, opt = 'O2'):
+        ''' 
+        IDO has no inline ASM, so an external tool must be used.
+        This returns two commands in a list: 
+          the first is a string for the shell
+          the second is a list for .o file post-processing
+        '''
+        if not self.game.c.needsAsmPrepoc:
+            return [self.invoke_cc(includes, input, output, opt)]
+
+        cc = self.invoke_cc(includes, IDO_ASMPROC['cin'], output, opt)
+        gas = self.game.assembler.AS + self.game.assembler.ASFLAGS
+        asmproc_flags = ['-'+opt, input, '--input-enc', 'utf-8', '--output-enc', 'utf-8']
+        asmproc_invocation = [IDO_ASMPROC['proc']] + asmproc_flags
+
+        compile_cmd = map(str, asmproc_invocation + ['|'] + cc)
+        shell_str = " ".join(compile_cmd)
+        gas_str = " ".join(map(str, gas))
+        postproc_options = [
+            '--post-process', output, 
+            '--asm-prelude', IDO_ASMPROC['prelude'], 
+            '--assembler', gas_str
+        ]
+        postproc = asmproc_invocation + postproc_options
+
+        return [ shell_str, postproc ]
+
+
+### Helper Routines ###
+def _get_cross_toolchain(requested_tc, config):
+    ''' 
+    Get a `(Compiler, Assembler, Binutils)` tupple used for cross compilation 
+    E.g., for the game or for libultra
+    '''
+    prefix = _which_gnu_prefix()
+    binutils = Binutils([prefix + 'ld'], [prefix + 'objcopy'], [prefix + 'ar'])
+    assembler = Assembler([prefix + 'as'], GCC_AS_FLAGS)
+
+    tools = config.tools
+
+    if requested_tc == 'qemu-ido7.1':
+        compiler = _get_qemu_ido('7.1', config)
+    elif requested_tc == 'qemu-ido5.3':
+        compiler = _get_qemu_ido('5.3', config)
+    elif requested_tc == 'ido7.1':
+        compiler = _get_recomp_ido('7.1', tools)
+    elif requested_tc == 'ido5.3':
+        compiler = _get_recomp_ido('5.3', tools)
+    else:
+        raise Exception("Unsupported toolchain: " + requested_tc)
+
+    return CrossTools(compiler, assembler, binutils)
+
+
+def _get_qemu_ido(version, config):
+    ''' 
+    Create a `Compiler` for an ido cc running in qemu 
+    '''
+    qemu = _find_qemu_irix(config.qemu)
+    # TODO: put the ido raw binary directory somewhere else (const at top?)
+    ido_base = config.tools / 'irix'
+    if version == '5.3':
+        ido_home = ido_base / 'ido5.3'
+    elif version == '7.1':
+        ido_home = ido_base / 'ido7.1'
+    else:
+        raise Exception("Unknown IDO version for QEMU: " + version)
+
+    cc = ido_home / 'usr' / 'bin' / 'cc'
+    invocation = [qemu, '-silent', '-L', ido_home, cc, '-c']
+
+    return Compiler(invocation, IDO_CC_FLAGS, True)
+
+def _get_recomp_ido(version, tools):
+    ''' Create a `Compiler` for the recompiled native version of IDO '''
+    cc = tools / ('ido' + version) / 'cc'
+
+    return Compiler([cc], IDO_CC_FLAGS, True)
+
 
 class MissingGNUToolchain(Exception):
     def __init__(self):
         self.message = """
             Missing a proper GNU toolchain for MIPS
-            Install one of the following cross binutils
+            Install one of the following cross binutils:
               * mips-linux-gnu
               * mips64-linux-gnu
               * mips64-elf 
@@ -18,8 +204,8 @@ class MissingGNUToolchain(Exception):
 class MissingQemuIrix(Exception):
     def __init__(self):
         self.message = """
-            Missing path to qemu-irix binary. 
-            Ensure that one of these is true:
+            Missing qemu-irix binary 
+            There are three ways to select the qemu-irix binary:
               * Pass a path to the binary on CLI (doit QEMU_IRIX=<path>)
               * Define env variable 'QEMU_IRIX' with a path to the binary
               * Put directory containing 'qemu-irix' in PATH
@@ -46,100 +232,8 @@ def _find_qemu_irix(cli_path):
     else:
         raise MissingQemuIrix()
 
-def _append_intersperse(iterable, val):
+def _prefix_it(iterable, prefix):
     it = iter(iterable)
     for x in it:
-        yield val
+        yield prefix
         yield x
-
-class ToolChain:
-    def __init__(self, config):
-        cross = _which_gnu_prefix()
-        # Common toolchain
-        self.AS = [cross + 'as']
-        self.ASFLAGS = ['-march=vr4300', '-mabi=32']
-        self.LD = [cross + 'ld']
-        self.OBJCOPY = [cross + 'objcopy']
-        self.CPP = ['cpp'] if sys.platform != 'darwin' else [cross + 'cpp']
-        self.CC_CHECK = ['gcc', 
-            '-fsyntax-only', '-fsigned-char', '-std=gnu90', '-fno-builtin',
-            '-m32',
-            '-Wall', '-Wextra', '-Wno-format-security', '-Wno-main', 
-            '-DNON_MATCHING', '-DAVOID_UB']
-        self.MIPSISET = ['-mips2']
-        self.C_DEFINES = ['-D_LANGUAGE_C']
-        
-        # Compiler specific
-        possible_tc = config.toolchain
-        if possible_tc == 'ido':
-            qemu = _find_qemu_irix(config.qemu)
-            ido5_3 = config.tools / 'ido5.3'
-            ido5_3_cc = ido5_3 / 'usr' / 'bin' / 'cc'
-            ido7_1 = config.tools / 'ido7.1'
-            ido7_1_cc = ido7_1 / 'usr' / 'bin' / 'cc'
-            self.CC = [qemu, '-silent', '-L', ido7_1, ido7_1_cc, '-c']
-            self.CFLAGS = ['-Wab,-r4300_mul', '-G', '0', '-non_shared',
-                '-Xfullwarn', '-Xcpluscomm', '-signed', '-32']
-            self.CC_ALT = {
-                'ido7.1': {
-                    'cc': self.CC,
-                    'flags': self.CFLAGS,
-                },
-                'ido5.3':{
-                    'cc': [qemu, '-silent', '-L', ido5_3, ido5_3_cc, '-c'],
-                    'flags': self.CFLAGS,
-                },
-            }
-            self.CC_ASMPROC = {
-                'proc': 'utils/asm-processor/asm_processor.py',
-                'cin': 'utils/asm-processor/include-stdin.c',
-                'prelude': 'utils/asm-processor/prelude.s',
-            }
-        elif possible_tc == 'gcc':
-            self.CC = [cross + 'gcc']
-            self.CFLAGS = ['-march=vr4300', '-mfix4300', '-mabi=32', 
-                '-mno-shared', '-G', '0', '-mhard-float', '-fno-stack-protector',
-                '-fno-common', '-fno-zero-initialized-in-bss', '-fno-PIC', 
-                '-mno-abicalls', '-fno-strict-aliasing', '-fno-inline-functions', 
-                '-ffreestanding', '-fwrapv', '-Wall', '-Wextra']
-            self.CC_ALT = None
-            self.CC_ASMPROC = None
-        else:
-            raise Exception(f"Unknown toolchain {possible_tc}")
-    
-    def invoke_as(self, includes):
-        # TODO: add defines
-        incs = list(_append_intersperse(includes, '-I'))
-        return self.AS + self.ASFLAGS + incs
-    
-    def invoke_cc(self, includes, input, output, opt="O2"):
-        # TODO: add defines
-        incs = list(_append_intersperse(includes, '-I'))
-        opt = ['-'+opt]
-        invocation = self.CC + self.CFLAGS + self.MIPSISET + self.C_DEFINES + opt + incs
-
-        return invocation + ['-o', output, input]
-    
-    def invoke_cc_check(self, includes, input, output, depfile):
-        incs = list(_append_intersperse(includes, '-I'))
-        outputs = ['-MMD', '-MP', '-MT', output, '-MF', depfile, input]
-        special = ['-DIGNORE_SYNTAX_CHECK']
-        return self.CC_CHECK + incs + self.C_DEFINES + special + outputs
-    
-    def invoke_asm_processor(self, includes, input, output, opt="O2"):
-        if self.CC_ASMPROC is None:
-            return [self.invoke_cc(includes, input, output, opt)]
-
-        cc = self.invoke_cc(includes, self.CC_ASMPROC['cin'], output, opt)
-        gas = self.invoke_as([])
-        asmproc_flags = ['-'+opt, input, '--input-enc', 'utf-8', '--output-enc', 'utf-8']
-
-        compile_cmd = map(str, [self.CC_ASMPROC['proc']] + asmproc_flags + ['|'] + cc)
-        shell_str = " ".join(compile_cmd)
-        gas_str = " ".join(map(str, gas))
-        return [
-            shell_str,
-            [self.CC_ASMPROC['proc']] + asmproc_flags + ['--post-process', output, 
-            '--asm-prelude', self.CC_ASMPROC['prelude'], '--assembler', gas_str]
-        ]
-            

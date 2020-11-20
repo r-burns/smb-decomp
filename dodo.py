@@ -18,50 +18,36 @@ DOIT_CONFIG = {'default_tasks': ['compare'], 'reporter': 'executed-only'}
 
 # Read CLI options to configure this build
 config = Config(
-    Path('build'), # Output location for build artifacts. 
+    Path('build'), # Location for build artifacts
     Path('game'),  # Location for all game source files
     Path('tools')  # Location for supporting tool binaries and scripts
 )
 # Toolchain (cc, as, ld, objcopy) based on user config
-tc = ToolChain(config)
+tc = ToolChain.from_config(config)
 
 ########## Tools #####################################
-n64gfx = config.tools / 'n64gfx'
-imgbank = config.tools / 'imgbank'
+# General System Utilities
 shasum = 'shasum'
 
-rust_tools = [n64gfx, imgbank]
+# Rust Tooling
 rust_dir = config.tools / 'rust'
 rust_manifest = rust_dir / 'Cargo.toml'
 rust_output_dir = rust_dir / 'target' / 'release'
+n64gfx = rust_output_dir / 'n64gfx'
+imgbank = rust_output_dir / 'imgbank'
+rust_tools = [n64gfx, imgbank]
 
-def task_tools():
-    ''' Compile all tooling required for building the ROM '''
-
-    for prog in rust_tools:
-        prog_name = prog.name
-        cargo_out = rust_output_dir.joinpath(prog_name)
-
-        yield {
-            'name': prog_name,
-            'actions': [
-                ['cp', cargo_out, prog],
-            ],
-            'file_dep': [cargo_out],
-            'targets': [prog],
-        }
-
-def task_run_cargo():
-    ''' Run Cargo to check if a rust based tool is outdated '''
-    cmd = ['cargo', 'build', '--release', '--manifest-path', rust_manifest]
+def task_rust_tools():
+    ''' Use cargo to check and rebuild rust based tools '''
+    cargo_build = ['cargo', 'build', '--release', '--manifest-path', rust_manifest]
     outputs = []
-    for prog in rust_tools:
-        name = prog.name
-        cmd.extend(['-p', name])
-        outputs.append(rust_output_dir.joinpath(name))
+    for tool in rust_tools:
+        name = tool.name
+        cargo_build.extend(['-p', name])
+        outputs.append(tool)
 
     return {
-        'actions': [cmd],
+        'actions': [cargo_build],
         'targets': outputs
     }
 
@@ -80,7 +66,7 @@ c_objs = list(map(lambda f: config.to_output(f, '.o'), c_files))
 
 # Linker Scripts
 ssb_lds_in = config.game_dir / 'ssb64.in.ld'
-ssb_lds = config.to_output(ssb_lds_in, ".ld")
+ssb_lds = config.to_output(ssb_lds_in.with_name('ssb64'), ".ld")
 unk_symbols = [
     config.game_dir / 'hardware-registers.ld',
     config.game_dir / 'not-found-sym.ld',
@@ -95,7 +81,7 @@ rom = rom_elf.with_suffix('.z64')
 def task_distclean():
     ''' Remove all possible build artifacts '''
 
-    # Asset remove must happen before tool cleaning
+    # Asset removal must happen before tool cleaning
     return {
         'actions': [
             (extract_assets.clean, [None], None),
@@ -117,13 +103,15 @@ def task_compare():
 
 def task_build_rom():
     """ Build the ROM """
+
+    binutils = tc.game.utils
  
-    link_rom = tc.LD                                                      \
+    link_rom = binutils.LD                                                \
         + ['--no-check-sections', '-Map', rom_map, '-T', ssb_lds, '-T', ] \
         + unk_symbols                                                     \
         + ['-o', rom_elf, '-L', config.build_dir]
     
-    copy_rom = tc.OBJCOPY \
+    copy_rom = binutils.OBJCOPY \
         + ['--pad-to=0x1000000', '--gap-fill=0xFF', '-O', 'binary', rom_elf, rom]
 
     return { 
@@ -144,7 +132,7 @@ def task_preprocess_ldscript():
     ''' Run C preprocessor on game ldscript '''
     return {
         'actions': [
-            tc.CPP + ['-P', '-o', ssb_lds, ssb_lds_in]
+            tc.system.CPP + ['-P', '-o', ssb_lds, ssb_lds_in]
         ],
         'file_dep': [ssb_lds_in],
         'targets': [ssb_lds],
@@ -158,19 +146,16 @@ def task_assemble():
         found_deps = parse_mk_dependencies(d)
         deps = found_deps[o] if found_deps is not None else [f]
 
-        invoke_as = tc.invoke_as([inc_dir, asm_dir, f.parent])
+        assemble = tc.invoke_as(
+            includes = [inc_dir, asm_dir, f.parent],
+            depfile = d,
+            input = f,
+            output = o
+        )
 
         yield {
             'name': o,
-            'actions': [ invoke_as + [
-                    '-I', inc_dir,
-                    '-I', asm_dir,
-                    '-I', f.parent,
-                    '--MD', d,
-                    '-o', o,
-                    f,
-                ]
-            ],
+            'actions': [assemble],
             'file_dep': deps,
             'targets': [o, d],
         }
@@ -185,12 +170,12 @@ def task_cc():
         found_deps = parse_mk_dependencies(d)
         deps = found_deps[o] if found_deps is not None else [f]
         
-        actions = [tc.invoke_cc_check(includes, f, o, d)]
+        syntax_check = tc.invoke_cc_check(includes, d, f, o)
         # if the input needs to have asm processed
         if f.name.endswith('.asm.c'):
-            actions += tc.invoke_asm_processor(includes, f, o)
+            actions = [syntax_check] + tc.invoke_asm_prepoc(includes, f, o)
         else:
-            actions.append(tc.invoke_cc(includes, f, o))
+            actions = [syntax_check, tc.invoke_cc(includes, f, o)]
 
         yield {
             'name': o,
@@ -214,7 +199,7 @@ def task_link_resources():
     return {
         # $(LD) -T %f -r -o %o %<resbins> 
         'actions': [
-            tc.LD + ['-T', res_link, '-r', '-o', res_archive] + res_tempbins_o
+            tc.game.utils.LD + ['-T', res_link, '-r', '-o', res_archive] + res_tempbins_o
         ],
         'file_dep': [res_link] + res_tempbins_o,
         'targets': [res_archive],
@@ -308,12 +293,15 @@ def task_assemble_sprite_bank_entry():
         else:
             deps = found_deps[o]
 
-        invoke_as = tc.invoke_as([s.parent])
+        invocation = tc.invoke_as(
+            includes=[s.parent],
+            depfile=d,
+            input=s,
+            output=o
+        )
         yield {
             'name': o,
-            'actions': [                
-                invoke_as + ['--MD', d, '-o', o, s]
-            ],
+            'actions': [ invocation ],
             'file_dep': deps,
             'task_dep': ['convert_sprite_pngs'],
             'targets': [o, d],
@@ -347,7 +335,7 @@ def task_link_sprite_bank():
         # no relink (want symbols to be resolved)
         yield {
             'name': o,
-            'actions': [tc.LD + ['-d', '-T', lds, '-L', obj_dir, '-o', o]],
+            'actions': [tc.game.utils.LD + ['-d', '-T', lds, '-L', obj_dir, '-o', o]],
             'file_dep': [lds] + bank_objs,
             'targets': [o],
         }
@@ -377,7 +365,7 @@ def task_temp_bin_obj():
         converted to real source files
     '''
 
-    invoke_ld = tc.LD + ['-r', '-b', 'binary', '-o']
+    invoke_ld = tc.game.utils.LD + ['-r', '-b', 'binary', '-o']
 
     for b, o in zip(temp_audio_bins, temp_audio_o):
         yield {
