@@ -51,6 +51,117 @@ def task_rust_tools():
         'targets': outputs
     }
 
+# Ido Recompiled Toolchain
+recomp = config.tools / 'recomp'
+recomp_base = config.tools / 'ido-recomp'
+recomp_src = recomp_base / 'recomp.cpp'
+irix_root = config.tools / 'irix'
+irix_53 = irix_root / 'ido5.3'
+irix_71 = irix_root / 'ido7.1'
+irix_lib = Path('usr/lib')
+irix_bin = Path('usr/bin')
+
+recomp_53_out = config.tools / 'ido5.3'
+recomp_71_out = config.tools / 'ido7.1'
+
+# Irix libc wrapper library
+recomp_libc = recomp_base / 'libc_impl.c'
+recomp_libc_h = recomp_libc.with_suffix('.h')
+recomp_libc_flags = ['-fno-strict-aliasing', '-O2']
+
+# (Prog, Irix Bin/Lib Path, Recomp Flags, Build Flags)
+common_flags = ['-fno-strict-aliasing', '-fno-pie', '-lm']
+ido53_progs = [
+    ('as1',  irix_53 / irix_lib / 'as1',  [], common_flags + ['-O2']),
+    ('cc',   irix_53 / irix_bin / 'cc',   [], common_flags + ['-O2']),
+    ('cfe',  irix_53 / irix_lib / 'cfe',  [], common_flags + ['-O2']),
+    ('ugen', irix_53 / irix_lib / 'ugen', ['--conservative'], common_flags + ['-O2']),
+    ('uopt', irix_53 / irix_lib / 'uopt', [], common_flags + ['-O2']),
+]
+
+ido71_progs = [
+    ('as1',  irix_71 / irix_lib / 'as1',  [], common_flags + ['-O2']),
+    ('cc',   irix_71 / irix_bin / 'cc',   [], common_flags + ['-O2']),
+    ('cfe',  irix_71 / irix_lib / 'cfe',  [], common_flags + ['-O2']),
+    ('ugen', irix_71 / irix_lib / 'ugen', [], common_flags + ['-O2']),
+    ('uopt', irix_71 / irix_lib / 'uopt', [], common_flags + ['-O2']),
+]
+
+# (name, programs, output directory, version defines, error strings)
+ido_toolchains = [
+    ('ido5.3', ido53_progs, recomp_53_out, '-DIDO53', irix_53/irix_lib/'err.english.cc'),
+    ('ido7.1', ido71_progs, recomp_71_out, '-DIDO71', irix_71/irix_lib/'err.english.cc')
+]
+
+# Recompiled binaries
+ido71_tools = [recomp_71_out / p[0] for p in ido71_progs]
+ido53_tools = [recomp_53_out / p[0] for p in ido53_progs]
+
+def task_build_recomp():
+    ''' Build the IDO recompiler tool '''
+    return {
+        'actions': [tc.system.cxx.CXX + [recomp_src, '-o', recomp, '-O2', '-std=c++11', '-lcapstone']],
+        'file_dep': [recomp_src],
+        'targets': [recomp],
+    }
+
+def task_recompile_ido():
+    ''' Translate IDO toolchain (5.3, 7.1) into native binaries '''
+    CC = tc.system.c.CC
+
+    for (name, programs, out_dir, libc_defs, errstr) in ido_toolchains:
+        libc = out_dir / 'libc_impl.o'
+        mkdir_task = f'recompile_ido:{name}-create-output-dir'
+        errstr_dst = out_dir / errstr.name
+
+        yield {
+            'name': name + '-create-output-dir',
+            'actions': [['mkdir', '-p', out_dir]],
+            'targets': [out_dir],
+            'uptodate': [out_dir.exists()],
+        }
+
+        yield {
+            'name': name + '-libc',
+            'actions': [CC + recomp_libc_flags + ['-c', recomp_libc, libc_defs, '-o', libc]],
+            'targets': [libc],
+            'file_dep': [recomp_libc, recomp_libc_h],
+            'task_dep': [mkdir_task]
+        }
+
+        yield {
+            'name': name + '-copy-error-strings',
+            'actions': [['cp', '-f', errstr, errstr_dst]],
+            'targets': [errstr_dst],
+            'file_dep': [errstr]
+        }
+
+        for (prog, src, recomp_flags, build_flags) in programs:
+            rf = " ".join(recomp_flags)
+            prog_exe = out_dir / prog
+            prog_c = prog_exe.with_suffix('.c')
+            yield {
+                'name': name + '-translate-' + prog,
+                'actions': [f'{recomp} {rf} {src} > {prog_c}'],
+                'targets': [prog_c],
+                'file_dep': [src, recomp],
+                'task_dep': [mkdir_task]
+            }
+
+            yield {
+                'name': name + '-compile-' + prog,
+                'actions': [CC + build_flags + [libc, prog_c, '-o', prog_exe, '-I', recomp_base]],
+                'targets': [prog_exe],
+                'file_dep': [libc, prog_c, errstr_dst],
+                'task_dep': [mkdir_task]
+            }
+
+# cc:build/us-ido7.1/src/sys/main.o
+
+def task_clean_recompiled_ido():
+    return {
+        'actions': [['rm', '-rf', recomp_53_out, recomp_71_out, recomp]]
+    }
 
 ########## Files and Outputs #########################
 # Assembly Files
@@ -87,7 +198,8 @@ def task_distclean():
             (extract_assets.clean, [None], None),
             f'rm -rf {config.all_builds}',
             f'cargo clean --manifest-path {rust_manifest}',
-        ]
+        ],
+        'task_dep': ['clean_recompiled_ido']
     }
 
 def task_compare():
@@ -164,6 +276,7 @@ def task_cc():
     ''' Compile .c files into .o '''
 
     includes = [inc_dir, c_dir]
+    tools_dep = get_toolchain_deps(config.toolchain)
 
     for f, o in zip(c_files, c_objs):
         d = o.with_suffix('.d')
@@ -180,9 +293,17 @@ def task_cc():
         yield {
             'name': o,
             'actions': actions,
-            'file_dep': deps,
+            'file_dep': deps + tools_dep,
             'targets': [o, d],
         }
+
+def get_toolchain_deps(tc):
+    if tc == "ido5.3":
+        return ido53_tools
+    elif tc == "ido7.1":
+        return ido71_tools
+    else:
+        return []
 
 ########## Resource Table ############################
 res_dir = config.game_dir / 'resources'

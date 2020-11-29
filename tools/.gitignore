@@ -1,2 +1,6 @@
-/imgbank
-/n64gfx
+/imgbank*
+/n64gfx*
+/recomp*
+
+/ido5.3/*
+/ido7.1/*

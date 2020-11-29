@@ -6,11 +6,13 @@ ALL_VERSIONS        = ['us']
 SYSTEM_TOOLCHAINS   = ['gcc', 'clang']
 GAME_TOOLCHAINS     = ['qemu-ido5.3', 'qemu-ido7.1', 'ido5.3', 'ido7.1']
 LIBULTRA_TOOLCHAINS = ['qemu-ido5.3', 'qemu-ido7.1', 'ido5.3', 'ido7.1']
-GAME_DEFAULT_TC     = 'qemu-ido7.1'
-LIBULTRA_DEFAULT_TC = 'qemu-ido5.3'
+GAME_DEFAULT_TC     = 'ido7.1'
+LIBULTRA_DEFAULT_TC = 'ido5.3'
 
 def _get_choice(var, default, choices):
+    print(var)
     possible = get_var(var, default)
+    print(possible)
     if possible in choices: 
         return possible
     else:

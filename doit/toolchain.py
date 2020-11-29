@@ -1,9 +1,32 @@
 import os
 from dataclasses import dataclass
 from pathlib import Path
-from typing import List, Union, Tuple
+from typing import List, Union, Tuple, Dict
 from shutil import which
 
+# Game cross toolchain flags
+IDO_CC_FLAGS = [
+    '-Wab,-r4300_mul', '-G', '0', '-non_shared', '-Xfullwarn', '-Xcpluscomm', 
+    '-signed', '-32', '-mips2',
+    '-D_LANGUAGE_C'
+]
+GCC_AS_FLAGS = ['-march=vr4300', '-mabi=32']
+C_SYNTAX_CHECK_FLAGS = [
+    '-fsyntax-only', '-fsigned-char', '-fno-builtin',
+    '-std=gnu90', '-m32', 
+    '-Wall', '-Wextra', '-Wno-format-security', '-Wno-main', 
+    '-D_LANGUAGE_C', '-DNON_MATCHING', '-DAVOID_UB', '-DIGNORE_SYNTAX_CHECK'
+]
+
+# ASM processor for IDO
+# TODO: dynamic under config tools direction?
+IDO_ASMPROC = {
+    'proc': 'utils/asm-processor/asm_processor.py',
+    'cin': 'utils/asm-processor/include-stdin.c',
+    'prelude': 'utils/asm-processor/prelude.s',
+}
+
+# Structs
 @dataclass
 class Compiler:
     CC: List[Union[str, Path]]
@@ -38,28 +61,7 @@ class CrossTools:
     assembler: Assembler
     utils: Binutils
 
-# Game cross toolchain flags
-IDO_CC_FLAGS = [
-    '-Wab,-r4300_mul', '-G', '0', '-non_shared', '-Xfullwarn', '-Xcpluscomm', 
-    '-signed', '-32', '-mips2',
-    '-D_LANGUAGE_C'
-]
-GCC_AS_FLAGS = ['-march=vr4300', '-mabi=32']
-C_SYNTAX_CHECK_FLAGS = [
-    '-fsyntax-only', '-fsigned-char', '-fno-builtin',
-    '-std=gnu90', '-m32', 
-    '-Wall', '-Wextra', '-Wno-format-security', '-Wno-main', 
-    '-D_LANGUAGE_C', '-DNON_MATCHING', '-DAVOID_UB', '-DIGNORE_SYNTAX_CHECK'
-]
-
-# ASM processor for IDO
-# TODO: dynamic under config tools direction?
-IDO_ASMPROC = {
-    'proc': 'utils/asm-processor/asm_processor.py',
-    'cin': 'utils/asm-processor/include-stdin.c',
-    'prelude': 'utils/asm-processor/prelude.s',
-}
-
+# The main class for using the system, game, or libultra toolchain
 @dataclass
 class ToolChain:
     system: SystemTools
@@ -73,7 +75,7 @@ class ToolChain:
         sys_cxx = CXX(['g++'], ['-O2'])
         # TODO: check for gcc cpp on clang/apple builds
         #       or remove once there's a linker spec file tool...
-        system = SystemTools(sys_cc, sys_cxx, ['cpp-9'])
+        system = SystemTools(sys_cc, sys_cxx, ['cpp-10'])
         # Configure cross toolchain for game
         game = _get_cross_toolchain(config.toolchain, config)
         # Configure libultra cross toolchain for game
@@ -141,8 +143,7 @@ class ToolChain:
 ### Helper Routines ###
 def _get_cross_toolchain(requested_tc, config):
     ''' 
-    Get a `(Compiler, Assembler, Binutils)` tupple used for cross compilation 
-    E.g., for the game or for libultra
+    Get `CrossTools` used for cross compilation
     '''
     prefix = _which_gnu_prefix()
     binutils = Binutils([prefix + 'ld'], [prefix + 'objcopy'], [prefix + 'ar'])
@@ -187,7 +188,7 @@ def _get_recomp_ido(version, tools):
     ''' Create a `Compiler` for the recompiled native version of IDO '''
     cc = tools / ('ido' + version) / 'cc'
 
-    return Compiler([cc], IDO_CC_FLAGS, True)
+    return Compiler([cc, '-c'], IDO_CC_FLAGS, True)
 
 
 class MissingGNUToolchain(Exception):
