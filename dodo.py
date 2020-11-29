@@ -14,8 +14,6 @@ from pathutil import append_suffix, up_one_dir
 
 
 ############ Configuration ###########################
-DOIT_CONFIG = {'default_tasks': ['compare'], 'reporter': 'executed-only'}
-
 # Read CLI options to configure this build
 config = Config(
     Path('build'), # Location for build artifacts
@@ -24,6 +22,11 @@ config = Config(
 )
 # Toolchain (cc, as, ld, objcopy) based on user config
 tc = ToolChain.from_config(config)
+
+DOIT_CONFIG = {
+    'default_tasks': ['compare' if not config.no_match else 'build_rom'], 
+    'reporter': 'executed-only'
+}
 
 ########## Tools #####################################
 # General System Utilities
@@ -156,51 +159,31 @@ def task_recompile_ido():
                 'task_dep': [mkdir_task]
             }
 
-# cc:build/us-ido7.1/src/sys/main.o
-
 def task_clean_recompiled_ido():
     return {
         'actions': [['rm', '-rf', recomp_53_out, recomp_71_out, recomp]]
     }
 
-########## Files and Outputs #########################
-# Assembly Files
-asm_dir = config.game_dir / 'asm'
-s_files = list(asm_dir.rglob('*.s'))
-s_objs = list(map(lambda f: config.to_output(f, '.o'), s_files))
-
-# C Files
-inc_dir = config.game_dir / 'include'
-c_dir = config.game_dir / 'src'
-c_files = list(c_dir.rglob('*.c'))
-c_objs = list(map(lambda f: config.to_output(f, '.o'), c_files))
-
-# Linker Scripts
-ssb_lds_in = config.game_dir / 'ssb64.in.ld'
-ssb_lds = config.to_output(ssb_lds_in.with_name('ssb64'), ".ld")
-unk_symbols = [
-    config.game_dir / 'hardware-registers.ld',
-    config.game_dir / 'not-found-sym.ld',
-] + list(asm_dir.rglob('*.unresolved.ld'))
-
+########## ROM Linking and Creation ##################
 # ROM and Build Artifacts
 rom_name = f"ssb64.{config.target_version}"
 rom_elf = config.build_dir / (rom_name + '.elf')
 rom_map = rom_elf.with_suffix('.map')
 rom = rom_elf.with_suffix('.z64')
 
-def task_distclean():
-    ''' Remove all possible build artifacts '''
+# Assembly Files
+# TODO: move into assembly section once there are no more unresolved symbols
+asm_dir = config.game_dir / 'asm'
+s_files = list(asm_dir.rglob('*.s'))
+s_objs = list(map(lambda f: config.to_output(f, '.o'), s_files))
 
-    # Asset removal must happen before tool cleaning
-    return {
-        'actions': [
-            (extract_assets.clean, [None], None),
-            f'rm -rf {config.all_builds}',
-            f'cargo clean --manifest-path {rust_manifest}',
-        ],
-        'task_dep': ['clean_recompiled_ido']
-    }
+# Linker Scripts
+ssb_lds_in = config.game_dir / 'ssb64.in.ld'
+ssb_lds = config.to_output(ssb_lds_in.with_name('ssb64'), ".ld")
+unk_symbols = list(asm_dir.rglob('*.unresolved.ld')) + [
+    config.game_dir / 'hardware-registers.ld',
+    config.game_dir / 'not-found-sym.ld',
+]
 
 def task_compare():
     ''' Build SS64 ROM and compare to known sha1 checksum '''
@@ -250,6 +233,21 @@ def task_preprocess_ldscript():
         'targets': [ssb_lds],
     }
 
+########## Housekeeping ##############################
+def task_distclean():
+    ''' Remove all possible build artifacts '''
+
+    # Asset removal must happen before tool cleaning
+    return {
+        'actions': [
+            (extract_assets.clean, [None], None),
+            f'rm -rf {config.all_builds}',
+            f'cargo clean --manifest-path {rust_manifest}',
+        ],
+        'task_dep': ['clean_recompiled_ido']
+    }
+
+########## Game Assembling ###########################
 def task_assemble():
     ''' Assemble .s files into .o with dependencies .d '''
 
@@ -271,6 +269,12 @@ def task_assemble():
             'file_dep': deps,
             'targets': [o, d],
         }
+
+########## Game C Compiling ##########################
+inc_dir = config.game_dir / 'include'
+c_dir = config.game_dir / 'src'
+c_files = list(c_dir.rglob('*.c'))
+c_objs = list(map(lambda f: config.to_output(f, '.o'), c_files))
 
 def task_cc():
     ''' Compile .c files into .o '''
