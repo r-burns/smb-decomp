@@ -15,7 +15,8 @@ C_SYNTAX_CHECK_FLAGS = [
     '-fsyntax-only', '-fsigned-char', '-fno-builtin',
     '-std=gnu90', '-m32', 
     '-Wall', '-Wextra', '-Wno-format-security', '-Wno-main', 
-    '-D_LANGUAGE_C', '-DNON_MATCHING', '-DAVOID_UB', '-DIGNORE_SYNTAX_CHECK'
+    '-D_LANGUAGE_C', '-DNON_MATCHING', '-DAVOID_UB', '-DIGNORE_SYNTAX_CHECK',
+    '-D_MIPS_SZINT=32', '-D_MIPS_SZLONG=32',
 ]
 
 # ASM processor for IDO
@@ -25,6 +26,17 @@ IDO_ASMPROC = {
     'cin': 'utils/asm-processor/include-stdin.c',
     'prelude': 'utils/asm-processor/prelude.s',
 }
+
+# Libultra flags
+IDO_ULTRA_CFLAGS = [
+    '-Wab,-r4300_mul', '-non_shared', '-G', '0', '-nostdinc',
+    '-Xcpluscomm', '-fullwarn',
+    '-D_LANGUAGE_C', '-D_FINALROM', '-DF3DEX_GBI', '-DNDEBUG',
+]
+IDO_ULTRA_ASFLAGS = [
+    '-Wab,-r4300_mul', '-non_shared', '-G', '0', '-nostdinc',
+    '-D_FINALROM', '-DF3DEX_GBI', '-DNDEBUG',
+]
 
 # Structs
 @dataclass
@@ -77,9 +89,9 @@ class ToolChain:
         #       or remove once there's a linker spec file tool...
         system = SystemTools(sys_cc, sys_cxx, ['cpp-10'])
         # Configure cross toolchain for game
-        game = _get_cross_toolchain(config.toolchain, config)
+        game = _get_game_crosschain(config.toolchain, config)
         # Configure libultra cross toolchain for game
-        libultra = _get_cross_toolchain(config.libultra, config)
+        libultra = _get_libultra_crosschain(config.libultra, config)
         # TODO: Encode user CLI options
         defines = []
 
@@ -139,11 +151,20 @@ class ToolChain:
 
         return [ shell_str, postproc ]
 
+    def libultra_cc(self, includes, input, output, mipsiset, opt):
+        incs = list(_prefix_it(includes, '-I'))
+        files = ['-o', output, input]
+        tc = self.libultra.c
+        # TODO: do this once when creating user_defines?
+        defines = ['-D'+d for d in self.user_defines]
+        settings = mipsiset + [opt]
+
+        return tc.CC + tc.CFLAGS + settings + incs + defines + files
 
 ### Helper Routines ###
-def _get_cross_toolchain(requested_tc, config):
+def _get_game_crosschain(requested_tc, config):
     ''' 
-    Get `CrossTools` used for cross compilation
+    Get `CrossTools` used for building game code
     '''
     prefix = _which_gnu_prefix()
     binutils = Binutils([prefix + 'ld'], [prefix + 'objcopy'], [prefix + 'ar'])
@@ -152,20 +173,39 @@ def _get_cross_toolchain(requested_tc, config):
     tools = config.tools
 
     if requested_tc == 'qemu-ido7.1':
-        compiler = _get_qemu_ido('7.1', config)
+        compiler = _get_qemu_ido('7.1', config, IDO_CC_FLAGS)
     elif requested_tc == 'qemu-ido5.3':
-        compiler = _get_qemu_ido('5.3', config)
+        compiler = _get_qemu_ido('5.3', config, IDO_CC_FLAGS)
     elif requested_tc == 'ido7.1':
-        compiler = _get_recomp_ido('7.1', tools)
+        compiler = _get_recomp_ido('7.1', tools, IDO_CC_FLAGS)
     elif requested_tc == 'ido5.3':
-        compiler = _get_recomp_ido('5.3', tools)
+        compiler = _get_recomp_ido('5.3', tools, IDO_CC_FLAGS)
     else:
         raise Exception("Unsupported toolchain: " + requested_tc)
 
     return CrossTools(compiler, assembler, binutils)
 
+def _get_libultra_crosschain(requested_tc, config):
+    ''' 
+    Get `CrossTools` used for building libultra code
+    '''
+    prefix = _which_gnu_prefix()
+    binutils = Binutils([prefix + 'ld'], [prefix + 'objcopy'], [prefix + 'ar'])
 
-def _get_qemu_ido(version, config):
+    tools = config.tools
+
+    if requested_tc == 'qemu-ido5.3':
+        compiler = _get_qemu_ido('5.3', config, IDO_ULTRA_CFLAGS)
+        assembler = Assembler([prefix + 'as'], GCC_AS_FLAGS)
+    elif requested_tc == 'ido5.3':
+        compiler = _get_recomp_ido('5.3', tools, IDO_ULTRA_CFLAGS)
+        assembler = Assembler([prefix + 'as'], GCC_AS_FLAGS)
+    else:
+        raise Exception("Unsupported toolchain: " + requested_tc)
+
+    return CrossTools(compiler, assembler, binutils)
+
+def _get_qemu_ido(version, config, cflags):
     ''' 
     Create a `Compiler` for an ido cc running in qemu 
     '''
@@ -182,13 +222,13 @@ def _get_qemu_ido(version, config):
     cc = ido_home / 'usr' / 'bin' / 'cc'
     invocation = [qemu, '-silent', '-L', ido_home, cc, '-c']
 
-    return Compiler(invocation, IDO_CC_FLAGS, True)
+    return Compiler(invocation, cflags, True)
 
-def _get_recomp_ido(version, tools):
+def _get_recomp_ido(version, tools, cflags):
     ''' Create a `Compiler` for the recompiled native version of IDO '''
     cc = tools / ('ido' + version) / 'cc'
 
-    return Compiler([cc, '-c'], IDO_CC_FLAGS, True)
+    return Compiler([cc, '-c'], cflags, True)
 
 
 class MissingGNUToolchain(Exception):

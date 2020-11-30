@@ -79,7 +79,11 @@ ido53_progs = [
     ('cc',   irix_53 / irix_bin / 'cc',   [], common_flags + ['-O2']),
     ('cfe',  irix_53 / irix_lib / 'cfe',  [], common_flags + ['-O2']),
     ('ugen', irix_53 / irix_lib / 'ugen', ['--conservative'], common_flags + ['-O2']),
+    ('ujoin', irix_53 / irix_lib / 'ujoin', [], common_flags + ['-O2']),
+    ('uld', irix_53 / irix_lib / 'uld', [], common_flags + ['-O2']),
+    ('umerge', irix_53 / irix_lib / 'umerge', [], common_flags + ['-O2']),
     ('uopt', irix_53 / irix_lib / 'uopt', [], common_flags + ['-O2']),
+    ('usplit', irix_53 / irix_lib / 'usplit', [], common_flags + ['-O2']),
 ]
 
 ido71_progs = [
@@ -164,6 +168,21 @@ def task_clean_recompiled_ido():
         'actions': [['rm', '-rf', recomp_53_out, recomp_71_out, recomp]]
     }
 
+########## Housekeeping ##############################
+def task_distclean():
+    ''' Remove all possible build artifacts '''
+
+    # Asset removal must happen before tool cleaning
+    return {
+        'actions': [
+            (extract_assets.clean, [None], None),
+            f'rm -rf {config.all_builds}',
+            f'cargo clean --manifest-path {rust_manifest}',
+        ],
+        'task_dep': ['clean_recompiled_ido']
+    }
+
+
 ########## ROM Linking and Creation ##################
 # ROM and Build Artifacts
 rom_name = f"ssb64.{config.target_version}"
@@ -233,20 +252,6 @@ def task_preprocess_ldscript():
         'targets': [ssb_lds],
     }
 
-########## Housekeeping ##############################
-def task_distclean():
-    ''' Remove all possible build artifacts '''
-
-    # Asset removal must happen before tool cleaning
-    return {
-        'actions': [
-            (extract_assets.clean, [None], None),
-            f'rm -rf {config.all_builds}',
-            f'cargo clean --manifest-path {rust_manifest}',
-        ],
-        'task_dep': ['clean_recompiled_ido']
-    }
-
 ########## Game Assembling ###########################
 def task_assemble():
     ''' Assemble .s files into .o with dependencies .d '''
@@ -308,6 +313,108 @@ def get_toolchain_deps(tc):
         return ido71_tools
     else:
         return []
+
+########## Libultra ##################################
+libultra_includes = inc_dir / 'PR'
+libultra_root = config.game_dir / 'libultra'
+libultra_a = config.build_dir / 'libultra.a'
+libultra_objs = []
+# (module, mipsiset, C Opt, ASM Opt)
+libultra_srcs = [
+    (libultra_root/'gu', ['-mips2', '-32'], '-O3', '-O1'),
+    (libultra_root/'gt', ['-mips2', '-32'], '-O3', '-O1'),
+    (libultra_root/'rg', ['-mips2', '-32'], '-O3', '-O1'),
+    (libultra_root/'sp', ['-mips2', '-32'], '-O3', '-O1'),
+    (libultra_root/'sched', ['-mips2', '-32'], '-O3', '-O1'),
+    (libultra_root/'audio', ['-mips2', '-32'], '-O3', '-O1'),
+    (libultra_root/'libc', ['-mips2', '-32'], '-O3', '-O1'),
+    (libultra_root/'io', ['-mips2', '-32'], '-O1', '-O1'),
+    (libultra_root/'os', ['-mips2', '-32'], '-O1', '-O1'),
+]
+# (mipsiset, C Opt, ASM Opt))
+libultra_exceptions = {
+    libultra_root/'os'/'exceptasm.c': (['-mips3', '-o32'], None, None),
+    libultra_root/'libc'/'bcmp.s': (None, None, '-O2'),
+    libultra_root/'libc'/'bcopy.s': (None, None, '-O2'),
+    libultra_root/'libc'/'bzero.s': (None, None, '-O2'),
+    libultra_root/'libc'/'ll.c': (['-mips3', '-o32'], '-O1', None),
+    libultra_root/'libc'/'llbit.c': (['-mips3', '-o32'], '-O1', None),
+    libultra_root/'libc'/'llcvt.c': (['-mips3', '-o32'], '-O1', None),
+}
+
+def task_compile_libultra():
+    ''' Build the various C and ASM libultra modules '''
+    includes = [inc_dir, libultra_includes]
+    tools_dep = get_toolchain_deps(config.libultra)
+    # TODO: make tools_dep a global under tools? cc_deps? as_deps? cross_compile_deps?
+
+    for module, mipsiset, c_opt, as_opt in libultra_srcs:
+        c_files = module.glob('*.c')
+        s_files = module.glob('*.s')
+        check_file = lambda f: check_libultra_exceptions(f, mipsiset, c_opt, as_opt)
+
+        for src in c_files:
+            out = config.to_output(src, '.o')
+            (d, make_deps) = get_make_dependencies(src, out)
+            src_mi, src_copt, _ = check_file(src)
+
+            # nice global state manipulation
+            libultra_objs.append(out)
+
+            syntax_check = tc.invoke_cc_check(includes, d, src, out)
+            compile_src = tc.libultra_cc(includes, src, out, src_mi, src_copt)
+
+            yield {
+                'name': out,
+                'actions': [syntax_check, compile_src],
+                'targets': [out, d],
+                'file_dep': make_deps + tools_dep
+            }
+
+def task_libultra():
+    ''' Create the libultra archive '''
+
+    AR = tc.libultra.utils.AR
+    bundle_archive = AR + ['rcs', '-o', libultra_a] + libultra_objs
+
+    return {
+        'actions': [bundle_archive],
+        'targets': [libultra_a],
+        'file_dep': libultra_objs,
+    }
+
+def check_libultra_exceptions(file, mipsiset, copt, asopt):
+    ''' check for special instruction set or opt flags for file '''
+    possible = libultra_exceptions.get(file)
+    if possible is None:
+        return (mipsiset, copt, asopt)
+    else:
+        mb_mi, mb_copt, mb_asopt = possible
+        return (
+            option_or(mb_mi, mipsiset), 
+            option_or(mb_copt, copt),
+            option_or(mb_asopt, asopt),
+        )
+    
+
+def option_or(a, b):
+    if a is None:
+        return b
+    else:
+        return a
+
+def get_make_dependencies(src_file, obj_file):
+    ''' (Path to .d file, List[Make Dependancies]) '''
+    d = obj_file.with_suffix('.d')
+    found_deps = parse_mk_dependencies(d)
+    if found_deps is None:
+        deps = [src_file]
+    else:
+        deps = found_deps[obj_file]
+
+    return (d, deps)
+    
+    
 
 ########## Resource Table ############################
 res_dir = config.game_dir / 'resources'

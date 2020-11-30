@@ -1244,7 +1244,6 @@ static uint32_t init_file(uint8_t *mem, int fd, int i, const char *path, const c
 }
 
 uint32_t wrapper_fopen(uint8_t *mem, uint32_t path_addr, uint32_t mode_addr) {
-    printf("Path Addr: %#08x [Mem: %p]\n", path_addr, mem);
     STRING(path)
     STRING(mode)
     return init_file(mem, -1, -1, path, mode);
