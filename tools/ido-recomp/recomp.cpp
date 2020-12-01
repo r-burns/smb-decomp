@@ -147,6 +147,8 @@ static const struct {
     {"atof", "dp"},
     {"strtol", "ippi"},
     {"strtoul", "uppi"},
+    {"strtoll", "lppi"},
+    {"strtoull", "jppi"},
     {"strtod", "dpp"},
     {"strchr", "ppi"},
     {"strrchr", "ppi"},
@@ -211,6 +213,7 @@ static const struct {
     {"fread", "upuup"},
     {"fwrite", "upuup"},
     {"fputs", "ipp"},
+    {"fputc", "iip"},
     {"puts", "ip"},
     {"getcwd", "ppu"},
     {"time", "ip"},
@@ -267,6 +270,7 @@ static const struct {
     {"execlp", "ip", FLAG_VARARG},
     {"execv", "ipp"},
     {"execvp", "ipp"},
+    {"execve", "ippp"},
     {"fork", "i"},
     {"system", "ip"},
     {"tsearch", "pppp"},
@@ -275,6 +279,7 @@ static const struct {
     {"regcmp", "pp", FLAG_VARARG},
     {"regex", "ppp", FLAG_VARARG},
     {"__assert", "vppi"},
+    {"syssgi", "ii", FLAG_VARARG},
 };
 
 static void disassemble(void) {

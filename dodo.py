@@ -75,6 +75,8 @@ recomp_libc_flags = ['-fno-strict-aliasing', '-O2']
 # (Prog, Irix Bin/Lib Path, Recomp Flags, Build Flags)
 common_flags = ['-fno-strict-aliasing', '-fno-pie', '-lm']
 ido53_progs = [
+    ('as',   irix_53 / irix_lib / 'as',   [], common_flags + ['-O2']),
+    ('as0',  irix_53 / irix_lib / 'as0',  [], common_flags + ['-O2']),
     ('as1',  irix_53 / irix_lib / 'as1',  [], common_flags + ['-O2']),
     ('cc',   irix_53 / irix_bin / 'cc',   [], common_flags + ['-O2']),
     ('cfe',  irix_53 / irix_lib / 'cfe',  [], common_flags + ['-O2']),
@@ -333,7 +335,7 @@ libultra_srcs = [
 ]
 # (mipsiset, C Opt, ASM Opt))
 libultra_exceptions = {
-    libultra_root/'os'/'exceptasm.c': (['-mips3', '-o32'], None, None),
+    libultra_root/'os'/'exceptasm.s': (['-mips3', '-o32'], None, None),
     libultra_root/'libc'/'bcmp.s': (None, None, '-O2'),
     libultra_root/'libc'/'bcopy.s': (None, None, '-O2'),
     libultra_root/'libc'/'bzero.s': (None, None, '-O2'),
@@ -370,6 +372,24 @@ def task_compile_libultra():
                 'targets': [out, d],
                 'file_dep': make_deps + tools_dep
             }
+        
+        for src in s_files:
+            out = config.to_output(src, '.o')
+            # no .d file generation from ido as?
+            src_mi, _, src_asopt = check_file(src)
+
+            # nice global state manipulation
+            libultra_objs.append(out)
+
+            assemble = tc.libultra_as(includes, src, out, src_mi, src_asopt)
+
+            yield {
+                'name': out,
+                'actions': [assemble],
+                'targets': [out],
+                'file_dep': [src] + tools_dep,
+            }
+
 
 def task_libultra():
     ''' Create the libultra archive '''

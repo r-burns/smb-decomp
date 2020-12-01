@@ -160,6 +160,15 @@ class ToolChain:
         settings = mipsiset + [opt]
 
         return tc.CC + tc.CFLAGS + settings + incs + defines + files
+    
+    def libultra_as(self, includes, input, output, mipsiset, opt):
+        incs = list(_prefix_it(includes, '-I'))
+        files = ['-o', output, input]
+        tc = self.libultra.assembler
+        settings = mipsiset + [opt]
+
+        return tc.AS + tc.ASFLAGS + settings + incs + files
+
 
 ### Helper Routines ###
 def _get_game_crosschain(requested_tc, config):
@@ -199,7 +208,7 @@ def _get_libultra_crosschain(requested_tc, config):
         assembler = Assembler([prefix + 'as'], GCC_AS_FLAGS)
     elif requested_tc == 'ido5.3':
         compiler = _get_recomp_ido('5.3', tools, IDO_ULTRA_CFLAGS)
-        assembler = Assembler([prefix + 'as'], GCC_AS_FLAGS)
+        assembler = _get_recomp_as('5.3', tools, IDO_ULTRA_ASFLAGS)
     else:
         raise Exception("Unsupported toolchain: " + requested_tc)
 
@@ -230,6 +239,10 @@ def _get_recomp_ido(version, tools, cflags):
 
     return Compiler([cc, '-c'], cflags, True)
 
+def _get_recomp_as(version, tools, asflags):
+    asm = tools / ('ido' + version) / 'as'
+
+    return Assembler([asm], asflags)
 
 class MissingGNUToolchain(Exception):
     def __init__(self):

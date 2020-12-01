@@ -756,6 +756,141 @@ int wrapper_fprintf(uint8_t *mem, uint32_t fp_addr, uint32_t format_addr, uint32
         }
     }*/
     int ret = 0;
+    char requested_format[8] = {'\0'};
+    uintptr_t rf_pos = 0;
+    for (;;) {
+        uint32_t pos = format_addr;
+        char ch = MEM_S8(pos);
+        while (ch != '%' && ch != '\0') {
+            ++pos;
+            ch = MEM_S8(pos);
+        }
+        if (format_addr != pos) {
+            if (wrapper_fwrite(mem, format_addr, 1, pos - format_addr, fp_addr) != pos - format_addr) {
+                break;
+            }
+        }
+        if (ch == '\0') {
+            break;
+        }
+        ++pos;
+        // after a '%'
+        bool finished_format = FALSE;
+        while (!finished_format) {
+            ch = MEM_S8(pos);
+            //fprintf(stdout, "At '%c' in \"%s\"\n", ch, format);
+            switch (ch) {
+            case '%':
+            {
+                strcpy1(mem, INTBUF_ADDR, "%");
+                if (wrapper_fputs(mem, INTBUF_ADDR, fp_addr) == -1) {
+                    return ret;
+                }
+                ++ret;
+                finished_format = TRUE;
+                break;
+            }
+            case 's':
+            {
+                if (requested_format[0] != '\0') {
+                    fprintf(stdout, "formats not supported with %%s specifier: '%s'\n", format);
+                    assert(0 && "non-implemented fprintf format");
+                }
+                if (wrapper_fputs(mem, MEM_U32(sp), fp_addr) == -1) {
+                    return ret;
+                }
+                sp += 4;
+                ++ret;
+                finished_format = TRUE;
+                break;
+            }
+            case 'i':
+            case 'd':
+            {
+                char fmtbuf[2 + 8 + 1];
+                char buf[32];
+                // TODO: check format string for things that might move the stack > 4
+                sprintf(fmtbuf, "%%%sd", requested_format);
+                sprintf(buf, fmtbuf, MEM_U32(sp));
+                //fprintf(stdout, "wrapper_fprintf (ch = %c) i/d: %s => %s => %s\n\tfrom \"%s\"\n", ch, requested_format, fmtbuf, buf, format);
+                strcpy1(mem, INTBUF_ADDR, buf);
+                if (wrapper_fputs(mem, INTBUF_ADDR, fp_addr) == -1) {
+                    return ret;
+                }
+                sp += 4;
+                ++ret;
+                finished_format = TRUE;
+                memset(requested_format, '\0', sizeof(requested_format));
+                rf_pos = 0;
+                break;
+            }
+            case 'c':
+            {
+                char fmtbuf[2 + 8 + 1];
+                char buf[32];
+                // TODO: check format string for things that might move the stack > 4
+                sprintf(fmtbuf, "%%%sc", requested_format);
+                sprintf(buf, fmtbuf, MEM_U32(sp));
+                //fprintf(stdout, "wrapper_fprintf (ch = %c) c: %s => %s => %s\n\tfrom \"%s\"\n", ch, requested_format, fmtbuf, buf, format);
+                strcpy1(mem, INTBUF_ADDR, buf);
+                if (wrapper_fputs(mem, INTBUF_ADDR, fp_addr) == -1) {
+                    return ret;
+                }
+                sp += 4;
+                ++ret;
+                finished_format = TRUE;
+                memset(requested_format, '\0', sizeof(requested_format));
+                rf_pos = 0;
+                break;
+            }
+            // abort on unsupported specifiers
+            case 'u':
+            case 'o':
+            case 'x':
+            case 'X':
+            case 'f':
+            case 'e':
+            case 'E':
+            case 'g':
+            case 'G':
+            case 'p':
+            case 'n':
+            {
+                fprintf(stderr, "unimplemented format specifier: '%s'\n", format);
+                assert(0 && "non-implemented fprintf format");
+                break;
+            }
+            case 'F':
+            case 'a':
+            case 'A':
+            {
+                fprintf(stderr, "C99 format specifier: '%s'\n", format);
+                assert(0 && "non-implemented fprintf format");
+                break;
+            }
+            // copy format characters
+            default:
+            {
+                if (rf_pos >= 8 - 1) {
+                    fprintf(stderr, "format of format specifier too large (>7 char): '%s'\n", format);
+                    assert(0 && "non-implemented fprintf format");
+                    return ret;
+                }
+
+                requested_format[rf_pos] = ch;
+                ++rf_pos;
+            }
+            }
+
+            // move to next character
+            ++pos;
+        }
+        // move to next character
+        format_addr = ++pos;
+    }
+
+    // OLD LOOP
+    /*
     for (;;) {
         uint32_t pos = format_addr;
         char ch = MEM_S8(pos);
@@ -813,6 +948,8 @@ int wrapper_fprintf(uint8_t *mem, uint32_t fp_addr, uint32_t format_addr, uint32
         }
         format_addr = ++pos;
     }
+    */
+    
     return ret;
 }
 
@@ -976,6 +1113,30 @@ uint32_t wrapper_strtoul(uint8_t *mem, uint32_t nptr_addr, uint32_t endptr_addr,
     if (endptr != NULL) {
         MEM_U32(endptr_addr) = nptr_addr + (uint32_t)(endptr - nptr);
     }
+    return res;
+}
+
+uint64_t wrapper_strtoll(uint8_t *mem, uint32_t nptr_addr, uint32_t endptr_addr, int base) {
+    STRING(nptr)
+    char *endptr = NULL;
+    uint64_t res = strtoll(nptr, endptr_addr != 0 ? &endptr : NULL, base);
+
+    if(endptr != NULL) {
+        MEM_U32(endptr_addr) = nptr_addr + (uint32_t)(endptr - nptr);
+    }
+
+    return res;
+}
+
+uint64_t wrapper_strtoull(uint8_t *mem, uint32_t nptr_addr, uint32_t endptr_addr, int base) {
+    STRING(nptr)
+    char *endptr = NULL;
+    uint64_t res = strtoull(nptr, endptr_addr != 0 ? &endptr : NULL, base);
+
+    if(endptr != NULL) {
+        MEM_U32(endptr_addr) = nptr_addr + (uint32_t)(endptr - nptr);
+    }
+
     return res;
 }
 
@@ -1986,6 +2147,31 @@ int wrapper_fputs(uint8_t *mem, uint32_t str_addr, uint32_t fp_addr) {
     return ret == 0 && len != 0 ? -1 : 0;
 }
 
+int wrapper_fputc(uint8_t *mem, int32_t c, uint32_t fp_addr) {
+    struct FILE_irix *f = (struct FILE_irix *)&MEM_U32(fp_addr);
+
+    if (f->_base_addr == 0) {
+        file_assign_buffer(mem, f);
+        f->_cnt = bufendtab[f - (struct FILE_irix *)&MEM_U32(IOB_ADDR)];
+        f->_flag |= IOWRT;
+    }
+
+    if (f->_cnt > 0) {
+        MEM_U8(f->_ptr_addr) = (uint8_t)c;
+        f->_ptr_addr += 1;
+        f->_cnt -= 1;
+    } else {
+        // TODO set ferror?
+        return EOF;
+    }
+
+    if (f->_flag & IONBF) {
+        wrapper_fflush(mem, fp_addr); // TODO check error return value
+    }
+
+    return c;
+}
+
 int wrapper_puts(uint8_t *mem, uint32_t str_addr) {
     int ret = wrapper_fputs(mem, str_addr, STDOUT_ADDR);
     if (ret != 0) {
@@ -2388,6 +2574,56 @@ int wrapper_kill(uint8_t *mem, int pid, int sig) {
     return ret;
 }
 
+int wrapper_execve(uint8_t *mem, uint32_t pathname_addr, uint32_t argv_addr, uint32_t envp_addr) {
+    STRING(pathname)
+
+    printf("execve: path %s", pathname);
+    uint32_t argc = 0;
+    while (MEM_U32(argv_addr + argc * 4) != 0) {
+        ++argc;
+    }
+    char *argv[argc + 1];
+    for (uint32_t i = 0; i < argc; i++) {
+        uint32_t str_addr = MEM_U32(argv_addr + i * 4);
+        uint32_t len = wrapper_strlen(mem, str_addr) + 1;
+        argv[i] = (char *)malloc(len);
+        char *pos = argv[i];
+        while (len--) {
+            *pos++ = MEM_S8(str_addr);
+            ++str_addr;
+        }
+    }
+    argv[argc] = NULL;
+
+    uint32_t envc = 0;
+    while (MEM_U32(envp_addr + envc * 4) != 0) {
+        ++envc;
+    }
+    char *envp[envc + 1];
+    for (uint32_t i = 0; i < envc; i++) {
+        uint32_t str_addr = MEM_U32(envp_addr + i * 4);
+        uint32_t len = wrapper_strlen(mem, str_addr) + 1;
+        envp[i] = (char *)malloc(len);
+        char *pos = envp[i];
+        while (len--) {
+            *pos++ = MEM_S8(str_addr);
+            ++str_addr;
+        }
+    }
+    envp[envc] = NULL;
+
+    execve(pathname, argv, envp);
+    MEM_U32(ERRNO_ADDR) = errno;
+
+    for (uint32_t i = 0; i < argc; i++) {
+        free(argv[i]);
+    }
+    for (uint32_t i = 0; i < envc; i++) {
+        free(argv[i]);
+    }
+    return -1;
+}
+
 int wrapper_execlp(uint8_t *mem, uint32_t file_addr, uint32_t sp) {
     uint32_t argv_addr = sp + 4;
     return wrapper_execvp(mem, file_addr, argv_addr);
@@ -2540,4 +2776,9 @@ void wrapper___assert(uint8_t *mem, uint32_t assertion_addr, uint32_t file_addr,
     STRING(assertion)
     STRING(file)
     __assert(assertion, file, line);
+}
+
+int32_t wrapper_syssgi(uint8_t *mem, int32_t request, ...) {
+    //assert(0 && "syssgi not implemented");
+    return 0;
 }
