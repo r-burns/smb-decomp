@@ -217,6 +217,12 @@ def task_compare():
         'verbosity': 2,
     }
 
+libultra_exports = [
+    '-u', 'spHide',
+    '-u', 'spShow',
+    '-u', 'spScale',
+]
+
 def task_build_rom():
     """ Build the ROM """
 
@@ -225,14 +231,16 @@ def task_build_rom():
     link_rom = binutils.LD                                                \
         + ['--no-check-sections', '-Map', rom_map, '-T', ssb_lds, '-T', ] \
         + unk_symbols                                                     \
-        + ['-o', rom_elf, '-L', config.build_dir]
+        + ['-o', rom_elf, '-L', config.build_dir, '-lultra'] + libultra_exports
     
     copy_rom = binutils.OBJCOPY \
         + ['--pad-to=0x1000000', '--gap-fill=0xFF', '-O', 'binary', rom_elf, rom]
 
+    components = [ssb_lds, libultra_a] + unk_symbols + c_objs + s_objs + temp_objs + imgbank_o
+
     return { 
         'actions': [link_rom, copy_rom],
-        'file_dep': [ssb_lds] + unk_symbols + c_objs + s_objs + temp_objs,
+        'file_dep': components,
         'task_dep': [
             'assemble',
             'cc', 
@@ -587,7 +595,7 @@ def task_link_sprite_bank():
         # no relink (want symbols to be resolved)
         yield {
             'name': o,
-            'actions': [tc.game.utils.LD + ['-d', '-T', lds, '-L', obj_dir, '-o', o]],
+            'actions': [tc.game.utils.LD + ['-T', lds, '-L', obj_dir, '-o', o]],
             'file_dep': [lds] + bank_objs,
             'targets': [o],
         }
