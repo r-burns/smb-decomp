@@ -160,7 +160,7 @@ savercp:
 	andi t0, t0, 0x3f
 	and t0, t0, t4
 	or t1, t1, t0
-.set noreorder /* can't get this to match sadly */
+.set noreorder /* cannot get this to match sadly */
 endrcp:
 	sw t1, THREAD_RCP(k0)
 	mfc0 t0, C0_EPC

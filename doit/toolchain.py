@@ -208,7 +208,8 @@ def _get_libultra_crosschain(requested_tc, config):
         assembler = Assembler([prefix + 'as'], GCC_AS_FLAGS)
     elif requested_tc == 'ido5.3':
         compiler = _get_recomp_ido('5.3', tools, IDO_ULTRA_CFLAGS)
-        assembler = _get_recomp_as('5.3', tools, IDO_ULTRA_ASFLAGS)
+        #assembler = _get_recomp_as('5.3', tools, IDO_ULTRA_ASFLAGS)
+        assembler = _get_qemu_as('5.3', config, IDO_ULTRA_ASFLAGS)
     else:
         raise Exception("Unsupported toolchain: " + requested_tc)
 
@@ -238,6 +239,22 @@ def _get_recomp_ido(version, tools, cflags):
     cc = tools / ('ido' + version) / 'cc'
 
     return Compiler([cc, '-c'], cflags, True)
+
+def _get_qemu_as(version, config, asflags):
+    qemu = _find_qemu_irix(config.qemu)
+    # TODO: put the ido raw binary directory somewhere else (const at top?)
+    ido_base = config.tools / 'irix'
+    if version == '5.3':
+        ido_home = ido_base / 'ido5.3'
+    elif version == '7.1':
+        ido_home = ido_base / 'ido7.1'
+    else:
+        raise Exception("Unknown IDO version for QEMU: " + version)
+
+    AS = ido_home / 'usr' / 'bin' / 'as'
+    invocation = [qemu, '-silent', '-L', ido_home, AS]
+
+    return Assembler(invocation, asflags)
 
 def _get_recomp_as(version, tools, asflags):
     asm = tools / ('ido' + version) / 'as'
@@ -282,7 +299,7 @@ def _find_qemu_irix(cli_path):
     elif os.environ.get('QEMU_IRIX') is not None:
         return os.environ.get('QEMU_IRIX')
     elif which('qemu-irix') is not None:
-        return 'qemu-irix'
+        return which('qemu-irix')
     else:
         raise MissingQemuIrix()
 

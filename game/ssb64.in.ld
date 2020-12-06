@@ -70,7 +70,25 @@ SECTIONS
         *libultra.a:show.o(.text);
         *libultra.a:spscale.o(.text);
         asm/system/audio.text.o(.text);
+        *libultra.a:sendmesg.o(.text);
+        *libultra.a:stopthread.o(.text);
+        *libultra.a:recvmesg.o(.text);
+        *libultra.a:setintmask.o(.text);
+        *libultra.a:sinf.o(.text);
+        *libultra.a:sptask.o(.text);
+        *libultra.a:destroythread.o(.text);
         asm/system/libultra.text.o(.text);
+        *libultra.a:thread.o(.text);
+        *libultra.a:bzero.o(.text);
+        asm/system/libultra2.text.o(.text);
+        *libultra.a:initialize.o(.text);
+        asm/system/libultra3.text.o(.text);
+        *libultra.a:sirawread.o(.text);
+        asm/system/libultra4.text.o(.text);
+        *libultra.a:bcopy.o(.text);
+        asm/system/libultra5.text.o(.text);
+        *libultra.a:sirawwrite.o(.text);
+        asm/system/libultra6.text.o(.text);
         asm/system/rsp.o(.text);
 
         src/sys/main.o(.data);
@@ -78,13 +96,21 @@ SECTIONS
         asm/system/sprite.o(.data);
         asm/system/audio.data.o(.data);
         asm/system/libultra.data.o(.data);
+        *libultra.a:thread.o(.data);
+        asm/system/libultra2.data.o(.data);
+        *libultra.a:initialize.o(.data);
+        asm/system/libultra3.data.o(.data);
 
         src/sys/main.o(.rodata);
         src/sys/thread3.asm.o(.rodata);
         asm/system/system.rodata.o(.rodata);
         asm/system/sprite.o(.rodata);
         asm/system/audio.rodata.o(.rodata);
+        *libultra.a:setintmask.o(.rodata);
+        *libultra.a:sinf.o(.rodata);
         asm/system/libultra.rodata.o(.rodata);
+        *libultra.a:libm_vals.o(.rodata);
+        asm/system/libultra2.rodata.o(.rodata);
         asm/system/rsp.o(.rodata);
     }
     END_SEG(system)
@@ -95,7 +121,10 @@ SECTIONS
         asm/system/system.bss.o(.bss);
         asm/system/sprite.o(.bss);
         asm/system/audio.bss.o(.bss);
+        *libultra.a:sptask.o(.bss);
         asm/system/libultra.bss.o(.bss);
+        *libultra.a:initialize.o(.bss);
+        asm/system/libultra2.bss.o(.bss);
         /* Entry code assumes 8-byte aligned bss section */
         . = ALIGN(8);
     }

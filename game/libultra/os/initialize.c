@@ -3,6 +3,9 @@
 #include <R4300.h>
 #include <rcp.h>
 
+/* TODO: wft is __createSpeedParam */
+extern void __createSpeedParam(void);
+
 typedef struct
 {
    /* 0x0 */ unsigned int inst1;
@@ -16,8 +19,8 @@ OSTime osClockRate = OS_CLOCK_RATE;
 s32 osViClock = VI_NTSC_CLOCK;
 u32 __osShutdown = 0;
 u32 __OSGlobalIntMask = OS_IM_ALL;
-// u32 __osFinalrom;
-extern u32 __osFinalrom;
+u32 __osFinalrom;
+
 void osInitialize()
 {
    u32 pifdata;
@@ -40,6 +43,8 @@ void osInitialize()
    *(__osExceptionVector *)E_VEC = __osExceptionPreamble;
    osWritebackDCache((void *)UT_VEC, E_VEC - UT_VEC + sizeof(__osExceptionVector));
    osInvalICache((void *)UT_VEC, E_VEC - UT_VEC + sizeof(__osExceptionVector));
+   __createSpeedParam();
+   osUnmapTLBAll();
    osMapTLBRdb();
    osPiRawReadIo(4, &clock); //TODO: remove magic constant;
    clock &= ~0xf;            //clear lower 4 bits
@@ -64,4 +69,8 @@ void osInitialize()
    {
       osViClock = VI_NTSC_CLOCK;
    }
+
+   IO_WRITE(AI_CONTROL_REG, AI_CONTROL_DMA_ON);
+   IO_WRITE(AI_DACRATE_REG, AI_MAX_DAC_RATE - 1);
+   IO_WRITE(AI_BITRATE_REG, AI_MAX_BIT_RATE - 1);
 }
