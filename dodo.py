@@ -54,6 +54,21 @@ def task_rust_tools():
         'targets': outputs
     }
 
+# Libultra 64bit Libmath Patcher
+patcher_src = config.tools / 'patch_libultra_math.c'
+patcher = patcher_src.with_suffix('')
+
+def task_libultra_patcher():
+    ''' Build the libultra math pather tool '''
+    flags = ['-I', '.', '-Wall', '-Wextra', '-Wno-unused-parameter', '-pedantic', '-O2']
+    compile = tc.system.c.CC + flags + ['-o', patcher, patcher_src]
+
+    return {
+        'actions': [compile],
+        'targets': [patcher],
+        'file_dep': [patcher_src],
+    }
+
 # Ido Recompiled Toolchain
 recomp = config.tools / 'recomp'
 recomp_base = config.tools / 'ido-recomp'
@@ -179,6 +194,7 @@ def task_distclean():
         'actions': [
             (extract_assets.clean, [None], None),
             f'rm -rf {config.all_builds}',
+            f'rm -rf {patcher}',
             f'cargo clean --manifest-path {rust_manifest}',
         ],
         'task_dep': ['clean_recompiled_ido']
@@ -404,11 +420,12 @@ def task_libultra():
 
     AR = tc.libultra.utils.AR
     bundle_archive = AR + ['rcs', '-o', libultra_a] + libultra_objs
+    patch = [patcher, libultra_a]
 
     return {
-        'actions': [bundle_archive],
+        'actions': [bundle_archive, patch],
         'targets': [libultra_a],
-        'file_dep': libultra_objs,
+        'file_dep': libultra_objs + [patcher],
     }
 
 def check_libultra_exceptions(file, mipsiset, copt, asopt):
@@ -423,7 +440,6 @@ def check_libultra_exceptions(file, mipsiset, copt, asopt):
             option_or(mb_copt, copt),
             option_or(mb_asopt, asopt),
         )
-    
 
 def option_or(a, b):
     if a is None:

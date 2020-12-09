@@ -9,12 +9,13 @@ s32 osContStartReadData(OSMesgQueue *mq)
     s32 ret;
     int i;
 
-    ret = 0;
+    //ret = 0;
     __osSiGetAccess();
     if (__osContLastCmd != CONT_CMD_READ_BUTTON)
     {
         __osPackReadData();
-        ret = __osSiRawStartDma(OS_WRITE, &__osContPifRam);
+        //ret = __osSiRawStartDma(OS_WRITE, &__osContPifRam);
+        __osSiRawStartDma(OS_WRITE, &__osContPifRam);
         osRecvMesg(mq, NULL, OS_MESG_BLOCK);
     }
     ret = __osSiRawStartDma(OS_READ, &__osContPifRam);
@@ -24,6 +25,8 @@ s32 osContStartReadData(OSMesgQueue *mq)
     return ret;
 }
 
+/*
+Original
 void osContGetReadData(OSContPad *data)
 {
     u8 *ptr;
@@ -33,6 +36,26 @@ void osContGetReadData(OSContPad *data)
     for (i = 0; i < __osMaxControllers; i++, ptr += sizeof(__OSContReadFormat), data++)
     {
         readformat = *(__OSContReadFormat *)ptr;
+        data->errno = CHNL_ERR(readformat);
+        if (data->errno == 0)
+        {
+            data->button = readformat.button;
+            data->stick_x = readformat.stick_x;
+            data->stick_y = readformat.stick_y;
+        }
+    }
+}
+*/
+
+void osContGetReadData(OSContPad *data)
+{
+    __OSContReadFormat *ptr = (__OSContReadFormat *)&__osContPifRam.ramarray;
+    __OSContReadFormat readformat;
+    int i;
+
+    //ptr = (__OSContReadFormat *)&__osContPifRam.ramarray;
+    for (i = 0; i < __osMaxControllers; i++, ptr++, data++) {
+        readformat = *ptr;
         data->errno = CHNL_ERR(readformat);
         if (data->errno == 0)
         {

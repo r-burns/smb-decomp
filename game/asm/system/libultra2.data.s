@@ -2,11 +2,11 @@
 
 .section .data
 
-glabel D_8003D3D0
-  .incbin "system.raw.bin", 0x3CFD0, 0x10
+#glabel D_8003D3D0
+#  .incbin "system.raw.bin", 0x3CFD0, 0x10
 
-glabel D_8003D3E0
-  .incbin "system.raw.bin", 0x3CFE0, 0x10
+#glabel D_8003D3E0
+#  .incbin "system.raw.bin", 0x3CFE0, 0x10
 
 #glabel osClockRate
 #  .incbin "system.raw.bin", 0x3CFF0, 0x4

@@ -5,8 +5,8 @@
 glabel D_8003D330
   .incbin "system.raw.bin", 0x3CF30, 0x50
 
-glabel D_8003D380
-  .incbin "system.raw.bin", 0x3CF80, 0x30
+#glabel D_8003D380
+#  .incbin "system.raw.bin", 0x3CF80, 0x30
 
 #glabel __osThreadTail
 #  .incbin "system.raw.bin", 0x3CFB0, 0x8

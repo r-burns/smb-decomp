@@ -24,20 +24,20 @@
 #  .8byte 0x3e6110b4611a6263 # .double 3.178650954705639e-8
 #  .incbin "system.raw.bin", 0x3EDA0, 0x10
 
-glabel D_8003F1B0
-  .incbin "system.raw.bin", 0x3EDB0, 0x20
-
-glabel jtbl_8003F1D0
-  /* 3EDD0 03FDD0 8003F1D0 */  .4byte jtgt_80031128
-  /* 3EDD4 03FDD4 8003F1D4 */  .4byte jtgt_800310F0
-  /* 3EDD8 03FDD8 8003F1D8 */  .4byte jtgt_800310D0
-  /* 3EDDC 03FDDC 8003F1DC */  .4byte jtgt_80030F34
-  /* 3EDE0 03FDE0 8003F1E0 */  .4byte jtgt_80030EF0
-  /* 3EDE4 03FDE4 8003F1E4 */  .4byte jtgt_80031074
-  /* 3EDE8 03FDE8 8003F1E8 */  .4byte jtgt_80030EB8
-  /* 3EDEC 03FDEC 8003F1EC */  .4byte jtgt_80030EC4
-  /* 3EDF0 03FDF0 8003F1F0 */  .4byte jtgt_80030ED0
-  .incbin "system.raw.bin", 0x3EDF4, 0xC
+#glabel D_8003F1B0
+#  .incbin "system.raw.bin", 0x3EDB0, 0x20
+#
+#glabel jtbl_8003F1D0
+#  /* 3EDD0 03FDD0 8003F1D0 */  .4byte jtgt_80031128
+#  /* 3EDD4 03FDD4 8003F1D4 */  .4byte jtgt_800310F0
+#  /* 3EDD8 03FDD8 8003F1D8 */  .4byte jtgt_800310D0
+#  /* 3EDDC 03FDDC 8003F1DC */  .4byte jtgt_80030F34
+#  /* 3EDE0 03FDE0 8003F1E0 */  .4byte jtgt_80030EF0
+#  /* 3EDE4 03FDE4 8003F1E4 */  .4byte jtgt_80031074
+#  /* 3EDE8 03FDE8 8003F1E8 */  .4byte jtgt_80030EB8
+#  /* 3EDEC 03FDEC 8003F1EC */  .4byte jtgt_80030EC4
+#  /* 3EDF0 03FDF0 8003F1F0 */  .4byte jtgt_80030ED0
+#  .incbin "system.raw.bin", 0x3EDF4, 0xC
 
 glabel jtbl_8003F200
   /* 3EE00 03FE00 8003F200 */  .4byte jtgt_8003331C

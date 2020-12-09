@@ -2,8 +2,10 @@
 
 .section .bss
 
-glabel D_8009F040
-    .space 432
+#glabel D_8009F040
+#    .space 432
+#unref_D_8009F1E0:
+#    .space 4
 glabel D_8009F1F0
     .space 4
 glabel D_8009F1F4

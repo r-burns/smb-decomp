@@ -6,6 +6,9 @@
 
 EXPORT(__osHwIntTable)
 .word 0x0, 0x0, 0x0, 0x0, 0x0
+/* extra words? */
+.word      0x0, 0x0, 0x0
+.word 0x0, 0x0, 0x0, 0x0
 
 .rdata
 #define REDISPATCH 0x00
@@ -237,7 +240,21 @@ counter:
 	b next_interrupt
 
 cart:
-	
+	.set noreorder
+	.set noat
+	lui t1, %hi(__osHwIntTable)
+	addiu t1, t1, %lo(__osHwIntTable)
+	lw t2, 8(t1) # __osHwIntTable + 8
+	addiu $at, zero, ~CAUSE_IP4
+	and s0, s0, $at
+	beqz t2, 1f
+	addi t1, t1, 8
+	jalr t2
+	lw sp, 4(t1) # __osHwIntTable + 4
+	.set reorder
+	.set at
+
+	/* Original 
 	and s0, s0, ~CAUSE_IP4
 	li t2, 4
 
@@ -245,10 +262,11 @@ cart:
 
 	la sp, leoDiskStack
 	li a0, MESG(OS_EVENT_CART)
-	addiu sp, sp, OS_PIM_STACKSIZE-16 /* TODO: maybe make OS_LEO_STACKSIZE */
+	addiu sp, sp, OS_PIM_STACKSIZE-16
 	beqz t2, 1f
 
 	jalr t2
+	*/
 	
 	li a0, MESG(OS_EVENT_CART)
 	beqz v0, 1f

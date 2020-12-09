@@ -77,10 +77,18 @@ SECTIONS
         *libultra.a:sinf.o(.text);
         *libultra.a:sptask.o(.text);
         *libultra.a:destroythread.o(.text);
-        asm/system/libultra.text.o(.text);
+        *libultra.a:ll.o(.text);
+        *libultra.a:exceptasm.o(.text);
         *libultra.a:thread.o(.text);
         *libultra.a:bzero.o(.text);
-        asm/system/libultra2.text.o(.text);
+        asm/system/motor.o(.text);
+        *libultra.a:siacs.o(.text);
+        *libultra.a:controller.o(.text);
+        *libultra.a:createthread.o(.text);
+        /* *libultra.a:contreaddata.o(.text); */
+        asm/system/contreaddata.o(.text);
+        *libultra.a:virtualtophysical.o(.text);
+        *libultra.a:writebackdcache.o(.text);
         *libultra.a:initialize.o(.text);
         asm/system/libultra3.text.o(.text);
         *libultra.a:sirawread.o(.text);
@@ -96,8 +104,10 @@ SECTIONS
         asm/system/sprite.o(.data);
         asm/system/audio.data.o(.data);
         asm/system/libultra.data.o(.data);
+        *libultra.a:exceptasm.o(.data);
         *libultra.a:thread.o(.data);
-        asm/system/libultra2.data.o(.data);
+        *libultra.a:siacs.o(.data);
+        *libultra.a:controller.o(.data);
         *libultra.a:initialize.o(.data);
         asm/system/libultra3.data.o(.data);
 
@@ -108,6 +118,7 @@ SECTIONS
         asm/system/audio.rodata.o(.rodata);
         *libultra.a:setintmask.o(.rodata);
         *libultra.a:sinf.o(.rodata);
+        *libultra.a:exceptasm.o(.rodata);
         asm/system/libultra.rodata.o(.rodata);
         *libultra.a:libm_vals.o(.rodata);
         asm/system/libultra2.rodata.o(.rodata);
@@ -122,8 +133,11 @@ SECTIONS
         asm/system/sprite.o(.bss);
         asm/system/audio.bss.o(.bss);
         *libultra.a:sptask.o(.bss);
-        asm/system/libultra.bss.o(.bss);
+        asm/system/motor.o(.bss);
+        *libultra.a:siacs.o(.bss);
+        *libultra.a:controller.o(.bss);
         *libultra.a:initialize.o(.bss);
+        *libultra.a:kdebugserver.o(.bss);
         asm/system/libultra2.bss.o(.bss);
         /* Entry code assumes 8-byte aligned bss section */
         . = ALIGN(8);

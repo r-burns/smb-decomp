@@ -1,6 +1,8 @@
 /imgbank*
 /n64gfx*
 /recomp*
+/patch_libultra_math*
+!/patch_libultra_math.c
 
 /ido5.3/*
 /ido7.1/*

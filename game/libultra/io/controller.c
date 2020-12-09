@@ -5,6 +5,7 @@
 
 #define HALF_A_SECOND OS_USEC_TO_CYCLES(500000)
 
+/* 
 // OSPifRam __osContPifRam;
 // u8 __osContLastCmd;
 // u8 __osMaxControllers;
@@ -17,6 +18,16 @@ extern u8 __osMaxControllers;
 // OSTimer __osEepromTimer;
 // OSMesgQueue __osEepromTimerQ;
 // OSMesg __osEepromTimerMsg;
+*/
+
+u32 __osContinitialized = 0;
+OSPifRam __osContPifRam;
+u8 __osContLastCmd;
+u8 __osMaxControllers;
+OSTimer __osEepromTimer;
+OSMesgQueue __osEepromTimerQ;
+OSMesg __osEepromTimerMsg;
+
 s32 osContInit(OSMesgQueue *mq, u8 *bitpattern, OSContStatus *data)
 {
     OSMesg dummy;

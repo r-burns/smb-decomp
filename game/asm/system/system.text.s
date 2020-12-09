@@ -1434,7 +1434,7 @@ glabel func_80003DD4
   /* 004A14 80003E14 0C00C084 */       jal osRecvMesg
   /* 004A18 80003E18 24060001 */     addiu $a2, $zero, 1
   /* 004A1C 80003E1C 3C048004 */       lui $a0, %hi(D_80045188)
-  /* 004A20 80003E20 0C00C7FD */       jal func_80031FF4
+  /* 004A20 80003E20 0C00C7FD */       jal osContGetReadData
   /* 004A24 80003E24 24845188 */     addiu $a0, $a0, %lo(D_80045188)
   /* 004A28 80003E28 3C118004 */       lui $s1, %hi(D_80045188)
   /* 004A2C 80003E2C 3C108004 */       lui $s0, %hi(D_800451A8)
