@@ -2,8 +2,8 @@
 
 .section .data
 
-glabel D_8003D330
-  .incbin "system.raw.bin", 0x3CF30, 0x50
+#glabel osViModePalLan1
+#  .incbin "system.raw.bin", 0x3CF30, 0x50
 
 #glabel D_8003D380
 #  .incbin "system.raw.bin", 0x3CF80, 0x30

@@ -2,14 +2,17 @@
 #include <rcp.h>
 #include "viint.h"
 
+extern u32 D_8003D63C; // in vimgr.c based on data?
+
 void __osViSwapContext()
 {
-    register OSViMode *vm;
-    register __OSViContext *vc;
-    u32 origin;
+    register OSViMode *vm; //a1, 44sp
+    register __OSViContext *vc; //s0
+    u32 origin; // a0
     u32 hStart;
+    u32 vStart; // sp34
     u32 nomValue;
-    u32 field;
+    u32 field; // sp2c
 
     field = 0;
     vc = __osViNext;
@@ -26,6 +29,7 @@ void __osViSwapContext()
     {
         vc->x.scale = vm->comRegs.xScale;
     }
+
     if (vc->state & VI_STATE_YSCALE_UPDATED)
     {
         nomValue = vm->fldRegs[field].yScale & VI_SCALE_MASK;
@@ -36,6 +40,8 @@ void __osViSwapContext()
     {
         vc->y.scale = vm->fldRegs[field].yScale;
     }
+
+    vStart = (vm->fldRegs[field].vStart - (D_8003D63C << 16)) + D_8003D63C;
     hStart = vm->comRegs.hStart;
     if (vc->state & VI_STATE_BLACK)
     {
@@ -58,7 +64,7 @@ void __osViSwapContext()
     IO_WRITE(VI_H_SYNC_REG, vm->comRegs.hSync);
     IO_WRITE(VI_LEAP_REG, vm->comRegs.leap);
     IO_WRITE(VI_H_START_REG, hStart);
-    IO_WRITE(VI_V_START_REG, vm->fldRegs[field].vStart);
+    IO_WRITE(VI_V_START_REG, vStart);
     IO_WRITE(VI_V_BURST_REG, vm->fldRegs[field].vBurst);
     IO_WRITE(VI_INTR_REG, vm->fldRegs[field].vIntr);
     IO_WRITE(VI_X_SCALE_REG, vc->x.scale);

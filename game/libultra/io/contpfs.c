@@ -279,17 +279,3 @@ s32 __osPfsRWInode(OSPfs *pfs, __OSInode *inode, u8 flag, u8 bank)
     }
     return 0;
 }
-
-s32 __osPfsSelectBank(OSPfs *pfs, u32 bank)
-{
-    u8 temp[BLOCKSIZE];
-    int i;
-    s32 ret;
-    ret = 0;
-    for (i = 0; i < ARRLEN(temp); i++)
-    {
-        temp[i] = bank;
-    }
-    ret = __osContRamWrite(pfs->queue, pfs->channel, 1024, (u8*)temp, FALSE);
-    return ret;
-}

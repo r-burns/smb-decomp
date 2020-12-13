@@ -5,6 +5,7 @@
  
 OSDevMgr __osViDevMgr = {0};
 // extern OSDevMgr __osViDevMgr;
+// u32 D_8003D63C = 0;
 OSThread viThread;
 unsigned char viThreadStack[OS_VIM_STACKSIZE];
 OSMesgQueue viEventQueue;

@@ -128,17 +128,17 @@ typedef struct {
 
 
 typedef struct OSPiHandle_s {
-        struct OSPiHandle_s     *next;  /* point to next handle on the table */
-        u8                      type;   /* DEVICE_TYPE_BULK for disk */
-        u8                      latency;        /* domain latency */
-        u8                      pageSize;       /* domain page size */
-        u8                      relDuration;    /* domain release duration */
-        u8                      pulse;          /* domain pulse width */
-	u8			domain;		/* which domain */
-        u32                     baseAddress;    /* Domain address */
-        u32                     speed;          /* for roms only */
+        struct OSPiHandle_s     *next;  /* 00 point to next handle on the table */
+        u8                      type;   /* 04 DEVICE_TYPE_BULK for disk */
+        u8                      latency;        /* 05 domain latency */
+        u8                      pageSize;       /* 06 domain page size */
+        u8                      relDuration;    /* 07 domain release duration */
+        u8                      pulse;          /* 08 domain pulse width */
+		u8						domain;			/* 09 which domain */
+        u32                     baseAddress;    /* 0C Domain address */
+        u32                     speed;          /* 10 for roms only */
         /* The following are "private" elements" */
-        __OSTranxInfo           transferInfo;	/* for disk only */
+        __OSTranxInfo           transferInfo;	/* 14 for disk only */
 } OSPiHandle;
 
 typedef struct {

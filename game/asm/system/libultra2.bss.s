@@ -2,95 +2,59 @@
 
 .section .bss
 
-#glabel D_8009F040
-#    .space 432
-#unref_D_8009F1E0:
+#glabel piThread
+#    .space 3360
+#glabel D_800A0000
 #    .space 4
-glabel D_8009F1F0
-    .space 4
-glabel D_8009F1F4
-    .space 1
-glabel D_8009F1F5
-    .space 1
-glabel D_8009F1F6
-    .space 1
-glabel D_8009F1F7
-    .space 1
-glabel D_8009F1F8
-    .space 112
-glabel D_8009F268
-    .space 4
-glabel D_8009F26C
-    .space 1
-glabel D_8009F26D
-    .space 1
-glabel D_8009F26E
-    .space 1
-glabel D_8009F26F
-    .space 1
-glabel D_8009F270
-    .space 112
-glabel D_8009F2E0
-    .space 3360
-glabel D_800A0000
-    .space 4
-glabel D_800A0004
-    .space 1
-glabel D_800A0005
-    .space 1
-glabel D_800A0006
-    .space 1
-glabel D_800A0007
-    .space 1
-glabel D_800A0008
-    .space 1
-glabel D_800A0009
-    .space 3
-glabel D_800A000C
-    .space 4
-glabel D_800A0010
-    .space 1152
-glabel D_800A0490
-    .space 24
-glabel D_800A04A8
-    .space 8
-glabel D_800A04B0
-    .space 8
-glabel D_800A04B8
-    .space 24
-glabel __osEventStateTab
-    .space 128
-glabel D_800A0550
-    .space 32
-glabel D_800A0570
-    .space 4
-glabel D_800A0574
-    .space 4
-glabel D_800A0578
-    .space 4
-glabel D_800A057C
-    .space 4
-glabel D_800A0580
-    .space 16
-glabel D_800A0590
-    .space 20
-glabel D_800A05A4
-    .space 108
+#glabel D_800A0004
+#    .space 1
+#glabel D_800A0005
+#    .space 1
+#glabel D_800A0006
+#    .space 1
+#glabel D_800A0007
+#    .space 1
+#glabel D_800A0008
+#    .space 1
+#glabel D_800A0009
+#    .space 3
+#glabel D_800A000C
+#    .space 4
+#glabel D_800A0010
+#    .space 1152
+#glabel piEventQueue
+#    .space 24
+#glabel piEventBuf
+#    .space 8
+
+#glabel D_800A04B0
+#    .space 8
+#glabel D_800A04B8
+#    .space 24
+
+#glabel __osEventStateTab
+#    .space 128
+
+#glabel D_800A0550
+#    .space 32
+## D_800A0570
+#glabel __osCurrentTime
+#    .space 4
+#glabel D_800A0574
+#    .space 4
+## D_800A0578
+#glabel __osBaseCounter
+#    .space 4
+#glabel __osViIntrCount
+#    .space 4
+#glabel __osTimerCounter
+#    .space 16
+
+# cartrominit.bss
+#glabel sCartHandle
+#    .space 20
+#glabel D_800A05A4
+#    .space 108
+
 glabel D_800A0610
     .space 256
-glabel D_800A0710
-    .space 60
-glabel D_800A074C
-    .space 4
-glabel D_800A0750
-    .space 4528
-glabel D_800A1900
-    .space 24
-glabel D_800A1918
-    .space 24
-glabel D_800A1930
-    .space 24
-glabel D_800A1948
-    .space 24
-glabel D_800A1960
-    .space 16

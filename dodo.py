@@ -360,6 +360,15 @@ libultra_srcs = [
 # (mipsiset, C Opt, ASM Opt))
 libultra_exceptions = {
     libultra_root/'os'/'exceptasm.s': (['-mips3', '-o32'], None, None),
+    libultra_root/'io'/'sirawdma.c': (None, '-O2', None),
+    libultra_root/'io'/'pimgr.c': (None, '-O2', None),
+    libultra_root/'io'/'epirawdma.c': (None, '-O2', None),
+    libultra_root/'io'/'aisetfreq.c': (None, '-O2', None),
+    libultra_root/'io'/'viswapcontext.c': (None, '-O2', None),
+    libultra_root/'io'/'cartrominit.c': (None, '-O2', None),
+    libultra_root/'io'/'pfsselectbank.c': (None, '-O2', None),
+    libultra_root/'io'/'epirawread.c': (None, '-O2', None),
+    libultra_root/'io'/'epirawwrite.c': (None, '-O2', None),
     libultra_root/'libc'/'bcmp.s': (None, None, '-O2'),
     libultra_root/'libc'/'bcopy.s': (None, None, '-O2'),
     libultra_root/'libc'/'bzero.s': (None, None, '-O2'),
