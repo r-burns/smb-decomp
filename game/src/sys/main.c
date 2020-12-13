@@ -11,7 +11,7 @@
 #include "loadovl/loader.h"
 
 // libultra internal
-void __osSetWatchLo(s32);
+void __osSetWatchLo(u32);
 
 #define STACK_PROBE_MAGIC 0xFEDCBA98
 // size of stack in double words (u64, 8 bytes)
@@ -191,9 +191,13 @@ void thread1_idle(void *arg) {
 
 void ssb_main(void) {
     gThread0Stack[0] = STACK_PROBE_MAGIC;
-    __osSetWatchLo(0x4900000);
+    __osSetWatchLo(0x04900000 & WATCHLO_ADDRMASK);
     osInitialize();
-    osCreateThread(&sThread1, 1, thread1_idle, &sThreadArgBuf, 
+    osCreateThread(
+        &sThread1,
+        1,
+        thread1_idle, 
+        &sThreadArgBuf, 
         sThread1Stack + THREAD1_STACK_SIZE, 
         OS_PRIORITY_APPMAX
     );

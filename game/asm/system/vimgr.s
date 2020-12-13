@@ -8,6 +8,23 @@ glabel D_8003D620
 glabel D_8003D63C
   .incbin "system.raw.bin", 0x3D23C, 0x4
 
+.section .bss
+.balign 16
+
+glabel D_800A0750
+    .space 4528
+glabel D_800A1900
+    .space 24
+glabel D_800A1918
+    .space 24
+glabel D_800A1930
+    .space 24
+glabel D_800A1948
+    .space 24
+glabel D_800A1960
+    .space 16
+
+
 # assembler directives
 .set noat      # allow manual use of $at
 .set noreorder # don't insert nops after branches

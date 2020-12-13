@@ -91,7 +91,7 @@ SECTIONS
         *libultra.a:initialize.o(.text);
         asm/system/createspeedparam.o(.text);
         *libultra.a:pirawread.o(.text);
-        asm/system/libultranops.o(.text);
+        asm/system/libultra.nops1.o(.text);
         *libultra.a:setsr.o(.text);
         *libultra.a:getsr.o(.text);
         *libultra.a:vigetnextframebuf.o(.text);
@@ -106,7 +106,7 @@ SECTIONS
         *libultra.a:probetlb.o(.text);
         *libultra.a:pimgr.o(.text);
         *libultra.a:piacs.o(.text);
-        asm/system/morenops.o(.text);
+        asm/system/libultra.nops2.o(.text);
         *libultra.a:devmgr.o(.text);
         *libultra.a:pirawdma.o(.text);
         *libultra.a:getcount.o(.text);
@@ -170,7 +170,7 @@ SECTIONS
         *libultra.a:dp.o(.text);
         *libultra.a:spsetstat.o(.text);
         *libultra.a:spgetstat.o(.text);
-        asm/system/finalnops.o(.text);
+        asm/system/libultra.nops3.o(.text);
         asm/system/vimgr.o(.text);
         *libultra.a:vigetcurrcontext.o(.text);
         *libultra.a:writebackdcacheall.o(.text);
@@ -182,7 +182,6 @@ SECTIONS
         *libultra.a:vigetcurrframebuf.o(.text);
         *libultra.a:spsetpc.o(.text);
         *libultra.a:setwatchlo.o(.text);
-        asm/system/libultra6.text.o(.text);
         asm/system/rsp.o(.text);
 
         src/sys/main.o(.data);
@@ -223,7 +222,7 @@ SECTIONS
         *libultra.a:cents2ratio.o(.rodata);
         *libultra.a:xldtob.o(.rodata);
         *libultra.a:llcvt.o(.rodata);
-        asm/system/libultra2.rodata.o(.rodata);
+        asm/system/unknown.rodata.o(.rodata);
         asm/system/rsp.o(.rodata);
     }
     END_SEG(system)
@@ -246,9 +245,9 @@ SECTIONS
         *libultra.a:seteventmesg.o(.bss);
         *libultra.a:timerintr.o(.bss);
         *libultra.a:cartrominit.o(.bss);
-        asm/system/libultra2.bss.o(.bss);
+        asm/system/contpfs.o(.bss);
         *libultra.a:pfsisplug.o(.bss);
-        asm/system/libultra25.bss.o(.bss);
+        asm/system/vimgr.o(.bss);
         /* Entry code assumes 8-byte aligned bss section */
         . = ALIGN(8);
     }

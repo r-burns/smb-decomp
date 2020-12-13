@@ -11,6 +11,12 @@ glabel D_8003D5D4
 glabel D_8003D5E0
   .incbin "system.raw.bin", 0x3D1E0, 0x10
 
+.section .bss
+.align 4
+
+glabel D_800A0610
+  .space 256
+
 # assembler directives
 .set noat      # allow manual use of $at
 .set noreorder # don't insert nops after branches
