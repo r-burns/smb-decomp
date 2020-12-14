@@ -5,15 +5,6 @@
 # This probably isn't fully correct, but will have to do until more files are
 # split from system.s
 
-glabel jtbl_8003D6D0
-  /* 3D2D0 03E2D0 8003D6D0 */  .4byte jtgt_80004508
-  /* 3D2D4 03E2D4 8003D6D4 */  .4byte jtgt_8000453C
-  /* 3D2D8 03E2D8 8003D6D8 */  .4byte jtgt_80004584
-  /* 3D2DC 03E2DC 8003D6DC */  .4byte jtgt_800045F4
-  /* 3D2E0 03E2E0 8003D6E0 */  .4byte jtgt_8000464C
-  /* 3D2E4 03E2E4 8003D6E4 */  .4byte jtgt_80004620
-  .incbin "system.raw.bin", 0x3D2E8, 0x8
-
 glabel D_8003D6F0
   /* 3D2F0 03E2F0 8003D6F0 */
   .asciz "gtl : DLBuffer over flow !  kind = %d  vol = %d byte\n"

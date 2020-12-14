@@ -14,28 +14,28 @@ fn print_usage() {
         A tool to convert PNG into an N64 image binary, or vice versa
         
         Usage:
-        -h, --help      print this help message
-        -V, --version   print version info
-        encode          convert PNG into N64 binary
-        decode          convert N64 binary to PNG
+          -h, --help      print this help message
+          -V, --version   print version info
+          encode          convert PNG into N64 binary
+          decode          convert N64 binary to PNG
 
         {name} encode:
-        -i, --input <file>              input PNG file path
-        -o, --output <file>             output binary path
-        -f, --format {{RGBA, CI, I, IA}}  format of output binary
-        -d, --bitdepth {{4, 8, 16, 32}}   bitdepth of output binary
-        [-p, --palette <file>]          custom file for palette output (if CI)
+          -i, --input <file>              input PNG file path
+          -o, --output <file>             output binary path
+          -f, --format {{RGBA, CI, I, IA}}  format of output binary
+          -d, --bitdepth {{4, 8, 16, 32}}   bitdepth of output binary
+          [-p, --palette <file>]          custom file for palette output (if CI)
 
         {name} decode:
-        -i, --input <file>              input PNG file path
-        -o, --output <file>             output binary path
-        -f, --format {{RGBA, CI, I, IA}}  format of output binary
-        -d, --bitdepth {{4, 8, 16, 32}}   bitdepth of output binary
-        -w, --width <pixels>
-        -h, --height <pixels>
-        [--offset <address>]            offset to image data in `input`
-        [--convert-palette]             output full color PNG (default is paletted PNG)
-        [-p, --palette]                 offset to CI palette (RBGA16 data) in `input`
+          -i, --input <file>              input PNG file path
+          -o, --output <file>             output binary path
+          -f, --format {{RGBA, CI, I, IA}}  format of output binary
+          -d, --bitdepth {{4, 8, 16, 32}}   bitdepth of output binary
+          -w, --width <pixels>
+          -h, --height <pixels>
+          [--offset <address>]            offset to image data in `input`
+          [--convert-palette]             output full color PNG (default is paletted PNG)
+          [-p, --palette <address>]       offset to CI palette (RBGA16 data) in `input`
 
         "#,
         name = env!("CARGO_BIN_NAME"),

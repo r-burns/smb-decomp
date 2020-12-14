@@ -4,68 +4,6 @@
 
 # 0x8003FAD0 -> 0x800A1970 [0x61ea0 bytes]
 
-
-# unsplit system.bss
-glabel gPiHandle
-    .space 8
-glabel D_80045048
-    .space 20
-glabel D_8004505C
-    .space 96
-glabel D_800450BC
-    .space 4
-glabel D_800450C0
-    .space 24
-glabel D_800450D8
-    .space 4
-glabel D_800450DC
-    .space 4
-glabel D_800450E0
-    .space 16
-glabel D_800450F0
-    .space 24
-glabel D_80045108
-    .space 8
-glabel D_80045110
-    .space 8
-glabel D_80045118
-    .space 32
-glabel D_80045138
-    .space 24
-glabel D_80045150
-    .space 16
-glabel D_80045160
-    .space 24
-glabel D_80045178
-    .space 16
-glabel D_80045188
-    .space 24
-glabel D_800451A0
-    .space 4
-glabel D_800451A4
-    .space 4
-glabel D_800451A8
-    .space 16
-glabel D_800451B8
-    .space 4
-glabel D_800451BC
-    .space 28
-glabel D_800451D8
-    .space 4
-glabel D_800451DC
-    .space 28
-glabel D_800451F8
-    .space 4
-glabel D_800451FC
-    .space 28
-glabel D_80045218
-    .space 4
-glabel D_8004521C
-    .space 12
-glabel D_80045228
-    .space 2
-glabel D_8004522A
-    .space 38
 glabel D_80045250
     .space 4
 glabel D_80045254

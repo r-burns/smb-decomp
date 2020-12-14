@@ -24,25 +24,32 @@ def is_routine_glabel(line):
     return "glabel" in line and "D_" not in line and "jtgt" not in line and "L8" not in line
 
 def id_routines(input):
-    # name => text
+    # routine name => String<asm statements>
     routines = dict()
+    def store_routine(state):
+        if state is not None: 
+            routines[state[0]] = state[1]
+        state = None
+    
     with open(input, 'r') as f:
         # (name, textbuf)
         state = None
+        text_section = False
         for line in f:
-            if is_routine_glabel(line):
+            if line.startswith(".section"):
+                text_section = line.split()[1] == ".text"
+                store_routine(state)
+            elif is_routine_glabel(line) and text_section:
                 name = line.split()[-1]
                 # store "completed" prior routine
-                if state is not None:
-                    routines[state[0]] = state[1]
-                
+                store_routine(state)
+                # and start collecting the next routine
                 state = (name, line)
-            elif state is not None:
+            elif state is not None and text_section:
                 state = (state[0], state[1] + line)
 
         # output final routine
-        if state is not None:
-            routines[state[0]] = state[1]
+        store_routine(state)
 
     return routines
 
@@ -56,6 +63,7 @@ def write_split_files(nm_dir, c_out, routines):
             nm_out = nm_dir / Path(routine).with_suffix('.s')
 
             f = open(nm_out, "w")
+            f.write(".section .text\n")
             f.write(text)
             f.close()
 
