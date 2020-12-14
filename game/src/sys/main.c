@@ -7,6 +7,7 @@
 
 #include "sys/main.h"
 #include "sys/thread3.h"
+#include "sys/dma.h"
 #include "sys/system.h"
 #include "loadovl/loader.h"
 

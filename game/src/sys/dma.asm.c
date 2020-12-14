@@ -1,11 +1,14 @@
 #include <PR/ultratypes.h>
+#include <PR/os.h>
+
+#include "sys/dma.h"
 
 u8 gPiHandle[8];
 u8 D_80045048[20];
 u32 D_8004505C;
 u8 Extend_D_8004505C[92];
-u32 D_800450BC;
-u8 D_800450C0[24];
+OSMesg D_800450BC;
+OSMesgQueue D_800450C0;
 u32 D_800450D8;
 u32 D_800450DC;
 u8 D_800450E0[16];
@@ -42,7 +45,9 @@ u8 Extend_D_8004522A[32];
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wunknown-pragmas"
 
-#pragma GLOBAL_ASM("game/nonmatching/dma/ssb_create_dma_mq.s")
+void ssb_create_dma_mq(void) {
+    osCreateMesgQueue(&D_800450C0, &D_800450BC, OS_MESG_BLOCK);
+}
 
 #pragma GLOBAL_ASM("game/nonmatching/dma/ssb_data_dma.s")
 

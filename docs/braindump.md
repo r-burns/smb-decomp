@@ -24,6 +24,7 @@ utils/convert_bss.py <bss.s>
 9. Check build. If not OK, then there is probably some alignment issue due to the script only outputing basic types and arrays. Check the `.map` and split up arrays to `u32`, `u16`, or `u8` as necessary to match
 10. Once you get an OK, do a clean build to double check
 11. Commit!
+12. Create header and start decompiling
 
 ### Using mips to c
 
