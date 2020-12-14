@@ -54,7 +54,7 @@ def task_rust_tools():
         'targets': outputs
     }
 
-# Libultra 64bit Libmath Patcher
+# Libultra 64bit mips3 Patcher
 patcher_src = config.tools / 'patch_libultra_math.c'
 patcher = patcher_src.with_suffix('')
 
