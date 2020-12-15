@@ -1,14 +1,16 @@
 #include <PR/ultratypes.h>
 #include <PR/os.h>
+#include "ssb_types.h"
 
 #include "sys/dma.h"
+#include "sys/thread3.h"
 
 u8 gPiHandle[8];
 u8 D_80045048[20];
 u32 D_8004505C;
 u8 Extend_D_8004505C[92];
 OSMesg D_800450BC;
-OSMesgQueue D_800450C0;
+OSMesgQueue sDmaMesgQ; // D_800450C0
 u32 D_800450D8;
 u32 D_800450DC;
 u8 D_800450E0[16];
@@ -45,11 +47,49 @@ u8 Extend_D_8004522A[32];
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wunknown-pragmas"
 
+// create_dma_mq
 void ssb_create_dma_mq(void) {
-    osCreateMesgQueue(&D_800450C0, &D_800450BC, OS_MESG_BLOCK);
+    osCreateMesgQueue(&sDmaMesgQ, &D_800450BC, OS_MESG_BLOCK);
 }
 
-#pragma GLOBAL_ASM("game/nonmatching/dma/ssb_data_dma.s")
+// dma_copy
+void ssb_data_dma(OSPiHandle *handle, u32 physAddr, uintptr_t vAddr, u32 size, u8 direction) {
+    OSIoMesg mesg; //sp48
+
+    if (direction == OS_WRITE) {
+        osWritebackDCache((void *)vAddr, size);
+    } else {
+        osInvalDCache((void *)vAddr, size);
+    }
+
+    mesg.hdr.pri = OS_MESG_PRI_NORMAL;
+    mesg.hdr.retQueue = &sDmaMesgQ;
+    mesg.size = 0x10000;
+
+    while (size > 0x10000) {
+        mesg.dramAddr = (void *)vAddr;
+        mesg.devAddr = physAddr;
+
+        if (!D_80045020) {
+            osEPiStartDma(handle, &mesg, direction);
+        }
+        osRecvMesg(&sDmaMesgQ, NULL, OS_MESG_BLOCK);
+        size -= 0x10000;
+        physAddr += 0x10000;
+        vAddr += 0x10000;
+    }
+
+    if (size != 0) {
+        mesg.dramAddr = (void *)vAddr;
+        mesg.devAddr = physAddr;
+        mesg.size = size;
+
+        if (!D_80045020) {
+            osEPiStartDma(handle, &mesg, direction);
+        }
+        osRecvMesg(&sDmaMesgQ, NULL, OS_MESG_BLOCK);
+    }
+}
 
 #pragma GLOBAL_ASM("game/nonmatching/dma/load_overlay.s")
 

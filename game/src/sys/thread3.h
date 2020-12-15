@@ -4,6 +4,7 @@
 #include <PR/os.h>
 
 extern OSMesgQueue gScheduleTaskQueue;
+extern s32 D_80045020; 
 
 extern void thread3_scheduler(void *arg);
 

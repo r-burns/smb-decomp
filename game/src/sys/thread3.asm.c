@@ -118,7 +118,7 @@ u32 D_80045010;
 OSMesgQueue *D_80045014;
 void (*D_80045018)(void);
 s32 D_8004501C;
-s32 D_80045020;
+s32 D_80045020; // gSoftReseting ..?
 s32 D_80045024; // return of osAfterPreNMI
 void *D_80045028[3];
 u8 D_80045034;
