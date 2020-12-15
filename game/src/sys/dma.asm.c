@@ -65,6 +65,7 @@ void ssb_create_dma_mq(void) {
 
 #pragma GLOBAL_ASM("game/nonmatching/dma/func_80002E18.s")
 
+// Possible thread6.c start?
 #pragma GLOBAL_ASM("game/nonmatching/dma/func_800035E0.s")
 
 #pragma GLOBAL_ASM("game/nonmatching/dma/func_800035FC.s")
