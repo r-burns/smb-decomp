@@ -136,12 +136,12 @@ void check_stack_probes(void) {
 
 void thread5_main(UNUSED void *arg) {
     osCreateViManager(OS_PRIORITY_VIMGR);
-    gPiHandle = osCartRomInit();
-    maybe_setup_pi_handle();
+    gRomPiHandle = osCartRomInit();
+    sram_pi_init();
     osCreatePiManager(OS_PRIORITY_PIMGR, &sPIcmdQ, sPIcmdBuf, ARRAY_COUNT(sPIcmdBuf));
     create_dma_mq();
     // load IP3 font?
-    dma_read(PHYSICAL_TO_ROM(0xB70), D_80044C40, sizeof(D_80044C40));
+    dma_rom_read(PHYSICAL_TO_ROM(0xB70), D_80044C40, sizeof(D_80044C40));
     check_sp_imem();
     check_sp_dmem();
     osCreateMesgQueue(&gThreadingQueue, sBlockMsg, ARRAY_COUNT(sBlockMsg));

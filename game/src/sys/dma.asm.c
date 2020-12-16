@@ -1,22 +1,25 @@
 #include <PR/ultratypes.h>
 #include <PR/os.h>
-#include "ssb_types.h"
+#include <PR/rcp.h>
+
+#include <macros.h>
+#include <ssb_types.h>
 
 #include "sys/dma.h"
 #include "sys/thread3.h"
 
-OSPiHandle *gPiHandle; // gEPiHandle
-//u8 gPiHandle[8];
-u8 D_80045048[20];
-u32 D_8004505C;
-u8 Extend_D_8004505C[92];
-//u32 unref800450B4; //OSPiHandle Spacing?
-//u32 unref800450B8;
-OSMesg D_800450BC[1];
-OSMesgQueue sDmaMesgQ; // D_800450C0
-u32 D_800450D8;
+OSPiHandle *gRomPiHandle;
+OSPiHandle sSramPiHandle; // 80045048
+OSMesg sDmaMesg[1]; // 800450BC
+OSMesgQueue sDmaMesgQ; // 800450C0
+
+// thread 6 bss?
+void *D_800450D8;
 u32 D_800450DC;
-u8 D_800450E0[16];
+u32 D_800450E0;
+u32 pad800450E8[2];
+
+// thread6 here?
 u8 D_800450F0[24];
 u8 D_80045108[8];
 u8 D_80045110[8];
@@ -50,7 +53,7 @@ u8 Extend_D_8004522A[32];
 #pragma GCC diagnostic ignored "-Wunknown-pragmas"
 
 void create_dma_mq(void) {
-    osCreateMesgQueue(&sDmaMesgQ, D_800450BC, OS_MESG_BLOCK);
+    osCreateMesgQueue(&sDmaMesgQ, sDmaMesg, OS_MESG_BLOCK);
 }
 
 void dma_copy(OSPiHandle *handle, u32 physAddr, uintptr_t vAddr, u32 size, u8 direction) {
@@ -102,42 +105,123 @@ void load_overlay(struct Overlay *ovl) {
     }
 
     if (ovl->romEnd - ovl->romStart != 0) {
-        dma_copy(gPiHandle, ovl->romStart, (uintptr_t)ovl->ramLoadStart, ovl->romEnd - ovl->romStart, OS_READ);
+        dma_copy(gRomPiHandle, ovl->romStart, (uintptr_t)ovl->ramLoadStart, ovl->romEnd - ovl->romStart, OS_READ);
     }
-    
+
     if ((uintptr_t)ovl->ramNoloadEnd - (uintptr_t)ovl->ramNoloadStart != 0) {
         bzero((void *)(u32)ovl->ramNoloadStart, (uintptr_t)ovl->ramNoloadEnd - (uintptr_t)ovl->ramNoloadStart);
     }
 }
 
-void dma_read(u32 devAddr, void *ramAddr, u32 nbytes) {
-    dma_copy(gPiHandle, devAddr, (uintptr_t)ramAddr, nbytes, OS_READ);
+void dma_rom_read(u32 romSrc, void *ramDst, u32 nbytes) {
+    dma_copy(gRomPiHandle, romSrc, (uintptr_t)ramDst, nbytes, OS_READ);
 }
 
-void dma_write(void *ramAddr, u32 devAddr, u32 nbytes) {
-    dma_copy(gPiHandle, devAddr, (uintptr_t)ramAddr, nbytes, OS_WRITE);
-
+void dma_rom_write(void *ramSrc, u32 romDst, u32 nbytes) {
+    dma_copy(gRomPiHandle, romDst, (uintptr_t)ramSrc, nbytes, OS_WRITE);
 }
 
-#pragma GLOBAL_ASM("game/nonmatching/dma/maybe_setup_pi_handle.s")
+OSPiHandle *sram_pi_init(void) {
+    if (sSramPiHandle.baseAddress == PHYS_TO_K1(PI_DOM2_ADDR2)) {
+        return &sSramPiHandle;
+    }
 
-#pragma GLOBAL_ASM("game/nonmatching/dma/func_80002DA4.s")
+    sSramPiHandle.type = DEVICE_TYPE_SRAM;
+    sSramPiHandle.baseAddress = PHYS_TO_K1(PI_DOM2_ADDR2);
+    sSramPiHandle.latency = 5;
+    sSramPiHandle.pulse = 12;
+    sSramPiHandle.pageSize = 13;
+    sSramPiHandle.relDuration = 2;
+    sSramPiHandle.domain = PI_DOMAIN2;
+    sSramPiHandle.speed = 0;
+    bzero(&sSramPiHandle.transferInfo, 0x60); //once again, not sizeof(sSramPiHandle.transferInfo)...
+    osEPiLinkHandle(&sSramPiHandle);
 
-#pragma GLOBAL_ASM("game/nonmatching/dma/func_80002DE0.s")
+    return &sSramPiHandle;
+}
 
+void dma_sram_read(u32 romSrc, void *ramDst, u32 nbytes) {
+    dma_copy(&sSramPiHandle, romSrc, (uintptr_t)ramDst, nbytes, OS_READ);
+}
+
+void dma_sram_write(void *ramSrc, u32 romDst, u32 nbytes) {
+    dma_copy(&sSramPiHandle, romDst, (uintptr_t)ramSrc, nbytes, OS_WRITE);
+}
+
+#ifdef NON_MATCHING
+// some sort of crc function?
+// arg0 = array arg1 = nbytes?
+u32 func_80002E18(u16 *arg0, u32 arg1, void (*arg2)(void), u32 arg3) {
+    s32 s1;
+    u16 s2;
+
+    u16 *csr; // in a0 as cursor for arg0?
+
+    arg2();
+
+    csr = arg0;
+    s2 = *csr;
+    csr++;
+    s1 = 0x10;
+    if ((uintptr_t)csr >= (uintptr_t)arg0 + arg1) {
+        arg2();
+        csr = arg0;
+    }
+    // L80002E84
+    s2 = s2 << 16 | *csr;
+    s1 -= 0x10;
+    csr++;
+    if ((uintptr_t)csr >= (uintptr_t)arg0 + arg1) {
+        arg2();
+        csr = arg0;
+    }
+    //L80002EB0
+    s2 = s2 << 16 | *csr;
+    s1 += 0x10;
+    csr++;
+    if ((uintptr_t)csr >= (uintptr_t)arg0 + arg1) {
+        arg2();
+        csr = arg0;
+    }
+    // L80002ED8
+    s2 = s2 << 16 | *csr;
+    s1 -= 0x10;
+
+    //s2 << -s1;
+
+
+    return 0xDEAD;
+}
+
+#else
 #pragma GLOBAL_ASM("game/nonmatching/dma/func_80002E18.s")
+#endif /* NON_MATCHING */
 
-// Possible thread6.c start?
-#pragma GLOBAL_ASM("game/nonmatching/dma/func_800035E0.s")
+void func_800035E0(u32 devAddr, void *ramAddr, u32 nbytes) {
+    D_800450E0 = devAddr;
+    D_800450D8 = ramAddr;
+    D_800450DC = nbytes;
+}
 
-#pragma GLOBAL_ASM("game/nonmatching/dma/func_800035FC.s")
+void func_800035FC(void) {
+    dma_rom_read(D_800450E0, D_800450D8, D_800450DC);
+    D_800450E0 += D_800450DC;
+}
 
-#pragma GLOBAL_ASM("game/nonmatching/dma/func_80003648.s")
+void func_80003648(u32 devAddr, u32 arg1, void *ramAddr, u32 nbytes) {
+    func_800035E0(devAddr, ramAddr, nbytes);
+    func_80002E18(ramAddr, nbytes, func_800035FC, arg1);
+}
 
-#pragma GLOBAL_ASM("game/nonmatching/dma/func_80003690.s")
+void func_80003690(u32 devAddr, u32 arg1) {
+    u8 buffer[0x400];
+
+    func_80003648(devAddr, arg1, &buffer, ARRAY_COUNT(buffer));
+}
 
 #pragma GLOBAL_ASM("game/nonmatching/dma/unref_800036B4.s")
 
+// Possible thread6.c start?
 #pragma GLOBAL_ASM("game/nonmatching/dma/func_80003C00.s")
 
 #pragma GLOBAL_ASM("game/nonmatching/dma/func_80003CC4.s")

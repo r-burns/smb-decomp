@@ -29442,10 +29442,10 @@ glabel func_8001E91C
   /* 01F544 8001E944 8FB90038 */        lw $t9, 0x38($sp)
   /* 01F548 8001E948 3C0E800A */       lui $t6, %hi(D_8009D328)
   /* 01F54C 8001E94C 25CED328 */     addiu $t6, $t6, %lo(D_8009D328)
-  /* 01F550 8001E950 3C048004 */       lui $a0, %hi(gPiHandle)
+  /* 01F550 8001E950 3C048004 */       lui $a0, %hi(gRomPiHandle)
   /* 01F554 8001E954 A3A0001A */        sb $zero, 0x1a($sp)
   /* 01F558 8001E958 AFAE001C */        sw $t6, 0x1c($sp)
-  /* 01F55C 8001E95C 8C845040 */        lw $a0, %lo(gPiHandle)($a0)
+  /* 01F55C 8001E95C 8C845040 */        lw $a0, %lo(gRomPiHandle)($a0)
   /* 01F560 8001E960 27A50018 */     addiu $a1, $sp, 0x18
   /* 01F564 8001E964 00003025 */        or $a2, $zero, $zero
   /* 01F568 8001E968 AFAF0020 */        sw $t7, 0x20($sp)
@@ -29524,10 +29524,10 @@ glabel func_8001E99C
   /* 01F678 8001EA78 ACB0000C */        sw $s0, 0xc($a1)
   /* 01F67C 8001EA7C ACAB0008 */        sw $t3, 8($a1)
   /* 01F680 8001EA80 8C580010 */        lw $t8, 0x10($v0)
-  /* 01F684 8001EA84 3C048004 */       lui $a0, %hi(gPiHandle)
+  /* 01F684 8001EA84 3C048004 */       lui $a0, %hi(gRomPiHandle)
   /* 01F688 8001EA88 25390001 */     addiu $t9, $t1, 1
   /* 01F68C 8001EA8C ACB80010 */        sw $t8, 0x10($a1)
-  /* 01F690 8001EA90 8C845040 */        lw $a0, %lo(gPiHandle)($a0)
+  /* 01F690 8001EA90 8C845040 */        lw $a0, %lo(gRomPiHandle)($a0)
   /* 01F694 8001EA94 24420008 */     addiu $v0, $v0, 8
   /* 01F698 8001EA98 AD590000 */        sw $t9, ($t2) # D_8003CB20 + 0
   /* 01F69C 8001EA9C 00003025 */        or $a2, $zero, $zero

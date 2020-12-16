@@ -71391,11 +71391,11 @@ glabel func_ovl2_801159F8
   /* 091298 80115A98 AFA20038 */        sw $v0, 0x38($sp)
   /* 09129C 80115A9C 8FA40040 */        lw $a0, 0x40($sp)
   /* 0912A0 80115AA0 8FA5003C */        lw $a1, 0x3c($sp)
-  /* 0912A4 80115AA4 0C000B28 */       jal dma_read
+  /* 0912A4 80115AA4 0C000B28 */       jal dma_rom_read
   /* 0912A8 80115AA8 8FA60028 */        lw $a2, 0x28($sp)
   /* 0912AC 80115AAC 8FA40048 */        lw $a0, 0x48($sp)
   /* 0912B0 80115AB0 8FA50038 */        lw $a1, 0x38($sp)
-  /* 0912B4 80115AB4 0C000B28 */       jal dma_read
+  /* 0912B4 80115AB4 0C000B28 */       jal dma_rom_read
   /* 0912B8 80115AB8 8FA60024 */        lw $a2, 0x24($sp)
   /* 0912BC 80115ABC 3C048013 */       lui $a0, %hi(D_ovl2_80131A18)
   /* 0912C0 80115AC0 8C841A18 */        lw $a0, %lo(D_ovl2_80131A18)($a0)

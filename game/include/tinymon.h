@@ -64,5 +64,5 @@
 
 #define DG_TINYMON_READ_OP	1
 #define DG_TINYMON_WRITE_OP	2
-#define DG_TINYMON_DMA_READ_OP	3
-#define DG_TINYMON_DMA_WRITE_OP	4
+#define DG_TINYMON_dma_rom_read_OP	3
+#define DG_TINYMON_dma_rom_write_OP	4

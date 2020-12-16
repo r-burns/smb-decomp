@@ -6595,7 +6595,7 @@ glabel func_ovl0_800CD814
   /* 049210 800CD830 3C05800D */       lui $a1, %hi(D_ovl0_800D6334)
   /* 049214 800CD834 8CA56334 */        lw $a1, %lo(D_ovl0_800D6334)($a1)
   /* 049218 800CD838 24060018 */     addiu $a2, $zero, 0x18
-  /* 04921C 800CD83C 0C000B28 */       jal dma_read
+  /* 04921C 800CD83C 0C000B28 */       jal dma_rom_read
   /* 049220 800CD840 01CF2021 */      addu $a0, $t6, $t7
   /* 049224 800CD844 8FBF0014 */        lw $ra, 0x14($sp)
   /* 049228 800CD848 27BD0018 */     addiu $sp, $sp, 0x18
@@ -6635,7 +6635,7 @@ glabel func_ovl0_800CD854
   /* 0492A8 800CD8C8 24170002 */     addiu $s7, $zero, 2
   .L800CD8CC:
   /* 0492AC 800CD8CC 02802025 */        or $a0, $s4, $zero
-  /* 0492B0 800CD8D0 0C000B28 */       jal dma_read
+  /* 0492B0 800CD8D0 0C000B28 */       jal dma_rom_read
   /* 0492B4 800CD8D4 02A02825 */        or $a1, $s5, $zero
   /* 0492B8 800CD8D8 24170002 */     addiu $s7, $zero, 2
   .L800CD8DC:
@@ -6682,7 +6682,7 @@ glabel func_ovl0_800CD854
   /* 049348 800CD968 96330000 */       lhu $s3, ($s1) # D_ovl0_800D6334 + 0
   /* 04934C 800CD96C 02802025 */        or $a0, $s4, $zero
   /* 049350 800CD970 02002825 */        or $a1, $s0, $zero
-  /* 049354 800CD974 0C000B28 */       jal dma_read
+  /* 049354 800CD974 0C000B28 */       jal dma_rom_read
   /* 049358 800CD978 24060002 */     addiu $a2, $zero, 2
   /* 04935C 800CD97C 16570005 */       bne $s2, $s7, .L800CD994
   /* 049360 800CD980 00000000 */       nop 
@@ -6833,7 +6833,7 @@ glabel func_ovl0_800CDA38
   .L800CDB88:
   /* 049568 800CDB88 02002025 */        or $a0, $s0, $zero
   /* 04956C 800CDB8C 02202825 */        or $a1, $s1, $zero
-  /* 049570 800CDB90 0C000B28 */       jal dma_read
+  /* 049570 800CDB90 0C000B28 */       jal dma_rom_read
   /* 049574 800CDB94 24060002 */     addiu $a2, $zero, 2
   /* 049578 800CDB98 0C03368E */       jal func_ovl0_800CDA38
   /* 04957C 800CDB9C 96240000 */       lhu $a0, ($s1)
@@ -14275,12 +14275,12 @@ glabel func_ovl0_800D45F4
   /* 04FFEC 800D460C 248444E0 */     addiu $a0, $a0, %lo(D_800A44E0)
   /* 04FFF0 800D4610 AC8205E8 */        sw $v0, 0x5e8($a0) # D_800A44E0 + 1512
   /* 04FFF4 800D4614 00002825 */        or $a1, $zero, $zero
-  /* 04FFF8 800D4618 0C000B78 */       jal func_80002DE0
+  /* 04FFF8 800D4618 0C000B78 */       jal dma_sram_write
   /* 04FFFC 800D461C 240605EC */     addiu $a2, $zero, 0x5ec
   /* 050000 800D4620 3C04800A */       lui $a0, %hi(D_800A44E0)
   /* 050004 800D4624 248444E0 */     addiu $a0, $a0, %lo(D_800A44E0)
   /* 050008 800D4628 240505F0 */     addiu $a1, $zero, 0x5f0
-  /* 05000C 800D462C 0C000B78 */       jal func_80002DE0
+  /* 05000C 800D462C 0C000B78 */       jal dma_sram_write
   /* 050010 800D4630 240605EC */     addiu $a2, $zero, 0x5ec
   /* 050014 800D4634 8FBF0014 */        lw $ra, 0x14($sp)
   /* 050018 800D4638 27BD0018 */     addiu $sp, $sp, 0x18
@@ -14293,7 +14293,7 @@ glabel func_ovl0_800D4644
   /* 05002C 800D464C 3C05800A */       lui $a1, %hi(D_800A44E0)
   /* 050030 800D4650 24A544E0 */     addiu $a1, $a1, %lo(D_800A44E0)
   /* 050034 800D4654 00002025 */        or $a0, $zero, $zero
-  /* 050038 800D4658 0C000B69 */       jal func_80002DA4
+  /* 050038 800D4658 0C000B69 */       jal dma_sram_read
   /* 05003C 800D465C 240605EC */     addiu $a2, $zero, 0x5ec
   /* 050040 800D4660 0C035169 */       jal func_ovl0_800D45A4
   /* 050044 800D4664 00000000 */       nop 
@@ -14301,7 +14301,7 @@ glabel func_ovl0_800D4644
   /* 05004C 800D466C 240405F0 */     addiu $a0, $zero, 0x5f0
   /* 050050 800D4670 3C05800A */       lui $a1, %hi(D_800A44E0)
   /* 050054 800D4674 24A544E0 */     addiu $a1, $a1, %lo(D_800A44E0)
-  /* 050058 800D4678 0C000B69 */       jal func_80002DA4
+  /* 050058 800D4678 0C000B69 */       jal dma_sram_read
   /* 05005C 800D467C 240605EC */     addiu $a2, $zero, 0x5ec
   /* 050060 800D4680 0C035169 */       jal func_ovl0_800D45A4
   /* 050064 800D4684 00000000 */       nop 
