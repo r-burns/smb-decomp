@@ -2740,7 +2740,7 @@ glabel func_ovl65_8018F7B4
   /* 10E05C 8018F7FC 2B01005D */      slti $at, $t8, 0x5d
   /* 10E060 8018F800 54200023 */      bnel $at, $zero, .L8018F890
   /* 10E064 8018F804 240C00FF */     addiu $t4, $zero, 0xff
-  /* 10E068 8018F808 0C000B28 */       jal ssb_rom_copy_no_writeback
+  /* 10E068 8018F808 0C000B28 */       jal dma_read
   /* 10E06C 8018F80C 24060010 */     addiu $a2, $zero, 0x10
   /* 10E070 8018F810 3C100000 */       lui $s0, %hi(D_NF_000000C8)
   /* 10E074 8018F814 261000C8 */     addiu $s0, $s0, %lo(D_NF_000000C8)

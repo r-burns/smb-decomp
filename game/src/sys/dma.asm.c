@@ -5,11 +5,14 @@
 #include "sys/dma.h"
 #include "sys/thread3.h"
 
-u8 gPiHandle[8];
+OSPiHandle *gPiHandle; // gEPiHandle
+//u8 gPiHandle[8];
 u8 D_80045048[20];
 u32 D_8004505C;
 u8 Extend_D_8004505C[92];
-OSMesg D_800450BC;
+//u32 unref800450B4; //OSPiHandle Spacing?
+//u32 unref800450B8;
+OSMesg D_800450BC[1];
 OSMesgQueue sDmaMesgQ; // D_800450C0
 u32 D_800450D8;
 u32 D_800450DC;
@@ -43,18 +46,15 @@ u16 D_8004522A;
 u32 fake_2C_extend_D_8004522A;
 u8 Extend_D_8004522A[32];
 
-
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wunknown-pragmas"
 
-// create_dma_mq
-void ssb_create_dma_mq(void) {
-    osCreateMesgQueue(&sDmaMesgQ, &D_800450BC, OS_MESG_BLOCK);
+void create_dma_mq(void) {
+    osCreateMesgQueue(&sDmaMesgQ, D_800450BC, OS_MESG_BLOCK);
 }
 
-// dma_copy
-void ssb_data_dma(OSPiHandle *handle, u32 physAddr, uintptr_t vAddr, u32 size, u8 direction) {
-    OSIoMesg mesg; //sp48
+void dma_copy(OSPiHandle *handle, u32 physAddr, uintptr_t vAddr, u32 size, u8 direction) {
+    OSIoMesg mesg;
 
     if (direction == OS_WRITE) {
         osWritebackDCache((void *)vAddr, size);
@@ -91,11 +91,33 @@ void ssb_data_dma(OSPiHandle *handle, u32 physAddr, uintptr_t vAddr, u32 size, u
     }
 }
 
-#pragma GLOBAL_ASM("game/nonmatching/dma/load_overlay.s")
+void load_overlay(struct Overlay *ovl) { 
+    if ((uintptr_t)ovl->ramTextEnd - (uintptr_t)ovl->ramTextStart != 0) {
+        osInvalICache((void *)(u32)ovl->ramTextStart, (uintptr_t)ovl->ramTextEnd - (uintptr_t)ovl->ramTextStart);
+        osInvalDCache((void *)(u32)ovl->ramTextStart, (uintptr_t)ovl->ramTextEnd - (uintptr_t)ovl->ramTextStart);
+    }
 
-#pragma GLOBAL_ASM("game/nonmatching/dma/ssb_rom_copy_no_writeback.s")
+    if ((uintptr_t)ovl->ramDataEnd - (uintptr_t)ovl->ramDataStart != 0) {
+        osInvalDCache((void *)(u32)ovl->ramDataStart, (uintptr_t)ovl->ramDataEnd - (uintptr_t)ovl->ramDataStart);
+    }
 
-#pragma GLOBAL_ASM("game/nonmatching/dma/ssb_rom_copy_writeback.s")
+    if (ovl->romEnd - ovl->romStart != 0) {
+        dma_copy(gPiHandle, ovl->romStart, (uintptr_t)ovl->ramLoadStart, ovl->romEnd - ovl->romStart, OS_READ);
+    }
+    
+    if ((uintptr_t)ovl->ramNoloadEnd - (uintptr_t)ovl->ramNoloadStart != 0) {
+        bzero((void *)(u32)ovl->ramNoloadStart, (uintptr_t)ovl->ramNoloadEnd - (uintptr_t)ovl->ramNoloadStart);
+    }
+}
+
+void dma_read(u32 devAddr, void *ramAddr, u32 nbytes) {
+    dma_copy(gPiHandle, devAddr, (uintptr_t)ramAddr, nbytes, OS_READ);
+}
+
+void dma_write(void *ramAddr, u32 devAddr, u32 nbytes) {
+    dma_copy(gPiHandle, devAddr, (uintptr_t)ramAddr, nbytes, OS_WRITE);
+
+}
 
 #pragma GLOBAL_ASM("game/nonmatching/dma/maybe_setup_pi_handle.s")
 

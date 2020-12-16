@@ -139,9 +139,9 @@ void thread5_main(UNUSED void *arg) {
     gPiHandle = osCartRomInit();
     maybe_setup_pi_handle();
     osCreatePiManager(OS_PRIORITY_PIMGR, &sPIcmdQ, sPIcmdBuf, ARRAY_COUNT(sPIcmdBuf));
-    ssb_create_dma_mq();
+    create_dma_mq();
     // load IP3 font?
-    ssb_rom_copy_no_writeback(PHYSICAL_TO_ROM(0xB70), D_80044C40, sizeof(D_80044C40));
+    dma_read(PHYSICAL_TO_ROM(0xB70), D_80044C40, sizeof(D_80044C40));
     check_sp_imem();
     check_sp_dmem();
     osCreateMesgQueue(&gThreadingQueue, sBlockMsg, ARRAY_COUNT(sBlockMsg));

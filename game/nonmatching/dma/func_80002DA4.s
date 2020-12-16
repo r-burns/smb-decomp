@@ -9,7 +9,7 @@ glabel func_80002DA4
   /* 0039BC 80002DBC 3C048004 */       lui $a0, %hi(D_80045048)
   /* 0039C0 80002DC0 8FA60024 */        lw $a2, 0x24($sp)
   /* 0039C4 80002DC4 24845048 */     addiu $a0, $a0, %lo(D_80045048)
-  /* 0039C8 80002DC8 0C000AA4 */       jal ssb_data_dma
+  /* 0039C8 80002DC8 0C000AA4 */       jal dma_copy
   /* 0039CC 80002DCC AFA00010 */        sw $zero, 0x10($sp)
   /* 0039D0 80002DD0 8FBF001C */        lw $ra, 0x1c($sp)
   /* 0039D4 80002DD4 27BD0020 */     addiu $sp, $sp, 0x20
