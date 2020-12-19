@@ -1,6 +1,5 @@
-use anyhow::Error;
-use std::path::PathBuf;
-use structopt::StructOpt;
+use anyhow::{Context, Error};
+use std::{ffi::OsStr, path::PathBuf};
 
 mod clean;
 mod config;
@@ -8,68 +7,174 @@ mod extract;
 mod ignore;
 mod local;
 
-/// Extract neccessary resources from SSB64 rom image
-#[derive(Debug, StructOpt)]
-enum Opts {
-    /// extract files into repo
-    Extract(Extract),
-    /// Generate new or add to existing .gitignore the extracted files
-    Ignore(GitIgnore),
-    Clean {
-        /// path to local assets file
-        #[structopt(parse(from_os_str))]
-        local: PathBuf,
-    },
+type ArgResult<T> = Result<T, pico_args::Error>;
+
+fn print_usage() {
+    indoc::printdoc!(
+        r#"
+        {name} {version}
+        Tool for extracting and managing resources from an SSB64 rom
+
+        Usage:
+        -h, --help      print this message
+        -V, --version   print version info
+        extract         extract resource into the repo
+        ignore          generate or modify .gitignore to ignore extracted files
+        clean           remove extracted assets
+
+        {name} extract:
+        -v, --version {{us}}          SSB64 version to extract assets from
+        -r, --rom <file>            path to ROM of `version`
+        -a, --assets <file>         path to .toml asset information file
+        -l, --local <file>          path to local assets file (created if missing)
+        [-f, --force]               replace any already extracted files
+        [-d, --dry-run]             show files to extract
+
+        {name} gitignore:
+        -r, --rom <file>            path to ROM
+        -a, --assets <file>         path to .toml asset information file
+        -i, --ignore <file>         path to .gitignore file (created if missing)
+
+        {name} clean <assets file>:
+        <assets file>               path to .toml asset information file
+
+        "#,
+        name = env!("CARGO_BIN_NAME"),
+        version = env!("CARGO_PKG_VERSION")
+    )
 }
 
-#[derive(Debug, StructOpt)]
-struct Extract {
-    /// version of SSB64 to extract from [us]
-    #[structopt(short, long, parse(try_from_str))]
-    version: config::Version,
-    /// path to rom
-    #[structopt(short, long, parse(from_os_str))]
-    rom: PathBuf,
-    /// path to assets.toml
-    #[structopt(short, long, parse(from_os_str))]
-    assets: PathBuf,
-    /// path to local assets file (info on version and already extracted assets)
-    #[structopt(short, long, parse(from_os_str))]
-    local: PathBuf,
-    /// replace any already extracted files (default is to do nothing)
-    #[structopt(short, long)]
-    force: bool,
-    /// show files to be extracted, but do not extract
-    #[structopt(short, long)]
-    dry_run: bool,
-}
-
-#[derive(Debug, StructOpt)]
-struct GitIgnore {
-    /// path to rom
-    #[structopt(short, long, parse(from_os_str))]
-    rom: PathBuf,
-    /// path to assets.toml
-    #[structopt(short, long, parse(from_os_str))]
-    assets: PathBuf,
-    /// path to .gitignore, or path for new .gitignore
-    #[structopt(short, long, parse(from_os_str))]
-    ignore: PathBuf,
+fn print_version() {
+    println!(
+        "{} version {}",
+        env!("CARGO_BIN_NAME"),
+        env!("CARGO_PKG_VERSION")
+    );
 }
 
 fn main() {
-    let opts = Opts::from_args();
-
-    if let Err(e) = run(opts) {
+    if let Err(e) = run() {
         eprintln!("Error: {:?}", e);
         ::std::process::exit(1);
     }
 }
 
-fn run(opts: Opts) -> Result<(), Error> {
-    match opts {
-        Opts::Extract(info) => extract::extract_assets(info),
-        Opts::Ignore(info) => ignore::modify_gitignore(info),
-        Opts::Clean { local } => clean::clean_assets(&local),
+fn run() -> Result<(), Error> {
+    let args = Args::from_env().context("parsing CLI args")?;
+
+    match args {
+        Args::Extract(info) => extract::extract_assets(info),
+        Args::Ignore(info) => ignore::modify_gitignore(info),
+        Args::Clean { local } => clean::clean_assets(&local),
+        Args::Help => Ok(print_usage()),
+        Args::Version => Ok(print_version()),
     }
+}
+
+enum Args {
+    Extract(Extract),
+    Ignore(GitIgnore),
+    Clean { local: PathBuf },
+    Help,
+    Version,
+}
+
+impl Args {
+    fn from_env() -> ArgResult<Self> {
+        let mut args = pico_args::Arguments::from_env();
+
+        if args.contains(["-h", "--help"]) {
+            return Ok(Self::Help);
+        }
+
+        if args.contains(["-V", "--version"]) {
+            return Ok(Self::Version);
+        }
+
+        match args.subcommand()?.as_deref() {
+            Some("extract") => Extract::from_args(args).map(Self::Extract),
+            Some("ignore") => GitIgnore::from_args(args).map(Self::Ignore),
+            Some("clean") => {
+                let local = args.free_os().and_then(get_first_free).map(PathBuf::from)?;
+
+                Ok(Self::Clean { local })
+            }
+            Some(unk) => {
+                println!("Unrecognized subcommand \"{}\"", unk);
+                Ok(Self::Help)
+            }
+            None => Ok(Self::Help),
+        }
+    }
+}
+
+struct Extract {
+    /// version of SSB64 to extract from [us]
+    version: config::Version,
+    /// path to rom
+    rom: PathBuf,
+    /// path to assets.toml
+    assets: PathBuf,
+    /// path to local assets file (info on version and already extracted assets)
+    local: PathBuf,
+    /// replace any already extracted files (default is to do nothing)
+    force: bool,
+    /// show files to be extracted, but do not extract
+    dry_run: bool,
+}
+
+impl Extract {
+    fn from_args(mut args: pico_args::Arguments) -> ArgResult<Self> {
+        let version = args.value_from_str(["-v", "--version"])?;
+        let rom = args.value_from_os_str(["-r", "--rom"], to_pathbuf)?;
+        let assets = args.value_from_os_str(["-a", "--assets"], to_pathbuf)?;
+        let local = args.value_from_os_str(["-l", "--local"], to_pathbuf)?;
+        let force = args.contains(["-f", "--force"]);
+        let dry_run = args.contains(["-d", "--dry-run"]);
+
+        Ok(Self {
+            version,
+            rom,
+            assets,
+            local,
+            force,
+            dry_run,
+        })
+    }
+}
+
+struct GitIgnore {
+    /// path to rom
+    rom: PathBuf,
+    /// path to assets.toml
+    assets: PathBuf,
+    /// path to .gitignore, or path for new .gitignore
+    ignore: PathBuf,
+}
+
+impl GitIgnore {
+    fn from_args(mut args: pico_args::Arguments) -> ArgResult<Self> {
+        let rom = args.value_from_os_str(["-r", "--rom"], to_pathbuf)?;
+        let assets = args.value_from_os_str(["-a", "--assets"], to_pathbuf)?;
+        let ignore = args.value_from_os_str(["-i", "--ignore"], to_pathbuf)?;
+
+        Ok(Self {
+            rom,
+            assets,
+            ignore,
+        })
+    }
+}
+
+fn to_pathbuf(s: &OsStr) -> ArgResult<PathBuf> {
+    Ok(PathBuf::from(s.to_os_string()))
+}
+
+fn get_first_free<T>(free_args: Vec<T>) -> ArgResult<T> {
+    free_args
+        .into_iter()
+        .nth(0)
+        .ok_or_else(|| pico_args::Error::ArgumentParsingFailed {
+            cause: "missing free argument".into(),
+        })
 }
