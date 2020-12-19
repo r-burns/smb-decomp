@@ -24,7 +24,7 @@ config = Config(
 tc = ToolChain.from_config(config)
 
 DOIT_CONFIG = {
-    'default_tasks': ['compare' if not config.no_match else 'build_rom'], 
+    'default_tasks': ['print_config', 'compare' if not config.no_match else 'build_rom'], 
     'reporter': 'executed-only'
 }
 
@@ -200,6 +200,14 @@ def task_distclean():
         'task_dep': ['clean_recompiled_ido']
     }
 
+def task_print_config():
+    ''' Print build config info to stdout '''
+    info = config.__str__()
+
+    return {
+        'actions': [['echo', info]],
+        'verbosity': 2,
+    }
 
 ########## ROM Linking and Creation ##################
 # ROM and Build Artifacts

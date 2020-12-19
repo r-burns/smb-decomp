@@ -85,9 +85,12 @@ class ToolChain:
         # Configure system C/C++ compiler
         sys_cc = Compiler(['gcc'], ['-O2'])
         sys_cxx = CXX(['g++'], ['-O2'])
-        # TODO: check for gcc cpp on clang/apple builds
-        #       or remove once there's a linker spec file tool...
-        system = SystemTools(sys_cc, sys_cxx, ['cpp-10'])
+        if config.host == 'darwin':
+            system = SystemTools(sys_cc, sys_cxx, ['clang', '-E', '-P', '-x', 'c'])
+        elif config.host == 'linux':
+            system = SystemTools(sys_cc, sys_cxx, ['cpp'])
+        else:
+            raise Exception(f'Unsupported Host OS: {config.host}')
         # Configure cross toolchain for game
         game = _get_game_crosschain(config.toolchain, config)
         # Configure libultra cross toolchain for game

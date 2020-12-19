@@ -10,13 +10,11 @@ GAME_DEFAULT_TC     = 'ido7.1'
 LIBULTRA_DEFAULT_TC = 'ido5.3'
 
 def _get_choice(var, default, choices):
-    print(var)
     possible = get_var(var, default)
-    print(possible)
     if possible in choices: 
         return possible
     else:
-        raise Exception(var + " not in possible options: " + possible)
+        raise Exception(f'{var} "{possible}" not in options: {choices}')
 
 def _get_flag(flag):
     flag = get_var(flag, False)
@@ -57,6 +55,9 @@ class Config():
         self.no_match = _get_flag('NON_MATCHING')
         self.avoid_ub = _get_flag('AVOID_UB')
 
+        # force non-matching if avoiding ub
+        self.no_match = self.no_match or self.avoid_ub
+
         # Build directories
         self.all_builds = build_base
         self.build_dir = build_base / self.target_version
@@ -74,3 +75,16 @@ class Config():
         o.parent.mkdir(parents=True, exist_ok=True)
 
         return o
+    
+    def __str__(self):
+        common = (
+            "======== Build Config ========\n"
+            f"  Host: {self.host}\n"
+            f"  Target: {self.target}\n"
+            f"  Version: {self.version}\n"
+            f"  Build Location: {self.build_dir}\n"
+            f"  Non Matching: {self.no_match}\n"
+            f"  Avoid UB: {self.avoid_ub}\n"
+        )
+
+        return common
