@@ -32,8 +32,8 @@ void __osSetWatchLo(u32);
 // generate an overlay_symbols.h?
 extern u32 _loadovlSegRomStart;
 extern u32 _loadovlSegRomEnd;
-extern void *_loadovlLoadStart;
-extern void *_loadovlLoadEnd;
+extern void *_loadovlSegStart;
+extern void *_loadovlSegEnd;
 extern void *_loadovlTextStart;
 extern void *_loadovlTextEnd;
 extern void *_loadovlDataStart;
@@ -45,7 +45,7 @@ extern void *_loadovlSegNoloadEnd;
 static struct Overlay OverlayManager = {
     (u32) &_loadovlSegRomStart,
     (u32) &_loadovlSegRomEnd,
-    &_loadovlLoadStart,
+    &_loadovlSegStart,
     &_loadovlTextStart,
     &_loadovlTextEnd,
     &_loadovlDataStart,

@@ -21,12 +21,6 @@
 #define END_NOLOAD(name) \
     _##name##SegNoloadEnd = ADDR(.name.noload) + SIZEOF(.name.noload);
 
-#define BEGIN_OVERLAY_LOAD(name) \
-    _##name##LoadStart = ABSOLUTE(.);
-
-#define END_OVERLAY_LOAD(name) \
-    _##name##LoadEnd = ABSOLUTE(.); \
-
 #define BEGIN_OVERLAY_TEXT(name) \
     _##name##TextStart = ABSOLUTE(.);
 
@@ -258,7 +252,6 @@ SECTIONS
     
     BEGIN_SEG(loadovl, 0x800A1980)
     {
-        BEGIN_OVERLAY_LOAD(loadovl)
         BEGIN_OVERLAY_TEXT(loadovl)
         asm/loadovl/loadovl.text.o(.text);
         END_OVERLAY_TEXT(loadovl)
@@ -266,7 +259,6 @@ SECTIONS
         BEGIN_OVERLAY_DATA(loadovl)
         asm/loadovl/loadovl.data.o(.data);
         END_OVERLAY_DATA(loadovl)
-        END_OVERLAY_LOAD(loadovl)
     }
     END_SEG(loadovl)
     BEGIN_NOLOAD(loadovl)
