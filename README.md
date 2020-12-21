@@ -7,4 +7,4 @@ It builds the following ROM(s):
 |--------------|-------------------------------------------|
 | ssb64.us.z64 | `e2929e10fccc0aa84e5776227e798abc07cedabf`|
 
-To setup and build the rom, see [BUILDING.md]
+To setup and build the rom, see [BUILDING.md](BUILDING.md)
