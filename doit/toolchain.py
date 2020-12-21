@@ -83,11 +83,13 @@ class ToolChain:
 
     def from_config(config):
         # Configure system C/C++ compiler
-        sys_cc = Compiler(['gcc'], ['-O2'])
-        sys_cxx = CXX(['g++'], ['-O2'])
         if config.host == 'darwin':
+            sys_cc = Compiler(['clang'], ['-O2'])
+            sys_cxx = CXX(['clang++'], ['-O2'])
             system = SystemTools(sys_cc, sys_cxx, ['clang', '-E', '-P', '-x', 'c'])
         elif config.host == 'linux':
+            sys_cc = Compiler(['gcc'], ['-O2'])
+            sys_cxx = CXX(['g++'], ['-O2'])
             system = SystemTools(sys_cc, sys_cxx, ['cpp'])
         else:
             raise Exception(f'Unsupported Host OS: {config.host}')
@@ -171,6 +173,37 @@ class ToolChain:
         settings = mipsiset + [opt]
 
         return tc.AS + tc.ASFLAGS + settings + incs + files
+    
+    def __str__(self):
+        stringify = lambda iter: ' '.join(map(str, iter))
+        s = (
+            "======= Toolchain Info =======\n"
+            f"  Defines: {stringify(self.user_defines)}\n"
+            "  System:\n"
+            f"    CC:       {stringify(self.system.c.CC)}\n"
+            #f"    CFLAGS:   {stringify(self.system.c.CFLAGS)}\n"
+            f"    CXX:      {stringify(self.system.cxx.CXX)}\n"
+            #f"    CXXFLAGS: {stringify(self.system.cxx.CXXFLAGS)}\n"
+            f"    CPP:      {stringify(self.system.CPP)}\n"
+            "  Game:\n"
+            f"    CC:      {stringify(self.game.c.CC)}\n"
+            #f"    CFLAGS:  {stringify(self.game.c.CFLAGS)}\n"
+            f"    AS:      {stringify(self.game.assembler.AS)}\n"
+            #f"    ASFLAGS: {stringify(self.game.assembler.ASFLAGS)}\n"
+            f"    LD:      {stringify(self.game.utils.LD)}\n"
+            f"    OBJCOPY: {stringify(self.game.utils.OBJCOPY)}\n"
+            f"    AR:      {stringify(self.game.utils.AR)}\n"
+            "  Libultra:\n"
+            f"    CC:      {stringify(self.libultra.c.CC)}\n"
+            #f"    CFLAGS:  {stringify(self.libultra.c.CFLAGS)}\n"
+            f"    AS:      {stringify(self.libultra.assembler.AS)}\n"
+            #f"    ASFLAGS: {stringify(self.libultra.assembler.ASFLAGS)}\n"
+            f"    LD:      {stringify(self.libultra.utils.LD)}\n"
+            f"    OBJCOPY: {stringify(self.libultra.utils.OBJCOPY)}\n"
+            f"    AR:      {stringify(self.libultra.utils.AR)}\n"
+        )
+
+        return s
 
 
 ### Helper Routines ###

@@ -203,7 +203,7 @@ def task_distclean():
 
 def task_print_config():
     ''' Print build config info to stdout '''
-    info = config.__str__()
+    info = str(config) + str(tc)
 
     return {
         'actions': [['echo', info]],
