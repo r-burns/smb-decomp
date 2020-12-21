@@ -1,10 +1,8 @@
-from doit import get_var
+from doit import get_var, create_after
 from pathlib import Path
 import subprocess
 import sys
 import shutil
-
-import extract_assets
 
 sys.path.append('doit')
 from parsemk import parse_mk_dependencies
@@ -38,7 +36,8 @@ rust_manifest = rust_dir / 'Cargo.toml'
 rust_output_dir = rust_dir / 'target' / 'release'
 n64gfx = rust_output_dir / 'n64gfx'
 imgbank = rust_output_dir / 'imgbank'
-rust_tools = [n64gfx, imgbank]
+extract = rust_output_dir / 'extract'
+rust_tools = [n64gfx, imgbank, extract]
 
 def task_rust_tools():
     ''' Use cargo to check and rebuild rust based tools '''
@@ -192,12 +191,14 @@ def task_distclean():
     # Asset removal must happen before tool cleaning
     return {
         'actions': [
-            (extract_assets.clean, [None], None),
             f'rm -rf {config.all_builds}',
             f'rm -rf {patcher}',
             f'cargo clean --manifest-path {rust_manifest}',
         ],
-        'task_dep': ['clean_recompiled_ido']
+        'task_dep': [
+            'clean_recompiled_ido',
+            'clean_assets',
+        ],
     }
 
 def task_print_config():
@@ -208,6 +209,72 @@ def task_print_config():
         'actions': [['echo', info]],
         'verbosity': 2,
     }
+
+########## Asset Extraction ##########################
+asset_cache = Path('.localassets')
+assets = Path('assets.toml')
+extracted_assets = config.build_dir / 'extracted-assets.txt'
+baserom = Path(f'baserom.{config.version}.z64')
+
+def task_generate_asset_list():
+    ''' Create a list of assets that are extracted from the baserom '''
+    list_assets = [ extract,
+        'list',
+        '-v', config.version,
+        '-r', baserom,
+        '-a', assets,
+        '-o', extracted_assets,
+    ]
+
+    return {
+        'actions': [list_assets],
+        'file_dep': [extract, baserom, assets],
+        'targets': [extracted_assets],
+    }
+
+@create_after(executed='generate_asset_list', target_regex='*')
+def task_extract_assets():
+    ''' Extract necessary assets from SSB64 baserom '''
+
+    extract_cmd = [ extract,
+        'extract',
+        '-a', assets,
+        '-l', asset_cache,
+        '-r', baserom,
+        '-v', config.version
+    ]
+
+    files = []
+    try:
+        with open(extracted_assets) as f:
+            files = [line.strip() for line in f]
+    except FileNotFoundError:
+        # doit will only create this task after making the list if 
+        # there is an active run. For other commands (list, info, etc.),
+        # it create this task as normal
+        pass
+    
+    return {
+        'actions': [extract_cmd],
+        'file_dep': [extract, baserom, assets, asset_cache, extracted_assets],
+        'targets': files,
+    }
+
+def task_clean_assets():
+    clean_cmd = [ extract, 'clean', asset_cache ]
+    remove_list = [ 'rm', '-f', extracted_assets ]
+
+    return {
+        'actions': [clean_cmd, remove_list],
+        'file_dep': [extract],
+        'uptodate': [False],
+    }
+
+def ensure_asset_extraction():
+    ''' Return the asset extraction task name if assets are not yet extracted '''
+    assets_are_extracted = asset_cache.exists() and extracted_assets.exists()
+
+    return [] if assets_are_extracted else ['extract_assets']
 
 ########## ROM Linking and Creation ##################
 # ROM and Build Artifacts
@@ -251,28 +318,38 @@ def task_build_rom():
     """ Build the ROM """
 
     binutils = tc.game.utils
+    ssb64_d, linking_deps = get_make_dependencies(ssb_lds, rom_elf)
  
-    link_rom = binutils.LD                                                \
-        + ['--no-check-sections', '-Map', rom_map, '-T', ssb_lds, '-T', ] \
-        + unk_symbols                                                     \
-        + ['-o', rom_elf, '-L', config.build_dir, '-lultra'] + libultra_exports
+    link_rom = binutils.LD + [
+        '--no-check-sections', 
+        '-Map', rom_map, 
+        '-T', ssb_lds, 
+        '-T' ] + unk_symbols + [
+        '-o', rom_elf, 
+        '-L', config.build_dir, 
+        '-lultra'] + libultra_exports + [
+        f'--dependency-file={ssb64_d}'
+    ]
     
-    copy_rom = binutils.OBJCOPY \
-        + ['--pad-to=0x1000000', '--gap-fill=0xFF', '-O', 'binary', rom_elf, rom]
-
-    components = [ssb_lds, libultra_a] + unk_symbols + c_objs + s_objs + temp_objs + imgbank_o
+    copy_rom = binutils.OBJCOPY + [
+        '--pad-to=0x1000000', 
+        '--gap-fill=0xFF', 
+        '-O', 'binary', 
+        rom_elf, rom
+    ]
 
     return { 
         'actions': [link_rom, copy_rom],
-        'file_dep': components,
+        'file_dep': linking_deps,
         'task_dep': [
             'assemble',
             'cc', 
+            'libultra',
             'link_resources',
             'link_sprite_bank',
             'temp_bin_obj'
         ],
-        'targets': [rom_elf, rom_map, rom],
+        'targets': [rom_elf, rom_map, rom, ssb64_d],
         'clean': [f'rm -rf {config.all_builds}'],
     }
 
@@ -291,9 +368,7 @@ def task_assemble():
     ''' Assemble .s files into .o with dependencies .d '''
 
     for f, o in zip(s_files, s_objs):
-        d = o.with_suffix('.d')
-        found_deps = parse_mk_dependencies(d)
-        deps = found_deps[o] if found_deps is not None else [f]
+        d, deps = get_make_dependencies(f, o)
 
         assemble = tc.invoke_as(
             includes = [inc_dir, asm_dir, f.parent],
@@ -305,15 +380,16 @@ def task_assemble():
         yield {
             'name': o,
             'actions': [assemble],
-            'file_dep': deps,
             'targets': [o, d],
+            'file_dep': deps,
+            'task_dep': ensure_asset_extraction(),
         }
 
 ########## Game C Compiling ##########################
 inc_dir = config.game_dir / 'include'
 c_dir = config.game_dir / 'src'
-c_files = list(c_dir.rglob('*.c'))
-c_objs = list(map(lambda f: config.to_output(f, '.o'), c_files))
+c_files = c_dir.rglob('*.c')
+#c_objs = list(map(lambda f: config.to_output(f, '.o'), c_files))
 
 def task_cc():
     ''' Compile .c files into .o '''
@@ -321,10 +397,9 @@ def task_cc():
     includes = [inc_dir, c_dir]
     tools_dep = get_toolchain_deps(config.toolchain)
 
-    for f, o in zip(c_files, c_objs):
-        d = o.with_suffix('.d')
-        found_deps = parse_mk_dependencies(d)
-        deps = found_deps[o] if found_deps is not None else [f]
+    for f in c_files:
+        o = config.to_output(f, '.o')
+        d, deps = get_make_dependencies(f, o)
         
         syntax_check = tc.invoke_cc_check(includes, d, f, o)
         # if the input needs to have asm processed
@@ -474,27 +549,22 @@ def get_make_dependencies(src_file, obj_file):
         deps = found_deps[obj_file]
 
     return (d, deps)
-    
-    
 
 ########## Resource Table ############################
 res_dir = config.game_dir / 'resources'
-res_tempbins = list(res_dir.glob('temp/files/*'))
-res_tempbins_o = list(map(lambda f: config.to_output(f, '.o'), res_tempbins))
-res_table = res_dir / 'temp' / 'resource-filetable.bin'
-res_table_o = config.to_output(up_one_dir(res_table), '.o')
 res_link  = res_dir / 'templink.ld'
 res_archive = config.to_output(res_dir / 'resource-files.o', '.o')
 
+@create_after(executed='temp_bin_obj', target_regex=res_archive)
 def task_link_resources():
     ''' Link resource files into a relocatable binary for linking '''
-
+    resource_temp_o = [config.to_output(f, '.o') for f in res_dir.glob('temp/files/*')]
     return {
         # $(LD) -T %f -r -o %o %<resbins> 
         'actions': [
-            tc.game.utils.LD + ['-T', res_link, '-r', '-o', res_archive] + res_tempbins_o
+            tc.game.utils.LD + ['-T', res_link, '-r', '-o', res_archive] + resource_temp_o
         ],
-        'file_dep': [res_link] + res_tempbins_o,
+        'file_dep': [res_link] + resource_temp_o,
         'targets': [res_archive],
     }
 
@@ -541,25 +611,28 @@ def gfx_encode_cmd(f, o):
 
 sprite_dir = config.game_dir / 'sprites'
 sprite_output = config.build_dir / 'sprites'
-sprite_pngs = list(sprite_dir.rglob('*.*.png'))
-sprite_bins = list(map(lambda f: config.to_output(f, ''), sprite_pngs))
 
+# TODO: list image extensions for target_regex
+@create_after(executed='extract_assets', target_regex='*')
 def task_convert_sprite_pngs():
-    ''' Convert sprite.format.png into sprite.format.bin ''' 
+    ''' Convert sprite.format.png into sprite.format ''' 
 
-    for f, o in zip(sprite_pngs, sprite_bins):
-        invocation, outs = gfx_encode_cmd(f, o)
+    sprite_pngs = list(sprite_dir.rglob('*.*.png'))
+
+    for png in sprite_pngs:
+        o = config.to_output(png, '')
+        invocation, outs = gfx_encode_cmd(png, o)
 
         yield {
             'name': o,
             'actions': [invocation],
-            'file_dep': [f, n64gfx],
             'targets': outs,
+            'file_dep': [png, n64gfx],
         }
 
 imgbank_entry_tomls = list(sprite_dir.glob('*/*/*.toml'))
-imgbank_entry_s = list(map(lambda f: config.to_output(f, '.s'), imgbank_entry_tomls))
-imgbank_entry_o = list(map(lambda f: up_one_dir(f, '.o'), imgbank_entry_s))
+imgbank_entry_s = [config.to_output(f, '.s') for f in imgbank_entry_tomls]
+imgbank_entry_o = [up_one_dir(s, '.o') for s in imgbank_entry_s]
 
 def task_pack_sprite_bank_entry():
     ''' Convert a .toml sprite/img bank spec file
@@ -578,15 +651,9 @@ def task_assemble_sprite_bank_entry():
     ''' Assemble an sprite bank entry into an object for linking'''
 
     for (s, o) in zip(imgbank_entry_s, imgbank_entry_o):
-        d = o.with_suffix('.d')
-        found_deps = parse_mk_dependencies(d)
-        # No .d file for `f` (not generated yet)
-        if found_deps is None:
-            deps = [s]
-        else:
-            deps = found_deps[o]
+        d, deps = get_make_dependencies(s, o)
 
-        invocation = tc.invoke_as(
+        assemble_entry = tc.invoke_as(
             includes=[s.parent],
             depfile=d,
             input=s,
@@ -594,12 +661,14 @@ def task_assemble_sprite_bank_entry():
         )
         yield {
             'name': o,
-            'actions': [ invocation ],
+            'actions': [ assemble_entry ],
             'file_dep': deps,
             'task_dep': ['convert_sprite_pngs'],
             'targets': [o, d],
         }
 
+# These .toml files are perseved in the repo, even though 
+# they can be extracted from the baserom
 imgbank_tomls = list(sprite_dir.glob('*/*.toml'))
 imgbank_ldscripts = list(map(lambda f: config.to_output(f, '.ld'), imgbank_tomls))
 imgbank_o = list(map(lambda f: up_one_dir(f, '.o'), imgbank_ldscripts))
@@ -619,88 +688,90 @@ def task_link_sprite_bank():
     ''' Link together all of the sprite entry objects into a bank object '''
 
     for (lds, o) in zip(imgbank_ldscripts, imgbank_o):
+        
         # only link to entry objects for a given bank
         bank_name = o.stem
-        bank_glob = f'*/{bank_name}/*'
-        bank_objs = list(filter(lambda obj: obj.match(bank_glob), imgbank_entry_o))
         obj_dir = sprite_output / bank_name
+        d, deps = get_make_dependencies(lds, o)
+        link_bank = tc.game.utils.LD + [
+            '-T', lds,
+            '-L', obj_dir,
+            '-o', o,
+            f'--dependency-file={d}',
+        ]
 
         # no relink (want symbols to be resolved)
         yield {
             'name': o,
-            'actions': [tc.game.utils.LD + ['-T', lds, '-L', obj_dir, '-o', o]],
-            'file_dep': [lds] + bank_objs,
-            'targets': [o],
+            'actions': [link_bank],
+            'targets': [o, d],
+            'file_dep': deps,
+            'task_dep': ['assemble_sprite_bank_entry']
         }
 
-temp_sprbank_bins = list(sprite_dir.glob('*/*.bin'))
-temp_sprbank_o = list(
-    map(lambda b: config.to_output(up_one_dir(b), '.o'), temp_sprbank_bins)
-)
-
 ########## Audio #####################################
-temp_audio_bins = list(config.game_dir.glob('audio/tempbins/*'))
-temp_audio_o = list(map(lambda b: config.to_output(up_one_dir(b), '.o', True), temp_audio_bins))
 
 ########## Temporary .bin handling ####################
-temp_unk_bins = list(config.game_dir.glob('unknown/tempbins/*'))
-temp_unk_o = list(
-    map(lambda b: config.to_output(b, '.o'),
-    map(up_one_dir, temp_unk_bins))
-)
-
-# all temporary objects
-temp_objs = temp_sprbank_o + temp_audio_o + temp_unk_o
-
+@create_after(executed='extract_assets', target_regex='*.o')
 def task_temp_bin_obj():
     ''' Convert a raw binary to a linkable .o file 
         This task should be temporary until all binary files are 
         converted to real source files
     '''
 
-    invoke_ld = tc.game.utils.LD + ['-r', '-b', 'binary', '-o']
+    invoke_ld = tc.game.utils.LD + ['-r', '-b', 'binary']
 
-    for b, o in zip(temp_audio_bins, temp_audio_o):
+    temp_audio_bins = config.game_dir.glob('audio/tempbins/*')
+    for audio_bin in temp_audio_bins:
+        o = config.to_output(up_one_dir(audio_bin), '.o', True)
         yield {
             'name': o,
             'actions': [
-                invoke_ld + [o, b],
+                invoke_ld + ['-o', o, audio_bin],
             ],
-            'file_dep': [b],
+            'file_dep': [audio_bin],
             'targets': [o],
         }
-    
-    for f, o in zip(res_tempbins, res_tempbins_o):
+
+    res_tempbins = res_dir.glob('temp/files/*')
+    for f in res_tempbins:
+        o = config.to_output(f, '.o')
         yield {
             'name': o,
             'actions': [
-                invoke_ld + [o, f],
+                invoke_ld + ['-o', o, f],
             ],
             'file_dep': [f],
             'targets': [o],
         }
-    
+
+    res_table = res_dir / 'temp' / 'resource-filetable.bin'
+    res_table_o = config.to_output(up_one_dir(res_table), '.o')
     yield {
         'name': res_table_o,
         'actions': [
-            invoke_ld + [res_table_o, res_table],
+            invoke_ld + ['-o', res_table_o, res_table],
         ],
         'file_dep': [res_table],
         'targets': [res_table_o],
     }
 
-    for b, o in zip(temp_sprbank_bins, temp_sprbank_o):
+    temp_sprbank_bins = sprite_dir.glob('*/*.bin')
+    for b in temp_sprbank_bins:
+        o = config.to_output(up_one_dir(b), '.o')
         yield {
             'name': o,
-            'actions': [invoke_ld + [o, b]],
+            'actions': [invoke_ld + ['-o', o, b]],
             'file_dep': [b],
             'targets': [o],
         }
     
-    for b, o in zip(temp_unk_bins, temp_unk_o):
+    temp_unk_bins = config.game_dir.glob('unknown/tempbins/*')
+    for b in temp_unk_bins:
+        o = config.to_output(up_one_dir(b), '.o')
         yield {
             'name': o,
-            'actions': [invoke_ld + [o, b]],
+            'actions': [invoke_ld + ['-o', o, b]],
             'file_dep': [b],
             'targets': [o],
         }

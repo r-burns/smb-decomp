@@ -13,6 +13,8 @@ def _get_choice(var, default, choices):
     possible = get_var(var, default)
     if possible in choices: 
         return possible
+    elif possible is None:
+        return default
     else:
         raise Exception(f'{var} "{possible}" not in options: {choices}')
 
@@ -79,12 +81,12 @@ class Config():
     def __str__(self):
         common = (
             "======== Build Config ========\n"
-            f"  Host: {self.host}\n"
-            f"  Target: {self.target}\n"
-            f"  Version: {self.version}\n"
+            f"  Host:           {self.host}\n"
+            f"  Target:         {self.target}\n"
+            f"  Version:        {self.version}\n"
             f"  Build Location: {self.build_dir}\n"
-            f"  Non Matching: {self.no_match}\n"
-            f"  Avoid UB: {self.avoid_ub}\n"
+            f"  Non Matching:   {self.no_match}\n"
+            f"  Avoid UB:       {self.avoid_ub}\n"
         )
 
         return common
