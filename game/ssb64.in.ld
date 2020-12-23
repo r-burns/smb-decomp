@@ -57,6 +57,7 @@ SECTIONS
         src/sys/main.o(.text);
         src/sys/thread3.asm.o(.text);
         src/sys/dma.asm.o(.text);
+        src/sys/thread6.asm.o(.text);
         asm/system/system.text.o(.text);
         *libultra.a:setattribute.o(.text);
         asm/system/sprite.o(.text);
@@ -204,7 +205,7 @@ SECTIONS
 
         src/sys/main.o(.rodata);
         src/sys/thread3.asm.o(.rodata);
-        src/sys/dma.asm.o(.rodata);
+        src/sys/thread6.asm.o(.rodata);
         asm/system/system.rodata.o(.rodata);
         asm/system/sprite.o(.rodata);
         asm/system/audio.rodata.o(.rodata);
@@ -227,6 +228,7 @@ SECTIONS
         src/sys/main.o(.bss);
         src/sys/thread3.asm.o(.bss);
         src/sys/dma.asm.o(.bss);
+        src/sys/thread6.asm.o(.bss);
         asm/system/system.bss.o(.bss);
         asm/system/sprite.o(.bss);
         asm/system/audio.bss.o(.bss);

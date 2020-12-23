@@ -2,8 +2,8 @@
 glabel func_80003DD4
   /* 0049D4 80003DD4 27BDFFC8 */     addiu $sp, $sp, -0x38
   /* 0049D8 80003DD8 AFB70030 */        sw $s7, 0x30($sp)
-  /* 0049DC 80003DDC 3C178004 */       lui $s7, %hi(D_800450F0)
-  /* 0049E0 80003DE0 26F750F0 */     addiu $s7, $s7, %lo(D_800450F0)
+  /* 0049DC 80003DDC 3C178004 */       lui $s7, %hi(sInitQueue)
+  /* 0049E0 80003DE0 26F750F0 */     addiu $s7, $s7, %lo(sInitQueue)
   /* 0049E4 80003DE4 AFBF0034 */        sw $ra, 0x34($sp)
   /* 0049E8 80003DE8 AFB6002C */        sw $s6, 0x2c($sp)
   /* 0049EC 80003DEC AFB50028 */        sw $s5, 0x28($sp)
@@ -23,10 +23,10 @@ glabel func_80003DD4
   /* 004A24 80003E24 24845188 */     addiu $a0, $a0, %lo(D_80045188)
   /* 004A28 80003E28 3C118004 */       lui $s1, %hi(D_80045188)
   /* 004A2C 80003E2C 3C108004 */       lui $s0, %hi(D_800451A8)
-  /* 004A30 80003E30 3C148004 */       lui $s4, %hi(D_800452C8)
-  /* 004A34 80003E34 3C138004 */       lui $s3, %hi(D_80045178)
-  /* 004A38 80003E38 26735178 */     addiu $s3, $s3, %lo(D_80045178)
-  /* 004A3C 80003E3C 269452C8 */     addiu $s4, $s4, %lo(D_800452C8)
+  /* 004A30 80003E30 3C148004 */       lui $s4, %hi(sMotorPfs)
+  /* 004A34 80003E34 3C138004 */       lui $s3, %hi(sContStatus)
+  /* 004A38 80003E38 26735178 */     addiu $s3, $s3, %lo(sContStatus)
+  /* 004A3C 80003E3C 269452C8 */     addiu $s4, $s4, %lo(sMotorPfs)
   /* 004A40 80003E40 261051A8 */     addiu $s0, $s0, %lo(D_800451A8)
   /* 004A44 80003E44 26315188 */     addiu $s1, $s1, %lo(D_80045188)
   /* 004A48 80003E48 00009025 */        or $s2, $zero, $zero
