@@ -165,7 +165,7 @@ glabel D_ovl14_80132950
   /* E5C 11C7CC 8013295C */  .4byte D_NF_80133130
   .incbin "ovl14.raw.bin", 0x0E60, 0x28
   /* E88 11C7F8 80132988 */  .4byte func_ovl14_80131B00
-  /* E8C 11C7FC 8013298C */  .4byte func_80004310
+  /* E8C 11C7FC 8013298C */  .4byte update_contdata
   .incbin "ovl14.raw.bin", 0x0E90, 0x20
   /* EB0 11C820 801329B0 */  .4byte jtbl_ovl0_800D5CAC
   .incbin "ovl14.raw.bin", 0x0EB4, 0x24

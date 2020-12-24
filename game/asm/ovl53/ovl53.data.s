@@ -116,7 +116,7 @@ glabel D_ovl53_80132FE4
   /* 14F0 1773F0 80132FF0 */  .4byte D_NF_801331C0
   .incbin "ovl53.raw.bin", 0x14F4, 0x28
   /* 151C 17741C 8013301C */  .4byte func_ovl53_80131B00
-  /* 1520 177420 80133020 */  .4byte func_80004310
+  /* 1520 177420 80133020 */  .4byte update_contdata
   .incbin "ovl53.raw.bin", 0x1524, 0x48
 
 glabel jtbl_ovl53_8013306C

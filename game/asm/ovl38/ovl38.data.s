@@ -52,7 +52,7 @@ glabel D_ovl38_8018E1B4
   /* 1100 169A30 8018E1C0 */  .4byte D_NF_8018E690
   .incbin "ovl38.raw.bin", 0x1104, 0x28
   /* 112C 169A5C 8018E1EC */  .4byte func_ovl38_8018E07C
-  /* 1130 169A60 8018E1F0 */  .4byte func_80004310
+  /* 1130 169A60 8018E1F0 */  .4byte update_contdata
   .incbin "ovl38.raw.bin", 0x1134, 0x20
   /* 1154 169A84 8018E214 */  .4byte jtbl_ovl0_800D5CAC
   .incbin "ovl38.raw.bin", 0x1158, 0x24

@@ -75,7 +75,7 @@ glabel D_ovl61_80132FCC
   /* 14D8 122428 80132FD8 */  .4byte D_NF_80133170
   .incbin "ovl61.raw.bin", 0x14DC, 0x28
   /* 1504 122454 80133004 */  .4byte func_ovl61_80131B00
-  /* 1508 122458 80133008 */  .4byte func_80004310
+  /* 1508 122458 80133008 */  .4byte update_contdata
   .incbin "ovl61.raw.bin", 0x150C, 0x48
   /* 1554 1224A4 80133054 */  .4byte func_ovl61_80132D64
   .incbin "ovl61.raw.bin", 0x1558, 0x8

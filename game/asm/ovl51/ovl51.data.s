@@ -96,7 +96,7 @@ glabel D_ovl51_8018D958
   /* 8A4 1751E4 8018D964 */  .4byte D_NF_8018DE60
   .incbin "ovl51.raw.bin", 0x08A8, 0x28
   /* 8D0 175210 8018D990 */  .4byte func_ovl51_8018D7CC
-  /* 8D4 175214 8018D994 */  .4byte func_80004310
+  /* 8D4 175214 8018D994 */  .4byte update_contdata
   .incbin "ovl51.raw.bin", 0x08D8, 0x20
   /* 8F8 175238 8018D9B8 */  .4byte jtbl_ovl0_800D5CAC
   .incbin "ovl51.raw.bin", 0x08FC, 0x24

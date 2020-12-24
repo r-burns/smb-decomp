@@ -262,7 +262,7 @@ glabel D_ovl30_80134928
   /* 2E34 1504A4 80134934 */  .4byte D_NF_80134E30
   .incbin "ovl30.raw.bin", 0x2E38, 0x28
   /* 2E60 1504D0 80134960 */  .4byte func_ovl30_80131B88
-  /* 2E64 1504D4 80134964 */  .4byte func_80004310
+  /* 2E64 1504D4 80134964 */  .4byte update_contdata
   .incbin "ovl30.raw.bin", 0x2E68, 0x48
   /* 2EB0 150520 801349B0 */  .4byte func_ovl30_80134304
   .incbin "ovl30.raw.bin", 0x2EB4, 0xC

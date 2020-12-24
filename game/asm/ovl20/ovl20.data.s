@@ -92,7 +92,7 @@ glabel D_ovl20_8013482C
   /* 2D38 128018 80134838 */  .4byte D_NF_801349E0
   .incbin "ovl20.raw.bin", 0x2D3C, 0x28
   /* 2D64 128044 80134864 */  .4byte func_ovl20_80131B00
-  /* 2D68 128048 80134868 */  .4byte func_80004310
+  /* 2D68 128048 80134868 */  .4byte update_contdata
   .incbin "ovl20.raw.bin", 0x2D6C, 0x48
   /* 2DB4 128094 801348B4 */  .4byte func_ovl20_80134504
   .incbin "ovl20.raw.bin", 0x2DB8, 0x8

@@ -44,7 +44,7 @@ glabel D_ovl23_801323D4
   /* 8E0 12ADA0 801323E0 */  .4byte D_NF_80132800
   .incbin "ovl23.raw.bin", 0x08E4, 0x28
   /* 90C 12ADCC 8013240C */  .4byte func_ovl23_80131B00
-  /* 910 12ADD0 80132410 */  .4byte func_80004310
+  /* 910 12ADD0 80132410 */  .4byte update_contdata
   .incbin "ovl23.raw.bin", 0x0914, 0x20
   /* 934 12ADF4 80132434 */  .4byte jtbl_ovl0_800D5CAC
   .incbin "ovl23.raw.bin", 0x0938, 0x24

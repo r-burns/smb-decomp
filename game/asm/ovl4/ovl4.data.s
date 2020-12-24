@@ -25,7 +25,7 @@ glabel D_ovl4_8018E3F4
   /* 1340 10B2F0 8018E400 */  .4byte D_NF_8018E7E0
   .incbin "ovl4.raw.bin", 0x1344, 0x28
   /* 136C 10B31C 8018E42C */  .4byte func_ovl4_8018E144
-  /* 1370 10B320 8018E430 */  .4byte func_80004310
+  /* 1370 10B320 8018E430 */  .4byte update_contdata
   .incbin "ovl4.raw.bin", 0x1374, 0x20
   /* 1394 10B344 8018E454 */  .4byte jtbl_ovl0_800D5CAC
   .incbin "ovl4.raw.bin", 0x1398, 0x28

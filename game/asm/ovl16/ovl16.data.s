@@ -40,7 +40,7 @@ glabel D_ovl16_800D7074
   /* BF0 18DC20 800D7080 */  .4byte D_NF_800D7170
   .incbin "ovl16.raw.bin", 0x0BF4, 0x28
   /* C1C 18DC4C 800D70AC */  .4byte func_ovl16_800D6490
-  /* C20 18DC50 800D70B0 */  .4byte func_80004310
+  /* C20 18DC50 800D70B0 */  .4byte update_contdata
   .incbin "ovl16.raw.bin", 0x0C24, 0x48
   /* C6C 18DC9C 800D70FC */  .4byte func_ovl16_800D65C4
 

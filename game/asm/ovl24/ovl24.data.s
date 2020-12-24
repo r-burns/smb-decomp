@@ -135,7 +135,7 @@ glabel D_ovl24_80135B54
   /* 4060 12EEA0 80135B60 */  .4byte D_NF_80136070
   .incbin "ovl24.raw.bin", 0x4064, 0x28
   /* 408C 12EECC 80135B8C */  .4byte func_ovl24_80131B00
-  /* 4090 12EED0 80135B90 */  .4byte func_80004310
+  /* 4090 12EED0 80135B90 */  .4byte update_contdata
   .incbin "ovl24.raw.bin", 0x4094, 0x20
   /* 40B4 12EEF4 80135BB4 */  .4byte jtbl_ovl0_800D5CAC
   .incbin "ovl24.raw.bin", 0x40B8, 0x24

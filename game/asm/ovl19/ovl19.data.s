@@ -85,7 +85,7 @@ glabel D_ovl19_8013489C
   /* 2DA8 125258 801348A8 */  .4byte D_NF_80134A50
   .incbin "ovl19.raw.bin", 0x2DAC, 0x28
   /* 2DD4 125284 801348D4 */  .4byte func_ovl19_80131B00
-  /* 2DD8 125288 801348D8 */  .4byte func_80004310
+  /* 2DD8 125288 801348D8 */  .4byte update_contdata
   .incbin "ovl19.raw.bin", 0x2DDC, 0x48
   /* 2E24 1252D4 80134924 */  .4byte func_ovl19_801345C4
   .incbin "ovl19.raw.bin", 0x2E28, 0x8

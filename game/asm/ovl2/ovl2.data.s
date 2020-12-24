@@ -138,7 +138,7 @@ glabel D_ovl2_80116DA0
 
 glabel D_ovl2_80116DD0
   .incbin "ovl2.raw.bin", 0x40940, 0x30
-  /* 40970 092600 80116E00 */  .4byte func_80004000
+  /* 40970 092600 80116E00 */  .4byte 0x80004000
   .incbin "ovl2.raw.bin", 0x40974, 0x8
   /* 4097C 09260C 80116E0C */  .4byte func_ovl2_800F293C
 

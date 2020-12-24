@@ -182,7 +182,7 @@ glabel D_ovl33_80136518
   /* 4A24 162574 80136524 */  .4byte D_NF_80136A90
   .incbin "ovl33.raw.bin", 0x4A28, 0x28
   /* 4A50 1625A0 80136550 */  .4byte func_ovl33_80131B00
-  /* 4A54 1625A4 80136554 */  .4byte func_80004310
+  /* 4A54 1625A4 80136554 */  .4byte update_contdata
   .incbin "ovl33.raw.bin", 0x4A58, 0x20
   /* 4A78 1625C8 80136578 */  .4byte jtbl_ovl0_800D5CAC
   .incbin "ovl33.raw.bin", 0x4A7C, 0x24

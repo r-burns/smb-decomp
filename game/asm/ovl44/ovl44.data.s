@@ -42,7 +42,7 @@ glabel D_ovl44_8013266C
   /* B78 16FCA8 80132678 */  .4byte D_NF_80132AB0
   .incbin "ovl44.raw.bin", 0x0B7C, 0x28
   /* BA4 16FCD4 801326A4 */  .4byte func_ovl44_80131B00
-  /* BA8 16FCD8 801326A8 */  .4byte func_80004310
+  /* BA8 16FCD8 801326A8 */  .4byte update_contdata
   .incbin "ovl44.raw.bin", 0x0BAC, 0x20
   /* BCC 16FCFC 801326CC */  .4byte jtbl_ovl0_800D5CAC
   .incbin "ovl44.raw.bin", 0x0BD0, 0x24

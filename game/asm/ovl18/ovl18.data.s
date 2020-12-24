@@ -59,7 +59,7 @@ glabel D_ovl18_8013310C
   /* 1618 11F228 80133118 */  .4byte D_NF_801332A0
   .incbin "ovl18.raw.bin", 0x161C, 0x28
   /* 1644 11F254 80133144 */  .4byte func_ovl18_80131B00
-  /* 1648 11F258 80133148 */  .4byte func_80004310
+  /* 1648 11F258 80133148 */  .4byte update_contdata
   .incbin "ovl18.raw.bin", 0x164C, 0x48
   /* 1694 11F2A4 80133194 */  .4byte func_ovl18_80132E9C
   .incbin "ovl18.raw.bin", 0x1698, 0x8

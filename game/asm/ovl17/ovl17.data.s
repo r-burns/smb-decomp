@@ -44,5 +44,5 @@ glabel D_ovl17_80132BF4
   /* 1100 11DB90 80132C00 */  .4byte D_NF_80132D70
   .incbin "ovl17.raw.bin", 0x1104, 0x28
   /* 112C 11DBBC 80132C2C */  .4byte func_ovl17_80131B00
-  /* 1130 11DBC0 80132C30 */  .4byte func_80004310
+  /* 1130 11DBC0 80132C30 */  .4byte update_contdata
   .incbin "ovl17.raw.bin", 0x1134, 0x4C

@@ -48,7 +48,7 @@ glabel D_ovl34_80134BEC
   /* 30F8 165738 80134BF8 */  .4byte D_NF_801350D0
   .incbin "ovl34.raw.bin", 0x30FC, 0x28
   /* 3124 165764 80134C24 */  .4byte func_ovl34_80131B00
-  /* 3128 165768 80134C28 */  .4byte func_80004310
+  /* 3128 165768 80134C28 */  .4byte update_contdata
   .incbin "ovl34.raw.bin", 0x312C, 0x20
   /* 314C 16578C 80134C4C */  .4byte jtbl_ovl0_800D5CAC
   .incbin "ovl34.raw.bin", 0x3150, 0x24

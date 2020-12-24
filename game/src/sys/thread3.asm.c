@@ -10,10 +10,6 @@
 #include "sys/thread3.h"
 #include "sys/system.h"
 
-struct MqListNode {
-    /* 0x00 */ struct MqListNode *next;
-    /* 0x04 */ OSMesgQueue *mq;
-};
 
 struct SpMqInfo {
     /* 0x00 */ s32 unk00;

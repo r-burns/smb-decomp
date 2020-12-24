@@ -39,7 +39,7 @@ glabel jtbl_ovl63_8018E74C
   /* 1694 18BD64 8018E754 */  .4byte D_NF_8018EC00
   .incbin "ovl63.raw.bin", 0x1698, 0x28
   /* 16C0 18BD90 8018E780 */  .4byte func_ovl63_8018E51C
-  /* 16C4 18BD94 8018E784 */  .4byte func_80004310
+  /* 16C4 18BD94 8018E784 */  .4byte update_contdata
   .incbin "ovl63.raw.bin", 0x16C8, 0x20
   /* 16E8 18BDB8 8018E7A8 */  .4byte jtbl_ovl0_800D5CAC
   .incbin "ovl63.raw.bin", 0x16EC, 0x24

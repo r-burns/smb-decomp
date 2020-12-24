@@ -57,7 +57,7 @@ glabel D_ovl56_80135208
   /* 3714 17E464 80135214 */  .4byte D_NF_801355B0
   .incbin "ovl56.raw.bin", 0x3718, 0x28
   /* 3740 17E490 80135240 */  .4byte func_ovl56_80131B00
-  /* 3744 17E494 80135244 */  .4byte func_80004310
+  /* 3744 17E494 80135244 */  .4byte update_contdata
   .incbin "ovl56.raw.bin", 0x3748, 0x20
   /* 3768 17E4B8 80135268 */  .4byte jtbl_ovl0_800D5CAC
   .incbin "ovl56.raw.bin", 0x376C, 0x24

@@ -53,7 +53,7 @@ glabel D_ovl22_801325BC
   /* AC8 12A438 801325C8 */  .4byte D_NF_80132990
   .incbin "ovl22.raw.bin", 0x0ACC, 0x28
   /* AF4 12A464 801325F4 */  .4byte func_ovl22_80131B00
-  /* AF8 12A468 801325F8 */  .4byte func_80004310
+  /* AF8 12A468 801325F8 */  .4byte update_contdata
   .incbin "ovl22.raw.bin", 0x0AFC, 0x48
   /* B44 12A4B4 80132644 */  .4byte func_ovl22_801322D4
   .incbin "ovl22.raw.bin", 0x0B48, 0x8

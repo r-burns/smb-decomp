@@ -86,7 +86,7 @@ glabel D_ovl35_80132954
   /* E60 166670 80132960 */  .4byte D_NF_80132BC0
   .incbin "ovl35.raw.bin", 0x0E64, 0x28
   /* E8C 16669C 8013298C */  .4byte func_ovl35_80131B00
-  /* E90 1666A0 80132990 */  .4byte func_80004310
+  /* E90 1666A0 80132990 */  .4byte update_contdata
   .incbin "ovl35.raw.bin", 0x0E94, 0x20
   /* EB4 1666C4 801329B4 */  .4byte jtbl_ovl0_800D5CAC
   .incbin "ovl35.raw.bin", 0x0EB8, 0x28

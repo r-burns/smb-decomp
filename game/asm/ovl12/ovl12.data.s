@@ -80,7 +80,7 @@ glabel D_ovl12_800D6780
   /* 2F8 11A0E8 800D6788 */  .4byte func_8000A340
   /* 2FC 11A0EC 800D678C */  .4byte D_NF_800D69F0
   .incbin "ovl12.raw.bin", 0x0300, 0x2C
-  /* 32C 11A11C 800D67BC */  .4byte func_80004310
+  /* 32C 11A11C 800D67BC */  .4byte update_contdata
   .incbin "ovl12.raw.bin", 0x0330, 0x48
   /* 378 11A168 800D6808 */  .4byte func_ovl12_800D65AC
   .incbin "ovl12.raw.bin", 0x037C, 0x4

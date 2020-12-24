@@ -71,7 +71,7 @@ glabel D_ovl6_8018F09C
   /* 1FE8 1137E8 8018F0A8 */  .4byte D_NF_8018F710
   .incbin "ovl6.raw.bin", 0x1FEC, 0x28
   /* 2014 113814 8018F0D4 */  .4byte func_ovl6_8018EA80
-  /* 2018 113818 8018F0D8 */  .4byte func_80004310
+  /* 2018 113818 8018F0D8 */  .4byte update_contdata
   .incbin "ovl6.raw.bin", 0x201C, 0x20
   /* 203C 11383C 8018F0FC */  .4byte jtbl_ovl0_800D5CAC
   .incbin "ovl6.raw.bin", 0x2040, 0x24

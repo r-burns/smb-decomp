@@ -73,7 +73,7 @@ glabel D_ovl64_8018E250
   /* 119C 18CF9C 8018E25C */  .4byte D_NF_8018E860
   .incbin "ovl64.raw.bin", 0x11A0, 0x28
   /* 11C8 18CFC8 8018E288 */  .4byte func_ovl64_8018DFC8
-  /* 11CC 18CFCC 8018E28C */  .4byte func_80004310
+  /* 11CC 18CFCC 8018E28C */  .4byte update_contdata
   .incbin "ovl64.raw.bin", 0x11D0, 0x20
   /* 11F0 18CFF0 8018E2B0 */  .4byte jtbl_ovl0_800D5CAC
   .incbin "ovl64.raw.bin", 0x11F4, 0x24

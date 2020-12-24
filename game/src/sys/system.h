@@ -8,11 +8,7 @@
 
 extern void fatal_printf(const char *fmt, ...);
 extern void thread4(void *arg);
-extern void thread6(void *arg);
 extern void func_80006B80(void);
 extern void start_thread8(void);
-
-void func_800044B4(s32);
-void func_80004494(s32);
 
 #endif /* TEMP_SYSTEM_H */

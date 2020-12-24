@@ -36,7 +36,7 @@ glabel D_ovl46_80132724
   /* C30 171290 80132730 */  .4byte D_NF_801329A0
   .incbin "ovl46.raw.bin", 0x0C34, 0x28
   /* C5C 1712BC 8013275C */  .4byte func_ovl46_80131B00
-  /* C60 1712C0 80132760 */  .4byte func_80004310
+  /* C60 1712C0 80132760 */  .4byte update_contdata
   .incbin "ovl46.raw.bin", 0x0C64, 0x20
   /* C84 1712E4 80132784 */  .4byte jtbl_ovl0_800D5CAC
   .incbin "ovl46.raw.bin", 0x0C88, 0x24

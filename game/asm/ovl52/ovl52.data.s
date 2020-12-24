@@ -29,7 +29,7 @@ glabel D_ovl52_80132694
   /* BA0 175E60 801326A0 */  .4byte D_NF_80132920
   .incbin "ovl52.raw.bin", 0x0BA4, 0x28
   /* BCC 175E8C 801326CC */  .4byte func_ovl52_80131B00
-  /* BD0 175E90 801326D0 */  .4byte func_80004310
+  /* BD0 175E90 801326D0 */  .4byte update_contdata
   .incbin "ovl52.raw.bin", 0x0BD4, 0x20
   /* BF4 175EB4 801326F4 */  .4byte jtbl_ovl0_800D5CAC
   .incbin "ovl52.raw.bin", 0x0BF8, 0x24

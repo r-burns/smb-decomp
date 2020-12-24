@@ -39,7 +39,7 @@ glabel D_ovl45_80132394
   /* 8A0 1705E0 801323A0 */  .4byte D_NF_80132600
   .incbin "ovl45.raw.bin", 0x08A4, 0x28
   /* 8CC 17060C 801323CC */  .4byte func_ovl45_80131B00
-  /* 8D0 170610 801323D0 */  .4byte func_80004310
+  /* 8D0 170610 801323D0 */  .4byte update_contdata
   .incbin "ovl45.raw.bin", 0x08D4, 0x20
   /* 8F4 170634 801323F4 */  .4byte jtbl_ovl0_800D5CAC
   .incbin "ovl45.raw.bin", 0x08F8, 0x28

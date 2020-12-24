@@ -48,7 +48,7 @@ glabel D_ovl5_8018D5D8
   /* 524 10B894 8018D5E4 */  .4byte D_NF_8018D950
   .incbin "ovl5.raw.bin", 0x0528, 0x28
   /* 550 10B8C0 8018D610 */  .4byte func_ovl5_8018D4BC
-  /* 554 10B8C4 8018D614 */  .4byte func_80004310
+  /* 554 10B8C4 8018D614 */  .4byte update_contdata
   .incbin "ovl5.raw.bin", 0x0558, 0x20
   /* 578 10B8E8 8018D638 */  .4byte jtbl_ovl0_800D5CAC
   .incbin "ovl5.raw.bin", 0x057C, 0x24

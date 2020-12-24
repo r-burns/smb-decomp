@@ -77,7 +77,7 @@ glabel D_ovl55_80134254
   /* 2760 17ACC0 80134260 */  .4byte D_NF_80134540
   .incbin "ovl55.raw.bin", 0x2764, 0x28
   /* 278C 17ACEC 8013428C */  .4byte func_ovl55_80131B00
-  /* 2790 17ACF0 80134290 */  .4byte func_80004310
+  /* 2790 17ACF0 80134290 */  .4byte update_contdata
   .incbin "ovl55.raw.bin", 0x2794, 0x20
   /* 27B4 17AD14 801342B4 */  .4byte jtbl_ovl0_800D5CAC
   .incbin "ovl55.raw.bin", 0x27B8, 0x24

@@ -54,7 +54,7 @@ glabel D_ovl42_8018E15C
   /* 10A8 16DF18 8018E168 */  .4byte D_NF_8018E640
   .incbin "ovl42.raw.bin", 0x10AC, 0x28
   /* 10D4 16DF44 8018E194 */  .4byte func_ovl42_8018E010
-  /* 10D8 16DF48 8018E198 */  .4byte func_80004310
+  /* 10D8 16DF48 8018E198 */  .4byte update_contdata
   .incbin "ovl42.raw.bin", 0x10DC, 0x20
   /* 10FC 16DF6C 8018E1BC */  .4byte jtbl_ovl0_800D5CAC
   .incbin "ovl42.raw.bin", 0x1100, 0x24

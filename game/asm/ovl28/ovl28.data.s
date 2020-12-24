@@ -213,7 +213,7 @@ glabel D_ovl28_80138448
   /* 6954 147A34 80138454 */  .4byte D_NF_80138CC0
   .incbin "ovl28.raw.bin", 0x6958, 0x28
   /* 6980 147A60 80138480 */  .4byte func_ovl28_80131B00
-  /* 6984 147A64 80138484 */  .4byte func_80004310
+  /* 6984 147A64 80138484 */  .4byte update_contdata
   .incbin "ovl28.raw.bin", 0x6988, 0x20
   /* 69A8 147A88 801384A8 */  .4byte jtbl_ovl0_800D5CAC
   .incbin "ovl28.raw.bin", 0x69AC, 0x24

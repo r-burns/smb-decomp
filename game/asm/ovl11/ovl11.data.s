@@ -18,7 +18,7 @@ glabel D_ovl11_800D671C
   /* 294 119D54 800D6724 */  .4byte func_8000A340
   /* 298 119D58 800D6728 */  .4byte D_NF_800D6B30
   .incbin "ovl11.raw.bin", 0x029C, 0x2C
-  /* 2C8 119D88 800D6758 */  .4byte func_80004310
+  /* 2C8 119D88 800D6758 */  .4byte update_contdata
   .incbin "ovl11.raw.bin", 0x02CC, 0x48
   /* 314 119DD4 800D67A4 */  .4byte func_ovl11_800D65B8
   .incbin "ovl11.raw.bin", 0x0318, 0x8

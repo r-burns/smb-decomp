@@ -224,7 +224,7 @@ glabel D_ovl29_8013754C
   /* 5A58 14D588 80137558 */  .4byte D_NF_80137E30
   .incbin "ovl29.raw.bin", 0x5A5C, 0x28
   /* 5A84 14D5B4 80137584 */  .4byte func_ovl29_80131B00
-  /* 5A88 14D5B8 80137588 */  .4byte func_80004310
+  /* 5A88 14D5B8 80137588 */  .4byte update_contdata
   .incbin "ovl29.raw.bin", 0x5A8C, 0x20
   /* 5AAC 14D5DC 801375AC */  .4byte jtbl_ovl0_800D5CAC
   .incbin "ovl29.raw.bin", 0x5AB0, 0x24

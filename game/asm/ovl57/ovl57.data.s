@@ -56,5 +56,5 @@ glabel D_ovl57_80132224
   /* 730 17EC40 80132230 */  .4byte D_NF_80132300
   .incbin "ovl57.raw.bin", 0x0734, 0x28
   /* 75C 17EC6C 8013225C */  .4byte func_ovl57_80131FE8
-  /* 760 17EC70 80132260 */  .4byte func_80004310
+  /* 760 17EC70 80132260 */  .4byte update_contdata
   .incbin "ovl57.raw.bin", 0x0764, 0x4C

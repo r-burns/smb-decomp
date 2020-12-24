@@ -47,7 +47,7 @@ glabel D_ovl36_8018E138
   /* 1084 167774 8018E144 */  .4byte D_NF_8018E620
   .incbin "ovl36.raw.bin", 0x1088, 0x28
   /* 10B0 1677A0 8018E170 */  .4byte func_ovl36_8018DFE4
-  /* 10B4 1677A4 8018E174 */  .4byte func_80004310
+  /* 10B4 1677A4 8018E174 */  .4byte update_contdata
   .incbin "ovl36.raw.bin", 0x10B8, 0x20
   /* 10D8 1677C8 8018E198 */  .4byte jtbl_ovl0_800D5CAC
   .incbin "ovl36.raw.bin", 0x10DC, 0x24

@@ -93,7 +93,7 @@ glabel D_ovl15_800D68C0
   /* 43C 150B7C 800D68CC */  .4byte D_NF_800D6A00
   .incbin "ovl15.raw.bin", 0x0440, 0x28
   /* 468 150BA8 800D68F8 */  .4byte func_ovl15_800D6490
-  /* 46C 150BAC 800D68FC */  .4byte func_80004310
+  /* 46C 150BAC 800D68FC */  .4byte update_contdata
   .incbin "ovl15.raw.bin", 0x0470, 0x48
   /* 4B8 150BF8 800D6948 */  .4byte func_ovl15_800D660C
   .incbin "ovl15.raw.bin", 0x04BC, 0x4

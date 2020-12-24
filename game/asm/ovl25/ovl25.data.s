@@ -44,5 +44,5 @@ glabel D_ovl25_80132894
   /* DA0 12FD00 801328A0 */  .4byte D_NF_80132A40
   .incbin "ovl25.raw.bin", 0x0DA4, 0x28
   /* DCC 12FD2C 801328CC */  .4byte func_ovl25_80131B00
-  /* DD0 12FD30 801328D0 */  .4byte func_80004310
+  /* DD0 12FD30 801328D0 */  .4byte update_contdata
   .incbin "ovl25.raw.bin", 0x0DD4, 0x4C

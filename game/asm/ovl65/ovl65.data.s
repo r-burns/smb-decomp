@@ -84,7 +84,7 @@ glabel D_ovl65_80192B34
   /* 5A80 1113A0 80192B40 */  .4byte D_NF_80193900
   .incbin "ovl65.raw.bin", 0x5A84, 0x28
   /* 5AAC 1113CC 80192B6C */  .4byte func_ovl65_80190F8C
-  /* 5AB0 1113D0 80192B70 */  .4byte func_80004310
+  /* 5AB0 1113D0 80192B70 */  .4byte update_contdata
   .incbin "ovl65.raw.bin", 0x5AB4, 0x20
   /* 5AD4 1113F4 80192B94 */  .4byte jtbl_ovl0_800D5CAC
   .incbin "ovl65.raw.bin", 0x5AD8, 0x24

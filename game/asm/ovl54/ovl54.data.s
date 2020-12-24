@@ -36,7 +36,7 @@ glabel D_ovl54_80132B24
   /* 1030 1784D0 80132B30 */  .4byte D_NF_80132F80
   .incbin "ovl54.raw.bin", 0x1034, 0x28
   /* 105C 1784FC 80132B5C */  .4byte func_ovl54_80131B00
-  /* 1060 178500 80132B60 */  .4byte func_80004310
+  /* 1060 178500 80132B60 */  .4byte update_contdata
   .incbin "ovl54.raw.bin", 0x1064, 0x20
   /* 1084 178524 80132B84 */  .4byte jtbl_ovl0_800D5CAC
   .incbin "ovl54.raw.bin", 0x1088, 0x24

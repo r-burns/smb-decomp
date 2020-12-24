@@ -59,7 +59,7 @@ glabel D_ovl40_8018E0F8
   /* 1044 16BC54 8018E104 */  .4byte D_NF_8018E5E0
   .incbin "ovl40.raw.bin", 0x1048, 0x28
   /* 1070 16BC80 8018E130 */  .4byte func_ovl40_8018DFCC
-  /* 1074 16BC84 8018E134 */  .4byte func_80004310
+  /* 1074 16BC84 8018E134 */  .4byte update_contdata
   .incbin "ovl40.raw.bin", 0x1078, 0x20
   /* 1098 16BCA8 8018E158 */  .4byte jtbl_ovl0_800D5CAC
   .incbin "ovl40.raw.bin", 0x109C, 0x24

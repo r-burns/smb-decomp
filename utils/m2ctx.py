@@ -24,7 +24,11 @@ def print_usage():
     print(USAGE)
 
 def run_cpp(file):
-    cmd = ['cpp', '-P', 
+    if sys.platform == 'darwin':
+        cpp = ['clang', '-x', 'c', '-E']
+    else:
+        cpp = ['cpp']
+    cmd = cpp + ['-P', 
         '-Igame/include',
         '-Igame/src',
         '-undef',

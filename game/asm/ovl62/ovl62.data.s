@@ -82,7 +82,7 @@ glabel D_ovl62_8013425C
   /* 2768 18A638 80134268 */  .4byte D_NF_80134480
   .incbin "ovl62.raw.bin", 0x276C, 0x28
   /* 2794 18A664 80134294 */  .4byte func_ovl62_80133964
-  /* 2798 18A668 80134298 */  .4byte func_80004310
+  /* 2798 18A668 80134298 */  .4byte update_contdata
   .incbin "ovl62.raw.bin", 0x279C, 0x48
   /* 27E4 18A6B4 801342E4 */  .4byte func_ovl62_801338F8
   .incbin "ovl62.raw.bin", 0x27E8, 0x8

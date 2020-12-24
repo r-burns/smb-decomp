@@ -69,7 +69,7 @@ glabel D_ovl21_8013333C
   /* 1848 1298E8 80133348 */  .4byte D_NF_80133540
   .incbin "ovl21.raw.bin", 0x184C, 0x28
   /* 1874 129914 80133374 */  .4byte func_ovl21_80131B00
-  /* 1878 129918 80133378 */  .4byte func_80004310
+  /* 1878 129918 80133378 */  .4byte update_contdata
   .incbin "ovl21.raw.bin", 0x187C, 0x48
   /* 18C4 129964 801333C4 */  .4byte func_ovl21_80133090
   .incbin "ovl21.raw.bin", 0x18C8, 0x8

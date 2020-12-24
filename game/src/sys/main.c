@@ -7,6 +7,7 @@
 
 #include "sys/main.h"
 #include "sys/thread3.h"
+#include "sys/thread6.h"
 #include "sys/dma.h"
 #include "sys/system.h"
 #include "loadovl/loader.h"
@@ -162,7 +163,7 @@ void thread5_main(UNUSED void *arg) {
     sThread4Stack[0] = STACK_PROBE_MAGIC; osStartThread(&sThread4);
     osRecvMesg(&gThreadingQueue, NULL, OS_MESG_BLOCK);
 
-    osCreateThread(&sThread6, 6, thread6, NULL, 
+    osCreateThread(&sThread6, 6, thread6_controllers, NULL, 
         sThread6Stack + THREAD6_STACK_SIZE, 
         THREAD6_PRI
     );

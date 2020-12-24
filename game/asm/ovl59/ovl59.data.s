@@ -138,7 +138,7 @@ glabel D_ovl59_8013A724
   /* 8C30 187E30 8013A730 */  .4byte D_NF_8013AA60
   .incbin "ovl59.raw.bin", 0x8C34, 0x28
   /* 8C5C 187E5C 8013A75C */  .4byte func_ovl59_801350F4
-  /* 8C60 187E60 8013A760 */  .4byte func_80004310
+  /* 8C60 187E60 8013A760 */  .4byte update_contdata
   .incbin "ovl59.raw.bin", 0x8C64, 0x48
   /* 8CAC 187EAC 8013A7AC */  .4byte func_ovl59_8013505C
 

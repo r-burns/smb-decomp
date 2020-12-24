@@ -36,7 +36,7 @@ glabel D_ovl48_801323F4
   /* 900 172AE0 80132400 */  .4byte D_NF_80132660
   .incbin "ovl48.raw.bin", 0x0904, 0x28
   /* 92C 172B0C 8013242C */  .4byte func_ovl48_80131B00
-  /* 930 172B10 80132430 */  .4byte func_80004310
+  /* 930 172B10 80132430 */  .4byte update_contdata
   .incbin "ovl48.raw.bin", 0x0934, 0x20
   /* 954 172B34 80132454 */  .4byte jtbl_ovl0_800D5CAC
   .incbin "ovl48.raw.bin", 0x0958, 0x28

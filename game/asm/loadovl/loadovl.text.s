@@ -19,7 +19,7 @@ glabel load_overlay_set
   /* 0406DC 800A198C AFB20020 */        sw $s2, 0x20($sp)
   /* 0406E0 800A1990 AFB1001C */        sw $s1, 0x1c($sp)
   /* 0406E4 800A1994 AFB00018 */        sw $s0, 0x18($sp)
-  /* 0406E8 800A1998 0C0010E5 */       jal func_80004394
+  /* 0406E8 800A1998 0C0010E5 */       jal set_contstatus_delay
   /* 0406EC 800A199C 2404003C */     addiu $a0, $zero, 0x3c
   /* 0406F0 800A19A0 3C04800A */       lui $a0, %hi(maybe_print_info_debug)
   /* 0406F4 800A19A4 0C008C01 */       jal set_debug_fn

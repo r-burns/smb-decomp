@@ -137,7 +137,7 @@ glabel D_ovl32_801369E8
   /* 4EF4 15D934 801369F4 */  .4byte D_NF_80136DA0
   .incbin "ovl32.raw.bin", 0x4EF8, 0x28
   /* 4F20 15D960 80136A20 */  .4byte func_ovl32_80131B00
-  /* 4F24 15D964 80136A24 */  .4byte func_80004310
+  /* 4F24 15D964 80136A24 */  .4byte update_contdata
   .incbin "ovl32.raw.bin", 0x4F28, 0x48
   /* 4F70 15D9B0 80136A70 */  .4byte func_ovl32_80136488
   .incbin "ovl32.raw.bin", 0x4F74, 0xC

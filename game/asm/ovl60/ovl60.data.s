@@ -85,5 +85,5 @@ glabel D_ovl60_80133714
   /* 1C20 120ED0 80133720 */  .4byte D_NF_801338C0
   .incbin "ovl60.raw.bin", 0x1C24, 0x28
   /* 1C4C 120EFC 8013374C */  .4byte func_ovl60_80131B00
-  /* 1C50 120F00 80133750 */  .4byte func_80004310
+  /* 1C50 120F00 80133750 */  .4byte update_contdata
   .incbin "ovl60.raw.bin", 0x1C54, 0x4C
