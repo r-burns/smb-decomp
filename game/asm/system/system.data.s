@@ -6,23 +6,6 @@
 #  8003B6E0 -> 8003FAD0
 
 # system.data
-glabel D_8003B6E0
-  .incbin "system.raw.bin", 0x3B2E0, 0x4
-
-glabel D_8003B6E4
-  .incbin "system.raw.bin", 0x3B2E4, 0x4
-
-glabel D_8003B6E8
-  .incbin "system.raw.bin", 0x3B2E8, 0x3
-
-glabel D_8003B6EB
-  .incbin "system.raw.bin", 0x3B2EB, 0x1
-
-glabel D_8003B6EC
-  /* 3B2EC 03C2EC 8003B6EC */  .4byte D_8003A320
-  /* 3B2F0 03C2F0 8003B6F0 */  .4byte D_8003F6B0
-  .incbin "system.raw.bin", 0x3B2F4, 0x5C
-
 glabel D_8003B750
   .incbin "system.raw.bin", 0x3B350, 0x8
 

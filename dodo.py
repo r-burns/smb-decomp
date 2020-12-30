@@ -22,7 +22,10 @@ config = Config(
 tc = ToolChain.from_config(config)
 
 DOIT_CONFIG = {
-    'default_tasks': ['print_config', 'compare' if not config.no_match else 'build_rom'], 
+    'default_tasks': [
+        'print_config', 
+        'compare' if not config.no_match else 'build_rom'
+    ], 
     'reporter': 'executed-only'
 }
 
@@ -693,6 +696,8 @@ def task_link_sprite_bank():
         bank_name = o.stem
         obj_dir = sprite_output / bank_name
         d, deps = get_make_dependencies(lds, o)
+
+        # no relink (want symbols to be resolved)
         link_bank = tc.game.utils.LD + [
             '-T', lds,
             '-L', obj_dir,
@@ -700,7 +705,6 @@ def task_link_sprite_bank():
             f'--dependency-file={d}',
         ]
 
-        # no relink (want symbols to be resolved)
         yield {
             'name': o,
             'actions': [link_bank],

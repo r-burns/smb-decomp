@@ -58,7 +58,9 @@ SECTIONS
         src/sys/thread3.asm.o(.text);
         src/sys/dma.asm.o(.text);
         src/sys/thread6.asm.o(.text);
+        src/sys/gtl.asm.o(.text);
         asm/system/system.text.o(.text);
+
         *libultra.a:setattribute.o(.text);
         asm/system/sprite.o(.text);
         *libultra.a:clearattribute.o(.text);
@@ -181,7 +183,9 @@ SECTIONS
         asm/system/rsp.o(.text);
 
         src/sys/main.o(.data);
+        asm/system/gtl.o(.data);
         asm/system/system.data.o(.data);
+
         asm/system/sprite.o(.data);
         asm/system/audio.data.o(.data);
         *libultra.a:vimodepallan1.o(.data);
@@ -206,7 +210,10 @@ SECTIONS
         src/sys/main.o(.rodata);
         src/sys/thread3.asm.o(.rodata);
         src/sys/thread6.asm.o(.rodata);
+        src/sys/gtl.asm.o(.rodata);
+        asm/system/gtl.o(.rodata);
         asm/system/system.rodata.o(.rodata);
+
         asm/system/sprite.o(.rodata);
         asm/system/audio.rodata.o(.rodata);
         *libultra.a:setintmask.o(.rodata);
@@ -219,6 +226,7 @@ SECTIONS
         *libultra.a:cents2ratio.o(.rodata);
         *libultra.a:xldtob.o(.rodata);
         *libultra.a:llcvt.o(.rodata);
+
         asm/system/unknown.rodata.o(.rodata);
         asm/system/rsp.o(.rodata);
     }
@@ -229,7 +237,9 @@ SECTIONS
         src/sys/thread3.asm.o(.bss);
         src/sys/dma.asm.o(.bss);
         src/sys/thread6.asm.o(.bss);
+        src/sys/gtl.asm.o(.bss);
         asm/system/system.bss.o(.bss);
+
         asm/system/sprite.o(.bss);
         asm/system/audio.bss.o(.bss);
         *libultra.a:sptask.o(.bss);
