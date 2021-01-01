@@ -19,7 +19,7 @@ glabel func_80006CE0
   /* 0078E4 80006CE4 03E00008 */        jr $ra
   /* 0078E8 80006CE8 AC8E000C */        sw $t6, 0xc($a0)
 
-glabel func_80006CEC
+glabel alloc_from_dynamic_buffer
   /* 0078EC 80006CEC 27BDFFE8 */     addiu $sp, $sp, -0x18
   /* 0078F0 80006CF0 AFBF0014 */        sw $ra, 0x14($sp)
   /* 0078F4 80006CF4 10C00007 */      beqz $a2, .L80006D14
@@ -51,7 +51,7 @@ glabel func_80006CEC
   /* 00794C 80006D4C 03E00008 */        jr $ra
   /* 007950 80006D50 27BD0018 */     addiu $sp, $sp, 0x18
 
-glabel func_80006D54
+glabel init_dynamic_buffer
   /* 007954 80006D54 00C77021 */      addu $t6, $a2, $a3
   /* 007958 80006D58 AC850000 */        sw $a1, ($a0)
   /* 00795C 80006D5C AC86000C */        sw $a2, 0xc($a0)
@@ -18656,7 +18656,7 @@ glabel func_80016EDC
   glabel jtgt_800171B0
   /* 017DB0 800171B0 02A02025 */        or $a0, $s5, $zero
   /* 017DB4 800171B4 24050020 */     addiu $a1, $zero, 0x20
-  /* 017DB8 800171B8 0C001B3B */       jal func_80006CEC
+  /* 017DB8 800171B8 0C001B3B */       jal alloc_from_dynamic_buffer
   /* 017DBC 800171BC 24060008 */     addiu $a2, $zero, 8
   /* 017DC0 800171C0 C6080044 */      lwc1 $f8, 0x44($s0)
   /* 017DC4 800171C4 8E06003C */        lw $a2, 0x3c($s0)
@@ -18694,7 +18694,7 @@ glabel func_80016EDC
   /* 017E3C 8001723C 02A02025 */        or $a0, $s5, $zero
   /* 017E40 80017240 24050020 */     addiu $a1, $zero, 0x20
   /* 017E44 80017244 24060008 */     addiu $a2, $zero, 8
-  /* 017E48 80017248 0C001B3B */       jal func_80006CEC
+  /* 017E48 80017248 0C001B3B */       jal alloc_from_dynamic_buffer
   /* 017E4C 8001724C 24130001 */     addiu $s3, $zero, 1
   /* 017E50 80017250 C6120044 */      lwc1 $f18, 0x44($s0)
   /* 017E54 80017254 8E06003C */        lw $a2, 0x3c($s0)
@@ -18721,7 +18721,7 @@ glabel func_80016EDC
   /* 017EA4 800172A4 02A02025 */        or $a0, $s5, $zero
   /* 017EA8 800172A8 24050020 */     addiu $a1, $zero, 0x20
   /* 017EAC 800172AC 24060008 */     addiu $a2, $zero, 8
-  /* 017EB0 800172B0 0C001B3B */       jal func_80006CEC
+  /* 017EB0 800172B0 0C001B3B */       jal alloc_from_dynamic_buffer
   /* 017EB4 800172B4 24130002 */     addiu $s3, $zero, 2
   /* 017EB8 800172B8 C6100044 */      lwc1 $f16, 0x44($s0)
   /* 017EBC 800172BC 8E06003C */        lw $a2, 0x3c($s0)

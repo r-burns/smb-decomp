@@ -1,4 +1,9 @@
 #include <PR/ultratypes.h>
+#include <PR/mbi.h>
+
+#include "sys/gtl.h"
+#include "sys/thread3.h"
+#include "sys/system.h"
 
 u8 D_80045490[16];
 u8 D_800454A0[24];
@@ -8,7 +13,7 @@ u32 D_800454BC;
 u8 D_800454C0[8];
 u8 D_800454C8[24];
 u8 D_800454E0[8];
-u8 D_800454E8[8];
+unsigned int *D_800454E8; // pointer to Gfx.w1 (segment base addr?)
 u8 D_800454F0[16];
 u8 D_80045500[24];
 u8 D_80045518[8];
@@ -35,7 +40,8 @@ u32 D_800465D0;
 u32 D_800465D4;
 u8 D_800465D8[12];
 u32 D_800465E4;
-u8 D_800465E8[16];
+//u8 D_800465E8[16];
+struct DynamicBuffer D_800465E8;
 u8 D_800465F8[20];
 u32 D_8004660C;
 u32 D_80046610;
@@ -53,30 +59,42 @@ u8 D_80046638[8];
 u8 D_80046640[8];
 u8 D_80046648[32];
 u32 D_80046668;
-u32 D_8004666C;
+void *D_8004666C; // function pointer?
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wunknown-pragmas"
 
-#ifdef NON_MATCHING
-#else
-#pragma GLOBAL_ASM("game/nonmatching/gtl/func_800048D0.s")
-#endif
+void func_800048D0(void *arg0) {
+    if (arg0 != NULL) {
+        D_8004666C = arg0;
+    } else {
+        D_8004666C = unref_80000A34;
+    }
+}
 
-#ifdef NON_MATCHING
-#else
-#pragma GLOBAL_ASM("game/nonmatching/gtl/func_800048F8.s")
-#endif
+void func_800048F8(Gfx **dl) {
+    D_800454E8 = &((*dl)->words.w1);
+    gSPSegment((*dl)++, G_MWO_SEGMENT_F, 0x00000000);
+}
 
-#ifdef NON_MATCHING
-#else
-#pragma GLOBAL_ASM("game/nonmatching/gtl/func_80004950.s")
-#endif
+void unref_80004928(u32 arg0) {
+    D_80046620 = arg0;
+}
 
-#ifdef NON_MATCHING
-#else
-#pragma GLOBAL_ASM("game/nonmatching/gtl/func_80004980.s")
-#endif
+void unref_80004934(u16 arg0, u16 arg1) {
+    D_80046624 = arg0;
+    D_80046626 = arg1;
+}
+
+// alloc_region?
+void func_80004950(s32 start, s32 size) {
+    init_dynamic_buffer(&D_800465E8, 0x10000, start, size);
+}
+
+// alloc_with_alignment
+void *func_80004980(s32 size, s32 alignment) {
+    return alloc_from_dynamic_buffer(&D_800465E8, size, alignment);
+}
 
 #ifdef NON_MATCHING
 #else

@@ -8,7 +8,7 @@ from shutil import which
 IDO_CC_FLAGS = [
     '-Wab,-r4300_mul', '-G', '0', '-non_shared', '-Xfullwarn', '-Xcpluscomm', 
     '-signed', '-32', '-mips2',
-    '-D_LANGUAGE_C'
+    '-D_LANGUAGE_C', '-DF3DEX_GBI_2',
 ]
 GCC_AS_FLAGS = ['-march=vr4300', '-mabi=32']
 C_SYNTAX_CHECK_FLAGS = [
@@ -16,7 +16,7 @@ C_SYNTAX_CHECK_FLAGS = [
     '-std=gnu90', '-m32', 
     '-Wall', '-Wextra', '-Wno-format-security', '-Wno-main', 
     '-D_LANGUAGE_C', '-DNON_MATCHING', '-DAVOID_UB', '-DIGNORE_SYNTAX_CHECK',
-    '-D_MIPS_SZINT=32', '-D_MIPS_SZLONG=32',
+    '-D_MIPS_SZINT=32', '-D_MIPS_SZLONG=32', '-DF3DEX_GBI_2',
 ]
 
 # ASM processor for IDO
@@ -31,11 +31,11 @@ IDO_ASMPROC = {
 IDO_ULTRA_CFLAGS = [
     '-Wab,-r4300_mul', '-non_shared', '-G', '0', '-nostdinc',
     '-Xcpluscomm', '-fullwarn',
-    '-D_LANGUAGE_C', '-D_FINALROM', '-DF3DEX_GBI', '-DNDEBUG',
+    '-D_LANGUAGE_C', '-D_FINALROM', '-DF3DEX_GBI_2', '-DNDEBUG',
 ]
 IDO_ULTRA_ASFLAGS = [
     '-Wab,-r4300_mul', '-non_shared', '-G', '0', '-nostdinc',
-    '-D_FINALROM', '-DF3DEX_GBI', '-DNDEBUG',
+    '-D_FINALROM', '-DF3DEX_GBI_2', '-DNDEBUG',
 ]
 
 # Structs

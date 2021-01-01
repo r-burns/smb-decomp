@@ -166,11 +166,6 @@ void func_800009D8(struct MqListNode *arg0, OSMesgQueue *mq, OSMesg *msg, u32 co
     func_80000970(&sp18);
 }
 
-struct Unk80000A34 {
-    /* 0x00 */ u8 pad00[0x70];
-    /* 0x70 */ s32 unk70;
-};
-
 
 #ifdef NON_MATCHING
 s32 unref_80000A34(struct Unk80000A34 *arg0) {
