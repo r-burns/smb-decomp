@@ -3,6 +3,7 @@
 
 #include "sys/gtl.h"
 #include "sys/thread3.h"
+#include "sys/ml.h"
 #include "sys/system.h"
 
 u8 D_80045490[16];
@@ -41,7 +42,7 @@ u32 D_800465D4;
 u8 D_800465D8[12];
 u32 D_800465E4;
 //u8 D_800465E8[16];
-struct DynamicBuffer D_800465E8;
+struct BumpAllocRegion D_800465E8;
 u8 D_800465F8[20];
 u32 D_8004660C;
 u32 D_80046610;
@@ -87,13 +88,13 @@ void unref_80004934(u16 arg0, u16 arg1) {
 }
 
 // alloc_region?
-void func_80004950(s32 start, s32 size) {
-    init_dynamic_buffer(&D_800465E8, 0x10000, start, size);
+void func_80004950(void *start, u32 size) {
+    init_bump_alloc(&D_800465E8, 0x10000, start, size);
 }
 
 // alloc_with_alignment
-void *func_80004980(s32 size, s32 alignment) {
-    return alloc_from_dynamic_buffer(&D_800465E8, size, alignment);
+void *func_80004980(u32 size, u32 alignment) {
+    return bump_alloc(&D_800465E8, size, alignment);
 }
 
 #ifdef NON_MATCHING

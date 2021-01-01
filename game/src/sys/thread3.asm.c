@@ -8,6 +8,7 @@
 
 #include "sys/main.h"
 #include "sys/thread3.h"
+#include "sys/thread6.h"
 #include "sys/system.h"
 
 

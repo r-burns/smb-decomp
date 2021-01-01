@@ -59,6 +59,7 @@ SECTIONS
         src/sys/dma.asm.o(.text);
         src/sys/thread6.asm.o(.text);
         src/sys/gtl.asm.o(.text);
+        src/sys/ml.o(.text);
         asm/system/system.text.o(.text);
 
         *libultra.a:setattribute.o(.text);
@@ -212,6 +213,7 @@ SECTIONS
         src/sys/thread6.asm.o(.rodata);
         src/sys/gtl.asm.o(.rodata);
         asm/system/gtl.o(.rodata);
+        src/sys/ml.o(.rodata);
         asm/system/system.rodata.o(.rodata);
 
         asm/system/sprite.o(.rodata);

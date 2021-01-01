@@ -5,12 +5,6 @@
 # This probably isn't fully correct, but will have to do until more files are
 # split from system.s
 
-glabel D_8003D910
-  /* 3D510 03E510 8003D910 */
-  .asciz "ml : alloc overflow #%d\n"
-  .balign 4
-  .incbin "system.raw.bin", 0x3D52C, 0x4
-
 glabel D_8003D930
   /* 3D530 03E530 8003D930 */
   .asciz "om : couldn\'t get GObjThread\n"

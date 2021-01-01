@@ -12,55 +12,6 @@
 # Text Sections
 #  0x80000910 -> 0x800396C0
 
-
-# Likely start of new file
-glabel func_80006CE0
-  /* 0078E0 80006CE0 8C8E0004 */        lw $t6, 4($a0)
-  /* 0078E4 80006CE4 03E00008 */        jr $ra
-  /* 0078E8 80006CE8 AC8E000C */        sw $t6, 0xc($a0)
-
-glabel alloc_from_dynamic_buffer
-  /* 0078EC 80006CEC 27BDFFE8 */     addiu $sp, $sp, -0x18
-  /* 0078F0 80006CF0 AFBF0014 */        sw $ra, 0x14($sp)
-  /* 0078F4 80006CF4 10C00007 */      beqz $a2, .L80006D14
-  /* 0078F8 80006CF8 00803825 */        or $a3, $a0, $zero
-  /* 0078FC 80006CFC 8C8E000C */        lw $t6, 0xc($a0)
-  /* 007900 80006D00 24C2FFFF */     addiu $v0, $a2, -1
-  /* 007904 80006D04 0040C027 */       not $t8, $v0
-  /* 007908 80006D08 01C27821 */      addu $t7, $t6, $v0
-  /* 00790C 80006D0C 10000002 */         b .L80006D18
-  /* 007910 80006D10 01F81824 */       and $v1, $t7, $t8
-  .L80006D14:
-  /* 007914 80006D14 8CE3000C */        lw $v1, 0xc($a3)
-  .L80006D18:
-  /* 007918 80006D18 8CF90008 */        lw $t9, 8($a3)
-  /* 00791C 80006D1C 00651021 */      addu $v0, $v1, $a1
-  /* 007920 80006D20 ACE2000C */        sw $v0, 0xc($a3)
-  /* 007924 80006D24 0322082B */      sltu $at, $t9, $v0
-  /* 007928 80006D28 10200007 */      beqz $at, .L80006D48
-  /* 00792C 80006D2C 8FBF0014 */        lw $ra, 0x14($sp)
-  /* 007930 80006D30 3C048004 */       lui $a0, %hi(D_8003D910)
-  /* 007934 80006D34 2484D910 */     addiu $a0, $a0, %lo(D_8003D910)
-  /* 007938 80006D38 0C008D89 */       jal fatal_printf
-  /* 00793C 80006D3C 8CE50000 */        lw $a1, ($a3)
-  .L80006D40:
-  /* 007940 80006D40 1000FFFF */         b .L80006D40
-  /* 007944 80006D44 00000000 */       nop 
-  .L80006D48:
-  /* 007948 80006D48 00601025 */        or $v0, $v1, $zero
-  /* 00794C 80006D4C 03E00008 */        jr $ra
-  /* 007950 80006D50 27BD0018 */     addiu $sp, $sp, 0x18
-
-glabel init_dynamic_buffer
-  /* 007954 80006D54 00C77021 */      addu $t6, $a2, $a3
-  /* 007958 80006D58 AC850000 */        sw $a1, ($a0)
-  /* 00795C 80006D5C AC86000C */        sw $a2, 0xc($a0)
-  /* 007960 80006D60 AC860004 */        sw $a2, 4($a0)
-  /* 007964 80006D64 03E00008 */        jr $ra
-  /* 007968 80006D68 AC8E0008 */        sw $t6, 8($a0)
-
-  /* 00796C 80006D6C 00000000 */       nop 
-
 # Likely start of new file
 glabel func_80006D70
   /* 007970 80006D70 3C0E8004 */       lui $t6, %hi(D_80046674)
@@ -18656,7 +18607,7 @@ glabel func_80016EDC
   glabel jtgt_800171B0
   /* 017DB0 800171B0 02A02025 */        or $a0, $s5, $zero
   /* 017DB4 800171B4 24050020 */     addiu $a1, $zero, 0x20
-  /* 017DB8 800171B8 0C001B3B */       jal alloc_from_dynamic_buffer
+  /* 017DB8 800171B8 0C001B3B */       jal bump_alloc
   /* 017DBC 800171BC 24060008 */     addiu $a2, $zero, 8
   /* 017DC0 800171C0 C6080044 */      lwc1 $f8, 0x44($s0)
   /* 017DC4 800171C4 8E06003C */        lw $a2, 0x3c($s0)
@@ -18694,7 +18645,7 @@ glabel func_80016EDC
   /* 017E3C 8001723C 02A02025 */        or $a0, $s5, $zero
   /* 017E40 80017240 24050020 */     addiu $a1, $zero, 0x20
   /* 017E44 80017244 24060008 */     addiu $a2, $zero, 8
-  /* 017E48 80017248 0C001B3B */       jal alloc_from_dynamic_buffer
+  /* 017E48 80017248 0C001B3B */       jal bump_alloc
   /* 017E4C 8001724C 24130001 */     addiu $s3, $zero, 1
   /* 017E50 80017250 C6120044 */      lwc1 $f18, 0x44($s0)
   /* 017E54 80017254 8E06003C */        lw $a2, 0x3c($s0)
@@ -18721,7 +18672,7 @@ glabel func_80016EDC
   /* 017EA4 800172A4 02A02025 */        or $a0, $s5, $zero
   /* 017EA8 800172A8 24050020 */     addiu $a1, $zero, 0x20
   /* 017EAC 800172AC 24060008 */     addiu $a2, $zero, 8
-  /* 017EB0 800172B0 0C001B3B */       jal alloc_from_dynamic_buffer
+  /* 017EB0 800172B0 0C001B3B */       jal bump_alloc
   /* 017EB4 800172B4 24130002 */     addiu $s3, $zero, 2
   /* 017EB8 800172B8 C6100044 */      lwc1 $f16, 0x44($s0)
   /* 017EBC 800172BC 8E06003C */        lw $a2, 0x3c($s0)
