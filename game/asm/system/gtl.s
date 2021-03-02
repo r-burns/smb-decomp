@@ -22,25 +22,26 @@ glabel D_8003B6EC
 
 .section .rodata
 
-glabel D_8003D6F0
-  /* 3D2F0 03E2F0 8003D6F0 */
-  .asciz "gtl : DLBuffer over flow !  kind = %d  vol = %d byte\n"
-  .balign 4
+# glabel D_8003D6F0
+#   /* 3D2F0 03E2F0 8003D6F0 */
+#   .asciz "gtl : DLBuffer over flow !  kind = %d  vol = %d byte\n"
+#   .balign 4
 
-glabel D_8003D728
-  /* 3D328 03E328 8003D728 */
-  .asciz "gtl : DynamicBuffer over flow !  %d byte\n"
-  .balign 4
+# glabel D_8003D728
+#   /* 3D328 03E328 8003D728 */
+#   .asciz "gtl : DynamicBuffer over flow !  %d byte\n"
+#   .balign 4
 
-glabel D_8003D754
-  /* 3D354 03E354 8003D754 */
-  .asciz "bad addr sc_rdp_output_len = %x\n"
-  .balign 4
 
-glabel D_8003D778
-  /* 3D378 03E378 8003D778 */
-  .asciz "gtl : Buffer size for RDP is zero !!\n"
-  .balign 4
+# glabel D_8003D754
+#   /* 3D354 03E354 8003D754 */
+#   .asciz "bad addr sc_rdp_output_len = %x\n"
+#   .balign 4
+
+# glabel D_8003D778
+#   /* 3D378 03E378 8003D778 */
+#   .asciz "gtl : Buffer size for RDP is zero !!\n"
+#   .balign 4
 
 glabel D_8003D7A0
   /* 3D3A0 03E3A0 8003D7A0 */

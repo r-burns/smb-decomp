@@ -11,20 +11,6 @@
 #include "sys/thread6.h"
 #include "sys/system.h"
 
-
-struct SpMqInfo {
-    /* 0x00 */ s32 unk00;
-    /* 0x04 */ s32 unk04;
-    /* 0x08 */ s32 unk08;
-    /* 0x0C */ struct SpTaskQueue *unk0C; // next; should these point to the combined type, or just this info type?
-    /* 0x10 */ struct SpTaskQueue *unk10; // prev
-    /* 0x14 */ s32 (*func)(struct SpTaskQueue *);
-    /* 0x18 */ s32 unk18;
-    /* 0x1C */ s32 unk1C;
-    /* 0x20 */ OSMesgQueue *unk20;
-    /* 0x24 */ struct MqListNode *unk24; // checked type? (-1 is meaningful)
-};
-
 struct SpTaskQueue {
     /* 0x00 */ struct SpMqInfo info;
     /* 0x28 */ OSTask task;
