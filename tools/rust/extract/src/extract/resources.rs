@@ -1,12 +1,14 @@
 use crate::config::{ResTable, Resources};
-use crate::extract::{usize_range, ExtractContext, ExtractTask, ToExtract};
-use anyhow::{bail, Error};
-use std::convert::TryInto;
-use std::fs;
-use std::iter::{self, Peekable};
-use std::ops::Range;
-use std::path::Path;
-use std::slice::Chunks;
+use crate::extract::{ExtractContext, ExtractTask, ToExtract};
+use anyhow::{bail, Context, Error};
+use std::{
+    borrow::Cow,
+    convert::TryInto,
+    fs,
+    iter::{self, Peekable},
+    ops::Range,
+    path::Path,
+};
 
 pub(super) fn todo<'a>(
     res: &'a Resources,
@@ -15,22 +17,18 @@ pub(super) fn todo<'a>(
     let read_table = |tbl| read_res_table(&res.output_dir, ctx, tbl);
 
     res.tables[ctx.version].as_ref().map(|tbl| {
-        let filename = "resource-filetable.bin";
-        let range = usize_range(&tbl.offset);
-        let table_bin = ToExtract {
-            out: res.output_dir.join(filename).into(),
-            info: ExtractTask::ResourceTable(&ctx.rom[range]),
-        };
+        let table_list = parse_resource_table(tbl, &res.output_dir, ctx);
 
-        iter::once(table_bin).chain(read_table(tbl))
+        iter::once(table_list).chain(read_table(tbl))
     })
 }
 
-pub(super) fn extract(out: &Path, task: &ExtractTask) -> Result<(), Error> {
+pub(super) fn extract(out: &Path, task: ExtractTask) -> Result<(), Error> {
     use ExtractTask::{Resource, ResourceReq, ResourceTable};
 
     match task {
-        ResourceTable(data) | Resource(data) | ResourceReq(data) => {
+        ResourceTable(entries) => write_resource_table_json(out, entries)?,
+        Resource(data) | ResourceReq(data) => {
             fs::write(out, data)?;
         }
         _ => bail!("Not a resource extraction: {:?}", task),
@@ -47,22 +45,28 @@ fn read_res_table<'a>(
     let start = table.offset.start as usize;
     let end = table.offset.end as usize;
     let raw_table = &ctx.rom[start..end];
-    let file_dir = out_dir.join("files");
+    let file_dir = {
+        let mut p = out_dir.join("files");
+        p.push("raw");
+        p
+    };
 
-    ResEntryIter::new(raw_table, ctx.rom, start..end)
+    let raw_iter = iterate_table_entries(raw_table);
+    ResEntryIter::new(raw_iter, ctx.rom, start..end)
         .enumerate()
         .filter_map(move |(i, entry)| {
             entry.details.as_ref().map(|details| {
                 // todo: check table.entries for existing name
-                let filename = format!("resource-{:04}", i);
-                let mut out = file_dir.join(&filename);
-                if entry.is_compressed() {
+                let filename = named_file_or_default(i, table.entries.as_deref());
+                let mut out = file_dir.join(&*filename);
+                if details.is_compressed {
                     out.set_extension("vpk");
                 } else {
                     out.set_extension("bin");
                 }
 
                 let reqs = details.reqs.map(|data| {
+                    // TODO function to name the req file?
                     let out = file_dir.join(format!("{}req.bin", &filename));
                     ToExtract {
                         out: out.into(),
@@ -83,156 +87,272 @@ fn read_res_table<'a>(
 struct ResourceDetails<'a> {
     file: &'a [u8],
     reqs: Option<&'a [u8]>,
-    internal_ptrs: Option<usize>,
-    external_ptrs: Option<usize>,
-    compressed_size: Option<usize>,
+    is_compressed: bool,
+    // can add back later once these are processed...
+    // internal_ptrs: Option<usize>,
+    // external_ptrs: Option<usize>,
+    // compressed_size: Option<usize>,
+    // original_size: usize,
 }
 
 #[derive(Debug)]
-struct ResourceEntry<'a> {
+struct ParsedResourceEntry<'a> {
     /// offset of file from the end of the resource table
     offset: usize,
     /// if entry is not a terminator, this has the entry's information
     details: Option<ResourceDetails<'a>>,
 }
 
-impl<'a> ResourceEntry<'a> {
-    const RAWSIZE: usize = 0x0C;
+impl<'a> ParsedResourceEntry<'a> {
+    fn from_raw(raw: RawEntry, rom: &'a [u8], table_end: usize) -> Self {
+        match raw {
+            RawEntry::End(o) => Self {
+                offset: o as usize,
+                details: None,
+            },
+            RawEntry::Entry {
+                offset,
+                size,
+                compressed,
+                ..
+            } => {
+                let offset = offset as usize;
+                let size = compressed.unwrap_or(size) as usize;
 
-    fn is_compressed(&self) -> bool {
-        self.details
-            .as_ref()
-            .map_or(false, |d| d.compressed_size.is_some())
+                let file_range = table_end + offset..table_end + offset + size;
+                let file = &rom[file_range];
+
+                Self {
+                    offset,
+                    details: Some(ResourceDetails {
+                        file,
+                        reqs: None,
+                        is_compressed: compressed.is_some(),
+                    }),
+                }
+            }
+        }
     }
+}
 
-    fn new(entry: [u8; 12], rom: &'a [u8], tbl_end: usize) -> Self {
-        // The word offset to the pointer-linked-list uses this value for no list
-        const NO_PTR: u16 = 0xFFFF;
+fn iterate_table_entries(table: &[u8]) -> impl Iterator<Item = RawEntry> + '_ {
+    assert!(
+        table.len() % RawEntry::SIZE == 0,
+        "Resource table not a multiple of {} bytes; was {}",
+        RawEntry::SIZE,
+        table.len()
+    );
 
-        let read_u32 = |r: Range<usize>| u32::from_be_bytes(entry[r].try_into().unwrap());
-        let read_u16 = |r: Range<usize>| u16::from_be_bytes(entry[r].try_into().unwrap());
-        let check_ptr = |p| {
-            if p == NO_PTR {
-                None
+    table
+        .chunks(RawEntry::SIZE)
+        .map(|raw| TryInto::<[u8; RawEntry::SIZE]>::try_into(raw).unwrap())
+        .map(RawEntry::from)
+}
+
+#[derive(Debug, Copy, Clone, PartialEq, Eq)]
+enum RawEntry {
+    End(u32),
+    Entry {
+        offset: u32,
+        inptrs: Option<u32>,
+        exptrs: Option<u32>,
+        size: u32,
+        /// if compressed
+        compressed: Option<u32>,
+    },
+}
+
+impl RawEntry {
+    const SIZE: usize = 12; // 12 bytes per entry in table
+    const NULL_PTR: u16 = 0xFFFF;
+}
+
+impl From<[u8; Self::SIZE]> for RawEntry {
+    fn from(raw: [u8; Self::SIZE]) -> Self {
+        let read_u32 = |r: Range<usize>| u32::from_be_bytes(raw[r].try_into().unwrap());
+        let read_u16 = |r: Range<usize>| u16::from_be_bytes(raw[r].try_into().unwrap());
+        let read_word_size = |r| read_u16(r) as u32 * 4;
+        let read_ptr = |p: u16| {
+            if p != Self::NULL_PTR {
+                Some(p as u32 * 4)
             } else {
-                Some(p as usize * 4)
+                None
             }
         };
 
         let (offset, compressed) = {
             let o = read_u32(0..4);
-            ((o & 0x7FFF_FFFF) as usize, o & 0x8000_0000 != 0)
+            (o & 0x7FFF_FFFF, o & 0x8000_0000 != 0)
         };
-        let size = read_u16(10..12) as usize * 4;
-        let details = if size == 0 {
-            // end of table, though offset points to end of the final file's data
-            None
+        let inptrs = read_ptr(read_u16(4..6));
+        let compressed = if compressed {
+            Some(read_word_size(6..8))
         } else {
-            let compressed_size = if compressed {
-                let s = read_u16(6..8);
-                Some(s as usize * 4)
-            } else {
-                None
-            };
-            let internal_ptrs = check_ptr(read_u16(4..6));
-            let external_ptrs = check_ptr(read_u16(8..10));
-            // used compressed size if compressed
-            let real_size = compressed_size.unwrap_or(size);
-            let r = tbl_end + offset..tbl_end + offset + real_size;
-            let file = &rom[r];
-
-            Some(ResourceDetails {
-                file,
-                internal_ptrs,
-                external_ptrs,
-                compressed_size,
-                reqs: None,
-            })
+            None
         };
+        let exptrs = read_ptr(read_u16(8..10));
+        let size = read_word_size(10..12);
 
-        Self { offset, details }
+        if size == 0 {
+            Self::End(offset)
+        } else {
+            Self::Entry {
+                offset,
+                inptrs,
+                exptrs,
+                size,
+                compressed,
+            }
+        }
     }
 }
 
-struct ResEntryIter<'a, 'csr> {
+struct ResEntryIter<'a, I: Iterator> {
     rom: &'a [u8],
-    entries: Peekable<Chunks<'csr, u8>>,
     table_offset: Range<usize>,
-    next_entry: Option<ResourceEntry<'a>>,
+    entries: Peekable<I>,
+    next_entry: Option<ParsedResourceEntry<'a>>,
 }
 
-impl<'a, 'csr> ResEntryIter<'a, 'csr> {
-    fn new(table: &'csr [u8], rom: &'a [u8], table_offset: Range<usize>) -> Self {
-        const SIZE: usize = ResourceEntry::RAWSIZE;
-        assert!(
-            table.len() % SIZE == 0,
-            "Resource table not a multiple of {} bytes; was {}",
-            SIZE,
-            table.len()
-        );
-
+impl<'a, I: Iterator> ResEntryIter<'a, I> {
+    fn new(entries: I, rom: &'a [u8], table_offset: Range<usize>) -> Self {
         Self {
             rom,
-            entries: table.chunks(SIZE).peekable(),
+            entries: entries.peekable(),
             table_offset,
             next_entry: None,
         }
     }
 }
 
-impl<'a, 'csr> Iterator for ResEntryIter<'a, 'csr> {
-    type Item = ResourceEntry<'a>;
+impl<'a, I: Iterator<Item = RawEntry> + 'a> Iterator for ResEntryIter<'a, I> {
+    type Item = ParsedResourceEntry<'a>;
 
     fn next(&mut self) -> Option<Self::Item> {
-        const SIZE: usize = ResourceEntry::RAWSIZE;
-
         // borrow-checker
         let rom = self.rom;
         let entries = &mut self.entries;
         let next_entry = &mut self.next_entry;
+        let table_end = self.table_offset.end;
 
-        let tbl_end = self.table_offset.end;
-        let new_entry = |raw| ResourceEntry::new(raw, rom, tbl_end);
+        let parse_raw = |raw| Self::Item::from_raw(raw, rom, table_end);
 
-        entries.next().and_then(|raw| {
-            let raw: [u8; SIZE] = raw.try_into().unwrap();
-            let next = entries.peek().map(|&r| new_entry(r.try_into().unwrap()));
-            let cur = next_entry.take().unwrap_or_else(|| new_entry(raw));
+        entries.next().map(|raw| {
+            let next = entries.peek().copied().map(parse_raw);
+            let mut cur = next_entry.take().unwrap_or_else(|| parse_raw(raw));
 
-            let opt_details = cur.details;
-            let offset = cur.offset;
-
-            opt_details
-                .map(|mut details| {
-                    let cur_size = details
-                        .compressed_size
-                        .unwrap_or_else(|| details.file.len());
-                    let cur_file_end = offset + cur_size;
-                    let found_reqs = next.as_ref().map(|n| n.offset).and_then(|start_next| {
-                        if cur_file_end < start_next {
-                            let start = tbl_end + cur_file_end;
-                            let end = tbl_end + start_next;
-
-                            Some(&rom[start..end])
-                        } else {
-                            None
-                        }
-                    });
-
-                    details.reqs = found_reqs;
-                    *next_entry = next;
-
-                    Self::Item {
-                        offset,
-                        details: Some(details),
+            // check the next file to see if there is req data between
+            // these two entries
+            if let Some(details) = cur.details.as_mut() {
+                // offsets are relative to the end of the table,
+                // so have to add the offsets to the table_end address to
+                // get the rom address
+                let file_end_addr = cur.offset + details.file.len();
+                let found_reqs = next.as_ref().map(|n| n.offset).and_then(|next_file_addr| {
+                    if file_end_addr < next_file_addr {
+                        let s = table_end + file_end_addr;
+                        let e = table_end + next_file_addr;
+                        Some(&rom[s..e])
+                    } else {
+                        None
                     }
-                })
-                .or_else(|| {
-                    Some(Self::Item {
-                        offset,
-                        details: None,
-                    })
-                })
+                });
+
+                let has_exptrs = if let RawEntry::Entry { exptrs, .. } = raw {
+                    exptrs.is_some()
+                } else {
+                    false
+                };
+
+                debug_assert_eq!(
+                    found_reqs.is_some(),
+                    has_exptrs,
+                    "all exptrs need req file:\n{:#?}\ncur: {:#x} + {:#x} = {:#x}\n{:#?}",
+                    raw,
+                    cur.offset,
+                    details.file.len(),
+                    file_end_addr,
+                    next.map(|n| n.offset)
+                );
+
+                details.reqs = found_reqs;
+
+                *next_entry = next;
+            }
+
+            cur
         })
     }
+}
+
+type BoxedResEntriesIter<'a> = Box<dyn Iterator<Item = TableEntry<'a>> + 'a>;
+pub(super) struct TableEntries<'a> {
+    iter: BoxedResEntriesIter<'a>,
+}
+
+fn named_file_or_default(idx: usize, names: Option<&[String]>) -> Cow<str> {
+    names
+        .and_then(|n| n.get(idx))
+        .map(Cow::from)
+        .unwrap_or_else(|| default_resfile_name(idx).into())
+}
+
+fn default_resfile_name(n: usize) -> String {
+    format!("resource-{:04}", n)
+}
+
+use resources::TableEntry;
+
+// Create an Iterator that can provide the info for recreating the resource table
+// right now, each entry needs all of the describing info,
+// eventually this shouldn't be the case
+fn parse_resource_table<'a>(
+    tbl: &'a ResTable,
+    outdir: &Path,
+    ctx: ExtractContext<'a>,
+) -> ToExtract<'a> {
+    let filename = "resources.json";
+    let file = outdir.join(filename);
+
+    let start = tbl.offset.start as usize;
+    let end = tbl.offset.end as usize;
+    let raw_table = &ctx.rom[start..end];
+    let iter =
+        iterate_table_entries(raw_table)
+            .enumerate()
+            .filter_map(move |(i, entry)| match entry {
+                RawEntry::End(_) => None,
+                RawEntry::Entry {
+                    inptrs,
+                    exptrs,
+                    size,
+                    compressed,
+                    ..
+                } => {
+                    let name = named_file_or_default(i, tbl.entries.as_deref());
+
+                    Some(TableEntry::Detailed {
+                        name,
+                        internal: inptrs,
+                        external: exptrs,
+                        decompressed: size,
+                        compressed,
+                    })
+                }
+            });
+
+    let iter = Box::new(iter) as BoxedResEntriesIter;
+
+    ToExtract {
+        out: file.into(),
+        info: ExtractTask::ResourceTable(TableEntries { iter }),
+    }
+}
+
+/// output the `TableEntry`s from the passed iterator to the newly created JSON file `out`
+fn write_resource_table_json(out: &Path, entries: TableEntries) -> Result<(), Error> {
+    let entries: Vec<_> = entries.iter.collect();
+    let wtr = fs::File::create(out).context("creating resource table json file")?;
+
+    serde_json::to_writer_pretty(wtr, &entries).context("writing JSON to resource table file")
 }

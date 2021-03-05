@@ -80,7 +80,7 @@ impl Entry {
         let mut buf = [0u32; ENTRY_SIZE];
         let end = offset + (ENTRY_SIZE * 4);
         BE::read_u32_into(&bank_data[offset..end], &mut buf);
-    
+
         let image_count = buf[0];
         let format = BankFormat::try_from(buf[1])?;
         let bitdepth = BankDepth::try_from(buf[2])?;
@@ -88,11 +88,11 @@ impl Entry {
         let height = buf[4];
         // CI image sets with 1 image show "no palettes" (0x1) even though they have a palette pointer
         let are_palettes = buf[5] == 0 || (format == BankFormat::CI && image_count == 1);
-    
+
         let mut image_offsets = vec![0u32; image_count as usize];
         let end_imgs = end + image_count as usize * 4;
         BE::read_u32_into(&bank_data[end..end_imgs], &mut image_offsets);
-    
+
         let palette_offsets = if are_palettes {
             let mut o = vec![0u32; image_count as usize];
             let end_pals = end_imgs + image_count as usize * 4;
@@ -101,7 +101,7 @@ impl Entry {
         } else {
             None
         };
-    
+
         Ok(Entry {
             entry_offset: offset as u32,
             image_count,

@@ -1077,8 +1077,7 @@ SECTIONS
 
     BEGIN_SEG(resources, 0)
     {
-        resources/resource-filetable.o(.data);
-        resources/resource-files.o(.data);
+        resources/resources.o(.filetable .data);
     }
     END_SEG(resources)
 

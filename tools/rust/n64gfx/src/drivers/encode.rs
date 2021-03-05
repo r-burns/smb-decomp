@@ -78,18 +78,18 @@ fn convert_to_intensity(
 }
 
 fn convert_to_ci(file: PathBuf, depth: BitDepth) -> Result<(Vec<u8>, Option<Vec<u8>>), Error> {
-    use lodepng::{ffi::ColorType::PALETTE, Image, State};
+    use lodepng::{ffi::ColorType::PALETTE, Decoder, Image};
 
-    let mut state = State::new();
-    state.info_raw_mut().colortype = PALETTE;
-    state.info_raw_mut().set_bitdepth(8);
+    let mut decoder = Decoder::new();
+    decoder.info_raw_mut().colortype = PALETTE;
+    decoder.info_raw_mut().set_bitdepth(8);
 
-    let indices = state.decode_file(&file).map(|res| match res {
+    let indices = decoder.decode_file(&file).map(|res| match res {
         Image::RawData(bits) => Ok(bits),
         _ => Err(anyhow!("couldn't read input png as paletted png")),
     })??;
 
-    let palette = state.info_png_mut().color.palette();
+    let palette = decoder.info_png_mut().color.palette();
     let (img, pal) = libgfx::indexed_to_raw(&indices.buffer, &palette, depth);
 
     Ok((img.into(), pal.into()))

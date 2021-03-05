@@ -4,10 +4,7 @@ use libgfx::{self, BitDepth, ImageFormat};
 use libsprite::{img_file_name, BankConfig, BankDepth, BankFormat, Entry, EntryConfig, Header};
 use lodepng::{
     self,
-    ffi::{
-        ColorType::{GREY_ALPHA, PALETTE},
-        State as PngState,
-    },
+    ffi::ColorType::{GREY_ALPHA, PALETTE},
 };
 use std::convert::TryFrom;
 use std::fs;
@@ -110,31 +107,31 @@ fn write_entry_images(entry: &Entry, outdir: &PathBuf, data: &[u8]) -> Result<()
                     let (img, pal) =
                         libgfx::raw_to_indexed(&raw_img, &raw_pal, bitdepth, width, height);
 
-                    let mut state = PngState::new();
+                    let mut encoder = lodepng::Encoder::new();
                     // provide the exact palette
-                    state.set_auto_convert(false);
+                    encoder.set_auto_convert(false);
                     // have to set the ColorMode struct for both output png and input raw data
-                    state.info_png_mut().color.colortype = PALETTE;
-                    state.info_png_mut().color.set_bitdepth(bitdepth as u32);
-                    state.info_png_mut().color.palette_clear();
+                    encoder.info_png_mut().color.colortype = PALETTE;
+                    encoder.info_png_mut().color.set_bitdepth(bitdepth as u32);
+                    encoder.info_png_mut().color.palette_clear();
 
-                    state.info_raw_mut().colortype = PALETTE;
-                    state.info_raw_mut().set_bitdepth(8);
-                    state.info_raw_mut().palette_clear();
+                    encoder.info_raw_mut().colortype = PALETTE;
+                    encoder.info_raw_mut().set_bitdepth(8);
+                    encoder.info_raw_mut().palette_clear();
                     // have to set palettes for both as well
                     for p in pal {
-                        state
+                        encoder
                             .info_raw_mut()
                             .palette_add(p)
                             .context("adding CI color to raw palette")?;
-                        state
+                        encoder
                             .info_png_mut()
                             .color
                             .palette_add(p)
                             .context("adding CI color to png palette")?;
                     }
                     // finally, write the png
-                    state.encode_file(&output_file, &img, width as usize, height as usize)?;
+                    encoder.encode_file(&output_file, &img, width as usize, height as usize)?;
 
                     Ok(())
                 })

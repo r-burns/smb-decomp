@@ -57,7 +57,7 @@ pub(crate) fn extract_assets(info: crate::Extract) -> Result<(), Error> {
             SpriteBank { .. } | SpriteImgEntry(..) | SpriteImg(..) | SpriteInfo(..) => {
                 sprites::extract(&out, &info)
             }
-            ResourceTable(..) | Resource(..) | ResourceReq(..) => resources::extract(&out, &info),
+            ResourceTable(..) | Resource(..) | ResourceReq(..) => resources::extract(&out, info),
         }
         .with_context(|| format!("extracting file {}", &new_file))?;
 
@@ -123,13 +123,11 @@ fn check_for_work(task: &ToExtract, already_extracted: Option<&LocalAssets>) -> 
         .unwrap_or(true)
 }
 
-#[derive(Debug)]
 pub(crate) struct ToExtract<'a> {
     pub out: Cow<'a, Path>,
     info: ExtractTask<'a>,
 }
 
-#[derive(Debug)]
 /// Information on what to extract
 enum ExtractTask<'a> {
     Binary(&'a [u8]),
@@ -143,11 +141,26 @@ enum ExtractTask<'a> {
     // right now, don't parse the data...
     SpriteInfo(&'a [u8]),
     // parse later
-    ResourceTable(&'a [u8]),
+    ResourceTable(resources::TableEntries<'a>),
     // parse later...? Probably need different variants
     Resource(&'a [u8]),
     // parse later..? should be part of the compiling of the resource file
     ResourceReq(&'a [u8]),
+}
+
+impl<'a> fmt::Debug for ExtractTask<'a> {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            ExtractTask::Binary(_) => write!(f, "Binary"),
+            ExtractTask::SpriteBank { .. } => write!(f, "Sprite Bank"),
+            ExtractTask::SpriteImgEntry(_) => write!(f, "Sprite Set Entry"),
+            ExtractTask::SpriteImg(_) => write!(f, "Sprite"),
+            ExtractTask::SpriteInfo(_) => write!(f, "Sprite Set Info"),
+            ExtractTask::ResourceTable(_) => write!(f, "Resource Table"),
+            ExtractTask::Resource(_) => write!(f, "Resource File"),
+            ExtractTask::ResourceReq(_) => write!(f, "Resource Req'd List"),
+        }
+    }
 }
 
 #[derive(Debug)]
