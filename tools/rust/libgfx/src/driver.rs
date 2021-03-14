@@ -6,11 +6,11 @@ use std::fmt;
 use std::path::Path;
 
 /// Possible errors when using `N64ToPng` to create a PNG file
-#[derive(Debug, Clone, Eq, PartialEq)]
+#[derive(Debug, Clone)]
 pub enum LibGfxPngError {
     MissingPalette,
-    PalAdd(lodepng::ffi::Error),
-    EncodeIssue(lodepng::ffi::Error),
+    PalAdd(lodepng::Error),
+    EncodeIssue(lodepng::Error),
 }
 
 impl fmt::Display for LibGfxPngError {

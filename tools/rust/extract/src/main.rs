@@ -105,7 +105,8 @@ impl Args {
             Some("extract") => Extract::from_args(args).map(Self::Extract),
             Some("ignore") => GitIgnore::from_args(args).map(Self::Ignore),
             Some("clean") => {
-                let local = args.free_os().and_then(get_first_free).map(PathBuf::from)?;
+                //let local = args.free_os().and_then(get_first_free).map(PathBuf::from)?;
+                let local = args.free_from_os_str(to_pathbuf)?;
 
                 Ok(Self::Clean { local })
             }
@@ -204,15 +205,6 @@ impl FileList {
 
 fn to_pathbuf(s: &OsStr) -> ArgResult<PathBuf> {
     Ok(PathBuf::from(s.to_os_string()))
-}
-
-fn get_first_free<T>(free_args: Vec<T>) -> ArgResult<T> {
-    free_args
-        .into_iter()
-        .nth(0)
-        .ok_or_else(|| pico_args::Error::ArgumentParsingFailed {
-            cause: "missing free argument".into(),
-        })
 }
 
 fn check_stdout(p: PathBuf) -> Option<PathBuf> {

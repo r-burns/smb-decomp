@@ -120,7 +120,7 @@ impl Args {
             Some("unpack") => {
                 let output = args.value_from_os_str(["-o", "--output"], to_pathbuf)?;
                 let extra = args.contains(["-e", "--extra"]);
-                let bank = args.free_os().and_then(get_first_free).map(PathBuf::from)?;
+                let bank = args.free_from_os_str(to_pathbuf)?;
 
                 Ok(Self::Unpack {
                     bank,
@@ -132,7 +132,7 @@ impl Args {
                 let output = args.opt_value_from_os_str(["-o", "--output"], to_pathbuf)?;
                 let imgext = args.opt_value_from_str(["-i", "--imgext"])?;
                 let palext = args.opt_value_from_str(["-p", "--palext"])?;
-                let config = args.free_os().and_then(get_first_free).map(PathBuf::from)?;
+                let config = args.free_from_os_str(to_pathbuf)?;
 
                 Ok(Self::PackEntry {
                     config,
@@ -144,7 +144,7 @@ impl Args {
             Some("link") => {
                 let section = args.opt_value_from_str(["-s", "--section"])?;
                 let output = args.opt_value_from_os_str(["-o", "--output"], to_pathbuf)?;
-                let config = args.free_os().and_then(get_first_free).map(PathBuf::from)?;
+                let config = args.free_from_os_str(to_pathbuf)?;
 
                 Ok(Self::Link {
                     config,
@@ -163,13 +163,4 @@ impl Args {
 
 fn to_pathbuf(s: &OsStr) -> ArgResult<PathBuf> {
     Ok(PathBuf::from(s.to_os_string()))
-}
-
-fn get_first_free<T>(free_args: Vec<T>) -> ArgResult<T> {
-    free_args
-        .into_iter()
-        .nth(0)
-        .ok_or_else(|| pico_args::Error::ArgumentParsingFailed {
-            cause: "missing free argument".into(),
-        })
 }
