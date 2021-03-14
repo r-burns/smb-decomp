@@ -77,6 +77,18 @@ class Config():
         o.parent.mkdir(parents=True, exist_ok=True)
 
         return o
+
+    def create_output_dir(self, directory_path):
+        ''' Given an `game_dir` relative directory path, 
+            create that directory under the proper build directory
+            This also ensures that the directory is created
+        '''
+
+        o = self.build_dir.joinpath(directory_path.relative_to(self.game_dir))
+        o.mkdir(parents=True, exist_ok=True)
+
+        return o
+
     
     def __str__(self):
         common = (

@@ -122,7 +122,7 @@ fn export_gray_png(info: ImageInfo, name: &Path) -> Result<(), Error> {
 }
 
 fn export_indexed_png(info: ImageInfo, name: &Path) -> Result<(), Error> {
-    use lodepng::ffi::{ColorType::PALETTE, State};
+    use lodepng::{ffi::ColorType::PALETTE, Encoder};
 
     let ImageInfo {
         raw,
@@ -135,29 +135,29 @@ fn export_indexed_png(info: ImageInfo, name: &Path) -> Result<(), Error> {
     let palette = palette.expect("palette for CI image");
     let (img, pal) = libgfx::raw_to_indexed(raw, palette, bitdepth, width, height);
 
-    let mut state = State::new();
+    let mut encoder = Encoder::new();
     // provide the palette for the raw data and output image for lodepng
-    state.set_auto_convert(false);
-    state.info_raw_mut().colortype = PALETTE;
-    state.info_raw_mut().set_bitdepth(8);
-    state.info_raw_mut().palette_clear();
-    state.info_png_mut().color.colortype = PALETTE;
-    state.info_png_mut().color.set_bitdepth(bitdepth as u32);
-    state.info_png_mut().color.palette_clear();
+    encoder.set_auto_convert(false);
+    encoder.info_raw_mut().colortype = PALETTE;
+    encoder.info_raw_mut().set_bitdepth(8);
+    encoder.info_raw_mut().palette_clear();
+    encoder.info_png_mut().color.colortype = PALETTE;
+    encoder.info_png_mut().color.set_bitdepth(bitdepth as u32);
+    encoder.info_png_mut().color.palette_clear();
 
     for p in pal {
-        state
+        encoder
             .info_raw_mut()
             .palette_add(p)
             .context("adding CI color to raw pallet")?;
-        state
+        encoder
             .info_png_mut()
             .color
             .palette_add(p)
             .context("adding CI color to png pallet")?;
     }
 
-    state.encode_file(name, &img, width as usize, height as usize)?;
+    encoder.encode_file(name, &img, width as usize, height as usize)?;
 
     Ok(())
 }

@@ -39,8 +39,9 @@ rust_manifest = rust_dir / 'Cargo.toml'
 rust_output_dir = rust_dir / 'target' / 'release'
 n64gfx = rust_output_dir / 'n64gfx'
 imgbank = rust_output_dir / 'imgbank'
+restool = rust_output_dir / 'resources'
 extract = rust_output_dir / 'extract'
-rust_tools = [n64gfx, imgbank, extract]
+rust_tools = [n64gfx, imgbank, restool, extract]
 
 def task_rust_tools():
     ''' Use cargo to check and rebuild rust based tools '''
@@ -555,19 +556,61 @@ def get_make_dependencies(src_file, obj_file):
 
 ########## Resource Table ############################
 res_dir = config.game_dir / 'resources'
-res_link  = res_dir / 'templink.ld'
-res_archive = config.to_output(res_dir / 'resource-files.o', '.o')
+res_list = res_dir / 'resources.json'
 
-@create_after(executed='temp_bin_obj', target_regex=res_archive)
+res_link  = config.to_output(res_dir / 'resources.ld', '.ld')
+res_archive = res_link.with_suffix('.o')
+res_bundle_dir = config.create_output_dir(res_dir / 'bundles')
+
+@create_after(executed='extract_assets', target_regex=res_link)
+def task_generate_resources_linkerscript():
+    ''' Generate the linkerscript for building the resource files together '''
+    return {
+        'actions': [
+            [restool, 'table', '-i', res_list, '-o', res_link]
+        ],
+        'file_dep': [restool, res_list],
+        'targets': [res_link],
+    }
+
+@create_after(executed='extract_assets', target_regex='*.o')
+def task_bundle_resources():
+    res_tempbins = res_dir.glob('files/raw/*')
+    invoke_ld = tc.game.utils.LD + ['-r', '-b', 'binary']
+
+    for f in res_tempbins:
+        o = (res_bundle_dir / f.name).with_suffix('.o')
+        yield {
+            'name': o,
+            'actions': [
+                invoke_ld + ['-o', o, f],
+            ],
+            'file_dep': [f],
+            'targets': [o],
+        }
+
+
+@create_after(executed='bundle_resources', target_regex=res_archive)
 def task_link_resources():
     ''' Link resource files into a relocatable binary for linking '''
-    resource_temp_o = [config.to_output(f, '.o') for f in res_dir.glob('temp/files/*')]
+    (res_d, deps) = get_make_dependencies(res_link, res_archive)
+
+    # other deps? as passed clousure?
+    # resource_temp_o = [config.to_output(f, '.o') for f in res_dir.glob('temp/files/*')]
+
+    link_all_resources = tc.game.utils.LD + [
+        '-T', res_link, 
+        '-L', res_bundle_dir,
+        '-r', 
+        '-o', res_archive, 
+        f'--dependency-file={res_d}',
+    ]
+
     return {
         # $(LD) -T %f -r -o %o %<resbins> 
-        'actions': [
-            tc.game.utils.LD + ['-T', res_link, '-r', '-o', res_archive] + resource_temp_o
-        ],
-        'file_dep': [res_link] + resource_temp_o,
+        'actions': [link_all_resources],
+        'file_dep': deps,
+        'task_dep': ['generate_resources_linkerscript'],
         'targets': [res_archive],
     }
 
@@ -737,28 +780,18 @@ def task_temp_bin_obj():
             'targets': [o],
         }
 
-    res_tempbins = res_dir.glob('temp/files/*')
-    for f in res_tempbins:
-        o = config.to_output(f, '.o')
-        yield {
-            'name': o,
-            'actions': [
-                invoke_ld + ['-o', o, f],
-            ],
-            'file_dep': [f],
-            'targets': [o],
-        }
+    
 
-    res_table = res_dir / 'temp' / 'resource-filetable.bin'
-    res_table_o = config.to_output(up_one_dir(res_table), '.o')
-    yield {
-        'name': res_table_o,
-        'actions': [
-            invoke_ld + ['-o', res_table_o, res_table],
-        ],
-        'file_dep': [res_table],
-        'targets': [res_table_o],
-    }
+    # res_table = res_dir / 'temp' / 'resource-filetable.bin'
+    # res_table_o = config.to_output(up_one_dir(res_table), '.o')
+    # yield {
+    #     'name': res_table_o,
+    #     'actions': [
+    #         invoke_ld + ['-o', res_table_o, res_table],
+    #     ],
+    #     'file_dep': [res_table],
+    #     'targets': [res_table_o],
+    # }
 
     temp_sprbank_bins = sprite_dir.glob('*/*.bin')
     for b in temp_sprbank_bins:

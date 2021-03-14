@@ -5,8 +5,8 @@ mod clean;
 mod config;
 mod extract;
 mod ignore;
-mod local;
 mod list;
+mod local;
 
 type ArgResult<T> = Result<T, pico_args::Error>;
 
@@ -189,10 +189,16 @@ impl FileList {
         let version = args.value_from_str(["-v", "--version"])?;
         let rom = args.value_from_os_str(["-r", "--rom"], to_pathbuf)?;
         let assets = args.value_from_os_str(["-a", "--assets"], to_pathbuf)?;
-        let output = args.opt_value_from_os_str(["-o", "--output"], to_pathbuf)?.and_then(check_stdout);
+        let output = args
+            .opt_value_from_os_str(["-o", "--output"], to_pathbuf)?
+            .and_then(check_stdout);
 
-        Ok(Self {version, rom, assets, output})
-
+        Ok(Self {
+            version,
+            rom,
+            assets,
+            output,
+        })
     }
 }
 

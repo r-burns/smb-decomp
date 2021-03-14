@@ -1,8 +1,5 @@
 use crate::{raw_to_gray, raw_to_indexed, raw_to_rgba, BitDepth, ImageFormat};
-use lodepng::{
-    self,
-    ffi::{ColorType, State},
-};
+use lodepng::{self, ffi::ColorType, Encoder};
 use rgb::{alt::GRAYA8, RGBA8};
 use std::error::Error;
 use std::fmt;
@@ -72,7 +69,7 @@ impl<'a> N64ToPng<'a> {
         self.palette = Some(palette);
         self
     }
-    /// Optionally set the palette for this image 
+    /// Optionally set the palette for this image
     pub fn maybe_with_palette(&mut self, pal: Option<&'a [u8]>) -> &mut Self {
         if let Some(pal) = pal {
             self.with_palette(pal);
@@ -91,8 +88,8 @@ impl<'a> N64ToPng<'a> {
                 lodepng::encode_file(p, &data, width, height, ColorType::GREY_ALPHA, 8)
             }
             ConvertedData::CI(data, pal) => {
-                let mut state = self.set_png_palette(&pal)?;
-                state.encode_file(p, &data, width, height)
+                let mut encoder = self.build_png_pal_encoder(&pal)?;
+                encoder.encode_file(p, &data, width, height)
             }
         }
         .map_err(LibGfxPngError::EncodeIssue)
@@ -109,8 +106,8 @@ impl<'a> N64ToPng<'a> {
                 lodepng::encode_memory(&data, width, height, ColorType::GREY_ALPHA, 8)
             }
             ConvertedData::CI(data, pal) => {
-                let mut state = self.set_png_palette(&pal)?;
-                state.encode(&data, width, height)
+                let mut encoder = self.build_png_pal_encoder(&pal)?;
+                encoder.encode(&data, width, height)
             }
         }
         .map_err(LibGfxPngError::EncodeIssue)
@@ -141,32 +138,32 @@ impl<'a> N64ToPng<'a> {
         }
     }
 
-    fn set_png_palette(&self, pal: &[RGBA8]) -> Result<State, LibGfxPngError> {
-        let mut state = State::new();
+    fn build_png_pal_encoder(&self, pal: &[RGBA8]) -> Result<Encoder, LibGfxPngError> {
+        let mut encoder = Encoder::new();
         // provide the exact palette
-        state.set_auto_convert(false);
+        encoder.set_auto_convert(false);
         // have to set the ColorMode struct for both output png and input raw data
-        state.info_png_mut().color.colortype = ColorType::PALETTE;
-        state.info_png_mut().color.set_bitdepth(self.depth as u32);
-        state.info_png_mut().color.palette_clear();
+        encoder.info_png_mut().color.colortype = ColorType::PALETTE;
+        encoder.info_png_mut().color.set_bitdepth(self.depth as u32);
+        encoder.info_png_mut().color.palette_clear();
 
-        state.info_raw_mut().colortype = ColorType::PALETTE;
-        state.info_raw_mut().set_bitdepth(8);
-        state.info_raw_mut().palette_clear();
+        encoder.info_raw_mut().colortype = ColorType::PALETTE;
+        encoder.info_raw_mut().set_bitdepth(8);
+        encoder.info_raw_mut().palette_clear();
         // have to set palettes for both as well
         for p in pal {
-            state
+            encoder
                 .info_raw_mut()
                 .palette_add(*p)
                 .map_err(LibGfxPngError::PalAdd)?;
-            state
+            encoder
                 .info_png_mut()
                 .color
                 .palette_add(*p)
                 .map_err(LibGfxPngError::PalAdd)?;
         }
 
-        Ok(state)
+        Ok(encoder)
     }
 }
 

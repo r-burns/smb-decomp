@@ -1,9 +1,13 @@
-use crate::config::{Assets};
+use crate::config::Assets;
 use crate::extract::{self, ExtractContext, ToExtract};
 use crate::FileList;
-use std::{fs, io::{self, BufWriter, Write}, path::Path};
-use std::collections::BTreeSet;
 use anyhow::{Context, Error};
+use std::collections::BTreeSet;
+use std::{
+    fs,
+    io::{self, BufWriter, Write},
+    path::Path,
+};
 
 pub(crate) fn list_files(info: FileList) -> Result<(), Error> {
     let rom = fs::read(&info.rom).context("reading rom file")?;
@@ -16,7 +20,7 @@ pub(crate) fn list_files(info: FileList) -> Result<(), Error> {
     let files = extract::generate_todos(&assets, ctx)
         .map(ToExtract::into_filename)
         .collect::<BTreeSet<_>>();
-    
+
     let mut output = get_output(info.output.as_deref()).context("opening output")?;
     for f in files {
         writeln!(&mut output, "{}", f.display()).context("writing to output")?;

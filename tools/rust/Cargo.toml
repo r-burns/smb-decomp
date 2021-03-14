@@ -3,8 +3,7 @@ members = [
     "libgfx",
     "imgbank",
     "n64gfx",
-    "libvpk",
-    "vpktool",
     "libsprite",
     "extract",
+    "resources",
 ]
