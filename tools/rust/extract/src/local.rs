@@ -1,10 +1,18 @@
 use anyhow::{anyhow, Error};
-use std::collections::BTreeSet;
-use std::fs::{File, OpenOptions};
-use std::io::{self, BufRead, BufReader, BufWriter, Write};
-use std::path::{Path, PathBuf};
+use std::{
+    collections::BTreeSet,
+    fs::{File, OpenOptions},
+    io::{self, BufRead, BufReader, BufWriter, Write},
+    path::{Path, PathBuf},
+};
 
-const CURRENT_VERSION: u16 = 0;
+/*
+ Version History
+ 0:     Initial working release
+ 1:     Add resource table JSON extraction
+        Pad sprite frames number based on total number of frames
+*/
+const CURRENT_VERSION: u16 = 1;
 const VERSION_KEY: &str = "Version:";
 
 #[derive(Debug)]
@@ -14,6 +22,10 @@ pub(super) struct LocalAssets {
 }
 
 impl LocalAssets {
+    pub fn out_of_date(&self) -> bool {
+        self.version != CURRENT_VERSION
+    }
+
     fn from_file(mut f: BufReader<File>) -> Result<Self, Error> {
         use AssetLine::*;
 

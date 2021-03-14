@@ -1,14 +1,18 @@
+use crate::clean;
 use crate::config::{Assets, Version};
 use crate::local::LocalAssets;
+
 use anyhow::{Context, Error};
 use libgfx::{BitDepth, ImageFormat};
 use libsprite::{BankDepth, BankFormat};
-use std::borrow::Cow;
-use std::fmt::{self};
-use std::fs;
-use std::io::{self, Write};
-use std::ops::Range;
-use std::path::Path;
+use std::{
+    borrow::Cow,
+    fmt::{self},
+    fs,
+    io::{self, Write},
+    ops::Range,
+    path::Path,
+};
 
 mod binaries;
 mod resources;
@@ -33,15 +37,32 @@ pub(crate) fn extract_assets(info: crate::Extract) -> Result<(), Error> {
         rom: &rom,
     };
     let local_assets = LocalAssets::from_path(&info.local).context("reading local assets")?;
+    let assets_out_of_date = local_assets
+        .as_ref()
+        .map_or(false, LocalAssets::out_of_date);
 
-    let mut todo = generate_todos(&assets, ctx)
-        .filter(|task| ctx.force || check_for_work(task, local_assets.as_ref()));
+    let mut todo = generate_todos(&assets, ctx).filter(|task| {
+        ctx.force || assets_out_of_date || check_for_work(task, local_assets.as_ref())
+    });
 
     if info.dry_run {
         let mut stdout = io::stdout();
+        if assets_out_of_date {
+            writeln!(
+                stdout,
+                "Current assets from older version, deleting old assets"
+            )?;
+        }
         return todo
             .try_for_each(|t| writeln!(stdout, "{}", t))
             .context("Writing dry-run todo list");
+    }
+
+    // remove extracted assets from another version if this a newer version of the tool
+    if assets_out_of_date {
+        if let Some(ref la) = local_assets {
+            clean::delete_assets(la).context("removing prior version's assets")?;
+        }
     }
 
     let mut fresh_assets = Vec::new();
@@ -70,8 +91,8 @@ pub(crate) fn extract_assets(info: crate::Extract) -> Result<(), Error> {
 
     // Output updated list of extracted assets
     match local_assets {
-        Some(la) => la.update_version(fresh_assets),
-        None => fresh_assets.into(),
+        Some(la) if !assets_out_of_date => la.update_version(fresh_assets),
+        Some(_) | None => fresh_assets.into(),
     }
     .write_to_path(&info.local)
     .context("writing new local assets file")?;
@@ -148,18 +169,24 @@ enum ExtractTask<'a> {
     ResourceReq(&'a [u8]),
 }
 
+impl<'a> ExtractTask<'a> {
+    const fn kind(&self) -> &'static str {
+        match self {
+            ExtractTask::Binary(_) => "Binary",
+            ExtractTask::SpriteBank { .. } => "Sprite Bank",
+            ExtractTask::SpriteImgEntry(_) => "Sprite Set Entry",
+            ExtractTask::SpriteImg(_) => "Sprite",
+            ExtractTask::SpriteInfo(_) => "Sprite Set Info",
+            ExtractTask::ResourceTable(_) => "Resource Table",
+            ExtractTask::Resource(_) => "Resource File",
+            ExtractTask::ResourceReq(_) => "Resource Req'd List",
+        }
+    }
+}
+
 impl<'a> fmt::Debug for ExtractTask<'a> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        match self {
-            ExtractTask::Binary(_) => write!(f, "Binary"),
-            ExtractTask::SpriteBank { .. } => write!(f, "Sprite Bank"),
-            ExtractTask::SpriteImgEntry(_) => write!(f, "Sprite Set Entry"),
-            ExtractTask::SpriteImg(_) => write!(f, "Sprite"),
-            ExtractTask::SpriteInfo(_) => write!(f, "Sprite Set Info"),
-            ExtractTask::ResourceTable(_) => write!(f, "Resource Table"),
-            ExtractTask::Resource(_) => write!(f, "Resource File"),
-            ExtractTask::ResourceReq(_) => write!(f, "Resource Req'd List"),
-        }
+        write!(f, "{}", self.kind())
     }
 }
 
