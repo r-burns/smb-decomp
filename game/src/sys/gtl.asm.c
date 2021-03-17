@@ -18,15 +18,17 @@ u8 D_800454C8[24];
 u8 D_800454E0[8];
 unsigned int *D_800454E8; // pointer to Gfx.w1 (segment base addr?)
 u8 D_800454F0[16];
-u8 D_80045500[24];
+OSMesgQueue D_80045500; // sctask end? or for all tasks?
 u8 D_80045518[8];
-u8 D_80045520[1056];
+OSMesgQueue D_80045520;
+u8 D_80045538[1032];
 u8 D_80045940[3080];
-u8 D_80046548[8];
-u8 D_80046550[8];
-u8 D_80046558[8];
-u8 D_80046560[8];
-u8 D_80046568[8];
+
+struct DObj *D_80046548[2];
+struct DObj *D_80046550[2];
+struct DObj *D_80046558[2];
+struct SCTaskGfxEnd *D_80046560[2];
+void *D_80046568[2];
 // is the collection of four `DLBuffer`s something worthy of a typedef?
 struct DLBuffer D_80046570[2][4];
 Gfx *D_800465B0[4];
@@ -50,10 +52,12 @@ u16 D_80046624;
 u16 D_80046626;
 u16 D_80046628;
 Gfx *D_8004662C;
-s32 D_80046630; // offset into D_80046648
+// offset into D_80046648 and D_80046548; has to be unsigned
+u32 D_80046630;
 u32 D_80046634;
 u8 D_80046638[8];
-u8 D_80046640[8];
+//u8 D_80046640[8];
+s32 D_80046640;
 struct BumpAllocRegion D_80046648[2];
 u32 D_80046668;
 void *D_8004666C; // function pointer?
@@ -193,30 +197,106 @@ void func_80004CB4(s32 arg0, void *arg1, u32 bufSize) {
     }
 }
 
-#ifdef NON_MATCHING
-#else
-#pragma GLOBAL_ASM("game/nonmatching/gtl/func_80004D2C.s")
-#endif
+struct DObj *func_80004D2C(void) {
+    struct DObj *temp;
+
+    if (D_80046548[D_80046630] == NULL) {
+        fatal_printf("gtl : not defined SCTaskGfx\n");
+        while (TRUE) ;
+    }
+
+    if (D_80046550[D_80046630] == D_80046558[D_80046630]) {
+        fatal_printf("gtl : couldn\'t get SCTaskGfx\n");
+        while (TRUE) ;
+    }
+
+    temp = D_80046550[D_80046630]++;
+
+    return temp;
+}
+
+struct SCTaskGfxEnd {
+    /* 0x00 */ struct SpMqInfo info;
+    /* 0x28 */ s32 unk28;
+}; // size >= 0x2C
 
 #ifdef NON_MATCHING
+/* a lot left to do on this one
+    hopefully the arguments are correct
+*/
+struct Unk4DB4_38 {
+    /* 0x00 */ u8 pad[0x38];
+}; // size = 0x38
+
+// this probably is `struct SCTaskGfxEnd`
+struct Unk4DB4_2C {
+    /* 0x00 */ u8 pad[0x2C];
+}; // size = 0x2C
+
+s32 func_80004DB4(struct DObj *arg0, s32 arg1, struct Unk4DB4_38 *arg2, struct Unk4DB4_2C *arg3) {
+    s32 i = 0;
+    struct DObj *csr;
+
+    if (D_80046640 > 0) {
+        csr = arg0;
+        for (i = 0; i < D_80046640; i++) {
+            
+            D_80046548[i] = csr;
+            D_80046550[i] = csr;
+            D_80046558[i] = &arg0[arg1 * i];
+            D_80046560[i] = (void *)&arg2[i];
+            D_80046568[i] = (void *)&arg3[i];
+            csr += arg1;
+        }
+    }
+
+    // L80004E7C
+    return i;
+}
 #else
 #pragma GLOBAL_ASM("game/nonmatching/gtl/func_80004DB4.s")
 #endif
 
-#ifdef NON_MATCHING
-#else
-#pragma GLOBAL_ASM("game/nonmatching/gtl/func_80004E90.s")
-#endif
+// func_80004E90
+void schedule_gfx_end(struct SCTaskGfxEnd *mesg, void *arg1, s32 arg2, OSMesgQueue *mq) {
+    mesg->info.unk00 = 6;
+    mesg->info.unk04 = 100;
+    mesg->info.func = NULL;
+    mesg->info.unk20 = mq;
+    mesg->info.unk1C = arg2;
+    mesg->info.unk24 = arg1;
+    mesg->unk28 = D_80046630;
 
-#ifdef NON_MATCHING
-#else
-#pragma GLOBAL_ASM("game/nonmatching/gtl/func_80004EFC.s")
-#endif
+    osSendMesg(&gScheduleTaskQueue, (OSMesg)mesg, OS_MESG_NOBLOCK);
+}
 
-#ifdef NON_MATCHING
-#else
-#pragma GLOBAL_ASM("game/nonmatching/gtl/func_80004F78.s")
-#endif
+void func_80004EFC(void) {
+    struct SCTaskGfxEnd *mesg = D_80046560[D_80046630];
+
+    if (mesg == NULL) {
+        fatal_printf("gtl : not defined SCTaskGfxEnd\n");
+        while (TRUE) ;
+    }
+
+    schedule_gfx_end(mesg, (void *)-1, D_80046630, &D_80045500);
+    D_80046550[D_80046630] = D_80046548[D_80046630];
+}
+
+void func_80004F78(void) {
+    OSMesg recv;
+    struct SCTaskGfxEnd *mesg = D_80046560[D_80046630];
+
+    if (mesg == NULL) {
+        fatal_printf("gtl : not defined SCTaskGfxEnd\n");
+        while (TRUE) ;
+    }
+
+    schedule_gfx_end(mesg, NULL, D_80046630, &D_80045520);
+    osRecvMesg(&D_80045520, &recv, OS_MESG_BLOCK);
+    D_80046550[D_80046630] = D_80046548[D_80046630];
+    func_800049B0();
+    func_80004AB0();
+}
 
 #ifdef NON_MATCHING
 #else

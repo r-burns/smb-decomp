@@ -11,17 +11,6 @@
 #include "sys/thread6.h"
 #include "sys/system.h"
 
-struct SpTaskQueue {
-    /* 0x00 */ struct SpMqInfo info;
-    /* 0x28 */ OSTask task;
-    /* 0x68 */ s32 *unk68;
-    /* 0x6C */ s32 *unk6C; // checked type? (-1 is meaningful)
-    /* 0x70 */ u8 pad70[0x04];
-    /* 0x74 */ s32 unk74;
-    /* 0x78 */ s32 unk78;
-    /* 0x7C */ s32 unk7C;
-    /* 0x80 */ u32 unk80;
-};
 
 /*
 	28 00 u32	type;

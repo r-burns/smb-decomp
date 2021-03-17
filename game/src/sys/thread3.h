@@ -3,6 +3,7 @@
 
 #include <PR/ultratypes.h>
 #include <PR/os.h>
+#include <PR/sptask.h>
 
 struct MqListNode {
     /* 0x00 */ struct MqListNode *next;
@@ -25,6 +26,18 @@ struct SpMqInfo {
     /* 0x1C */ s32 unk1C;
     /* 0x20 */ OSMesgQueue *unk20;
     /* 0x24 */ struct MqListNode *unk24; // checked type? (-1 is meaningful)
+};
+
+struct SpTaskQueue {
+    /* 0x00 */ struct SpMqInfo info;
+    /* 0x28 */ OSTask task;
+    /* 0x68 */ s32 *unk68;
+    /* 0x6C */ s32 *unk6C; // checked type? (-1 is meaningful)
+    /* 0x70 */ u8 pad70[0x04];
+    /* 0x74 */ s32 unk74;
+    /* 0x78 */ s32 unk78;
+    /* 0x7C */ s32 unk7C;
+    /* 0x80 */ u32 unk80;
 };
 
 extern OSMesgQueue gScheduleTaskQueue;

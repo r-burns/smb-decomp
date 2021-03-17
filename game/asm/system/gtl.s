@@ -43,25 +43,25 @@ glabel D_8003B6EC
 #   .asciz "gtl : Buffer size for RDP is zero !!\n"
 #   .balign 4
 
-glabel D_8003D7A0
-  /* 3D3A0 03E3A0 8003D7A0 */
-  .asciz "gtl : not defined SCTaskGfx\n"
-  .balign 4
+# glabel D_8003D7A0
+#   /* 3D3A0 03E3A0 8003D7A0 */
+#   .asciz "gtl : not defined SCTaskGfx\n"
+#   .balign 4
+# 
+# glabel D_8003D7C0
+#   /* 3D3C0 03E3C0 8003D7C0 */
+#   .asciz "gtl : couldn\'t get SCTaskGfx\n"
+#   .balign 4
 
-glabel D_8003D7C0
-  /* 3D3C0 03E3C0 8003D7C0 */
-  .asciz "gtl : couldn\'t get SCTaskGfx\n"
-  .balign 4
+# glabel D_8003D7E0
+#   /* 3D3E0 03E3E0 8003D7E0 */
+#   .asciz "gtl : not defined SCTaskGfxEnd\n"
+#   .balign 4
 
-glabel D_8003D7E0
-  /* 3D3E0 03E3E0 8003D7E0 */
-  .asciz "gtl : not defined SCTaskGfxEnd\n"
-  .balign 4
-
-glabel D_8003D800
-  /* 3D400 03E400 8003D800 */
-  .asciz "gtl : not defined SCTaskGfxEnd\n"
-  .balign 4
+# glabel D_8003D800
+#   /* 3D400 03E400 8003D800 */
+#   .asciz "gtl : not defined SCTaskGfxEnd\n"
+#   .balign 4
 
 glabel D_8003D820
   /* 3D420 03E420 8003D820 */
