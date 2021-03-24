@@ -1,13 +1,55 @@
 #include <PR/ultratypes.h>
 #include <PR/mbi.h>
+#include <PR/ucode.h>
 #include <macros.h>
 #include <ssb_types.h>
 
 #include "sys/gtl.h"
+#include "sys/main.h"
 #include "sys/thread3.h"
 #include "sys/ml.h"
 #include "sys/system.h"
 
+struct UcodeInfo {
+    /* 0x00 */ u64 *text;
+    /* 0x04 */ u64 *data;
+};
+
+// match Nintendo's name to make the text and data symbols
+#define NewUcodeInfo(ucode) { (u64 *)ucode##TextStart, (u64 *)ucode##DataStart }
+#define NullUcodeInfo { NULL, NULL }
+#define EndUncodeInfoArray NullUcodeInfo
+
+// data
+s32 D_8003B6E0 = 0;
+s32 D_8003B6E4 = 0;
+
+struct {
+    s16 a;
+    u8  b;
+    u8  c;
+} D_8003B6E8 = {0, 0, 0};
+//s16 D_8003B6E8 = 0;
+//u8 D_8003B6EB = 0;
+
+// Ten total ucodes + a terminator?
+struct UcodeInfo D_8003B6EC[11] = {
+    NewUcodeInfo(gspF3DEX2_fifo),
+    NullUcodeInfo,
+    NullUcodeInfo,
+    NullUcodeInfo,
+    NullUcodeInfo,
+    NullUcodeInfo,
+    NullUcodeInfo,
+    NullUcodeInfo,
+    NullUcodeInfo,
+    NullUcodeInfo,
+    EndUncodeInfoArray,
+};
+// or is this part of the above array..?
+// u32 pad8003B740[2] = { 0 };
+
+// bss
 u8 D_80045490[16];
 u8 D_800454A0[24];
 u16 D_800454B8;
@@ -21,8 +63,9 @@ u8 D_800454F0[16];
 OSMesgQueue D_80045500; // sctask end? or for all tasks?
 u8 D_80045518[8];
 OSMesgQueue D_80045520;
-u8 D_80045538[1032];
-u8 D_80045940[3080];
+//u8 D_80045538[1032];
+u64 D_80045538[SP_DRAM_STACK_SIZE64 + 1];
+u64 D_80045940[OS_YIELD_DATA_SIZE / sizeof(u64) + 1];
 
 struct DObj *D_80046548[2];
 struct DObj *D_80046550[2];
@@ -45,8 +88,8 @@ u8 D_800465F8[20];
 u32 D_8004660C;
 u32 D_80046610;
 u32 D_80046614;
-void *D_80046618;
-u32 D_8004661C;
+void *D_80046618; // u64 *?
+u32 D_8004661C; // size of D_80046618
 u32 D_80046620;
 u16 D_80046624;
 u16 D_80046626;
@@ -179,7 +222,6 @@ void func_80004C5C(struct MqListNode *arg0, u32 bufSize) {
     }
 }
 
-extern s32 D_8003B6E0; // data
 void func_80004CB4(s32 arg0, void *arg1, u32 bufSize) {
     D_8003B6E0 = arg0;
     D_80046618 = arg1;
@@ -298,25 +340,166 @@ void func_80004F78(void) {
     func_80004AB0();
 }
 
-#ifdef NON_MATCHING
-#else
-#pragma GLOBAL_ASM("game/nonmatching/gtl/func_80005018.s")
-#endif
+// is this just a `struct SpTaskQueue`?, or another type of dynamic sp struct?
+struct SCTaskUnk5018 {
+    /* 0x00 */ struct SpMqInfo info;
+    /* 0x28 */ OSTask task;
+    /* 0x68 */ unsigned int *unk68;
+    /* 0x6C */ u32 unk6C;
+    /* 0x70 */ u32 unk70;
+    /* 0x74 */ u32 unk74;
+    /* 0x78 */ u32 unk78;
+    /* 0x7C */ u32 unk7C;
+    /* 0x80 */ u32 unk80;
+}; // size == 0x84
 
-#ifdef NON_MATCHING
-#else
-#pragma GLOBAL_ASM("game/nonmatching/gtl/func_800051E4.s")
-#endif
+void func_80005018(struct SCTaskUnk5018 *t, s32 arg1, u32 ucodeIdx, s32 arg3, u64 *arg4, u64 *arg5, u32 arg6) {
+    struct UcodeInfo *ucode;
+    // ...why?
+    s32 two = 2;
+    
+    t->info.unk00 = 1;
+    t->info.unk04 = 50;
+    if (D_800454E8 != NULL) {
+        t->info.func = D_8004666C;
+        t->unk68 = D_800454E8;
+        D_800454E8 = NULL;
+    } else {
+        t->info.func = NULL;
+        t->unk68 = NULL;
+    }
+    t->unk6C = arg1;
+    t->unk70 = D_800465D4;
+    if (arg1 != 0) {
+        t->info.unk20 = &D_80045500;
+        t->info.unk1C = arg3;
+    } else {
+        t->info.unk20 = NULL;
+    }
+    t->info.unk18 = two;
+    t->unk80 = D_80046630;
+    t->unk7C = 0;
 
-#ifdef NON_MATCHING
-#else
-#pragma GLOBAL_ASM("game/nonmatching/gtl/func_80005240.s")
-#endif
+    t->task.t.type = M_GFXTASK;
+    t->task.t.flags = OS_TASK_LOADABLE;
+    t->task.t.ucode_boot = gRspBootCode;
+    t->task.t.ucode_boot_size = sizeof(gRspBootCode);
+    ucode = &D_8003B6EC[ucodeIdx];
+    if (ucode->text == NULL) {
+        fatal_printf("gtl : ucode isn\'t included  kind = %d\n", ucodeIdx);
+        while (TRUE) ;
+    }
+    t->task.t.ucode = ucode->text;
+    t->task.t.ucode_data = ucode->data;
+    t->task.t.ucode_size = SP_UCODE_SIZE;
+    t->task.t.ucode_data_size = SP_UCODE_DATA_SIZE;
+    t->task.t.dram_stack = OS_DCACHE_ROUNDUP_ADDR(&D_80045538);
+    t->task.t.dram_stack_size = SP_DRAM_STACK_SIZE8;
 
-#ifdef NON_MATCHING
-#else
-#pragma GLOBAL_ASM("game/nonmatching/gtl/func_80005344.s")
-#endif
+    switch (ucodeIdx) {
+        case 0:
+        case 2:
+        case 4:
+        case 6:
+        case 8:
+            // FIFO microcodes..?
+            t->task.t.output_buff = arg5;
+            t->task.t.output_buff_size = (u64 *)((uintptr_t)arg5 + arg6);
+            t->unk74 = two;
+            break;
+        case 1:
+        case 3:
+        case 5:
+        case 7:
+        case 9:
+            t->task.t.output_buff = NULL;
+            t->task.t.output_buff_size = NULL;
+            t->unk74 = 0;
+            break;
+    }
+    t->task.t.data_ptr = arg4;
+    t->task.t.data_size = 0;
+    t->task.t.yield_data_ptr = OS_DCACHE_ROUNDUP_ADDR(&D_80045940);
+    t->task.t.yield_data_size = OS_YIELD_DATA_SIZE;
+    osWritebackDCacheAll();
+    osSendMesg(&gScheduleTaskQueue, (OSMesg)t, OS_MESG_NOBLOCK);
+}
+
+u32 func_800051E4(void) {
+    u32 o = D_80046628 != 0 ? D_80046626 : D_80046624;
+
+    switch (o) {
+        case 1:
+        case 3:
+        case 5:
+        case 7:
+        case 9:
+            o = 9;
+            break;
+        default:
+            o = 8;
+            break;
+    }
+
+    return o;
+}
+
+void func_80005240(s32 arg0, u64 *arg1) {
+    u32 uidx;
+
+    if (arg0 == 0) {
+        uidx = D_80046624;
+        if (D_80046620 == 1) {
+            switch (uidx) {
+                case 0:
+                    uidx = 2;
+                    break;
+                case 1:
+                    uidx = 3;
+                    break;
+            }
+        }
+    } else {
+        uidx = func_800051E4();
+    }
+
+    switch (uidx) {
+        case 1:
+        case 3:
+        case 5:
+        case 7:
+        case 9:
+            func_80005018((void *)func_80004D2C(), 0, uidx, D_80046630, arg1, NULL, 0);
+            break;
+        case 0:
+        case 2:
+        case 4:
+        case 6:
+        case 8:
+            func_80005018((void *)func_80004D2C(), 0, uidx, D_80046630, arg1, D_80046618, D_8004661C);
+            break;
+    }
+}
+
+void append_ucode_load(Gfx **dlist, u32 ucodeIdx) {
+    switch (ucodeIdx) {
+        case 0:
+            gSPLoadUcodeL((*dlist)++, gspF3DEX2_fifo);
+            // intentional fall-thru
+        case 1:
+        case 2:
+        case 3:
+        case 4:
+        case 5:
+        case 6:
+        case 7:
+        case 8:
+        case 9:
+        default:
+            gSPDisplayList((*dlist)++, D_8004662C);
+            break;
+    }
+}
 
 #ifdef NON_MATCHING
 #else

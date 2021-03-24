@@ -184,7 +184,7 @@ SECTIONS
         asm/system/rsp.o(.text);
 
         src/sys/main.o(.data);
-        asm/system/gtl.o(.data);
+        src/sys/gtl.asm.o(.data);
         asm/system/system.data.o(.data);
 
         asm/system/sprite.o(.data);

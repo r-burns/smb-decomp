@@ -15,7 +15,7 @@ glabel D_800396C0 #F3DEX boot?
 # F3DEX2 bin @ 0x39F20 in system.raw.bin
 #   to 0x3B2B0?
 # Audio bin after?
-glabel D_8003A320 
+glabel gspF3DEX2_fifoTextStart 
   .incbin "system.raw.bin", 0x39F20, 0xF4
   /* 3A014 03B014 8003A414 */
   .asciz "7X"
@@ -48,13 +48,16 @@ glabel D_8003A320
   .balign 4
   .incbin "system.raw.bin", 0x3AFA0, 0x310
 
+.balign 16
+glabel gspF3DEX2_fifoTextEnd
+
 .section .rodata
 
 .balign 16
 # F3DEX2 data @ 0x3F2B0 in system.raw.bin
 #   end + 0x420 => 0x3F6D0
 # audio after?
-glabel D_8003F6B0
+glabel gspF3DEX2_fifoDataStart
   .incbin "system.raw.bin", 0x3F2B0, 0x3CC
   /* 3F67C 04067C 8003FA7C */
   .asciz "00@@"
@@ -64,3 +67,6 @@ glabel D_8003F6B0
   .asciz " "
   .balign 4
   .incbin "system.raw.bin", 0x3F6B8, 0x18
+
+.balign 16
+glabel gspF3DEX2_fifoDataEnd

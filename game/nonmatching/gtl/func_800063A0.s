@@ -1,3 +1,9 @@
+.section .rodata
+glabel D_8003D848
+  /* 3D448 03E448 8003D848 */
+  .asciz "gtl : not defined SCTaskGfxEnd\n"
+  .balign 4
+
 .section .text
 glabel func_800063A0
   /* 006FA0 800063A0 27BDFFE8 */     addiu $sp, $sp, -0x18

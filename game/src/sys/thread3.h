@@ -26,7 +26,7 @@ struct SpMqInfo {
     /* 0x1C */ s32 unk1C;
     /* 0x20 */ OSMesgQueue *unk20;
     /* 0x24 */ struct MqListNode *unk24; // checked type? (-1 is meaningful)
-};
+}; // size = 0x28
 
 struct SpTaskQueue {
     /* 0x00 */ struct SpMqInfo info;
@@ -38,7 +38,7 @@ struct SpTaskQueue {
     /* 0x78 */ s32 unk78;
     /* 0x7C */ s32 unk7C;
     /* 0x80 */ u32 unk80;
-};
+}; // size = 0x84
 
 extern OSMesgQueue gScheduleTaskQueue;
 extern s32 D_80045020; 

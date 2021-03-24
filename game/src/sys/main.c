@@ -74,7 +74,7 @@ u64 sThread5Stack[THREAD5_STACK_SIZE];
 OSThread sThread6;
 u8 sUnref8004440[56];
 u64 sThread6Stack[THREAD6_STACK_SIZE];
-u64 D_80044C40[0x20]; //IP3 font?
+u64 gRspBootCode[0x20]; //IP3 font?
 s8 gSPImemOkay;
 s8 gSPDmemOkay;
 OSMesg sBlockMsg[1];
@@ -141,8 +141,8 @@ void thread5_main(UNUSED void *arg) {
     sram_pi_init();
     osCreatePiManager(OS_PRIORITY_PIMGR, &sPIcmdQ, sPIcmdBuf, ARRAY_COUNT(sPIcmdBuf));
     create_dma_mq();
-    // load IP3 font?
-    dma_rom_read(PHYSICAL_TO_ROM(0xB70), D_80044C40, sizeof(D_80044C40));
+    // load IP3 font? rsp boot text
+    dma_rom_read(PHYSICAL_TO_ROM(0xB70), gRspBootCode, sizeof(gRspBootCode));
     check_sp_imem();
     check_sp_dmem();
     osCreateMesgQueue(&gThreadingQueue, sBlockMsg, ARRAY_COUNT(sBlockMsg));
