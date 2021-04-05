@@ -9,6 +9,7 @@
 #include "sys/thread3.h"
 #include "sys/thread6.h"
 #include "sys/dma.h"
+#include "sys/gtl.h"
 #include "sys/system.h"
 #include "loadovl/loader.h"
 
@@ -111,7 +112,7 @@ void check_sp_dmem(void) {
     }
 }
 
-void fatal_thread_stack_overflow(s32 tid) {
+void fatal_stack_overflow_thread(s32 tid) {
     fatal_printf("thread stack overflow  id = %d\n", tid);
 
     while (TRUE) {}
@@ -119,19 +120,19 @@ void fatal_thread_stack_overflow(s32 tid) {
 
 void check_stack_probes(void) {
     if (gThread0Stack[0] != STACK_PROBE_MAGIC) {
-        fatal_thread_stack_overflow(0);
+        fatal_stack_overflow_thread(0);
     }
 
     if (sThread1Stack[0] != STACK_PROBE_MAGIC) {
-        fatal_thread_stack_overflow(1);
+        fatal_stack_overflow_thread(1);
     }
 
     if (sThread3Stack[0] != STACK_PROBE_MAGIC) {
-        fatal_thread_stack_overflow(3);
+        fatal_stack_overflow_thread(3);
     }
 
     if (sThread5Stack[0] != STACK_PROBE_MAGIC) {
-        fatal_thread_stack_overflow(5);
+        fatal_stack_overflow_thread(5);
     }
 }
 

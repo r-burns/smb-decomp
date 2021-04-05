@@ -189,8 +189,8 @@ s32 unref_80000A34(struct Unk80000A34 *arg0) {
 #pragma GLOBAL_ASM("game/nonmatching/thread3/unref_80000A34.s")
 #endif /* NON_MATCHING */
 
-
-s32 func_80000B54(UNUSED s32 arg0) {
+// This function probably takes a pointer to whatever the minimal Task struct is
+s32 func_80000B54(UNUSED void *arg0) {
     struct SpTaskQueue *temp_v0;
     const s32 CHECK = 1;
 

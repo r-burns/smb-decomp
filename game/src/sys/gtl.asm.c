@@ -7,6 +7,7 @@
 #include "sys/gtl.h"
 #include "sys/main.h"
 #include "sys/thread3.h"
+#include "sys/thread6.h"
 #include "sys/ml.h"
 #include "sys/system.h"
 
@@ -15,6 +16,14 @@ struct UcodeInfo {
     /* 0x04 */ u64 *data;
 };
 
+struct FnBundle {
+    /* 0x00 */ u16 unk00;
+    /* 0x04 */ void (*fn04)(void);
+    /* 0x08 */ void (*fn08)(struct FnBundle *);
+    /* 0x0C */ void (*fn0C)(void);
+    /* 0x10 */ void (*fn10)(struct FnBundle *);
+}; // size == 0x14 (D_800465F8)
+
 // match Nintendo's name to make the text and data symbols
 #define NewUcodeInfo(ucode) { (u64 *)ucode##TextStart, (u64 *)ucode##DataStart }
 #define NullUcodeInfo { NULL, NULL }
@@ -22,13 +31,12 @@ struct UcodeInfo {
 
 // data
 s32 D_8003B6E0 = 0;
-s32 D_8003B6E4 = 0;
+u32 D_8003B6E4 = 0;
 
-struct {
-    s16 a;
-    u8  b;
-    u8  c;
-} D_8003B6E8 = {0, 0, 0};
+union {
+    u32 word;
+    u8 parts[4];
+} D_8003B6E8 = {0};
 //s16 D_8003B6E8 = 0;
 //u8 D_8003B6EB = 0;
 
@@ -50,18 +58,20 @@ struct UcodeInfo D_8003B6EC[11] = {
 // u32 pad8003B740[2] = { 0 };
 
 // bss
-u8 D_80045490[16];
-u8 D_800454A0[24];
+OSMesg D_80045490[4];
+// u8 D_800454A0[24];
+OSMesgQueue D_800454A0;
 u16 D_800454B8;
 u16 D_800454BA;
 u32 D_800454BC;
-u8 D_800454C0[8];
-u8 D_800454C8[24];
-u8 D_800454E0[8];
+OSMesg D_800454C0[1];
+//u8 D_800454C8[24];
+OSMesgQueue D_800454C8;
+struct MqListNode D_800454E0;
 unsigned int *D_800454E8; // pointer to Gfx.w1 (segment base addr?)
-u8 D_800454F0[16];
+OSMesg D_800454F0[3];
 OSMesgQueue D_80045500; // sctask end? or for all tasks?
-u8 D_80045518[8];
+OSMesg D_80045518[1];
 OSMesgQueue D_80045520;
 //u8 D_80045538[1032];
 u64 D_80045538[SP_DRAM_STACK_SIZE64 + 1];
@@ -78,13 +88,13 @@ Gfx *D_800465B0[4];
 Gfx *D_800465C0[4];
 
 u32 D_800465D0;
-u32 D_800465D4;
+s32 D_800465D4;
 //u8 D_800465D8[12];
 //u32 D_800465E4; // D_800465D8 + 12
 struct BumpAllocRegion D_800465D8;
 //u8 D_800465E8[16];
 struct BumpAllocRegion D_800465E8;
-u8 D_800465F8[20];
+struct FnBundle D_800465F8;
 u32 D_8004660C;
 u32 D_80046610;
 u32 D_80046614;
@@ -97,12 +107,12 @@ u16 D_80046628;
 Gfx *D_8004662C;
 // offset into D_80046648 and D_80046548; has to be unsigned
 u32 D_80046630;
-u32 D_80046634;
-u8 D_80046638[8];
+s32 D_80046634;
+s32 D_80046638[2];
 //u8 D_80046640[8];
 s32 D_80046640;
 struct BumpAllocRegion D_80046648[2];
-u32 D_80046668;
+void (*D_80046668)(void *); // takes function bundle struct?
 void *D_8004666C; // function pointer?
 
 #pragma GCC diagnostic push
@@ -205,6 +215,8 @@ void check_buffer_lengths(void) {
 }
 
 void func_80004C5C(struct MqListNode *arg0, u32 bufSize) {
+    // struct SCTaskGfxEnd ?
+    // if so, arg0 is wrong type
     struct {
         struct SpMqInfo spmq;
         u32 size;
@@ -262,13 +274,14 @@ struct SCTaskGfxEnd {
     /* 0x28 */ s32 unk28;
 }; // size >= 0x2C
 
+struct Unk4DB4_38 {
+    /* 0x00 */ u8 pad[0x38];
+}; // size == 0x38
+
 #ifdef NON_MATCHING
 /* a lot left to do on this one
     hopefully the arguments are correct
 */
-struct Unk4DB4_38 {
-    /* 0x00 */ u8 pad[0x38];
-}; // size = 0x38
 
 // this probably is `struct SCTaskGfxEnd`
 struct Unk4DB4_2C {
@@ -296,6 +309,7 @@ s32 func_80004DB4(struct DObj *arg0, s32 arg1, struct Unk4DB4_38 *arg2, struct U
     return i;
 }
 #else
+s32 func_80004DB4(struct DObj *arg0, s32 arg1, struct SCTaskGfxEnd *arg2, struct Unk4DB4_38 *arg3);
 #pragma GLOBAL_ASM("game/nonmatching/gtl/func_80004DB4.s")
 #endif
 
@@ -346,7 +360,7 @@ struct SCTaskUnk5018 {
     /* 0x28 */ OSTask task;
     /* 0x68 */ unsigned int *unk68;
     /* 0x6C */ u32 unk6C;
-    /* 0x70 */ u32 unk70;
+    /* 0x70 */ s32 unk70;
     /* 0x74 */ u32 unk74;
     /* 0x78 */ u32 unk78;
     /* 0x7C */ u32 unk7C;
@@ -501,78 +515,665 @@ void append_ucode_load(Gfx **dlist, u32 ucodeIdx) {
     }
 }
 
-#ifdef NON_MATCHING
-#else
-#pragma GLOBAL_ASM("game/nonmatching/gtl/func_800053CC.s")
-#endif
+void func_800053CC(void) {
+    s32 a0;
+    s32 diffs;
+    s32 i;
+    s32 dlIdx;
+    Gfx *cmdPtr;
 
-#ifdef NON_MATCHING
-#else
-#pragma GLOBAL_ASM("game/nonmatching/gtl/func_800057C8.s")
-#endif
+    // calculate bitset of differences
+    // bit 1 -> 0
+    // 2 -> 1
+    // 4 -> 2
+    // 8 -> 3
+    diffs = 0;
+    for (i = 0; i < 4; i++) {
+        diffs >>= 1;
+        if (D_800465B0[i] != D_800465C0[i]) {
+            diffs |= 8;
+        }
+    }
 
-#ifdef NON_MATCHING
-#else
-#pragma GLOBAL_ASM("game/nonmatching/gtl/func_80005AE4.s")
-#endif
+    if (diffs != 0) {
+        if (diffs & 1) {
+            if (diffs & 4) {
+                append_ucode_load(&D_800465B0[0], func_800051E4());
+                gSPBranchList(D_800465B0[0]++, D_800465C0[2]);
+            } else if (diffs & 2) {
+                // L80005480
+                if (D_80046628 != 0) {
+                    append_ucode_load(&D_800465B0[0], D_80046624);
+                }
+                // L800054AC
+                gSPBranchList(D_800465B0[0]++, D_800465C0[1]);
+            } else if (diffs & 8) {
+                // L800054DC
+                append_ucode_load(&D_800465B0[0], func_800051E4());
+                gSPBranchList(D_800465B0[0]++, D_800465C0[3]);
+            } else {
+                // L80005530
+                gDPFullSync(D_800465B0[0]++);
+                gSPEndDisplayList(D_800465B0[0]++);
+            }
+        }
+        // L80005568
+        if (diffs & 4) {
+            if (diffs & 2) {
+                append_ucode_load(&D_800465B0[2], D_80046624);
+                gSPBranchList(D_800465B0[2]++, D_800465C0[1]);
+            } else if (diffs & 8) {
+                // L800055DC
+                gSPBranchList(D_800465B0[2]++, D_800465C0[3]);
+            } else {
+                // L80005608
+                gDPFullSync(D_800465B0[2]++);
+                gSPEndDisplayList(D_800465B0[2]++);
+            }
+        }
+        // L80005634
+        if (diffs & 2) {
+            if (diffs & 8) {
+                append_ucode_load(&D_800465B0[0], func_800051E4());
+                gSPBranchList(D_800465B0[1]++, D_800465C0[3]);
+            } else {
+                // L80005690
+                gDPFullSync(D_800465B0[1]++);
+                gSPEndDisplayList(D_800465B0[1]++);
+            }
+        }
+        // L800056BC
+        if (diffs & 8) {
+            gDPFullSync(D_800465B0[3]++);
+            gSPEndDisplayList(D_800465B0[3]++);
+        }
+        // L800056F8
 
-#ifdef NON_MATCHING
-#else
-#pragma GLOBAL_ASM("game/nonmatching/gtl/func_80005BFC.s")
-#endif
+        if (diffs & 1) {
+            dlIdx = 0;
+            a0 = 0;
+        } else if (diffs & 4) {
+            // L80005708
+            dlIdx = 2;
+            a0 = 1;
+        } else if (diffs & 2) {
+            // L80005720
+            dlIdx = 1;
+            a0 = 0;
+        } else {
+            // L80005734
+            dlIdx = 3;
+            a0 = 1;
+        }
+        // L80005738
+        cmdPtr = D_800465B0[dlIdx];
+        gSPDisplayList(D_800465B0[dlIdx]++, D_8004662C);
+        gSPBranchList(D_800465B0[dlIdx]++, D_800465C0[dlIdx]);
+        func_80005240(a0, (u64 *)cmdPtr);
 
-#ifdef NON_MATCHING
-#else
-#pragma GLOBAL_ASM("game/nonmatching/gtl/func_80005C74.s")
-#endif
+        D_800465C0[0] = D_800465B0[0];
+        D_800465C0[2] = D_800465B0[2];
+        D_800465C0[1] = D_800465B0[1];
+        D_800465C0[3] = D_800465B0[3];
+    }
+    // L800057AC
+    check_buffer_lengths();
+}
 
-#ifdef NON_MATCHING
-#else
-#pragma GLOBAL_ASM("game/nonmatching/gtl/func_80005C9C.s")
-#endif
+void func_800057C8(void) {
+    s32 i;
+    s32 diffs;
 
-#ifdef NON_MATCHING
-#else
-#pragma GLOBAL_ASM("game/nonmatching/gtl/func_80005D10.s")
-#endif
+    check_buffer_lengths();
+    diffs = 0;
+    for (i = 0; i < 4; i++) {
+        diffs >>= 1;
+        if (D_800465B0[i] != D_800465C0[i]) {
+            diffs |= 8;
+        }
+    }
 
-#ifdef NON_MATCHING
-#else
-#pragma GLOBAL_ASM("game/nonmatching/gtl/func_80005DA0.s")
-#endif
+    if (diffs != 0) {
+        if (diffs & 1) {
+            if (diffs & 4) {
+                append_ucode_load(&D_800465B0[0], func_800051E4());
+                gSPBranchList(D_800465B0[0]++, D_800465C0[2]);
+            } else if (diffs & 2) {
+                // L80005878
+                if (D_80046628 != 0) {
+                    append_ucode_load(&D_800465B0[0], D_80046624);
+                }
+                // L800058A4
+                gSPBranchList(D_800465B0[0]++, D_800465C0[1]);
+            } else if (diffs & 8) {
+                // L800058D0
+                append_ucode_load(&D_800465B0[0], func_800051E4());
+                gSPBranchList(D_800465B0[0]++, D_800465C0[3]);
+            }
+        }
+        // L8000591C
+        if (diffs & 4) {
+            if (diffs & 2) {
+                append_ucode_load(&D_800465B0[2], D_80046624);
+                gSPBranchList(D_800465B0[2]++, D_800465C0[1]);
+            } else if (diffs & 8) {
+                // L80005980
+                gSPBranchList(D_800465B0[2]++, D_800465C0[3]);
+            } else {
+                // L800059AC
+                append_ucode_load(&D_800465B0[2], D_80046624);
+                gSPBranchList(D_800465B0[2]++, D_800465B0[0]);
+            }
+            // L800059E0
+            D_800465C0[2] = D_800465B0[2];
+        }
+        // L800059EC
+        if (diffs & 2) {
+            if (diffs & 8) {
+                append_ucode_load(&D_800465B0[0], func_800051E4());
+                gSPBranchList(D_800465B0[1]++, D_800465C0[3]);
+            } else {
+                // L80005A3C
+                if (D_80046628 != 0) {
+                    append_ucode_load(&D_800465B0[1], D_80046624);
+                }
+                // L80005A58
+                gSPBranchList(D_800465B0[1]++, D_800465B0[0]);
+            }
+            // L80005A74
+            D_800465C0[1] = D_800465B0[1];
+        }
+        // L80005A84
+        if (diffs & 8) {
+            append_ucode_load(&D_800465B0[3], D_80046624);
+            gSPBranchList(D_800465B0[3]++, D_800465B0[0]);
+            D_800465C0[3] = D_800465B0[3];
+        }
+    }
+    // L80005AC4
+    D_80046628 = 0;
+    check_buffer_lengths();
+}
 
-#ifdef NON_MATCHING
-#else
-#pragma GLOBAL_ASM("game/nonmatching/gtl/func_800062B4.s")
-#endif
+u32 func_80005AE4(s32 arg0) {
+    s32 msg;
+    s32 i;
 
-#ifdef NON_MATCHING
-#else
-#pragma GLOBAL_ASM("game/nonmatching/gtl/func_800062EC.s")
-#endif
+    // while mesg queue is not empty
+    while (osRecvMesg(&D_80045500, (OSMesg *)&msg, OS_MESG_NOBLOCK) != -1) {
+        D_80046638[msg] = 0;
+    }
+    // L80005B58
+    do {
+        for (i = 0; i < D_80046640; i++) {
+            if (D_80046638[i] == 0) {
+                D_80046630 = i;
+                D_80046638[i] = 1;
+                return 1;
+            }
+        }
+        if (arg0 == 0) {
+            osRecvMesg(&D_80045500, (OSMesg *)&msg, OS_MESG_BLOCK);
+            D_80046638[msg] = 0;
+        }
+    } while (arg0 == 0);
 
-#ifdef NON_MATCHING
-#else
-#pragma GLOBAL_ASM("game/nonmatching/gtl/func_80006350.s")
-#endif
+    return 0;
+}
 
-#ifdef NON_MATCHING
-#else
-#pragma GLOBAL_ASM("game/nonmatching/gtl/func_800063A0.s")
-#endif
+// This may be the real form of `struct SpMqInfo`, but I'll have to double check
+// thread3.c to see if I can replace all forms...
+struct RealSCInfo {
+    /* 0x00 */ s32 unk00; // type?
+    /* 0x04 */ s32 unk04;
+    /* 0x08 */ s32 unk08;
+    /* 0x0C */ struct RealSCInfo *unk0C; // next
+    /* 0x10 */ struct RealSCInfo *unk10; // prev
+    /* 0x14 */ s32 (*func)(void *); // should take a `self`..?
+    /* 0x18 */ s32 unk18;
+    /* 0x1C */ s32 unk1C;
+    /* 0x20 */ OSMesgQueue *unk20;
+}; // size == 0x24
 
-#ifdef NON_MATCHING
-#else
-#pragma GLOBAL_ASM("game/nonmatching/gtl/func_80006548.s")
-#endif
+void func_80005BFC(void) {
+    struct RealSCInfo info;
+    OSMesg msgs[1];
+    OSMesgQueue mq;
 
-#ifdef NON_MATCHING
-#else
-#pragma GLOBAL_ASM("game/nonmatching/gtl/func_8000683C.s")
-#endif
+    info.unk00 = 7;
+    info.unk04 = 50;
+    osCreateMesgQueue(&mq, msgs, ARRAY_COUNT(msgs));
+    info.func = func_80000B54;
+    info.unk1C = 1;
+    info.unk20 = &mq;
 
-#ifdef NON_MATCHING
-#else
-#pragma GLOBAL_ASM("game/nonmatching/gtl/func_80006B80.s")
-#endif
+    osSendMesg(&gScheduleTaskQueue, (OSMesg)&info, OS_MESG_NOBLOCK);
+    osRecvMesg(&mq, NULL, OS_MESG_BLOCK);
+}
+
+void func_80005C74(void) {
+    D_800465D0 = 1;
+}
+
+void unref_80005C84(s32 arg0) {
+    D_800465D0 = 2;
+    D_800465D4 = arg0;
+}
+
+s32 func_80005C9C(void) {
+    struct RealSCInfo info;
+
+    switch (D_800465D0) {
+        case 1: return 1;
+        case 2: 
+            if (D_80044FA4 != 0) {
+                info.unk00 = 11;
+                info.unk04 = 100;
+                func_80000970((void *)&info);
+                return 1;
+            }
+            return 0;
+        default: return 0;
+    }
+}
+
+void func_80005D10(void) {
+    if (D_800454BC == 1) {
+        D_800454BC = 2;
+        while (osRecvMesg(&D_800454C8, NULL, OS_MESG_NOBLOCK) != -1) ;
+
+        osRecvMesg(&D_800454C8, NULL, OS_MESG_BLOCK);
+        D_800454BC = 0;
+    }
+}
+
+void func_80005DA0(struct FnBundle *arg0) {
+    s32 i;
+
+    D_800454BC = 0;
+
+    while (osRecvMesg(&D_80045500, NULL, OS_MESG_NOBLOCK) != -1) ;
+    while (osRecvMesg(&D_80045520, NULL, OS_MESG_NOBLOCK) != -1) ;
+    while (osRecvMesg(&D_800454A0, NULL, OS_MESG_NOBLOCK) != -1) ;
+
+    // L80005E78
+    D_800465D0 = 0;
+    D_800465D4 = -1;
+    D_80046630 = 1;
+    D_80044FA4 = 0;
+
+    for (i = 0; i < ARRAY_COUNT(D_80046638); i++) {
+        D_80046638[i] = 0;
+    }
+    // 80005EB8
+    if (arg0->unk00 & 1) {
+        // L80005EF8
+        while (TRUE) {
+            func_80005D10();
+            check_stack_probes();
+            for (i = 0; i < D_800454B8; i++) {
+                osRecvMesg(&D_800454A0, NULL, OS_MESG_BLOCK);
+            }
+            // L80005F34
+            while (osRecvMesg(&D_800454A0, NULL, OS_MESG_NOBLOCK) != -1) ;
+            // L80005F60
+            D_8004660C = osGetCount();
+            arg0->fn08(arg0);
+            D_8003B6E4 += 1;
+            D_80046610 = (osGetCount() - D_8004660C) / 2971; // what is this constant?
+            // L80005FB0
+            if (func_80005C9C()) { break; }
+
+            if (D_8003B6E4 % D_800454BA == 0) {
+                // L80005FDC
+                func_80005AE4(0);
+                D_8004660C = osGetCount();
+                arg0->fn10(arg0);
+                D_8003B6E8.word += 1;
+                D_80046614 = (osGetCount() - D_8004660C) / 2971;
+                // L8000603C
+
+                if (func_80005C9C()) { break; }
+            }
+        }
+        // L8000604C
+        // unconditional loop back
+    } else {
+        // L80006054
+        while (TRUE) {
+            // L80006070
+            func_80005D10();
+            check_stack_probes();
+            for (i = 0; i < D_800454B8; i++) {
+                osRecvMesg(&D_800454A0, NULL, OS_MESG_BLOCK);
+            }
+            // L800060AC
+            while (osRecvMesg(&D_800454A0, NULL, OS_MESG_NOBLOCK) != -1) ;
+            // L800060D8
+            D_8004660C = osGetCount();
+            arg0->fn08(arg0);
+            D_8003B6E4 += 1;
+            D_80046610 = (osGetCount() - D_8004660C) / 2971;
+            // L80006128
+            if (func_80005C9C()) { break; }
+
+            // L80006154
+            if (D_8003B6E4 % D_800454BA == 0 && func_80005AE4(1)) {
+                D_8004660C = osGetCount();
+                arg0->fn10(arg0);
+                D_8003B6E8.word += 1;
+                D_80046614 = (osGetCount() - D_8004660C) / 2971;
+                // L800061BC
+                if (func_80005C9C()) { break; }
+            }
+            // L800061CC
+        }
+    }
+    // L800061D4
+    func_80005BFC();
+    while (osRecvMesg(&D_80045500, NULL, OS_MESG_NOBLOCK) != -1) ;
+    while (osRecvMesg(&D_80045520, NULL, OS_MESG_NOBLOCK) != -1) ;
+    while (osRecvMesg(&D_800454A0, NULL, OS_MESG_NOBLOCK) != -1) ;
+    // L80006270
+    func_80007168(NULL);
+    D_800454BC = 2;
+}
+
+void func_800062B4(struct FnBundle *self) {
+    D_80046668(self);
+    self->fn04();
+}
+
+void func_800062EC(struct FnBundle *self) {
+    func_800049B0();
+    func_80004AB0();
+    self->fn0C();
+    func_800053CC();
+    func_80006F5C(D_80046568[D_80046630]);
+    func_80004EFC();
+}
+
+void func_80006350(struct FnBundle *self) {
+    D_80046668(self);
+    self->fn04();
+    if (func_80005C9C()) {
+        func_8000B7B4();
+    }
+}
+
+void func_800063A0(struct FnBundle *self) {
+    func_800049B0();
+    func_80004AB0();
+    self->fn0C();
+    func_800053CC();
+    func_80006F5C(D_80046568[D_80046630]);
+    func_80004EFC();
+    if (func_80005C9C()) {
+        func_8000B7B4();
+    }
+}
+
+struct Temp8000641C {
+    /* 0x00 */ u8 pad00[0x2c];
+    /* 0x2C */ void (*fn2C)(struct Temp8000641C *);
+}; // size >= 0x2C
+
+void unref_8000641C(struct Temp8000641C *arg0) {
+    s32 idx;
+    struct SCTaskGfxEnd *task;
+
+    func_80005AE4(0);
+    func_800049B0();
+    func_80004AB0();
+    arg0->fn2C(arg0);
+    func_800053CC();
+    task = D_80046560[D_80046630];
+    if (task == NULL) {
+        fatal_printf("gtl : not defined SCTaskGfxEnd\n");
+        while (TRUE) ;
+    }
+    schedule_gfx_end(task, NULL, D_80046630, &D_80045500);
+    D_80046550[D_80046630] = D_80046548[D_80046630];
+    do {
+        osRecvMesg(&D_80045500, (OSMesg *)&idx, OS_MESG_BLOCK);
+        D_80046638[idx] = 0;
+    } while (D_80046638[D_80046630] != 0);
+
+    D_8003B6E8.word += 1;
+}
+
+struct BufferSetup {
+    /* 0x00 */ u16 unk00;
+    /* 0x04 */ void (*fn04)(void);
+    /* 0x08 */ void (*fn08)(void);
+    /* 0x0C */ void *unk0C;
+    /* 0x10 */ u32 unk10;
+    /* 0x14 */ u32 unk14; // count?
+    /* 0x18 */ s32 unk18;
+    /* 0x1C */ u32 unk1C;
+    /* 0x20 */ u32 unk20;
+    /* 0x24 */ u32 unk24;
+    /* 0x28 */ u32 unk28;
+    /* 0x2C */ u32 unk2C;
+    /* 0x30 */ u16 unk30;
+    /* 0x34 */ s32 unk34;
+    /* 0x38 */ void (*fn38)(void *); // scissor callback?
+    /* 0x3C */ void (*fn3C)(void *); // controller read callback?
+}; // size >= 0x40
+
+void func_80006548(struct BufferSetup *arg0, void (*arg1)(void)) {
+    s32 i;
+    struct DLBuffer sp44[2][4];
+
+    D_80046640 = arg0->unk18;
+    D_800465F8.unk00 = arg0->unk00;
+    D_800465F8.fn04 = arg0->fn04;
+    D_800465F8.fn0C = arg0->fn08;
+
+    func_80004DB4(
+        func_80004980(arg0->unk14 * sizeof(struct DObj) * D_80046640, 8),
+        arg0->unk14,
+        func_80004980(sizeof(struct SCTaskGfxEnd) * D_80046640, 8),
+        func_80004980(sizeof(struct Unk4DB4_38) * D_80046640, 8)
+    );
+    // 80006620
+    for (i = 0; i < D_80046640; i++) {
+        // L80006630
+        sp44[i][0].start = func_80004980(arg0->unk1C, 8);
+        sp44[i][0].length = arg0->unk1C;
+        sp44[i][1].start = func_80004980(arg0->unk20, 8);
+        sp44[i][1].length = arg0->unk20;
+        sp44[i][2].start = func_80004980(arg0->unk24, 8);
+        sp44[i][2].length = arg0->unk24;
+        sp44[i][3].start = func_80004980(arg0->unk28, 8);
+        sp44[i][3].length = arg0->unk28;
+    }
+    // L800066A8
+    func_80004A0C(sp44);
+    for (i = 0; i < D_80046640; i++) {
+        // L800066D0
+        init_bump_alloc(
+            &D_800465D8,
+            0x10002,
+            func_80004980(arg0->unk2C, 8),
+            arg0->unk2C
+        );
+        D_80046648[i].id = D_800465D8.id;
+        D_80046648[i].start = D_800465D8.start;
+        D_80046648[i].end = D_800465D8.end;
+        D_80046648[i].ptr = D_800465D8.ptr;
+    }
+    // L80006724
+    arg0->unk30 = 2;
+    if (arg0->unk34 == 0) {
+        arg0->unk34 = 0x1000;
+    }
+    // L80006740
+    func_80004CB4(
+        arg0->unk30,
+        func_80004980(arg0->unk34, 16),
+        arg0->unk34
+    );
+    func_80007168(arg0->fn38);
+    D_80046668 = arg0->fn3C;
+    enable_auto_contread((uintptr_t)schedule_contread != (uintptr_t)D_80046668 ? 1 : 0);
+
+    D_8003B6E4 = D_8003B6E8.word = 0; 
+    if (arg1 != NULL) {
+        arg1();
+    }
+    // L800067B4
+    func_80005DA0(&D_800465F8);
+}
+
+void unref_800067E4(struct BufferSetup *arg) {
+    func_80004950(arg->unk0C, arg->unk10);
+    D_800465F8.fn08 = func_800062B4;
+    D_800465F8.fn10 = func_800062EC;
+    func_80006548(arg, NULL);
+}
+
+struct Wrapper683C {
+    /* 0x00 */ struct BufferSetup setup;
+    /* 0x40 */ u32 unk40;
+    /* 0x44 */ s32 unk44;
+    /* 0x48 */ s32 unk48;
+    /* 0x4C */ s32 unk4C;
+    /* 0x50 */ s32 unk50;
+    /* 0x54 */ s32 unk54;
+    /* 0x58 */ s32 unk58;
+    /* 0x5C */ s32 unk5C;
+    /* 0x60 */ s32 unk60;
+    /* 0x64 */ s32 unk64;
+    /* 0x68 */ s32 unk68;
+    /* 0x6C */ s32 unk6C;
+    /* 0x70 */ s32 unk70;
+    /* 0x74 */ s32 unk74;
+    /* 0x78 */ s32 unk78;
+    /* 0x7C */ s32 unk7C;
+    /* 0x80 */ s32 unk80;
+    /* 0x84 */ s32 unk84;
+    /* 0x88 */ void (*unk88)(void);
+}; // size >= 0x8C
+
+void func_8000683C(struct Wrapper683C *arg) {
+    struct TempUnkA6E0 sp24;
+
+    func_80004950(arg->setup.unk0C, arg->setup.unk10);
+    // what is this struct?
+    sp24.unk00 = func_80004980(0x1C0U * arg->unk40, 8);
+    sp24.unk04 = arg->unk40;
+    sp24.unk08 = arg->unk44;
+    if (arg->unk44 != 0) {
+        sp24.unk0C = func_80004980((arg->unk44 + 8) * arg->unk48, 8);
+    }  else {
+        sp24.unk0C = NULL;
+    }
+    // L800068BC
+    sp24.unk10 = arg->unk48;
+    sp24.unk14 = arg->unk4C;
+    // what is this struct?
+    sp24.unk18 = func_80004980(0x24U * arg->unk50, 4);
+    sp24.unk1C = arg->unk50;
+    sp24.unk20 = func_80004980(arg->unk58 * arg->unk54, 8);
+    sp24.unk24 = arg->unk54;
+    sp24.unk28 = arg->unk58;
+    sp24.unk2C = func_80004980(0x48U * arg->unk5C, 8);
+    sp24.unk30 = arg->unk5C;
+    func_80010734(arg->unk60);
+    sp24.unk34 = arg->unk64;
+    sp24.unk38 = func_80004980(0x24U * arg->unk68, 4);
+    sp24.unk3C = arg->unk68;
+    sp24.unk40 = func_80004980(0xA8U * arg->unk6C, 4);
+    sp24.unk44 = arg->unk6C;
+
+    sp24.unk48 = func_80004980(arg->unk74 * arg->unk70, 8U);
+    sp24.unk4C = arg->unk70;
+    sp24.unk50 = arg->unk74;
+    sp24.unk54 = func_80004980(arg->unk7C * arg->unk78, 8U);
+    sp24.unk58 = arg->unk78;
+    sp24.unk5C = arg->unk7C;
+    sp24.unk60 = func_80004980(arg->unk84 * arg->unk80, 8U);
+    sp24.unk64 = arg->unk80;
+    sp24.unk68 = arg->unk84;
+
+    func_8000A6E0(&sp24);
+    D_800465F8.fn08 = func_80006350;
+    D_800465F8.fn10 = func_800063A0;
+    func_80006548(&arg->setup, arg->unk88);
+}
+
+
+void unref_80006A8C(u16 arg0, u16 arg1) {
+    D_800454B8 = arg0;
+    D_800454BA = arg1;
+}
+
+void unref_80006AA8(void) {
+    if (D_800454BC != 2) {
+        D_800454BC = 1;
+    }
+}
+
+s32 unref_80006AD0(void) {
+    if (D_800454BC == 2) {
+        return 1;
+    }
+
+    return 0;
+}
+
+void unref_80006AF8(void) {
+    osSendMesg(&D_800454C8, NULL, OS_MESG_NOBLOCK);
+}
+
+void unref_80006B24(s32 arg0) {
+    if (arg0 == 1 || arg0 == 2) {
+        D_80046640 = arg0;
+    }
+}
+
+s32 unref_80006B44(s32 arg0) {
+    if ((arg0 == 1 || arg0 == 2)) {
+        if ((&D_80046634)[arg0] == 0) {
+            return 1;
+        }
+    }
+
+    return 0;
+}
+
+void func_80006B80(void) {
+    s32 i;
+    s32 j;
+
+    for (i = 0; i < 2; i++) {
+        D_80046558[i] = NULL;
+        D_80046550[i] = NULL;
+        D_80046548[i] = NULL;
+        D_80046560[i] = NULL;
+    }
+    // 80006BD8
+    D_80046620 = 0;
+    D_80046624 = D_80046626 = 0;
+    //D_80046624 = 0;
+
+    for (i = 0; i < 2; i++) {
+        for (j = 0; j < 4; j++) {
+            D_80046570[i][j].start = NULL;
+            D_80046570[i][j].length = 0;
+        }
+    }
+    // 80006C2C
+    D_800454E8 = NULL;
+    func_800048D0(NULL);
+
+    func_800009D8(&D_800454E0, &D_800454A0, D_80045490, ARRAY_COUNT(D_80045490));
+    osCreateMesgQueue(&D_80045500, D_800454F0, ARRAY_COUNT(D_800454F0));
+    osCreateMesgQueue(&D_80045520, D_80045518, ARRAY_COUNT(D_80045518));
+    D_800454B8 = D_800454BA = 1;
+    osCreateMesgQueue(&D_800454C8, D_800454C0, ARRAY_COUNT(D_800454C0));
+    D_800454BC = 2;
+}
+
 #pragma GCC diagnostic pop

@@ -21,10 +21,11 @@ struct SpMqInfo {
     /* 0x08 */ s32 unk08;
     /* 0x0C */ struct SpTaskQueue *unk0C; // next; should these point to the combined type, or just this info type?
     /* 0x10 */ struct SpTaskQueue *unk10; // prev
-    /* 0x14 */ s32 (*func)(struct SpTaskQueue *);
+    /* 0x14 */ s32 (*func)(struct SpMqInfo *);
     /* 0x18 */ s32 unk18;
     /* 0x1C */ s32 unk1C;
     /* 0x20 */ OSMesgQueue *unk20;
+    // this may not be part of SqMqInfo, but rather SpTaskQueue
     /* 0x24 */ struct MqListNode *unk24; // checked type? (-1 is meaningful)
 }; // size = 0x28
 
@@ -41,12 +42,14 @@ struct SpTaskQueue {
 }; // size = 0x84
 
 extern OSMesgQueue gScheduleTaskQueue;
-extern s32 D_80045020; 
+extern u32 D_80044FA4;
 extern s64 D_80044FC0;
+extern s32 D_80045020; 
 
 extern void func_80000970(struct SpMqInfo *arg0);
 extern void func_800009D8(struct MqListNode *arg0, OSMesgQueue *mq, OSMesg *msg, u32 count);
 extern s32 unref_80000A34(struct Unk80000A34 *arg0);
 extern void thread3_scheduler(void *arg);
+extern s32 func_80000B54(UNUSED void *arg0);
 
 #endif /* SYS_THREAD_3_H */

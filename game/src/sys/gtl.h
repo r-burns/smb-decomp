@@ -38,4 +38,6 @@ struct DObj {
     /* 0x84 */ u32 unk84;
 }; // size = 0x88
 
+extern void func_80006B80(void);
+
 #endif /* SYS_GTL_H */
