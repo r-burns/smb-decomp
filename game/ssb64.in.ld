@@ -212,7 +212,6 @@ SECTIONS
         src/sys/thread3.asm.o(.rodata);
         src/sys/thread6.asm.o(.rodata);
         src/sys/gtl.asm.o(.rodata);
-        asm/system/gtl.o(.rodata);
         src/sys/ml.o(.rodata);
         asm/system/system.rodata.o(.rodata);
 

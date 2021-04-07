@@ -11,6 +11,7 @@
 #include "sys/ml.h"
 #include "sys/system.h"
 
+// structures
 struct UcodeInfo {
     /* 0x00 */ u64 *text;
     /* 0x04 */ u64 *data;
@@ -24,11 +25,6 @@ struct FnBundle {
     /* 0x10 */ void (*fn10)(struct FnBundle *);
 }; // size == 0x14 (D_800465F8)
 
-// match Nintendo's name to make the text and data symbols
-#define NewUcodeInfo(ucode) { (u64 *)ucode##TextStart, (u64 *)ucode##DataStart }
-#define NullUcodeInfo { NULL, NULL }
-#define EndUncodeInfoArray NullUcodeInfo
-
 // data
 s32 D_8003B6E0 = 0;
 u32 D_8003B6E4 = 0;
@@ -37,10 +33,13 @@ union {
     u32 word;
     u8 parts[4];
 } D_8003B6E8 = {0};
-//s16 D_8003B6E8 = 0;
-//u8 D_8003B6EB = 0;
 
 // Ten total ucodes + a terminator?
+
+// match Nintendo's name to make the text and data symbols
+#define NewUcodeInfo(ucode) { (u64 *)ucode##TextStart, (u64 *)ucode##DataStart }
+#define NullUcodeInfo { NULL, NULL }
+#define EndUncodeInfoArray NullUcodeInfo
 struct UcodeInfo D_8003B6EC[11] = {
     NewUcodeInfo(gspF3DEX2_fifo),
     NullUcodeInfo,
@@ -54,18 +53,15 @@ struct UcodeInfo D_8003B6EC[11] = {
     NullUcodeInfo,
     EndUncodeInfoArray,
 };
-// or is this part of the above array..?
-// u32 pad8003B740[2] = { 0 };
 
 // bss
+
 OSMesg D_80045490[4];
-// u8 D_800454A0[24];
 OSMesgQueue D_800454A0;
 u16 D_800454B8;
 u16 D_800454BA;
 u32 D_800454BC;
 OSMesg D_800454C0[1];
-//u8 D_800454C8[24];
 OSMesgQueue D_800454C8;
 struct MqListNode D_800454E0;
 unsigned int *D_800454E8; // pointer to Gfx.w1 (segment base addr?)
@@ -73,7 +69,6 @@ OSMesg D_800454F0[3];
 OSMesgQueue D_80045500; // sctask end? or for all tasks?
 OSMesg D_80045518[1];
 OSMesgQueue D_80045520;
-//u8 D_80045538[1032];
 u64 D_80045538[SP_DRAM_STACK_SIZE64 + 1];
 u64 D_80045940[OS_YIELD_DATA_SIZE / sizeof(u64) + 1];
 
@@ -89,10 +84,7 @@ Gfx *D_800465C0[4];
 
 u32 D_800465D0;
 s32 D_800465D4;
-//u8 D_800465D8[12];
-//u32 D_800465E4; // D_800465D8 + 12
 struct BumpAllocRegion D_800465D8;
-//u8 D_800465E8[16];
 struct BumpAllocRegion D_800465E8;
 struct FnBundle D_800465F8;
 u32 D_8004660C;
@@ -109,7 +101,6 @@ Gfx *D_8004662C;
 u32 D_80046630;
 s32 D_80046634;
 s32 D_80046638[2];
-//u8 D_80046640[8];
 s32 D_80046640;
 struct BumpAllocRegion D_80046648[2];
 void (*D_80046668)(void *); // takes function bundle struct?
@@ -272,41 +263,24 @@ struct DObj *func_80004D2C(void) {
 struct SCTaskGfxEnd {
     /* 0x00 */ struct SpMqInfo info;
     /* 0x28 */ s32 unk28;
-}; // size >= 0x2C
+}; // size == 0x2C
 
 struct Unk4DB4_38 {
     /* 0x00 */ u8 pad[0x38];
 }; // size == 0x38
 
 #ifdef NON_MATCHING
-/* a lot left to do on this one
-    hopefully the arguments are correct
-*/
+void func_80004DB4(struct DObj *arg0, s32 arg1, struct SCTaskGfxEnd *arg2, struct Unk4DB4_38 *arg3) {
+    s32 i;
 
-// this probably is `struct SCTaskGfxEnd`
-struct Unk4DB4_2C {
-    /* 0x00 */ u8 pad[0x2C];
-}; // size = 0x2C
-
-s32 func_80004DB4(struct DObj *arg0, s32 arg1, struct Unk4DB4_38 *arg2, struct Unk4DB4_2C *arg3) {
-    s32 i = 0;
-    struct DObj *csr;
-
-    if (D_80046640 > 0) {
-        csr = arg0;
-        for (i = 0; i < D_80046640; i++) {
-            
-            D_80046548[i] = csr;
-            D_80046550[i] = csr;
-            D_80046558[i] = &arg0[arg1 * i];
-            D_80046560[i] = (void *)&arg2[i];
-            D_80046568[i] = (void *)&arg3[i];
-            csr += arg1;
-        }
+    for (i = 0; i < D_80046640; i++) {
+        D_80046548[i] = &arg0[arg1 * i];
+        D_80046550[i] = &arg0[arg1 * i];
+        D_80046558[i] = &arg0[arg1 * (i + 1)];
+        D_80046560[i] = &arg2[i];
+        D_80046568[i] = (void *)&arg3[i];
     }
 
-    // L80004E7C
-    return i;
 }
 #else
 s32 func_80004DB4(struct DObj *arg0, s32 arg1, struct SCTaskGfxEnd *arg2, struct Unk4DB4_38 *arg3);
@@ -942,25 +916,6 @@ void unref_8000641C(struct Temp8000641C *arg0) {
     D_8003B6E8.word += 1;
 }
 
-struct BufferSetup {
-    /* 0x00 */ u16 unk00;
-    /* 0x04 */ void (*fn04)(void);
-    /* 0x08 */ void (*fn08)(void);
-    /* 0x0C */ void *unk0C;
-    /* 0x10 */ u32 unk10;
-    /* 0x14 */ u32 unk14; // count?
-    /* 0x18 */ s32 unk18;
-    /* 0x1C */ u32 unk1C;
-    /* 0x20 */ u32 unk20;
-    /* 0x24 */ u32 unk24;
-    /* 0x28 */ u32 unk28;
-    /* 0x2C */ u32 unk2C;
-    /* 0x30 */ u16 unk30;
-    /* 0x34 */ s32 unk34;
-    /* 0x38 */ void (*fn38)(void *); // scissor callback?
-    /* 0x3C */ void (*fn3C)(void *); // controller read callback?
-}; // size >= 0x40
-
 void func_80006548(struct BufferSetup *arg0, void (*arg1)(void)) {
     s32 i;
     struct DLBuffer sp44[2][4];
@@ -1032,29 +987,6 @@ void unref_800067E4(struct BufferSetup *arg) {
     D_800465F8.fn10 = func_800062EC;
     func_80006548(arg, NULL);
 }
-
-struct Wrapper683C {
-    /* 0x00 */ struct BufferSetup setup;
-    /* 0x40 */ u32 unk40;
-    /* 0x44 */ s32 unk44;
-    /* 0x48 */ s32 unk48;
-    /* 0x4C */ s32 unk4C;
-    /* 0x50 */ s32 unk50;
-    /* 0x54 */ s32 unk54;
-    /* 0x58 */ s32 unk58;
-    /* 0x5C */ s32 unk5C;
-    /* 0x60 */ s32 unk60;
-    /* 0x64 */ s32 unk64;
-    /* 0x68 */ s32 unk68;
-    /* 0x6C */ s32 unk6C;
-    /* 0x70 */ s32 unk70;
-    /* 0x74 */ s32 unk74;
-    /* 0x78 */ s32 unk78;
-    /* 0x7C */ s32 unk7C;
-    /* 0x80 */ s32 unk80;
-    /* 0x84 */ s32 unk84;
-    /* 0x88 */ void (*unk88)(void);
-}; // size >= 0x8C
 
 void func_8000683C(struct Wrapper683C *arg) {
     struct TempUnkA6E0 sp24;
