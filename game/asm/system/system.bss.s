@@ -4,30 +4,6 @@
 
 # 0x8003FAD0 -> 0x800A1970 [0x61ea0 bytes]
 
-glabel D_80046670
-    .space 4
-glabel D_80046674
-    .space 4
-glabel D_80046678
-    .space 4
-glabel D_8004667C
-    .space 4
-glabel D_80046680
-    .space 4
-glabel D_80046684
-    .space 4
-glabel D_80046688
-    .space 12
-glabel D_80046694
-    .space 2
-glabel D_80046696
-    .space 2
-glabel D_80046698
-    .space 2
-glabel D_8004669A
-    .space 6
-glabel D_800466A0
-    .space 16
 glabel D_800466B0
     .space 4
 glabel D_800466B4

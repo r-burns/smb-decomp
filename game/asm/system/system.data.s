@@ -5,22 +5,6 @@
 # Data Sections
 #  8003B6E0 -> 8003FAD0
 
-# system.data
-glabel D_8003B750
-  .incbin "system.raw.bin", 0x3B350, 0x8
-
-glabel D_8003B758
-  .incbin "system.raw.bin", 0x3B358, 0x40
-
-glabel D_8003B798
-  .incbin "system.raw.bin", 0x3B398, 0xC
-  /* 3B3A4 03C3A4 8003B7A4 */  .4byte D_800466A0
-  .incbin "system.raw.bin", 0x3B3A8, 0x3C
-  /* 3B3E4 03C3E4 8003B7E4 */  .4byte D_8003B758
-  .incbin "system.raw.bin", 0x3B3E8, 0x4
-  /* 3B3EC 03C3EC 8003B7EC */  .4byte D_8003B758
-  .incbin "system.raw.bin", 0x3B3F0, 0x80
-
 glabel D_8003B870
   .incbin "system.raw.bin", 0x3B470, 0x4
 

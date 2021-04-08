@@ -207,6 +207,7 @@ glabel D_8003DD78
   .4byte 0xff7fffff # .float -3.4028235e38
   .incbin "system.raw.bin", 0x3D97C, 0x4
 
+# new file start
 glabel jtbl_8003DD80
   /* 3D980 03E980 8003DD80 */  .4byte jtgt_8000AE74
   /* 3D984 03E984 8003DD84 */  .4byte jtgt_8000AE58
@@ -215,6 +216,7 @@ glabel jtbl_8003DD80
   /* 3D990 03E990 8003DD90 */  .4byte jtgt_8000AE20
   .incbin "system.raw.bin", 0x3D994, 0xC
 
+# new file start
 glabel D_8003DDA0
   /* 3D9A0 03E9A0 8003DDA0 */
   .asciz "gobjthread stack over  gobjid = %d\n"
