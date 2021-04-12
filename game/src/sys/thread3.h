@@ -1,9 +1,11 @@
 #ifndef SYS_THREAD_3_H
 #define SYS_THREAD_3_H
 
-#include <PR/ultratypes.h>
+#include <macros.h>
+
 #include <PR/os.h>
 #include <PR/sptask.h>
+#include <PR/ultratypes.h>
 
 struct MqListNode {
     /* 0x00 */ struct MqListNode *next;
@@ -19,7 +21,8 @@ struct SpMqInfo {
     /* 0x00 */ s32 unk00;
     /* 0x04 */ s32 unk04;
     /* 0x08 */ s32 unk08;
-    /* 0x0C */ struct SpTaskQueue *unk0C; // next; should these point to the combined type, or just this info type?
+    /* 0x0C */ struct SpTaskQueue
+        *unk0C; // next; should these point to the combined type, or just this info type?
     /* 0x10 */ struct SpTaskQueue *unk10; // prev
     /* 0x14 */ s32 (*func)(struct SpMqInfo *);
     /* 0x18 */ s32 unk18;
@@ -27,7 +30,7 @@ struct SpMqInfo {
     /* 0x20 */ OSMesgQueue *unk20;
     // this may not be part of SqMqInfo, but rather SpTaskQueue
     /* 0x24 */ struct MqListNode *unk24; // checked type? (-1 is meaningful)
-}; // size = 0x28
+};                                       // size = 0x28
 
 struct SpTaskQueue {
     /* 0x00 */ struct SpMqInfo info;
@@ -44,7 +47,7 @@ struct SpTaskQueue {
 extern OSMesgQueue gScheduleTaskQueue;
 extern u32 D_80044FA4;
 extern s64 D_80044FC0;
-extern s32 D_80045020; 
+extern s32 D_80045020;
 
 extern void func_80000970(struct SpMqInfo *arg0);
 extern void func_800009D8(struct MqListNode *arg0, OSMesgQueue *mq, OSMesg *msg, u32 count);

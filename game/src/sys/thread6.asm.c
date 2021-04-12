@@ -1,12 +1,14 @@
-#include <PR/ultratypes.h>
-#include <PR/os.h>
-#include <macros.h>
-#include <ssb_types.h>
-#include <missing_libultra.h>
-
 #include "sys/thread6.h"
+
 #include "sys/main.h"
 #include "sys/thread3.h"
+
+#include <macros.h>
+#include <missing_libultra.h>
+#include <ssb_types.h>
+
+#include <PR/os.h>
+#include <PR/ultratypes.h>
 
 struct ControllerInfo {
     /* 0x00 */ u16 unk00; // contpad button
@@ -16,14 +18,14 @@ struct ControllerInfo {
     /* 0x08 */ u16 unk08; // all buttons? ( |= .06)
     /* 0x0A */ u16 unk0A; // button releases
     /* 0x0C */ u16 unk0C; // released buttons ( |= .0A)
-    /* 0x0E */ s8  unk0E; // stick x
-    /* 0x0F */ s8  unk0F; // stick y
+    /* 0x0E */ s8 unk0E;  // stick x
+    /* 0x0F */ s8 unk0F;  // stick y
     /* 0x10 */ s32 unk10;
     /* 0x14 */ u32 unk14;
     /* 0x18 */ s32 unk18; // some sort of countdown
-    /* 0x1C */ u8  unk1C; // cont status errno 
-    /* 0x1D */ u8  unk1D; // cont status status
-}; // size = 0x20
+    /* 0x1C */ u8 unk1C;  // cont status errno
+    /* 0x1D */ u8 unk1D;  // cont status status
+};                        // size = 0x20
 
 enum ContEventType {
     CONT_EVENT_READ_CONT_DATA = 1,
@@ -51,11 +53,7 @@ struct ContSchedReadEvt {
     /* 0x0C */ s32 scheduleRead;
 }; // size = 0x10
 
-enum MotorCmd {
-    MOTOR_CMD_INIT,
-    MOTOR_CMD_START,
-    MOTOR_CMD_STOP
-};
+enum MotorCmd { MOTOR_CMD_INIT, MOTOR_CMD_START, MOTOR_CMD_STOP };
 
 struct ContMotorEvt {
     /* 0x00 */ struct ControllerEvent evt;
@@ -78,20 +76,20 @@ struct Unk80045268 {
 }; // size = 0x18
 
 OSMesgQueue sInitQueue; ///< Queue for OS controller Init, Status, and Read
-OSMesg sInitMesg[1]; ///< Message buffer for OS controller Init, Status, and Read
+OSMesg sInitMesg[1];    ///< Message buffer for OS controller Init, Status, and Read
 struct MqListNode D_80045110;
-OSMesg sContEvtMesgs[7]; // used in MqList D_80045110 [80045118]
+OSMesg sContEvtMesgs[7];     // used in MqList D_80045110 [80045118]
 OSMesgQueue sContEventQueue; // queue for struct ControllerEvent callbacks [80045138]
 OSMesg D_80045150[MAXCONTROLLERS];
 OSMesgQueue D_80045160; // controller mesgqueue? for waiting for 0 to 1+ controllers?
 OSContStatus sContStatus[MAXCONTROLLERS]; // 80045178
-OSContPad sContData[MAXCONTROLLERS]; // 80045188
+OSContPad sContData[MAXCONTROLLERS];      // 80045188
 u32 D_800451A0;
 s8 D_800451A4[MAXCONTROLLERS];
-struct ControllerInfo sContInfo[MAXCONTROLLERS]; // 800451A8
+struct ControllerInfo sContInfo[MAXCONTROLLERS];   // 800451A8
 struct ControllerInput gContInput[MAXCONTROLLERS]; // 80045228
-u32 gUpdateContData; // bool [80045250]
-struct ControllerEvent *sDelayedContUpdate; // 80045254
+u32 gUpdateContData;                               // bool [80045250]
+struct ControllerEvent *sDelayedContUpdate;        // 80045254
 /// bool [80045258] if true, always update controller data when a thread6 loop runs
 u32 sReadContData;
 // [8004525C] number of events (or frames?) to wait until perfomring OSContStatus update
@@ -113,14 +111,12 @@ void func_80003C00(void);
 void func_80003C00(void) {
     s32 v0;
     s32 v1;
-    //s32 a0;
+    // s32 a0;
     s32 a1;
     s32 a2;
 
     for (v0 = 0, v1 = 0; v1 < 4; v0++, v1++) {
-        if (sContInfo[v0].unk1C == 0) {
-            D_800451A4[v0] = v1;
-        }
+        if (sContInfo[v0].unk1C == 0) { D_800451A4[v0] = v1; }
         // L80003C34
     }
     // 80003C40
@@ -132,21 +128,15 @@ void func_80003C00(void) {
         a1 = a2 + v0;
 
         if (a2 != 0) {
-            do {
-                D_800451A4[v1] = -1;
-            } while (v1 != a1);
+            do { D_800451A4[v1] = -1; } while (v1 != a1);
         }
-        
+
         // 80003C88
-        if (v1 == 4) {
-            return;
-        }
+        if (v1 == 4) { return; }
         // L80003C8C
-        for ( ; v1 < 4; v1++) {
-            D_800451A4[v1] = -1;
-        }
+        for (; v1 < 4; v1++) { D_800451A4[v1] = -1; }
     }
-    
+
     // L80003CBC
 }
 #else
@@ -181,7 +171,7 @@ void read_controller_data(void) {
     osContGetReadData(sContData);
 
     for (i = 0; i != MAXCONTROLLERS; i++) {
-        if(!sContData[i].errno && (sContStatus[i].status & CONT_CARD_ON) && sContInfo[i].unk1C) {
+        if (!sContData[i].errno && (sContStatus[i].status & CONT_CARD_ON) && sContInfo[i].unk1C) {
             osMotorInit(&sInitQueue, &sMotorPfs[i], i);
         }
         // L80003EA8
@@ -232,7 +222,7 @@ void update_global_contdata(void) {
             gContInput[i].unk04 = sContInfo[i].unk08;
             gContInput[i].unk08 = sContInfo[i].unk0E;
             gContInput[i].unk09 = sContInfo[i].unk0F;
-            
+
             sContInfo[i].unk08 = 0;
             sContInfo[i].unk0C = 0;
             sContInfo[i].unk04 = 0;
@@ -271,15 +261,13 @@ void initialize_controllers(void) {
     osCreateMesgQueue(&sInitQueue, sInitMesg, ARRAY_COUNT(sInitMesg));
     osSetEventMesg(OS_EVENT_SI, &sInitQueue, (OSMesg)1);
     osContInit(&sInitQueue, &pattern, sContStatus);
-    
+
     for (i = 0; i < MAXCONTROLLERS; i++) {
-        if (sContStatus[i].status & CONT_CARD_ON) {
-            osMotorInit(&sInitQueue, &sMotorPfs[i], i);
-        }
+        if (sContStatus[i].status & CONT_CARD_ON) { osMotorInit(&sInitQueue, &sMotorPfs[i], i); }
     }
     // 80004150
     osCreateMesgQueue(&D_80045160, D_80045150, ARRAY_COUNT(D_80045150));
-    //test = 5;
+    // test = 5;
     for (i = 0; i < MAXCONTROLLERS; i++) {
         D_80045268[i].unk08 = i;
         D_80045268[i].unk00 = 0;
@@ -287,7 +275,7 @@ void initialize_controllers(void) {
         D_80045268[i].unk0C = &D_80045160;
     }
     // 8000419C
-    for (i = 0; i < MAXCONTROLLERS; i++) {        
+    for (i = 0; i < MAXCONTROLLERS; i++) {
         sContData[i].button = 0;
 
         sContInfo[i].unk06 = 0;
@@ -306,14 +294,14 @@ void initialize_controllers(void) {
         gContInput[i].unk02 = 0;
         gContInput[i].unk00 = 0;
 
-        //gContInput[i].unk09 = 0;
+        // gContInput[i].unk09 = 0;
         gContInput[i].unk08 = gContInput[i].unk09 = 0;
     }
 
     func_80003C00();
-    gUpdateContData = FALSE;
+    gUpdateContData    = FALSE;
     sDelayedContUpdate = NULL;
-    sReadContData = TRUE;
+    sReadContData      = TRUE;
     sLeftUntilStatus = sStatusUpdateDelay = 1;
 }
 #else
@@ -322,11 +310,11 @@ void initialize_controllers(void) {
 
 // func_80004284
 void dispatch_contevt(struct ControllerEvent *evt) {
-    OSMesg mesg[1]; // sp34
+    OSMesg mesg[1];    // sp34
     OSMesgQueue queue; // sp1C
 
     osCreateMesgQueue(&queue, mesg, ARRAY_COUNT(mesg));
-    evt->mesg = (OSMesg)1;
+    evt->mesg    = (OSMesg)1;
     evt->cbQueue = &queue;
 
     osSendMesg(&sContEventQueue, (OSMesg)evt, OS_MESG_NOBLOCK);
@@ -351,8 +339,8 @@ void unref_80004338(s32 arg0, s32 arg1) {
     struct ContEvtType3 data;
 
     data.evt.type = CONT_EVENT_UNK_3;
-    data.unk0C = arg0;
-    data.unk10 = arg1;
+    data.unk0C    = arg0;
+    data.unk10    = arg1;
     dispatch_contevt(&data.evt);
 }
 
@@ -360,7 +348,7 @@ void unref_80004338(s32 arg0, s32 arg1) {
 void enable_auto_contread(s32 shouldSchedule) {
     struct ContSchedReadEvt data;
 
-    data.evt.type = CONT_EVENT_SCHEDULE_READ_CONT_DATA;
+    data.evt.type     = CONT_EVENT_SCHEDULE_READ_CONT_DATA;
     data.scheduleRead = shouldSchedule;
     dispatch_contevt(&data.evt);
 }
@@ -370,7 +358,7 @@ void set_contstatus_delay(s32 delay) {
     struct ContStatusDelayEvt data;
 
     data.evt.type = CONT_EVENT_SET_STATUS_DELAY;
-    data.delay = delay;
+    data.delay    = delay;
     dispatch_contevt(&data.evt);
 }
 
@@ -410,18 +398,14 @@ void handle_contevt(struct ControllerEvent *evt) {
         {
             read_controller_data();
             update_global_contdata();
-            if (evt->cbQueue != NULL) {
-                osSendMesg(evt->cbQueue, evt->mesg, OS_MESG_NOBLOCK);
-            }
+            if (evt->cbQueue != NULL) { osSendMesg(evt->cbQueue, evt->mesg, OS_MESG_NOBLOCK); }
             break;
         }
         case CONT_EVENT_UPDATE_GLOBAL_DATA:
         {
             if (gUpdateContData) {
                 update_global_contdata();
-                if (evt->cbQueue != NULL) {
-                    osSendMesg(evt->cbQueue, evt->mesg, OS_MESG_NOBLOCK);
-                }
+                if (evt->cbQueue != NULL) { osSendMesg(evt->cbQueue, evt->mesg, OS_MESG_NOBLOCK); }
             } else {
                 sDelayedContUpdate = evt;
             }
@@ -434,55 +418,40 @@ void handle_contevt(struct ControllerEvent *evt) {
                 sContInfo[i].unk10 = ((struct ContEvtType3 *)evt)->unk0C;
                 sContInfo[i].unk14 = ((struct ContEvtType3 *)evt)->unk10;
             }
-            
-            if (evt->cbQueue != NULL) {
-                osSendMesg(evt->cbQueue, evt->mesg, OS_MESG_NOBLOCK);
-            }
+
+            if (evt->cbQueue != NULL) { osSendMesg(evt->cbQueue, evt->mesg, OS_MESG_NOBLOCK); }
             break;
         }
         case CONT_EVENT_SCHEDULE_READ_CONT_DATA:
         {
             sReadContData = ((struct ContSchedReadEvt *)evt)->scheduleRead;
-            if (evt->cbQueue != NULL) {
-                osSendMesg(evt->cbQueue, evt->mesg, OS_MESG_NOBLOCK);
-            }
+            if (evt->cbQueue != NULL) { osSendMesg(evt->cbQueue, evt->mesg, OS_MESG_NOBLOCK); }
             break;
         }
         case CONT_EVENT_SET_STATUS_DELAY:
         {
             sStatusUpdateDelay = ((struct ContStatusDelayEvt *)evt)->delay;
-            if (evt->cbQueue != NULL) {
-                osSendMesg(evt->cbQueue, evt->mesg, OS_MESG_NOBLOCK);
-            }
+            if (evt->cbQueue != NULL) { osSendMesg(evt->cbQueue, evt->mesg, OS_MESG_NOBLOCK); }
             break;
         }
         case CONT_EVENT_MOTOR:
         {
             // why
-            if (!sContInfo[((struct ContMotorEvt *)evt)->contID].unk1C && 
-                (sContInfo[((struct ContMotorEvt *)evt)->contID].unk1D & CONT_CARD_ON)
-            ) {
-                s32 id = ((struct ContMotorEvt *)evt)->contID;
+            if (!sContInfo[((struct ContMotorEvt *)evt)->contID].unk1C
+                && (sContInfo[((struct ContMotorEvt *)evt)->contID].unk1D & CONT_CARD_ON)) {
+                s32 id     = ((struct ContMotorEvt *)evt)->contID;
                 OSPfs *pfs = &sMotorPfs[id];
 
-                switch ( ((struct ContMotorEvt *)evt)->cmd ) {
-                case MOTOR_CMD_INIT:
-                    osMotorInit(&sInitQueue, pfs, id);
-                    break;
-                case MOTOR_CMD_START:
-                    if (!D_80045020) {
-                        osMotorStart(pfs);
-                    }
-                    break;
-                case MOTOR_CMD_STOP:
-                    osMotorStop(pfs);
-                    break;
+                switch (((struct ContMotorEvt *)evt)->cmd) {
+                    case MOTOR_CMD_INIT: osMotorInit(&sInitQueue, pfs, id); break;
+                    case MOTOR_CMD_START:
+                        if (!D_80045020) { osMotorStart(pfs); }
+                        break;
+                    case MOTOR_CMD_STOP: osMotorStop(pfs); break;
                 }
             }
 
-            if (evt->cbQueue != NULL) {
-                osSendMesg(evt->cbQueue, evt->mesg, OS_MESG_NOBLOCK);
-            }
+            if (evt->cbQueue != NULL) { osSendMesg(evt->cbQueue, evt->mesg, OS_MESG_NOBLOCK); }
             break;
         }
     }
@@ -493,20 +462,18 @@ void thread6_controllers(UNUSED void *arg) {
 
     initialize_controllers();
     func_800009D8(&D_80045110, &sContEventQueue, sContEvtMesgs, ARRAY_COUNT(sContEvtMesgs));
-    osSendMesg(&gThreadingQueue, (OSMesg) 1, OS_MESG_NOBLOCK);
+    osSendMesg(&gThreadingQueue, (OSMesg)1, OS_MESG_NOBLOCK);
 
     while (TRUE) {
         osRecvMesg(&sContEventQueue, &mesg, OS_MESG_BLOCK);
         if ((intptr_t)mesg == 1) {
-            if (sLeftUntilStatus != 0) {
-                sLeftUntilStatus--;
-            }
-            
+            if (sLeftUntilStatus != 0) { sLeftUntilStatus--; }
+
             if (sLeftUntilStatus == 0) {
                 update_controller_status();
                 sLeftUntilStatus = sStatusUpdateDelay;
             }
-            
+
             if (!sReadContData) { continue; }
             read_controller_data();
 

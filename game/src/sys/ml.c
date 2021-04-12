@@ -1,8 +1,10 @@
-#include <PR/ultratypes.h>
+#include "sys/ml.h"
+
+#include "sys/system.h"
+
 #include <ssb_types.h>
 
-#include "sys/ml.h"
-#include "sys/system.h"
+#include <PR/ultratypes.h>
 
 void reset_bump_alloc(struct BumpAllocRegion *bp) {
     bp->ptr = bp->start;
@@ -13,7 +15,7 @@ void *bump_alloc(struct BumpAllocRegion *bp, u32 size, u32 alignment) {
     u32 offset;
 
     if (alignment != 0) {
-        offset = alignment - 1;
+        offset  = alignment - 1;
         aligned = (u8 *)(((uintptr_t)bp->ptr + (offset)) & ~(offset));
     } else {
         aligned = bp->ptr;
@@ -22,15 +24,15 @@ void *bump_alloc(struct BumpAllocRegion *bp, u32 size, u32 alignment) {
     bp->ptr = (void *)(aligned + size);
     if (bp->end < bp->ptr) {
         fatal_printf("ml : alloc overflow #%d\n", bp->id);
-        while (TRUE) {}
+        while (TRUE) { }
     }
 
     return aligned;
 }
 
 void init_bump_alloc(struct BumpAllocRegion *bp, u32 id, void *start, u32 size) {
-    bp->id = id;
-    bp->ptr = start;
+    bp->id    = id;
+    bp->ptr   = start;
     bp->start = start;
-    bp->end = (void *)((uintptr_t)start + size);
+    bp->end   = (void *)((uintptr_t)start + size);
 }

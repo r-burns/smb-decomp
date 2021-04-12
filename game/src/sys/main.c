@@ -1,17 +1,19 @@
-#include <PR/ultratypes.h>
-#include <PR/os.h>
-#include <PR/rcp.h>
-#include <PR/R4300.h>
-#include <macros.h>
-#include <ssb_types.h>
-
 #include "sys/main.h"
-#include "sys/thread3.h"
-#include "sys/thread6.h"
+
+#include "loadovl/loader.h"
 #include "sys/dma.h"
 #include "sys/gtl.h"
 #include "sys/system.h"
-#include "loadovl/loader.h"
+#include "sys/thread3.h"
+#include "sys/thread6.h"
+
+#include <macros.h>
+#include <ssb_types.h>
+
+#include <PR/R4300.h>
+#include <PR/os.h>
+#include <PR/rcp.h>
+#include <PR/ultratypes.h>
 
 // libultra internal
 void __osSetWatchLo(u32);
@@ -45,16 +47,15 @@ extern void *_loadovlSegNoloadEnd;
 
 // data
 static struct Overlay OverlayManager = {
-    (u32) &_loadovlSegRomStart,
-    (u32) &_loadovlSegRomEnd,
+    (u32)&_loadovlSegRomStart,
+    (u32)&_loadovlSegRomEnd,
     &_loadovlSegStart,
     &_loadovlTextStart,
     &_loadovlTextEnd,
     &_loadovlDataStart,
     &_loadovlDataEnd,
     &_loadovlSegNoloadStart,
-    &_loadovlSegNoloadEnd
-};
+    &_loadovlSegNoloadEnd};
 u32 sNoThread5 = 0;
 
 // bss
@@ -75,7 +76,7 @@ u64 sThread5Stack[THREAD5_STACK_SIZE];
 OSThread sThread6;
 u8 sUnref8004440[56];
 u64 sThread6Stack[THREAD6_STACK_SIZE];
-u64 gRspBootCode[0x20]; //IP3 font?
+u64 gRspBootCode[0x20]; // IP3 font?
 s8 gSPImemOkay;
 s8 gSPDmemOkay;
 OSMesg sBlockMsg[1];
@@ -115,25 +116,14 @@ void check_sp_dmem(void) {
 void fatal_stack_overflow_thread(s32 tid) {
     fatal_printf("thread stack overflow  id = %d\n", tid);
 
-    while (TRUE) {}
+    while (TRUE) { }
 }
 
 void check_stack_probes(void) {
-    if (gThread0Stack[0] != STACK_PROBE_MAGIC) {
-        fatal_stack_overflow_thread(0);
-    }
-
-    if (sThread1Stack[0] != STACK_PROBE_MAGIC) {
-        fatal_stack_overflow_thread(1);
-    }
-
-    if (sThread3Stack[0] != STACK_PROBE_MAGIC) {
-        fatal_stack_overflow_thread(3);
-    }
-
-    if (sThread5Stack[0] != STACK_PROBE_MAGIC) {
-        fatal_stack_overflow_thread(5);
-    }
+    if (gThread0Stack[0] != STACK_PROBE_MAGIC) { fatal_stack_overflow_thread(0); }
+    if (sThread1Stack[0] != STACK_PROBE_MAGIC) { fatal_stack_overflow_thread(1); }
+    if (sThread3Stack[0] != STACK_PROBE_MAGIC) { fatal_stack_overflow_thread(3); }
+    if (sThread5Stack[0] != STACK_PROBE_MAGIC) { fatal_stack_overflow_thread(5); }
 }
 
 void thread5_main(UNUSED void *arg) {
@@ -148,28 +138,24 @@ void thread5_main(UNUSED void *arg) {
     check_sp_dmem();
     osCreateMesgQueue(&gThreadingQueue, sBlockMsg, ARRAY_COUNT(sBlockMsg));
 
-    osCreateThread(&sThread3, 3, &thread3_scheduler, NULL, 
-        sThread3Stack + THREAD3_STACK_SIZE, 
-        THREAD3_PRI
-    );
-    // statements required to be on same line to match (macro?)
+    osCreateThread(
+        &sThread3, 3, &thread3_scheduler, NULL, sThread3Stack + THREAD3_STACK_SIZE, THREAD3_PRI);
+    // clang-format off
     sThread3Stack[0] = STACK_PROBE_MAGIC; osStartThread(&sThread3);
+    // clang-format on
     osRecvMesg(&gThreadingQueue, NULL, OS_MESG_BLOCK);
 
-    osCreateThread(&sThread4, 4, thread4, NULL, 
-        sThread4Stack + THREAD4_STACK_SIZE, 
-        THREAD4_PRI
-    );
-    // statements required to be on same line to match (macro?)
+    osCreateThread(&sThread4, 4, thread4, NULL, sThread4Stack + THREAD4_STACK_SIZE, THREAD4_PRI);
+    // clang-format off
     sThread4Stack[0] = STACK_PROBE_MAGIC; osStartThread(&sThread4);
+    // clang-format on
     osRecvMesg(&gThreadingQueue, NULL, OS_MESG_BLOCK);
 
-    osCreateThread(&sThread6, 6, thread6_controllers, NULL, 
-        sThread6Stack + THREAD6_STACK_SIZE, 
-        THREAD6_PRI
-    );
-    // statements required to be on same line to match (macro?)
+    osCreateThread(
+        &sThread6, 6, thread6_controllers, NULL, sThread6Stack + THREAD6_STACK_SIZE, THREAD6_PRI);
+    // clang-format off
     sThread6Stack[0] = STACK_PROBE_MAGIC; osStartThread(&sThread6);
+    // clang-format on
     osRecvMesg(&gThreadingQueue, NULL, OS_MESG_BLOCK);
 
     func_80006B80();
@@ -179,17 +165,13 @@ void thread5_main(UNUSED void *arg) {
 
 void thread1_idle(void *arg) {
     start_thread8();
-    osCreateThread(&sThread5, 5, thread5_main, arg, 
-        sThread5Stack + THREAD5_STACK_SIZE, 
-        THREAD5_PRI
-    );
+    osCreateThread(
+        &sThread5, 5, thread5_main, arg, sThread5Stack + THREAD5_STACK_SIZE, THREAD5_PRI);
     sThread5Stack[0] = STACK_PROBE_MAGIC;
-    if (!sNoThread5) {
-        osStartThread(&sThread5);
-    }
+    if (!sNoThread5) { osStartThread(&sThread5); }
     osSetThreadPri(NULL, OS_PRIORITY_IDLE);
 
-    while (TRUE) {}
+    while (TRUE) { }
 }
 
 void ssb_main(void) {
@@ -199,12 +181,11 @@ void ssb_main(void) {
     osCreateThread(
         &sThread1,
         1,
-        thread1_idle, 
-        &sThreadArgBuf, 
-        sThread1Stack + THREAD1_STACK_SIZE, 
-        OS_PRIORITY_APPMAX
-    );
-    // statements required to be on same line to match (macro?)
+        thread1_idle,
+        &sThreadArgBuf,
+        sThread1Stack + THREAD1_STACK_SIZE,
+        OS_PRIORITY_APPMAX);
+    // clang-format off
     sThread1Stack[0] = STACK_PROBE_MAGIC; osStartThread(&sThread1);
+    // clang-format on
 }
-

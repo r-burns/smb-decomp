@@ -1,8 +1,10 @@
 #ifndef SYSTEM_DMA_H
 #define SYSTEM_DMA_H
 
+#include <ssb_types.h>
+
+#include <PR/os.h>
 #include <PR/ultratypes.h>
-#include "ssb_types.h"
 
 // loadovl.h? or a generic overlay header?
 // all ends are exclusive [start..end)

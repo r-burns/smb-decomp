@@ -3,9 +3,9 @@
 
 /* This is a temporary header catch all for all things in system.s */
 
-#include <PR/ultratypes.h>
-#include <PR/os.h>
 #include <PR/mbi.h>
+#include <PR/os.h>
+#include <PR/ultratypes.h>
 
 struct TempUnkA6E0 {
     /* 0x00 */ void *unk00;

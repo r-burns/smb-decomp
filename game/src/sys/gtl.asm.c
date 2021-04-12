@@ -1,15 +1,17 @@
-#include <PR/ultratypes.h>
-#include <PR/mbi.h>
-#include <PR/ucode.h>
+#include "sys/gtl.h"
+
+#include "sys/main.h"
+#include "sys/ml.h"
+#include "sys/system.h"
+#include "sys/thread3.h"
+#include "sys/thread6.h"
+
 #include <macros.h>
 #include <ssb_types.h>
 
-#include "sys/gtl.h"
-#include "sys/main.h"
-#include "sys/thread3.h"
-#include "sys/thread6.h"
-#include "sys/ml.h"
-#include "sys/system.h"
+#include <PR/mbi.h>
+#include <PR/ucode.h>
+#include <PR/ultratypes.h>
 
 // structures
 struct UcodeInfo {
@@ -37,8 +39,10 @@ union {
 // Ten total ucodes + a terminator?
 
 // match Nintendo's name to make the text and data symbols
-#define NewUcodeInfo(ucode) { (u64 *)ucode##TextStart, (u64 *)ucode##DataStart }
-#define NullUcodeInfo { NULL, NULL }
+#define NewUcodeInfo(ucode) \
+    { (u64 *)ucode##TextStart, (u64 *)ucode##DataStart }
+#define NullUcodeInfo \
+    { NULL, NULL }
 #define EndUncodeInfoArray NullUcodeInfo
 struct UcodeInfo D_8003B6EC[11] = {
     NewUcodeInfo(gspF3DEX2_fifo),
@@ -91,7 +95,7 @@ u32 D_8004660C;
 u32 D_80046610;
 u32 D_80046614;
 void *D_80046618; // u64 *?
-u32 D_8004661C; // size of D_80046618
+u32 D_8004661C;   // size of D_80046618
 u32 D_80046620;
 u16 D_80046624;
 u16 D_80046626;
@@ -104,7 +108,7 @@ s32 D_80046638[2];
 s32 D_80046640;
 struct BumpAllocRegion D_80046648[2];
 void (*D_80046668)(void *); // takes function bundle struct?
-void *D_8004666C; // function pointer?
+void *D_8004666C;           // function pointer?
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wunknown-pragmas"
@@ -143,17 +147,17 @@ void *func_80004980(u32 size, u32 alignment) {
 
 // reset D_800465D8 allocator
 void func_800049B0(void) {
-    D_800465D8.id = D_80046648[D_80046630].id;
+    D_800465D8.id    = D_80046648[D_80046630].id;
     D_800465D8.start = D_80046648[D_80046630].start;
-    D_800465D8.end = D_80046648[D_80046630].end;
-    D_800465D8.ptr = D_80046648[D_80046630].ptr;
+    D_800465D8.end   = D_80046648[D_80046630].end;
+    D_800465D8.ptr   = D_80046648[D_80046630].ptr;
 
     reset_bump_alloc(&D_800465D8);
 }
 
 void func_80004A0C(struct DLBuffer (*src)[4]) {
     s32 i;
-    
+
     for (i = 0; i < ARRAY_COUNT(D_80046570); i++) {
         D_80046570[i][0] = src[i][0];
         D_80046570[i][1] = src[i][1];
@@ -165,9 +169,7 @@ void func_80004A0C(struct DLBuffer (*src)[4]) {
 void func_80004AB0(void) {
     s32 i;
 
-    for (i = 0; i < 4; i++) {
-        D_800465B0[i] = D_800465C0[i] = D_80046570[D_80046630][i].start;
-    }
+    for (i = 0; i < 4; i++) { D_800465B0[i] = D_800465C0[i] = D_80046570[D_80046630][i].start; }
 
     for (i = 0; i < 4; i++) {
         if (D_80046570[D_80046630][i].length != 0) {
@@ -186,22 +188,21 @@ void check_buffer_lengths(void) {
     s32 i;
 
     for (i = 0; i < 4; i++) {
-        if (D_80046570[D_80046630][i].length + (uintptr_t)D_80046570[D_80046630][i].start < (uintptr_t)D_800465B0[i]) {
+        if (D_80046570[D_80046630][i].length + (uintptr_t)D_80046570[D_80046630][i].start
+            < (uintptr_t)D_800465B0[i]) {
             fatal_printf(
-                "gtl : DLBuffer over flow !  kind = %d  vol = %d byte\n", 
-                i, 
-                (uintptr_t)D_800465B0[i] - (uintptr_t)D_80046570[D_80046630][i].start
-            );
-            while (TRUE) ;
+                "gtl : DLBuffer over flow !  kind = %d  vol = %d byte\n",
+                i,
+                (uintptr_t)D_800465B0[i] - (uintptr_t)D_80046570[D_80046630][i].start);
+            while (TRUE) { ; }
         }
     }
 
     if ((uintptr_t)D_800465D8.end < (uintptr_t)D_800465D8.ptr) {
         fatal_printf(
-            "gtl : DynamicBuffer over flow !  %d byte\n", 
-            (uintptr_t)D_800465D8.ptr - (uintptr_t)D_800465D8.start
-        );
-        while (TRUE) ;
+            "gtl : DynamicBuffer over flow !  %d byte\n",
+            (uintptr_t)D_800465D8.ptr - (uintptr_t)D_800465D8.start);
+        while (TRUE) { ; }
     }
 }
 
@@ -212,16 +213,16 @@ void func_80004C5C(struct MqListNode *arg0, u32 bufSize) {
         struct SpMqInfo spmq;
         u32 size;
     } temp;
-    
+
     temp.spmq.unk00 = 8;
     temp.spmq.unk04 = 50;
     temp.spmq.unk24 = arg0;
-    temp.size = bufSize;
+    temp.size       = bufSize;
     func_80000970(&temp.spmq);
 
     if ((uintptr_t)&D_80044FC0 & 7) {
         fatal_printf("bad addr sc_rdp_output_len = %x\n", &D_80044FC0);
-        while (TRUE) ;
+        while (TRUE) { ; }
     }
 }
 
@@ -233,13 +234,11 @@ void func_80004CB4(s32 arg0, void *arg1, u32 bufSize) {
     if (arg0 == 2 || arg0 == 1) {
         if (bufSize == 0) {
             fatal_printf("gtl : Buffer size for RDP is zero !!\n");
-            while (TRUE) ;
+            while (TRUE) { ; }
         }
     }
 
-    if (arg0 == 1) {
-        func_80004C5C(arg1, bufSize);
-    }
+    if (arg0 == 1) { func_80004C5C(arg1, bufSize); }
 }
 
 struct DObj *func_80004D2C(void) {
@@ -247,12 +246,12 @@ struct DObj *func_80004D2C(void) {
 
     if (D_80046548[D_80046630] == NULL) {
         fatal_printf("gtl : not defined SCTaskGfx\n");
-        while (TRUE) ;
+        while (TRUE) { ; }
     }
 
     if (D_80046550[D_80046630] == D_80046558[D_80046630]) {
         fatal_printf("gtl : couldn\'t get SCTaskGfx\n");
-        while (TRUE) ;
+        while (TRUE) { ; }
     }
 
     temp = D_80046550[D_80046630]++;
@@ -270,7 +269,11 @@ struct Unk4DB4_38 {
 }; // size == 0x38
 
 #ifdef NON_MATCHING
-void func_80004DB4(struct DObj *arg0, s32 arg1, struct SCTaskGfxEnd *arg2, struct Unk4DB4_38 *arg3) {
+void func_80004DB4(
+    struct DObj *arg0,
+    s32 arg1,
+    struct SCTaskGfxEnd *arg2,
+    struct Unk4DB4_38 *arg3) {
     s32 i;
 
     for (i = 0; i < D_80046640; i++) {
@@ -280,7 +283,6 @@ void func_80004DB4(struct DObj *arg0, s32 arg1, struct SCTaskGfxEnd *arg2, struc
         D_80046560[i] = &arg2[i];
         D_80046568[i] = (void *)&arg3[i];
     }
-
 }
 #else
 s32 func_80004DB4(struct DObj *arg0, s32 arg1, struct SCTaskGfxEnd *arg2, struct Unk4DB4_38 *arg3);
@@ -291,11 +293,11 @@ s32 func_80004DB4(struct DObj *arg0, s32 arg1, struct SCTaskGfxEnd *arg2, struct
 void schedule_gfx_end(struct SCTaskGfxEnd *mesg, void *arg1, s32 arg2, OSMesgQueue *mq) {
     mesg->info.unk00 = 6;
     mesg->info.unk04 = 100;
-    mesg->info.func = NULL;
+    mesg->info.func  = NULL;
     mesg->info.unk20 = mq;
     mesg->info.unk1C = arg2;
     mesg->info.unk24 = arg1;
-    mesg->unk28 = D_80046630;
+    mesg->unk28      = D_80046630;
 
     osSendMesg(&gScheduleTaskQueue, (OSMesg)mesg, OS_MESG_NOBLOCK);
 }
@@ -305,7 +307,7 @@ void func_80004EFC(void) {
 
     if (mesg == NULL) {
         fatal_printf("gtl : not defined SCTaskGfxEnd\n");
-        while (TRUE) ;
+        while (TRUE) { ; }
     }
 
     schedule_gfx_end(mesg, (void *)-1, D_80046630, &D_80045500);
@@ -318,7 +320,7 @@ void func_80004F78(void) {
 
     if (mesg == NULL) {
         fatal_printf("gtl : not defined SCTaskGfxEnd\n");
-        while (TRUE) ;
+        while (TRUE) { ; }
     }
 
     schedule_gfx_end(mesg, NULL, D_80046630, &D_80045520);
@@ -341,20 +343,27 @@ struct SCTaskUnk5018 {
     /* 0x80 */ u32 unk80;
 }; // size == 0x84
 
-void func_80005018(struct SCTaskUnk5018 *t, s32 arg1, u32 ucodeIdx, s32 arg3, u64 *arg4, u64 *arg5, u32 arg6) {
+void func_80005018(
+    struct SCTaskUnk5018 *t,
+    s32 arg1,
+    u32 ucodeIdx,
+    s32 arg3,
+    u64 *arg4,
+    u64 *arg5,
+    u32 arg6) {
     struct UcodeInfo *ucode;
     // ...why?
     s32 two = 2;
-    
+
     t->info.unk00 = 1;
     t->info.unk04 = 50;
     if (D_800454E8 != NULL) {
         t->info.func = D_8004666C;
-        t->unk68 = D_800454E8;
-        D_800454E8 = NULL;
+        t->unk68     = D_800454E8;
+        D_800454E8   = NULL;
     } else {
         t->info.func = NULL;
-        t->unk68 = NULL;
+        t->unk68     = NULL;
     }
     t->unk6C = arg1;
     t->unk70 = D_800465D4;
@@ -365,23 +374,24 @@ void func_80005018(struct SCTaskUnk5018 *t, s32 arg1, u32 ucodeIdx, s32 arg3, u6
         t->info.unk20 = NULL;
     }
     t->info.unk18 = two;
-    t->unk80 = D_80046630;
-    t->unk7C = 0;
+    t->unk80      = D_80046630;
+    t->unk7C      = 0;
 
-    t->task.t.type = M_GFXTASK;
-    t->task.t.flags = OS_TASK_LOADABLE;
-    t->task.t.ucode_boot = gRspBootCode;
+    t->task.t.type            = M_GFXTASK;
+    t->task.t.flags           = OS_TASK_LOADABLE;
+    t->task.t.ucode_boot      = gRspBootCode;
     t->task.t.ucode_boot_size = sizeof(gRspBootCode);
+
     ucode = &D_8003B6EC[ucodeIdx];
     if (ucode->text == NULL) {
         fatal_printf("gtl : ucode isn\'t included  kind = %d\n", ucodeIdx);
-        while (TRUE) ;
+        while (TRUE) { ; }
     }
-    t->task.t.ucode = ucode->text;
-    t->task.t.ucode_data = ucode->data;
-    t->task.t.ucode_size = SP_UCODE_SIZE;
+    t->task.t.ucode           = ucode->text;
+    t->task.t.ucode_data      = ucode->data;
+    t->task.t.ucode_size      = SP_UCODE_SIZE;
     t->task.t.ucode_data_size = SP_UCODE_DATA_SIZE;
-    t->task.t.dram_stack = OS_DCACHE_ROUNDUP_ADDR(&D_80045538);
+    t->task.t.dram_stack      = OS_DCACHE_ROUNDUP_ADDR(&D_80045538);
     t->task.t.dram_stack_size = SP_DRAM_STACK_SIZE8;
 
     switch (ucodeIdx) {
@@ -391,23 +401,23 @@ void func_80005018(struct SCTaskUnk5018 *t, s32 arg1, u32 ucodeIdx, s32 arg3, u6
         case 6:
         case 8:
             // FIFO microcodes..?
-            t->task.t.output_buff = arg5;
+            t->task.t.output_buff      = arg5;
             t->task.t.output_buff_size = (u64 *)((uintptr_t)arg5 + arg6);
-            t->unk74 = two;
+            t->unk74                   = two;
             break;
         case 1:
         case 3:
         case 5:
         case 7:
         case 9:
-            t->task.t.output_buff = NULL;
+            t->task.t.output_buff      = NULL;
             t->task.t.output_buff_size = NULL;
-            t->unk74 = 0;
+            t->unk74                   = 0;
             break;
     }
-    t->task.t.data_ptr = arg4;
-    t->task.t.data_size = 0;
-    t->task.t.yield_data_ptr = OS_DCACHE_ROUNDUP_ADDR(&D_80045940);
+    t->task.t.data_ptr        = arg4;
+    t->task.t.data_size       = 0;
+    t->task.t.yield_data_ptr  = OS_DCACHE_ROUNDUP_ADDR(&D_80045940);
     t->task.t.yield_data_size = OS_YIELD_DATA_SIZE;
     osWritebackDCacheAll();
     osSendMesg(&gScheduleTaskQueue, (OSMesg)t, OS_MESG_NOBLOCK);
@@ -421,12 +431,8 @@ u32 func_800051E4(void) {
         case 3:
         case 5:
         case 7:
-        case 9:
-            o = 9;
-            break;
-        default:
-            o = 8;
-            break;
+        case 9: o = 9; break;
+        default: o = 8; break;
     }
 
     return o;
@@ -439,12 +445,8 @@ void func_80005240(s32 arg0, u64 *arg1) {
         uidx = D_80046624;
         if (D_80046620 == 1) {
             switch (uidx) {
-                case 0:
-                    uidx = 2;
-                    break;
-                case 1:
-                    uidx = 3;
-                    break;
+                case 0: uidx = 2; break;
+                case 1: uidx = 3; break;
             }
         }
     } else {
@@ -456,15 +458,14 @@ void func_80005240(s32 arg0, u64 *arg1) {
         case 3:
         case 5:
         case 7:
-        case 9:
-            func_80005018((void *)func_80004D2C(), 0, uidx, D_80046630, arg1, NULL, 0);
-            break;
+        case 9: func_80005018((void *)func_80004D2C(), 0, uidx, D_80046630, arg1, NULL, 0); break;
         case 0:
         case 2:
         case 4:
         case 6:
         case 8:
-            func_80005018((void *)func_80004D2C(), 0, uidx, D_80046630, arg1, D_80046618, D_8004661C);
+            func_80005018(
+                (void *)func_80004D2C(), 0, uidx, D_80046630, arg1, D_80046618, D_8004661C);
             break;
     }
 }
@@ -483,9 +484,7 @@ void append_ucode_load(Gfx **dlist, u32 ucodeIdx) {
         case 7:
         case 8:
         case 9:
-        default:
-            gSPDisplayList((*dlist)++, D_8004662C);
-            break;
+        default: gSPDisplayList((*dlist)++, D_8004662C); break;
     }
 }
 
@@ -504,9 +503,7 @@ void func_800053CC(void) {
     diffs = 0;
     for (i = 0; i < 4; i++) {
         diffs >>= 1;
-        if (D_800465B0[i] != D_800465C0[i]) {
-            diffs |= 8;
-        }
+        if (D_800465B0[i] != D_800465C0[i]) { diffs |= 8; }
     }
 
     if (diffs != 0) {
@@ -516,9 +513,7 @@ void func_800053CC(void) {
                 gSPBranchList(D_800465B0[0]++, D_800465C0[2]);
             } else if (diffs & 2) {
                 // L80005480
-                if (D_80046628 != 0) {
-                    append_ucode_load(&D_800465B0[0], D_80046624);
-                }
+                if (D_80046628 != 0) { append_ucode_load(&D_800465B0[0], D_80046624); }
                 // L800054AC
                 gSPBranchList(D_800465B0[0]++, D_800465C0[1]);
             } else if (diffs & 8) {
@@ -565,19 +560,19 @@ void func_800053CC(void) {
 
         if (diffs & 1) {
             dlIdx = 0;
-            a0 = 0;
+            a0    = 0;
         } else if (diffs & 4) {
             // L80005708
             dlIdx = 2;
-            a0 = 1;
+            a0    = 1;
         } else if (diffs & 2) {
             // L80005720
             dlIdx = 1;
-            a0 = 0;
+            a0    = 0;
         } else {
             // L80005734
             dlIdx = 3;
-            a0 = 1;
+            a0    = 1;
         }
         // L80005738
         cmdPtr = D_800465B0[dlIdx];
@@ -602,9 +597,7 @@ void func_800057C8(void) {
     diffs = 0;
     for (i = 0; i < 4; i++) {
         diffs >>= 1;
-        if (D_800465B0[i] != D_800465C0[i]) {
-            diffs |= 8;
-        }
+        if (D_800465B0[i] != D_800465C0[i]) { diffs |= 8; }
     }
 
     if (diffs != 0) {
@@ -614,9 +607,7 @@ void func_800057C8(void) {
                 gSPBranchList(D_800465B0[0]++, D_800465C0[2]);
             } else if (diffs & 2) {
                 // L80005878
-                if (D_80046628 != 0) {
-                    append_ucode_load(&D_800465B0[0], D_80046624);
-                }
+                if (D_80046628 != 0) { append_ucode_load(&D_800465B0[0], D_80046624); }
                 // L800058A4
                 gSPBranchList(D_800465B0[0]++, D_800465C0[1]);
             } else if (diffs & 8) {
@@ -648,9 +639,7 @@ void func_800057C8(void) {
                 gSPBranchList(D_800465B0[1]++, D_800465C0[3]);
             } else {
                 // L80005A3C
-                if (D_80046628 != 0) {
-                    append_ucode_load(&D_800465B0[1], D_80046624);
-                }
+                if (D_80046628 != 0) { append_ucode_load(&D_800465B0[1], D_80046624); }
                 // L80005A58
                 gSPBranchList(D_800465B0[1]++, D_800465B0[0]);
             }
@@ -673,15 +662,17 @@ u32 func_80005AE4(s32 arg0) {
     s32 msg;
     s32 i;
 
+    // clang-format off
     // while mesg queue is not empty
-    while (osRecvMesg(&D_80045500, (OSMesg *)&msg, OS_MESG_NOBLOCK) != -1) {
-        D_80046638[msg] = 0;
+    while (osRecvMesg(&D_80045500, (OSMesg *)&msg, OS_MESG_NOBLOCK) != -1) { 
+        D_80046638[msg] = 0; 
     }
-    // L80005B58
+    // clang-format on
+
     do {
         for (i = 0; i < D_80046640; i++) {
             if (D_80046638[i] == 0) {
-                D_80046630 = i;
+                D_80046630    = i;
                 D_80046638[i] = 1;
                 return 1;
             }
@@ -703,7 +694,7 @@ struct RealSCInfo {
     /* 0x08 */ s32 unk08;
     /* 0x0C */ struct RealSCInfo *unk0C; // next
     /* 0x10 */ struct RealSCInfo *unk10; // prev
-    /* 0x14 */ s32 (*func)(void *); // should take a `self`..?
+    /* 0x14 */ s32 (*func)(void *);      // should take a `self`..?
     /* 0x18 */ s32 unk18;
     /* 0x1C */ s32 unk1C;
     /* 0x20 */ OSMesgQueue *unk20;
@@ -717,7 +708,7 @@ void func_80005BFC(void) {
     info.unk00 = 7;
     info.unk04 = 50;
     osCreateMesgQueue(&mq, msgs, ARRAY_COUNT(msgs));
-    info.func = func_80000B54;
+    info.func  = func_80000B54;
     info.unk1C = 1;
     info.unk20 = &mq;
 
@@ -739,7 +730,7 @@ s32 func_80005C9C(void) {
 
     switch (D_800465D0) {
         case 1: return 1;
-        case 2: 
+        case 2:
             if (D_80044FA4 != 0) {
                 info.unk00 = 11;
                 info.unk04 = 100;
@@ -754,7 +745,7 @@ s32 func_80005C9C(void) {
 void func_80005D10(void) {
     if (D_800454BC == 1) {
         D_800454BC = 2;
-        while (osRecvMesg(&D_800454C8, NULL, OS_MESG_NOBLOCK) != -1) ;
+        while (osRecvMesg(&D_800454C8, NULL, OS_MESG_NOBLOCK) != -1) { ; }
 
         osRecvMesg(&D_800454C8, NULL, OS_MESG_BLOCK);
         D_800454BC = 0;
@@ -766,9 +757,9 @@ void func_80005DA0(struct FnBundle *arg0) {
 
     D_800454BC = 0;
 
-    while (osRecvMesg(&D_80045500, NULL, OS_MESG_NOBLOCK) != -1) ;
-    while (osRecvMesg(&D_80045520, NULL, OS_MESG_NOBLOCK) != -1) ;
-    while (osRecvMesg(&D_800454A0, NULL, OS_MESG_NOBLOCK) != -1) ;
+    while (osRecvMesg(&D_80045500, NULL, OS_MESG_NOBLOCK) != -1) { ; }
+    while (osRecvMesg(&D_80045520, NULL, OS_MESG_NOBLOCK) != -1) { ; }
+    while (osRecvMesg(&D_800454A0, NULL, OS_MESG_NOBLOCK) != -1) { ; }
 
     // L80005E78
     D_800465D0 = 0;
@@ -776,20 +767,16 @@ void func_80005DA0(struct FnBundle *arg0) {
     D_80046630 = 1;
     D_80044FA4 = 0;
 
-    for (i = 0; i < ARRAY_COUNT(D_80046638); i++) {
-        D_80046638[i] = 0;
-    }
+    for (i = 0; i < ARRAY_COUNT(D_80046638); i++) { D_80046638[i] = 0; }
     // 80005EB8
     if (arg0->unk00 & 1) {
         // L80005EF8
         while (TRUE) {
             func_80005D10();
             check_stack_probes();
-            for (i = 0; i < D_800454B8; i++) {
-                osRecvMesg(&D_800454A0, NULL, OS_MESG_BLOCK);
-            }
+            for (i = 0; i < D_800454B8; i++) { osRecvMesg(&D_800454A0, NULL, OS_MESG_BLOCK); }
             // L80005F34
-            while (osRecvMesg(&D_800454A0, NULL, OS_MESG_NOBLOCK) != -1) ;
+            while (osRecvMesg(&D_800454A0, NULL, OS_MESG_NOBLOCK) != -1) { ; }
             // L80005F60
             D_8004660C = osGetCount();
             arg0->fn08(arg0);
@@ -818,11 +805,9 @@ void func_80005DA0(struct FnBundle *arg0) {
             // L80006070
             func_80005D10();
             check_stack_probes();
-            for (i = 0; i < D_800454B8; i++) {
-                osRecvMesg(&D_800454A0, NULL, OS_MESG_BLOCK);
-            }
+            for (i = 0; i < D_800454B8; i++) { osRecvMesg(&D_800454A0, NULL, OS_MESG_BLOCK); }
             // L800060AC
-            while (osRecvMesg(&D_800454A0, NULL, OS_MESG_NOBLOCK) != -1) ;
+            while (osRecvMesg(&D_800454A0, NULL, OS_MESG_NOBLOCK) != -1) { ; }
             // L800060D8
             D_8004660C = osGetCount();
             arg0->fn08(arg0);
@@ -845,9 +830,9 @@ void func_80005DA0(struct FnBundle *arg0) {
     }
     // L800061D4
     func_80005BFC();
-    while (osRecvMesg(&D_80045500, NULL, OS_MESG_NOBLOCK) != -1) ;
-    while (osRecvMesg(&D_80045520, NULL, OS_MESG_NOBLOCK) != -1) ;
-    while (osRecvMesg(&D_800454A0, NULL, OS_MESG_NOBLOCK) != -1) ;
+    while (osRecvMesg(&D_80045500, NULL, OS_MESG_NOBLOCK) != -1) { ; }
+    while (osRecvMesg(&D_80045520, NULL, OS_MESG_NOBLOCK) != -1) { ; }
+    while (osRecvMesg(&D_800454A0, NULL, OS_MESG_NOBLOCK) != -1) { ; }
     // L80006270
     func_80007168(NULL);
     D_800454BC = 2;
@@ -870,9 +855,7 @@ void func_800062EC(struct FnBundle *self) {
 void func_80006350(struct FnBundle *self) {
     D_80046668(self);
     self->fn04();
-    if (func_80005C9C()) {
-        func_8000B7B4();
-    }
+    if (func_80005C9C()) { func_8000B7B4(); }
 }
 
 void func_800063A0(struct FnBundle *self) {
@@ -882,9 +865,7 @@ void func_800063A0(struct FnBundle *self) {
     func_800053CC();
     func_80006F5C(D_80046568[D_80046630]);
     func_80004EFC();
-    if (func_80005C9C()) {
-        func_8000B7B4();
-    }
+    if (func_80005C9C()) { func_8000B7B4(); }
 }
 
 struct Temp8000641C {
@@ -904,7 +885,7 @@ void unref_8000641C(struct Temp8000641C *arg0) {
     task = D_80046560[D_80046630];
     if (task == NULL) {
         fatal_printf("gtl : not defined SCTaskGfxEnd\n");
-        while (TRUE) ;
+        while (TRUE) { ; }
     }
     schedule_gfx_end(task, NULL, D_80046630, &D_80045500);
     D_80046550[D_80046630] = D_80046548[D_80046630];
@@ -920,63 +901,49 @@ void func_80006548(struct BufferSetup *arg0, void (*arg1)(void)) {
     s32 i;
     struct DLBuffer sp44[2][4];
 
-    D_80046640 = arg0->unk18;
+    D_80046640       = arg0->unk18;
     D_800465F8.unk00 = arg0->unk00;
-    D_800465F8.fn04 = arg0->fn04;
-    D_800465F8.fn0C = arg0->fn08;
+    D_800465F8.fn04  = arg0->fn04;
+    D_800465F8.fn0C  = arg0->fn08;
 
     func_80004DB4(
         func_80004980(arg0->unk14 * sizeof(struct DObj) * D_80046640, 8),
         arg0->unk14,
         func_80004980(sizeof(struct SCTaskGfxEnd) * D_80046640, 8),
-        func_80004980(sizeof(struct Unk4DB4_38) * D_80046640, 8)
-    );
+        func_80004980(sizeof(struct Unk4DB4_38) * D_80046640, 8));
     // 80006620
     for (i = 0; i < D_80046640; i++) {
         // L80006630
-        sp44[i][0].start = func_80004980(arg0->unk1C, 8);
+        sp44[i][0].start  = func_80004980(arg0->unk1C, 8);
         sp44[i][0].length = arg0->unk1C;
-        sp44[i][1].start = func_80004980(arg0->unk20, 8);
+        sp44[i][1].start  = func_80004980(arg0->unk20, 8);
         sp44[i][1].length = arg0->unk20;
-        sp44[i][2].start = func_80004980(arg0->unk24, 8);
+        sp44[i][2].start  = func_80004980(arg0->unk24, 8);
         sp44[i][2].length = arg0->unk24;
-        sp44[i][3].start = func_80004980(arg0->unk28, 8);
+        sp44[i][3].start  = func_80004980(arg0->unk28, 8);
         sp44[i][3].length = arg0->unk28;
     }
     // L800066A8
     func_80004A0C(sp44);
     for (i = 0; i < D_80046640; i++) {
         // L800066D0
-        init_bump_alloc(
-            &D_800465D8,
-            0x10002,
-            func_80004980(arg0->unk2C, 8),
-            arg0->unk2C
-        );
-        D_80046648[i].id = D_800465D8.id;
+        init_bump_alloc(&D_800465D8, 0x10002, func_80004980(arg0->unk2C, 8), arg0->unk2C);
+        D_80046648[i].id    = D_800465D8.id;
         D_80046648[i].start = D_800465D8.start;
-        D_80046648[i].end = D_800465D8.end;
-        D_80046648[i].ptr = D_800465D8.ptr;
+        D_80046648[i].end   = D_800465D8.end;
+        D_80046648[i].ptr   = D_800465D8.ptr;
     }
     // L80006724
     arg0->unk30 = 2;
-    if (arg0->unk34 == 0) {
-        arg0->unk34 = 0x1000;
-    }
+    if (arg0->unk34 == 0) { arg0->unk34 = 0x1000; }
     // L80006740
-    func_80004CB4(
-        arg0->unk30,
-        func_80004980(arg0->unk34, 16),
-        arg0->unk34
-    );
+    func_80004CB4(arg0->unk30, func_80004980(arg0->unk34, 16), arg0->unk34);
     func_80007168(arg0->fn38);
     D_80046668 = arg0->fn3C;
     enable_auto_contread((uintptr_t)schedule_contread != (uintptr_t)D_80046668 ? 1 : 0);
 
-    D_8003B6E4 = D_8003B6E8.word = 0; 
-    if (arg1 != NULL) {
-        arg1();
-    }
+    D_8003B6E4 = D_8003B6E8.word = 0;
+    if (arg1 != NULL) { arg1(); }
     // L800067B4
     func_80005DA0(&D_800465F8);
 }
@@ -998,7 +965,7 @@ void func_8000683C(struct Wrapper683C *arg) {
     sp24.unk08 = arg->unk44;
     if (arg->unk44 != 0) {
         sp24.unk0C = func_80004980((arg->unk44 + 8) * arg->unk48, 8);
-    }  else {
+    } else {
         sp24.unk0C = NULL;
     }
     // L800068BC
@@ -1035,22 +1002,17 @@ void func_8000683C(struct Wrapper683C *arg) {
     func_80006548(&arg->setup, arg->unk88);
 }
 
-
 void unref_80006A8C(u16 arg0, u16 arg1) {
     D_800454B8 = arg0;
     D_800454BA = arg1;
 }
 
 void unref_80006AA8(void) {
-    if (D_800454BC != 2) {
-        D_800454BC = 1;
-    }
+    if (D_800454BC != 2) { D_800454BC = 1; }
 }
 
 s32 unref_80006AD0(void) {
-    if (D_800454BC == 2) {
-        return 1;
-    }
+    if (D_800454BC == 2) { return 1; }
 
     return 0;
 }
@@ -1060,16 +1022,12 @@ void unref_80006AF8(void) {
 }
 
 void unref_80006B24(s32 arg0) {
-    if (arg0 == 1 || arg0 == 2) {
-        D_80046640 = arg0;
-    }
+    if (arg0 == 1 || arg0 == 2) { D_80046640 = arg0; }
 }
 
 s32 unref_80006B44(s32 arg0) {
     if ((arg0 == 1 || arg0 == 2)) {
-        if ((&D_80046634)[arg0] == 0) {
-            return 1;
-        }
+        if ((&D_80046634)[arg0] == 0) { return 1; }
     }
 
     return 0;
@@ -1088,11 +1046,11 @@ void func_80006B80(void) {
     // 80006BD8
     D_80046620 = 0;
     D_80046624 = D_80046626 = 0;
-    //D_80046624 = 0;
+    // D_80046624 = 0;
 
     for (i = 0; i < 2; i++) {
         for (j = 0; j < 4; j++) {
-            D_80046570[i][j].start = NULL;
+            D_80046570[i][j].start  = NULL;
             D_80046570[i][j].length = 0;
         }
     }

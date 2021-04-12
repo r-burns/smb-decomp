@@ -1,17 +1,18 @@
-#include <PR/ultratypes.h>
-#include <PR/os.h>
-#include <PR/rcp.h>
+#include "sys/dma.h"
+
+#include "sys/thread3.h"
 
 #include <macros.h>
 #include <ssb_types.h>
 
-#include "sys/dma.h"
-#include "sys/thread3.h"
+#include <PR/os.h>
+#include <PR/rcp.h>
+#include <PR/ultratypes.h>
 
 OSPiHandle *gRomPiHandle;
 OSPiHandle sSramPiHandle; // 80045048
-OSMesg sDmaMesg[1]; // 800450BC
-OSMesgQueue sDmaMesgQ; // 800450C0
+OSMesg sDmaMesg[1];       // 800450BC
+OSMesgQueue sDmaMesgQ;    // 800450C0
 
 // crc bss?
 void *D_800450D8;
@@ -35,17 +36,15 @@ void dma_copy(OSPiHandle *handle, u32 physAddr, uintptr_t vAddr, u32 size, u8 di
         osInvalDCache((void *)vAddr, size);
     }
 
-    mesg.hdr.pri = OS_MESG_PRI_NORMAL;
+    mesg.hdr.pri      = OS_MESG_PRI_NORMAL;
     mesg.hdr.retQueue = &sDmaMesgQ;
-    mesg.size = 0x10000;
+    mesg.size         = 0x10000;
 
     while (size > 0x10000) {
         mesg.dramAddr = (void *)vAddr;
-        mesg.devAddr = physAddr;
+        mesg.devAddr  = physAddr;
 
-        if (!D_80045020) {
-            osEPiStartDma(handle, &mesg, direction);
-        }
+        if (!D_80045020) { osEPiStartDma(handle, &mesg, direction); }
         osRecvMesg(&sDmaMesgQ, NULL, OS_MESG_BLOCK);
         size -= 0x10000;
         physAddr += 0x10000;
@@ -54,32 +53,43 @@ void dma_copy(OSPiHandle *handle, u32 physAddr, uintptr_t vAddr, u32 size, u8 di
 
     if (size != 0) {
         mesg.dramAddr = (void *)vAddr;
-        mesg.devAddr = physAddr;
-        mesg.size = size;
+        mesg.devAddr  = physAddr;
+        mesg.size     = size;
 
-        if (!D_80045020) {
-            osEPiStartDma(handle, &mesg, direction);
-        }
+        if (!D_80045020) { osEPiStartDma(handle, &mesg, direction); }
         osRecvMesg(&sDmaMesgQ, NULL, OS_MESG_BLOCK);
     }
 }
 
-void load_overlay(struct Overlay *ovl) { 
+void load_overlay(struct Overlay *ovl) {
     if ((uintptr_t)ovl->ramTextEnd - (uintptr_t)ovl->ramTextStart != 0) {
-        osInvalICache((void *)(u32)ovl->ramTextStart, (uintptr_t)ovl->ramTextEnd - (uintptr_t)ovl->ramTextStart);
-        osInvalDCache((void *)(u32)ovl->ramTextStart, (uintptr_t)ovl->ramTextEnd - (uintptr_t)ovl->ramTextStart);
+        osInvalICache(
+            (void *)(u32)ovl->ramTextStart,
+            (uintptr_t)ovl->ramTextEnd - (uintptr_t)ovl->ramTextStart);
+        osInvalDCache(
+            (void *)(u32)ovl->ramTextStart,
+            (uintptr_t)ovl->ramTextEnd - (uintptr_t)ovl->ramTextStart);
     }
 
     if ((uintptr_t)ovl->ramDataEnd - (uintptr_t)ovl->ramDataStart != 0) {
-        osInvalDCache((void *)(u32)ovl->ramDataStart, (uintptr_t)ovl->ramDataEnd - (uintptr_t)ovl->ramDataStart);
+        osInvalDCache(
+            (void *)(u32)ovl->ramDataStart,
+            (uintptr_t)ovl->ramDataEnd - (uintptr_t)ovl->ramDataStart);
     }
 
     if (ovl->romEnd - ovl->romStart != 0) {
-        dma_copy(gRomPiHandle, ovl->romStart, (uintptr_t)ovl->ramLoadStart, ovl->romEnd - ovl->romStart, OS_READ);
+        dma_copy(
+            gRomPiHandle,
+            ovl->romStart,
+            (uintptr_t)ovl->ramLoadStart,
+            ovl->romEnd - ovl->romStart,
+            OS_READ);
     }
 
     if ((uintptr_t)ovl->ramNoloadEnd - (uintptr_t)ovl->ramNoloadStart != 0) {
-        bzero((void *)(u32)ovl->ramNoloadStart, (uintptr_t)ovl->ramNoloadEnd - (uintptr_t)ovl->ramNoloadStart);
+        bzero(
+            (void *)(u32)ovl->ramNoloadStart,
+            (uintptr_t)ovl->ramNoloadEnd - (uintptr_t)ovl->ramNoloadStart);
     }
 }
 
@@ -92,19 +102,18 @@ void dma_rom_write(void *ramSrc, u32 romDst, u32 nbytes) {
 }
 
 OSPiHandle *sram_pi_init(void) {
-    if (sSramPiHandle.baseAddress == PHYS_TO_K1(PI_DOM2_ADDR2)) {
-        return &sSramPiHandle;
-    }
+    if (sSramPiHandle.baseAddress == PHYS_TO_K1(PI_DOM2_ADDR2)) { return &sSramPiHandle; }
 
-    sSramPiHandle.type = DEVICE_TYPE_SRAM;
+    sSramPiHandle.type        = DEVICE_TYPE_SRAM;
     sSramPiHandle.baseAddress = PHYS_TO_K1(PI_DOM2_ADDR2);
-    sSramPiHandle.latency = 5;
-    sSramPiHandle.pulse = 12;
-    sSramPiHandle.pageSize = 13;
+    sSramPiHandle.latency     = 5;
+    sSramPiHandle.pulse       = 12;
+    sSramPiHandle.pageSize    = 13;
     sSramPiHandle.relDuration = 2;
-    sSramPiHandle.domain = PI_DOMAIN2;
-    sSramPiHandle.speed = 0;
-    bzero(&sSramPiHandle.transferInfo, 0x60); //once again, not sizeof(sSramPiHandle.transferInfo)...
+    sSramPiHandle.domain      = PI_DOMAIN2;
+    sSramPiHandle.speed       = 0;
+    // once again, not sizeof(sSramPiHandle.transferInfo)...
+    bzero(&sSramPiHandle.transferInfo, 0x60);
     osEPiLinkHandle(&sSramPiHandle);
 
     return &sSramPiHandle;
@@ -132,7 +141,7 @@ u32 func_80002E18(u16 *arg0, u32 arg1, void (*arg2)(void), u32 arg3) {
     arg2();
 
     csr = arg0;
-    s2 = *csr;
+    s2  = *csr;
     csr++;
     s1 = 0x10;
     if ((uintptr_t)csr >= (uintptr_t)arg0 + arg1) {
@@ -147,7 +156,7 @@ u32 func_80002E18(u16 *arg0, u32 arg1, void (*arg2)(void), u32 arg3) {
         arg2();
         csr = arg0;
     }
-    //L80002EB0
+    // L80002EB0
     s2 = s2 << 16 | *csr;
     s1 += 0x10;
     csr++;
@@ -166,13 +175,12 @@ u32 func_80002E18(u16 *arg0, u32 arg1, void (*arg2)(void), u32 arg3) {
         if ((uintptr_t)csr >= (uintptr_t)arg0 + arg1) {
             arg2();
             csr = arg0;
-        } 
+        }
         // L80002F24
         s2 = s2 << 16 | *csr;
         s1 += 0x10;
     }
     // L80002F34
-
 
     return 0xDEAD;
 }

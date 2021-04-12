@@ -419,6 +419,29 @@ def task_cc():
             'targets': [o, d],
         }
 
+def task_fmt():
+    ''' Use clang-tidy to format game C source code '''
+
+    from config import ALL_VERSIONS 
+
+    flags  = [
+        '--',
+        '-fsigned-char', '-fno-builtin',
+        '-std=gnu90', '-m32', 
+        '-Wno-format-security', '-Wno-main', 
+        f'-I{inc_dir}',
+        f'-I{c_dir}',
+        '-D_LANGUAGE_C','-D_MIPS_SZINT=32', '-D_MIPS_SZLONG=32', '-DF3DEX_GBI_2'
+    ]
+
+    tidy = ['clang-tidy', '--fix'] + list(c_dir.rglob('*.c')) + flags
+
+    cmds = [ tidy + [f'-DVERSION_{ver.upper()}'] for ver in ALL_VERSIONS ]
+
+    return {
+        'actions' : cmds,
+    }
+
 def get_toolchain_deps(tc):
     if tc == "ido5.3":
         return ido53_tools

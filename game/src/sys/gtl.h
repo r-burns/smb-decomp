@@ -1,8 +1,8 @@
 #ifndef SYS_GTL_H
 #define SYS_GTL_H
 
-#include <PR/ultratypes.h>
 #include <PR/mbi.h>
+#include <PR/ultratypes.h>
 
 struct DLBuffer {
     /* 0x00 */ Gfx *start;
@@ -55,7 +55,7 @@ struct BufferSetup {
     /* 0x34 */ s32 unk34;
     /* 0x38 */ void (*fn38)(void *); // scissor callback?
     /* 0x3C */ void (*fn3C)(void *); // controller read callback?
-}; // size == 0x40
+};                                   // size == 0x40
 
 struct Wrapper683C {
     /* 0x00 */ struct BufferSetup setup;
@@ -79,7 +79,6 @@ struct Wrapper683C {
     /* 0x84 */ s32 unk84;
     /* 0x88 */ void (*unk88)(void);
 }; // size >= 0x8C
-
 
 extern void func_800048D0(void *arg0);
 extern void func_800048F8(Gfx **dl);

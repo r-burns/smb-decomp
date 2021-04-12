@@ -1,17 +1,17 @@
 #ifndef SYS_THREAD_6_H
 #define SYS_THREAD_6_H
 
-#include <PR/ultratypes.h>
 #include <PR/os.h>
+#include <PR/ultratypes.h>
 
 struct ControllerInput {
-    /* 0x00 */ u16 unk00; // button 
+    /* 0x00 */ u16 unk00; // button
     /* 0x02 */ u16 unk02; // new button presses?
     /* 0x04 */ u16 unk04; // buttons to handle?
     /* 0x06 */ u16 unk06; // released buttons?
-    /* 0x08 */ s8  unk08; // stick_x
-    /* 0x09 */ s8  unk09; // stick_y
-}; // size = 0x0A
+    /* 0x08 */ s8 unk08;  // stick_x
+    /* 0x09 */ s8 unk09;  // stick_y
+};                        // size = 0x0A
 
 extern u32 D_800451A0;
 extern u32 gUpdateContData;
