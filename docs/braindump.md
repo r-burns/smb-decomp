@@ -6,25 +6,28 @@ Collection of things that should be explained more throughly
 1. Try to find a split point in the ASM. Compiled objects are 0x10 byte aligned,
   so extra `nop`s indicate a file split. Also can look at data + bss to see alignment
 2. Create a new asm file by moving `.text`, `.data`, `.rodata`, and `.bss` into a standalone file
-3. Use script to split asm into "C" file:
+3. Ensure `OK` build, and run `utils/cpy_expected.py`
+4. Use script to split asm into "C" file:
 ```
 utils/split_asm.py <input.s> game/nonmatching/ game/src/<output directory>
 ```
-4. Delete routines from the split asm from step 2
-5. Check that rebuild works.
-6. Move over any `.rodata` (strings and arrays) and `.late_rodata` (jump tables and float constants) from split asm file into that data's nonmatching file. This helps with `mips2c`
+5. Delete routines from the split asm from step 2
+6. Add new `.c` file into `ssb64.in.ld` (named as `{filename}.asm.o`)
+7. Check that rebuild works.
+8. Move over any `.rodata` (strings and arrays) and `.late_rodata` (jump tables and float constants) from split asm file into that data's nonmatching file. This helps with `mips2c`
   * TODO: update asm-preprocessor to make/edit `.d` for included ASM files
   * `.4byte` not supported. Change to `.word` or update asm-preprocessor
   * Also, replace any `.incbin` with the raw data. The data probably is padding zeroes.
-7. Check that build is still OK
-8. Move bss over:
+9. Check that build is still OK
+10. Move bss over:
 ```
 utils/convert_bss.py <bss.s>
 ```
-9. Check build. If not OK, then there is probably some alignment issue due to the script only outputing basic types and arrays. Check the `.map` and split up arrays to `u32`, `u16`, or `u8` as necessary to match
-10. Once you get an OK, do a clean build to double check
-11. Commit!
-12. Create header and start decompiling
+11. Check build. If not OK, then there is probably some alignment issue due to the script only outputing basic types and arrays. Check the `.map` and split up arrays to `u32`, `u16`, or `u8` as necessary to match
+  * `utils/first_diff.py`
+12. Once you get an OK, do a clean build to double check
+13. Commit!
+14. Create header and start decompiling
 
 ### Using mips to c
 

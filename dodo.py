@@ -434,12 +434,18 @@ def task_fmt():
         '-D_LANGUAGE_C','-D_MIPS_SZINT=32', '-D_MIPS_SZLONG=32', '-DF3DEX_GBI_2'
     ]
 
-    tidy = ['clang-tidy', '--fix'] + list(c_dir.rglob('*.c')) + flags
+    c_files = list(c_dir.rglob('*.c'))
+    h_files = list(c_dir.rglob('*.h'))
+
+    tidy = ['clang-tidy', '--fix', '--fix-errors'] + c_files + flags
+    fmt = ['clang-format', '-i'] + c_files + h_files
 
     cmds = [ tidy + [f'-DVERSION_{ver.upper()}'] for ver in ALL_VERSIONS ]
+    cmds += [fmt]
 
     return {
         'actions' : cmds,
+        'verbosity': 2,
     }
 
 def get_toolchain_deps(tc):
