@@ -44,6 +44,20 @@ struct SpTaskQueue {
     /* 0x80 */ u32 unk80;
 }; // size = 0x84
 
+// This may be the real form of `struct SpMqInfo`, but I'll have to double check
+// thread3.c to see if I can replace all forms...
+struct RealSCInfo {
+    /* 0x00 */ s32 unk00; // type?
+    /* 0x04 */ s32 unk04;
+    /* 0x08 */ s32 unk08;
+    /* 0x0C */ struct RealSCInfo *unk0C; // next
+    /* 0x10 */ struct RealSCInfo *unk10; // prev
+    /* 0x14 */ s32 (*func)(void *);      // should take a `self`..?
+    /* 0x18 */ s32 unk18;
+    /* 0x1C */ s32 unk1C;
+    /* 0x20 */ OSMesgQueue *unk20;
+}; // size == 0x24
+
 extern OSMesgQueue gScheduleTaskQueue;
 extern u32 D_80044FA4;
 extern s64 D_80044FC0;

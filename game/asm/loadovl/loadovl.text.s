@@ -1020,7 +1020,7 @@ glabel func_800A26D8
   /* 041520 800A27D0 AE2F0000 */        sw $t7, ($s1) # D_800465B0 + 0
   /* 041524 800A27D4 AE180000 */        sw $t8, ($s0)
   /* 041528 800A27D8 AFA30074 */        sw $v1, 0x74($sp)
-  /* 04152C 800A27DC 0C001B5C */       jal func_80006D70
+  /* 04152C 800A27DC 0C001B5C */       jal rgba32_to_fill_color
   /* 041530 800A27E0 AFB0005C */        sw $s0, 0x5c($sp)
   /* 041534 800A27E4 8FA6005C */        lw $a2, 0x5c($sp)
   /* 041538 800A27E8 8FA30074 */        lw $v1, 0x74($sp)
@@ -1081,7 +1081,7 @@ glabel func_800A26D8
   /* 041608 800A28B8 AE0E0000 */        sw $t6, ($s0)
   /* 04160C 800A28BC AFA7006C */        sw $a3, 0x6c($sp)
   /* 041610 800A28C0 AFA30074 */        sw $v1, 0x74($sp)
-  /* 041614 800A28C4 0C001B5C */       jal func_80006D70
+  /* 041614 800A28C4 0C001B5C */       jal rgba32_to_fill_color
   /* 041618 800A28C8 AFB00050 */        sw $s0, 0x50($sp)
   /* 04161C 800A28CC 8FA60050 */        lw $a2, 0x50($sp)
   /* 041620 800A28D0 8FA30074 */        lw $v1, 0x74($sp)
@@ -1148,7 +1148,7 @@ glabel func_800A26D8
   /* 041708 800A29B8 AE190000 */        sw $t9, ($s0)
   /* 04170C 800A29BC AFA7006C */        sw $a3, 0x6c($sp)
   /* 041710 800A29C0 AFA30074 */        sw $v1, 0x74($sp)
-  /* 041714 800A29C4 0C001B5C */       jal func_80006D70
+  /* 041714 800A29C4 0C001B5C */       jal rgba32_to_fill_color
   /* 041718 800A29C8 AFB00044 */        sw $s0, 0x44($sp)
   /* 04171C 800A29CC 8FA80044 */        lw $t0, 0x44($sp)
   /* 041720 800A29D0 8FA30074 */        lw $v1, 0x74($sp)
@@ -1190,7 +1190,7 @@ glabel func_800A26D8
   /* 0417B0 800A2A60 AE2E0000 */        sw $t6, ($s1) # D_800465B0 + 0
   /* 0417B4 800A2A64 AE0C0000 */        sw $t4, ($s0)
   /* 0417B8 800A2A68 2404FFFF */     addiu $a0, $zero, -1
-  /* 0417BC 800A2A6C 0C001B5C */       jal func_80006D70
+  /* 0417BC 800A2A6C 0C001B5C */       jal rgba32_to_fill_color
   /* 0417C0 800A2A70 AFB00034 */        sw $s0, 0x34($sp)
   /* 0417C4 800A2A74 8FA90034 */        lw $t1, 0x34($sp)
   /* 0417C8 800A2A78 24180001 */     addiu $t8, $zero, 1
