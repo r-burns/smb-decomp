@@ -6204,8 +6204,8 @@ glabel func_ovl0_800CD2CC
   /* 048CB0 800CD2D0 AFBF0014 */        sw $ra, 0x14($sp)
   /* 048CB4 800CD2D4 AFA40030 */        sw $a0, 0x30($sp)
   /* 048CB8 800CD2D8 8C880074 */        lw $t0, 0x74($a0)
-  /* 048CBC 800CD2DC 3C098004 */       lui $t1, %hi(D_80046678)
-  /* 048CC0 800CD2E0 8D296678 */        lw $t1, %lo(D_80046678)($t1)
+  /* 048CBC 800CD2DC 3C098004 */       lui $t1, %hi(gCurrScreenWidth)
+  /* 048CC0 800CD2E0 8D296678 */        lw $t1, %lo(gCurrScreenWidth)($t1)
   /* 048CC4 800CD2E4 85020010 */        lh $v0, 0x10($t0)
   /* 048CC8 800CD2E8 85030008 */        lh $v1, 8($t0)
   /* 048CCC 800CD2EC 85050012 */        lh $a1, 0x12($t0)
@@ -6240,14 +6240,14 @@ glabel func_ovl0_800CD2CC
   /* 048D30 800CD350 00A65823 */      subu $t3, $a1, $a2
   /* 048D34 800CD354 01FF0019 */     multu $t7, $ra
   /* 048D38 800CD358 00C56821 */      addu $t5, $a2, $a1
-  /* 048D3C 800CD35C 3C038004 */       lui $v1, %hi(D_8004667C)
+  /* 048D3C 800CD35C 3C038004 */       lui $v1, %hi(gCurrScreenHeight)
   /* 048D40 800CD360 00003812 */      mflo $a3
   /* 048D44 800CD364 0147082A */       slt $at, $t2, $a3
   /* 048D48 800CD368 10200002 */      beqz $at, .L800CD374
   /* 048D4C 800CD36C 01272023 */      subu $a0, $t1, $a3
   /* 048D50 800CD370 00E05025 */        or $t2, $a3, $zero
   .L800CD374:
-  /* 048D54 800CD374 8C63667C */        lw $v1, %lo(D_8004667C)($v1)
+  /* 048D54 800CD374 8C63667C */        lw $v1, %lo(gCurrScreenHeight)($v1)
   /* 048D58 800CD378 240100F0 */     addiu $at, $zero, 0xf0
   /* 048D5C 800CD37C 0061001A */       div $zero, $v1, $at
   /* 048D60 800CD380 0000C012 */      mflo $t8

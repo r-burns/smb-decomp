@@ -14,7 +14,7 @@
 #define GLUE(a, b) a ## b
 #define GLUE2(a, b) GLUE(a, b)
 
-// Static assertions
+/// Static assertions
 #ifdef __GNUC__
 #define STATIC_ASSERT(cond, msg) _Static_assert(cond, msg)
 #else
@@ -24,4 +24,17 @@
 /// Convert from a physical addresss to a ROM (0xB0) address
 #define PHYSICAL_TO_ROM(x) ((uintptr_t)(x) + 0xB0000000)
 
+/// Turn off syntax check diagnostic
+#ifdef __GNUC__
+#define DO_PRAGMA(x) _Pragma (#x)
+#define DIAGNOSTIC_SAVE() _Pragma("GCC diagnostic push")
+#define DIAGNOSTIC_IGNORE(d) DO_PRAGMA(GCC diagnostic ignored d)
+#define DIAGNOSTIC_RESTORE() _Pragma("GCC diagnostic pop")
+
+#else
+#define DIAGNOSTIC_SAVE()
+#define DIAGNOSTIC_IGNORE(d)
+#define DIAGNOSTIC_RESTORE()
+
+#endif
 #endif /* SSB_C_MACROS_H */

@@ -6,17 +6,13 @@
 #include <PR/os.h>
 #include <PR/ultratypes.h>
 
-// u16 *gZBuffer ?
-u32 D_80046670;
+u16 *gZBuffer;
 u32 D_80046674;
-// current screen width?
-u32 D_80046678;
-// current screen height?
-u32 D_8004667C;
+s32 gCurrScreenWidth;
+s32 gCurrScreenHeight;
 u32 D_80046680;
 u32 D_80046684;
-// frame buffers?
-void *D_80046688[3];
+void *sFrameBuffers[3];
 s16 D_80046694;
 s16 D_80046696;
 s16 D_80046698;
@@ -41,14 +37,14 @@ u32 rgba32_to_fill_color(u32 color) {
     return D_80046674 == 3 ? color : (packed << 16) | packed;
 }
 
-void func_80006DC4(void *arg0, void *arg1, void *arg2) {
+void update_framebuffers(void *fb1, void *fb2, void *fb3) {
     struct SCTaskType5 mesg;
 
-    mesg.info.unk00 = 5;
-    mesg.info.unk04 = 100;
-    D_80046688[0] = mesg.unk24[0] = arg0;
-    D_80046688[1] = mesg.unk24[1] = arg1;
-    D_80046688[2] = mesg.unk24[2] = arg2;
+    mesg.info.unk00  = 5;
+    mesg.info.unk04  = 100;
+    sFrameBuffers[0] = mesg.unk24[0] = fb1;
+    sFrameBuffers[1] = mesg.unk24[1] = fb2;
+    sFrameBuffers[2] = mesg.unk24[2] = fb3;
 
     func_80000970(&mesg.info);
 }
@@ -58,18 +54,18 @@ void func_80006E18(s32 arg0) {
 
     if ((arg0 & 0x20)) { D_80046674 = 3; }
     if ((arg0 & 0x10)) { D_80046674 = 2; }
-    D_80046684 = 1;
+    D_80046684 = TRUE;
 }
 
 // set current screen width?
-void func_80006E64(s32 arg0) {
-    D_80046678 = arg0;
-    D_80046684 = 1;
+void set_screen_width(s32 arg0) {
+    gCurrScreenWidth = arg0;
+    D_80046684       = TRUE;
 }
 
-void func_80006E7C(s32 arg0) {
-    D_8004667C = arg0;
-    D_80046684 = 1;
+void set_screen_height(s32 arg0) {
+    gCurrScreenHeight = arg0;
+    D_80046684        = TRUE;
 }
 
 void func_80006E94(s16 arg0, s16 arg1, s16 arg2, s16 arg3) {
@@ -77,19 +73,19 @@ void func_80006E94(s16 arg0, s16 arg1, s16 arg2, s16 arg3) {
     D_80046696 = arg1;
     D_80046698 = arg2;
     D_8004669A = arg3;
-    D_80046684 = 1;
+    D_80046684 = TRUE;
 }
 
 void func_80006EF4(struct SCTaskType4 *task) {
-    task->unk24 = D_80046678;
-    task->unk28 = D_8004667C;
+    task->unk24 = gCurrScreenWidth;
+    task->unk28 = gCurrScreenHeight;
     task->unk2C = D_80046680;
     task->unk30 = D_80046694;
     task->unk32 = D_80046696;
     task->unk34 = D_80046698;
     task->unk36 = D_8004669A;
     D_80046680  = 0;
-    D_80046684  = 0;
+    D_80046684  = FALSE;
 }
 
 void func_80006F5C(struct SCTaskType4 *task) {
@@ -108,22 +104,22 @@ void func_80006F5C(struct SCTaskType4 *task) {
  * @param arg1 screen height?
  * @param arg2 cycle type?
  */
-void func_80006FB8(s32 arg0, s32 arg1, u32 arg2) {
+void func_80006FB8(s32 width, s32 height, u32 arg2) {
     struct SCTaskType4 task;
 
     D_80046680 = 0;
     D_80046674 = 2;
     func_80006E18(arg2);
-    func_80006E64(arg0);
-    func_80006E7C(arg1);
+    set_screen_width(width);
+    set_screen_height(height);
     task.info.unk00 = 4;
     task.info.unk04 = 100;
     func_80006EF4(&task);
     func_80000970((void *)&task.info);
 }
 
-void func_80007024(struct Unk7024 *arg0) {
-    func_80006DC4(arg0->unk00, arg0->unk04, arg0->unk08);
-    D_80046670 = arg0->unk0C;
-    func_80006FB8(arg0->unk10, arg0->unk14, arg0->unk18);
+void func_80007024(struct ScreenSettings *arg0) {
+    update_framebuffers(arg0->fb1, arg0->fb2, arg0->fb3);
+    gZBuffer = arg0->zBuffer;
+    func_80006FB8(arg0->screenWidth, arg0->screenHeight, arg0->unk18);
 }

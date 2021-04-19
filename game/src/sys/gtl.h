@@ -55,7 +55,7 @@ struct BufferSetup {
     /* 0x2C */ u32 unk2C;
     /* 0x30 */ u16 unk30;
     /* 0x34 */ s32 unk34;
-    /* 0x38 */ void (*fn38)(void *); // scissor callback?
+    /* 0x38 */ void (*fn38)(Gfx **); // scissor callback?
     /* 0x3C */ void (*fn3C)(void *); // controller read callback?
 };                                   // size == 0x40
 

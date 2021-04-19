@@ -61,7 +61,7 @@ SECTIONS
         src/sys/gtl.asm.o(.text);
         src/sys/ml.o(.text);
         src/sys/system_00.o(.text);
-        asm/system/system_01.o(.text);
+        src/sys/rdp_reset.asm.o(.text);
         asm/system/system.text.o(.text);
 
         *libultra.a:setattribute.o(.text);
@@ -187,7 +187,7 @@ SECTIONS
 
         src/sys/main.o(.data);
         src/sys/gtl.asm.o(.data);
-        asm/system/system_01.o(.data);
+        src/sys/rdp_reset.asm.o(.data);
         asm/system/system.data.o(.data);
 
         asm/system/sprite.o(.data);
@@ -243,7 +243,7 @@ SECTIONS
         src/sys/thread6.asm.o(.bss);
         src/sys/gtl.asm.o(.bss);
         src/sys/system_00.o(.bss);
-        asm/system/system_01.o(.bss);
+        src/sys/rdp_reset.asm.o(.bss);
         asm/system/system.bss.o(.bss);
 
         asm/system/sprite.o(.bss);

@@ -41,12 +41,6 @@ struct TempUnkA6E0 {
 extern void fatal_printf(const char *fmt, ...);
 extern void thread4(void *arg);
 extern void start_thread8(void);
-// reset_rdp_settings
-extern void func_80007174(Gfx **dl);
-// set_scissor_callback
-extern void func_80007168(void (*fn)(void *));
-// pointer is of type of D_80046568
-extern void func_80006F5C(void *);
 extern void func_8000A6E0(struct TempUnkA6E0 *);
 extern void func_8000B7B4(void);
 extern void func_80010734(s32);

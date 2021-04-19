@@ -2,7 +2,9 @@
 
 #include "sys/main.h"
 #include "sys/ml.h"
+#include "sys/rdp_reset.h"
 #include "sys/system.h"
+#include "sys/system_00.h"
 #include "sys/thread3.h"
 #include "sys/thread6.h"
 
@@ -80,7 +82,7 @@ struct DObj *D_80046548[2];
 struct DObj *D_80046550[2];
 struct DObj *D_80046558[2];
 struct SCTaskGfxEnd *D_80046560[2];
-void *D_80046568[2];
+struct SCTaskType4 *D_80046568[2];
 // is the collection of four `DLBuffer`s something worthy of a typedef?
 struct DLBuffer D_80046570[2][4];
 Gfx *D_800465B0[4];
@@ -174,7 +176,7 @@ void func_80004AB0(void) {
     for (i = 0; i < 4; i++) {
         if (D_80046570[D_80046630][i].length != 0) {
             D_8004662C = D_800465B0[i];
-            func_80007174(&D_800465B0[i]);
+            reset_rdp_settings(&D_800465B0[i]);
             gSPEndDisplayList(D_800465B0[i]++);
             D_800465C0[i] = D_800465B0[i];
             break;
@@ -797,7 +799,7 @@ void func_80005DA0(struct FnBundle *arg0) {
     while (osRecvMesg(&D_80045520, NULL, OS_MESG_NOBLOCK) != -1) { ; }
     while (osRecvMesg(&D_800454A0, NULL, OS_MESG_NOBLOCK) != -1) { ; }
     // L80006270
-    func_80007168(NULL);
+    set_scissor_callback(NULL);
     D_800454BC = 2;
 }
 
@@ -901,7 +903,7 @@ void func_80006548(struct BufferSetup *arg0, void (*arg1)(void)) {
     if (arg0->unk34 == 0) { arg0->unk34 = 0x1000; }
     // L80006740
     func_80004CB4(arg0->unk30, func_80004980(arg0->unk34, 16), arg0->unk34);
-    func_80007168(arg0->fn38);
+    set_scissor_callback(arg0->fn38);
     D_80046668 = arg0->fn3C;
     enable_auto_contread((uintptr_t)schedule_contread != (uintptr_t)D_80046668 ? 1 : 0);
 
