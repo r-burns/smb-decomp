@@ -108,16 +108,16 @@ s32 D_80046638[2];
 s32 D_80046640;
 struct BumpAllocRegion D_80046648[2];
 void (*D_80046668)(void *); // takes function bundle struct?
-void *D_8004666C;           // function pointer?
+SCTaskCallback D_8004666C;  // function pointer?
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wunknown-pragmas"
 
-void func_800048D0(void *arg0) {
+void func_800048D0(SCTaskGfxCallback arg0) {
     if (arg0 != NULL) {
-        D_8004666C = arg0;
+        D_8004666C = (void *)arg0;
     } else {
-        D_8004666C = unref_80000A34;
+        D_8004666C = (void *)unref_80000A34;
     }
 }
 
@@ -320,22 +320,9 @@ void func_80004F78(void) {
     func_80004AB0();
 }
 
-// is this just a `struct SCTaskGfx`?, or another type of dynamic sp struct?
-struct SCTaskUnk5018 {
-    /* 0x00 */ struct SpMqInfo info;
-    /* 0x28 */ OSTask task;
-    /* 0x68 */ unsigned int *unk68;
-    /* 0x6C */ u32 unk6C;
-    /* 0x70 */ s32 unk70;
-    /* 0x74 */ u32 unk74;
-    /* 0x78 */ u32 unk78;
-    /* 0x7C */ u32 unk7C;
-    /* 0x80 */ u32 unk80;
-}; // size == 0x84
-
 void func_80005018(
-    struct SCTaskUnk5018 *t,
-    s32 arg1,
+    struct SCTaskGfx *t,
+    s32 *arg1,
     u32 ucodeIdx,
     s32 arg3,
     u64 *arg4,
@@ -349,7 +336,7 @@ void func_80005018(
     t->info.unk04 = 50;
     if (D_800454E8 != NULL) {
         t->info.func = D_8004666C;
-        t->unk68     = D_800454E8;
+        t->unk68     = (void *)D_800454E8;
         D_800454E8   = NULL;
     } else {
         t->info.func = NULL;
@@ -677,7 +664,7 @@ u32 func_80005AE4(s32 arg0) {
 }
 
 void func_80005BFC(void) {
-    struct RealSCInfo info;
+    struct SCTaskInfo info;
     OSMesg msgs[1];
     OSMesgQueue mq;
 
@@ -702,7 +689,7 @@ void unref_80005C84(s32 arg0) {
 }
 
 s32 func_80005C9C(void) {
-    struct RealSCInfo info;
+    struct SCTaskInfo info;
 
     switch (D_800465D0) {
         case 1: return 1;

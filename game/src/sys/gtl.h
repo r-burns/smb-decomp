@@ -1,6 +1,8 @@
 #ifndef SYS_GTL_H
 #define SYS_GTL_H
 
+#include "sys/thread3.h"
+
 #include <PR/mbi.h>
 #include <PR/ultratypes.h>
 
@@ -80,7 +82,7 @@ struct Wrapper683C {
     /* 0x88 */ void (*unk88)(void);
 }; // size >= 0x8C
 
-extern void func_800048D0(void *arg0);
+extern void func_800048D0(SCTaskGfxCallback arg0);
 extern void func_800048F8(Gfx **dl);
 extern void *func_80004980(u32 size, u32 alignment);
 extern void func_80004F78(void);

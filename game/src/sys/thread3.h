@@ -7,6 +7,12 @@
 #include <PR/sptask.h>
 #include <PR/ultratypes.h>
 
+struct SCTaskInfo;
+struct SCTaskGfx;
+
+typedef s32 (*SCTaskCallback)(struct SCTaskInfo *);
+typedef s32 (*SCTaskGfxCallback)(struct SCTaskGfx *);
+
 struct MqListNode {
     /* 0x00 */ struct MqListNode *next;
     /* 0x04 */ OSMesgQueue *mq;
@@ -17,30 +23,15 @@ struct Unk80000A34 {
     /* 0x70 */ s32 unk70;
 }; // size = ??
 
-struct SpMqInfo {
-    /* 0x00 */ s32 unk00;
-    /* 0x04 */ s32 unk04;
-    /* 0x08 */ s32 unk08;
-    /* 0x0C */ struct SCTaskGfx
-        *unk0C; // next; should these point to the combined type, or just this info type?
-    /* 0x10 */ struct SCTaskGfx *unk10; // prev
-    /* 0x14 */ s32 (*func)(struct SpMqInfo *);
-    /* 0x18 */ s32 unk18;
-    /* 0x1C */ s32 unk1C;
-    /* 0x20 */ OSMesgQueue *unk20;
-    // this may not be part of SqMqInfo, but rather SCTaskGfx
-    /* 0x24 */ struct MqListNode *unk24; // checked type? (-1 is meaningful)
-};                                       // size = 0x28
-
 // This may be the real form of `struct SpMqInfo`, but I'll have to double check
 // thread3.c to see if I can replace all forms...
-struct RealSCInfo {
+struct SCTaskInfo {
     /* 0x00 */ s32 unk00; // type?
     /* 0x04 */ s32 unk04; // priority?
     /* 0x08 */ s32 unk08;
-    /* 0x0C */ struct RealSCInfo *unk0C; // next (smaller unk04?)
-    /* 0x10 */ struct RealSCInfo *unk10; // prev (larger unk04?)
-    /* 0x14 */ s32 (*func)(void *);      // should take a `self`..?
+    /* 0x0C */ struct SCTaskInfo *unk0C; // next (smaller unk04?)
+    /* 0x10 */ struct SCTaskInfo *unk10; // prev (larger unk04?)
+    /* 0x14 */ SCTaskCallback func;      // run function?
     /* 0x18 */ s32 unk18;
     /* 0x1C */ s32 unk1C;
     /* 0x20 */ OSMesgQueue *unk20;
@@ -60,11 +51,11 @@ struct RealSCInfo {
 // 11 - Remove all Type1 and Type4 from D_80044EC4 queue
 
 struct SCTaskGfx {
-    /* 0x00 */ struct RealSCInfo info;
+    /* 0x00 */ struct SCTaskInfo info;
     /* 0x28 */ OSTask task;
-    /* 0x68 */ s32 *unk68;
+    /* 0x68 */ u32 *unk68;
     /* 0x6C */ s32 *unk6C; // checked type? (-1 is meaningful)
-    /* 0x70 */ u8 pad70[0x04];
+    /* 0x70 */ s32 unk70;  // frame buffer idx for D_80044F90
     /* 0x74 */ s32 unk74;
     /* 0x78 */ s32 unk78;
     /* 0x7C */ s32 unk7C;
@@ -72,12 +63,12 @@ struct SCTaskGfx {
 };                        // size = 0x84
 
 struct SCTaskType3 {
-    /* 0x00 */ struct RealSCInfo info;
+    /* 0x00 */ struct SCTaskInfo info;
     /* 0x24 */ struct MqListNode *unk24;
 }; // size == 0x28
 
 struct SCTaskType4 {
-    /* 0x00 */ struct RealSCInfo info;
+    /* 0x00 */ struct SCTaskInfo info;
     /* 0x24 */ s32 unk24; // screen width?
     /* 0x28 */ s32 unk28; // screen height?
     /* 0x2C */ s32 unk2C;
@@ -88,24 +79,24 @@ struct SCTaskType4 {
 }; // size == 0x38
 
 struct SCTaskType5 {
-    /* 0x00 */ struct RealSCInfo info;
-    /* 0x24 */ void *unk24[3];
-}; // size == 0x30
+    /* 0x00 */ struct SCTaskInfo info;
+    /* 0x24 */ void *unk24[3]; // frame buffer pointers
+};                             // size == 0x30
 
 struct SCTaskGfxEnd {
-    /* 0x00 */ struct RealSCInfo info;
+    /* 0x00 */ struct SCTaskInfo info;
     /* 0x24 */ void *unk24;
     /* 0x28 */ u32 unk28; // gfx task id?
 };                        /* size == 0x2C */
 
 struct SCTaskType8 {
-    /* 0x00 */ struct RealSCInfo info;
+    /* 0x00 */ struct SCTaskInfo info;
     /* 0x24 */ void *unk24;
     /* 0x28 */ s32 unk28; // size
 };                        // size >= 0x2C
 
 struct SCTaskType9 {
-    /* 0x00 */ struct RealSCInfo info;
+    /* 0x00 */ struct SCTaskInfo info;
     /* 0x24 */ OSMesgQueue *unk24;
 }; // size >= 0x28
 
@@ -114,10 +105,10 @@ extern u32 D_80044FA4;
 extern s64 D_80044FC0;
 extern s32 D_80045020;
 
-extern void func_80000970(struct RealSCInfo *arg0);
+extern void func_80000970(struct SCTaskInfo *arg0);
 extern void func_800009D8(struct MqListNode *arg0, OSMesgQueue *mq, OSMesg *msg, u32 count);
-extern s32 unref_80000A34(struct Unk80000A34 *arg0);
+extern s32 unref_80000A34(struct SCTaskGfx *t);
 extern void thread3_scheduler(void *arg);
-extern s32 func_80000B54(UNUSED void *arg0);
+extern s32 func_80000B54(UNUSED struct SCTaskInfo *t);
 
 #endif /* SYS_THREAD_3_H */
