@@ -55,8 +55,8 @@ struct ViSettings {
 
 // bss
 struct MqListNode *D_80044EC0;
-struct SpTaskQueue *D_80044EC4;
-struct SpTaskQueue *D_80044EC8;
+struct RealSCInfo *D_80044EC4; // largest priority/unk04?
+struct RealSCInfo *D_80044EC8; // smallest priority/unk04?
 struct SpTaskQueue *D_80044ECC;
 struct SpTaskQueue *D_80044ED0;
 struct SpTaskQueue *D_80044ED4;
@@ -117,15 +117,15 @@ void unref_80000938(void) {
     return;
 }
 
-void func_80000970(struct SpMqInfo *arg0) {
+void func_80000970(struct RealSCInfo *task) {
     OSMesg msgs[1];
     OSMesgQueue mq;
 
     osCreateMesgQueue(&mq, msgs, ARRAY_COUNT(msgs));
-    arg0->func  = NULL;
-    arg0->unk1C = 1;
-    arg0->unk20 = &mq;
-    osSendMesg(&gScheduleTaskQueue, (OSMesg)arg0, OS_MESG_NOBLOCK);
+    task->func  = NULL;
+    task->unk1C = 1;
+    task->unk20 = &mq;
+    osSendMesg(&gScheduleTaskQueue, (OSMesg)task, OS_MESG_NOBLOCK);
     osRecvMesg(&mq, NULL, OS_MESG_BLOCK);
 }
 
@@ -184,29 +184,29 @@ s32 unref_80000A34(struct Unk80000A34 *arg0) {
 
 // This function probably takes a pointer to whatever the minimal Task struct is
 s32 func_80000B54(UNUSED void *arg0) {
-    struct SpTaskQueue *temp_v0;
-    const s32 CHECK = 1;
+    struct RealSCInfo *temp_v0;
+    const s32 TYPE_TO_CHECK = 1;
 
-    if (D_80044ECC != NULL && D_80044ECC->info.unk00 == CHECK) { return 0; }
+    if (D_80044ECC != NULL && D_80044ECC->info.unk00 == TYPE_TO_CHECK) { return 0; }
 
     temp_v0 = D_80044ED4;
     while (temp_v0 != NULL) {
-        if (temp_v0->info.unk00 == CHECK) { return 0; }
-        temp_v0 = temp_v0->info.unk0C;
+        if (temp_v0->unk00 == TYPE_TO_CHECK) { return 0; }
+        temp_v0 = temp_v0->unk0C;
     }
 
     temp_v0 = D_80044EC4;
     while (temp_v0 != NULL) {
-        if (temp_v0->info.unk00 == CHECK) { return 0; }
-        temp_v0 = temp_v0->info.unk0C;
+        if (temp_v0->unk00 == TYPE_TO_CHECK) { return 0; }
+        temp_v0 = temp_v0->unk0C;
     }
 
-    if (D_80044EE4 != NULL && D_80044EE4->info.unk00 == CHECK) { return 0; }
+    if (D_80044EE4 != NULL && D_80044EE4->info.unk00 == TYPE_TO_CHECK) { return 0; }
 
     temp_v0 = D_80044EDC;
     while (temp_v0 != NULL) {
-        if (temp_v0->info.unk00 == CHECK) { return 0; }
-        temp_v0 = temp_v0->info.unk0C;
+        if (temp_v0->unk00 == TYPE_TO_CHECK) { return 0; }
+        temp_v0 = temp_v0->unk0C;
     }
 
     if (D_80045034 != D_80045035) { return 0; }
@@ -214,42 +214,44 @@ s32 func_80000B54(UNUSED void *arg0) {
     return 1;
 }
 
-void func_80000C64(struct SpTaskQueue *arg0) {
-    struct SpTaskQueue *temp_v0;
+// insert into task (command?) priority queue?
+void func_80000C64(struct RealSCInfo *newTask) {
+    struct RealSCInfo *csr;
 
-    temp_v0 = D_80044EC8;
-    while (temp_v0 != NULL && temp_v0->info.unk04 < arg0->info.unk04) {
-        temp_v0 = temp_v0->info.unk10;
+    // find task with priority higher than arg0
+    csr = D_80044EC8;
+    while (csr != NULL && csr->unk04 < newTask->unk04) { csr = csr->unk10; }
+
+    // insert new task into queue
+    newTask->unk10 = csr;
+    if (csr != NULL) {
+        newTask->unk0C = csr->unk0C;
+        csr->unk0C     = newTask;
+    } else {
+        newTask->unk0C = D_80044EC4;
+        D_80044EC4     = newTask;
     }
 
-    arg0->info.unk10 = temp_v0;
-    if (temp_v0 != NULL) {
-        arg0->info.unk0C    = temp_v0->info.unk0C;
-        temp_v0->info.unk0C = arg0;
+    csr = newTask->unk0C;
+    if (csr != NULL) {
+        csr->unk10 = newTask;
     } else {
-        arg0->info.unk0C = D_80044EC4;
-        D_80044EC4       = arg0;
-    }
-
-    temp_v0 = arg0->info.unk0C;
-    if (temp_v0 != NULL) {
-        temp_v0->info.unk10 = arg0;
-    } else {
-        D_80044EC8 = arg0;
+        D_80044EC8 = newTask;
     }
 }
 
-void func_80000CF4(struct SpTaskQueue *arg0) {
-    if (arg0->info.unk10 != NULL) {
-        arg0->info.unk10->info.unk0C = arg0->info.unk0C;
+// remove from priority queue?
+void func_80000CF4(struct RealSCInfo *task) {
+    if (task->unk10 != NULL) {
+        task->unk10->unk0C = task->unk0C;
     } else {
-        D_80044EC4 = arg0->info.unk0C;
+        D_80044EC4 = task->unk0C;
     }
 
-    if (arg0->info.unk0C != NULL) {
-        arg0->info.unk0C->info.unk10 = arg0->info.unk10;
+    if (task->unk0C != NULL) {
+        task->unk0C->unk10 = task->unk10;
     } else {
-        D_80044EC8 = arg0->info.unk10;
+        D_80044EC8 = task->unk10;
     }
 }
 
@@ -278,6 +280,7 @@ void func_80000D44(struct SpTaskQueue *arg0) {
     }
 }
 
+// remove from D_80044ED4/D_80044ED8 queue
 void func_80000DD4(struct SpTaskQueue *arg0) {
     if (arg0->info.unk10 != NULL) {
         arg0->info.unk10->info.unk0C = arg0->info.unk0C;
@@ -681,54 +684,65 @@ void func_80001968(struct SpTaskQueue *arg0) {
     D_80044ED0 = arg0;
 }
 
-s32 func_80001A00(struct SpTaskQueue *arg0);
+s32 func_80001A00(struct RealSCInfo *task);
 #ifdef NON_MATCHING
-s32 func_80001A00(struct SpTaskQueue *arg0) {
+// execute task?
+s32 func_80001A00(struct RealSCInfo *task) {
     s32 sp4C = 0;
 
-    switch (arg0->info.unk00) {
+    switch (task->unk00) {
         case 1:
-            if (arg0->unk68 != NULL) {
-                arg0->unk68 = D_80044F9C;
-                osWritebackDCache(arg0->unk68, sizeof(s32 *));
+        {
+            struct SpTaskQueue *t = (void *)task;
+
+            if (t->unk68 != NULL) {
+                t->unk68 = D_80044F9C;
+                osWritebackDCache(t->unk68, sizeof(s32 *));
             }
             // L80001A6C
-            if ((uintptr_t)arg0->task.t.output_buff == (uintptr_t)-1) {
-                arg0->task.t.output_buff = &D_80044FC8[D_80044FCC];
-                osWritebackDCache(&arg0->task.t.output_buff, sizeof(u64 *));
+            if ((uintptr_t)t->task.t.output_buff == (uintptr_t)-1) {
+                t->task.t.output_buff = &D_80044FC8[D_80044FCC];
+                osWritebackDCache(&t->task.t.output_buff, sizeof(u64 *));
             }
             // L80001A98
-            if (arg0->unk74 == 1) { osInvalDCache(&D_80044FC0, sizeof(D_80044FC0)); }
+            if (t->unk74 == 1) { osInvalDCache(&D_80044FC0, sizeof(D_80044FC0)); }
             // L80001AB4
-            func_800018E0(arg0);
+            func_800018E0(t);
             sp4C = 1;
             break;
+        }
         case 2:
+        {
+            // or is this a separate type with an OSTask at the same location?
+            struct SpTaskQueue *t = (void *)task;
+
             osWritebackDCacheAll();
-            func_80001968(arg0);
+            func_80001968(t);
             sp4C = 1;
             break;
+        }
         case 3:
-            arg0->info.unk24 = D_80044EC0;
-            D_80044EC0       = arg0->info.unk24;
-            if (arg0->info.unk20 != NULL) {
-                osSendMesg(arg0->info.unk20, (OSMesg)arg0->info.unk1C, OS_MESG_NOBLOCK);
-            }
-            break;
-        case 4:
-            func_80000F30(
-                arg0->info.unk24,
-                arg0->task.t.type,
-                arg0->task.t.flags,
-                ((s16 *)&arg0->task.t.ucode_boot)[0],
-                ((s16 *)&arg0->task.t.ucode_boot)[1],
-                ((s16 *)&arg0->task.t.ucode_boot_size)[0],
-                ((s16 *)&arg0->task.t.ucode_boot_size)[1]);
+        {
+            struct SCTaskType3 *t = (void *)task;
 
-            if (arg0->info.unk20 != NULL) {
-                osSendMesg(arg0->info.unk20, (OSMesg)arg0->info.unk1C, OS_MESG_NOBLOCK);
+            t->unk24->next = D_80044EC0;
+            D_80044EC0     = t->unk24;
+            if (t->info.unk20 != NULL) {
+                osSendMesg(t->info.unk20, (OSMesg)t->info.unk1C, OS_MESG_NOBLOCK);
             }
             break;
+        }
+        case 4:
+        {
+            struct SCTaskType4 *t = (void *)task;
+
+            func_80000F30(t->unk24, t->unk28, t->unk2C, t->unk30, t->unk32, t->unk34, t->unk34);
+
+            if (t->info.unk20 != NULL) {
+                osSendMesg(t->info.unk20, (OSMesg)t->info.unk1C, OS_MESG_NOBLOCK);
+            }
+            break;
+        }
         case 5:
             // v0 = &D_80044F90
             // a0 = &D_80044F9C
@@ -736,39 +750,41 @@ s32 func_80001A00(struct SpTaskQueue *arg0) {
             // L80001B7C
             {
                 s32 i;
-                for (i = 0; i < ARRAY_COUNT(D_80044F90); i++) {
-                    D_80044F90[i] = arg0[i].info.unk24;
+                struct SCTaskType5 *t = (void *)task;
+
+                for (i = 0; i < ARRAY_COUNT(D_80044F90); i++) { D_80044F90[i] = t->unk24[i]; }
+
+                if (t->info.unk20 != NULL) {
+                    osSendMesg(t->info.unk20, (OSMesg)t->info.unk1C, OS_MESG_NOBLOCK);
                 }
-            }
-            if (arg0->info.unk20 != NULL) {
-                osSendMesg(arg0->info.unk20, (OSMesg)arg0->info.unk1C, OS_MESG_NOBLOCK);
             }
             break;
         case 6:
             // really big
             {
-                struct SpTaskQueue *v1 = NULL;
-                struct SpTaskQueue *v0;
+                struct SCTaskGfxEnd *t = (void *)task;
+                struct SpTaskQueue *v1 = NULL; // found
+                struct SpTaskQueue *v0;        // csr
                 // a0 = D_80044ECC;
                 if (D_80044ECC != NULL) {
                     if (D_80044ECC->info.unk00 == 1) {
-                        if (arg0->task.t.type == D_80044ECC->unk80) { v1 = D_80044ECC; }
+                        if (t->unk28 == D_80044ECC->unk80) { v1 = D_80044ECC; }
                     }
                 }
                 // L80001BEC
                 v0 = D_80044ED4;
                 while (v0 != NULL) {
                     if (v0->info.unk00 == 1) {
-                        if (arg0->task.t.type == v0->unk80) { v1 = v0; }
+                        if (t->unk28 == v0->unk80) { v1 = v0; }
                     }
                     // L80001C20
                     v0 = v0->info.unk0C;
                 }
                 // L80001C28
-                v0 = D_80044EC4;
+                v0 = (void *)D_80044EC4;
                 while (v0 != NULL) {
                     if (v0->info.unk00 == 1) {
-                        if (arg0->task.t.type == v0->unk80) { v1 = v0; }
+                        if (t->unk28 == v0->unk80) { v1 = v0; }
                     }
                     // L80001C5C
                     v0 = v0->info.unk0C;
@@ -777,77 +793,85 @@ s32 func_80001A00(struct SpTaskQueue *arg0) {
                 v0 = D_80044EE4;
                 if (v0 != NULL) {
                     if (v0->info.unk00 == 1) {
-                        if (arg0->task.t.type == D_80044ECC->unk80) { v1 = v0; }
+                        if (t->unk28 == D_80044ECC->unk80) { v1 = v0; }
                     }
                 }
                 // L80001C94
                 v0 = D_80044EDC;
                 while (v0 != NULL) {
                     if (v0->info.unk00 == 1) {
-                        if (arg0->task.t.type == v0->unk80) { v1 = v0; }
+                        if (t->unk28 == v0->unk80) { v1 = v0; }
                     }
                     v0 = v0->info.unk0C;
                 }
                 // L80001CD0
                 if (v1 != NULL) {
-                    v1->info.unk1C = arg0->info.unk1C;
-                    v1->info.unk20 = arg0->info.unk20;
-                    v1->unk6C      = arg0->info.unk24;
+                    v1->info.unk1C = t->info.unk1C;
+                    v1->info.unk20 = t->info.unk20;
+                    v1->unk6C      = t->unk24;
                 } else {
                     // L80001CF8
-                    if (arg0->info.unk24 != NULL) { func_800017B8(arg0->info.unk20); }
+                    if (t->unk24 != NULL) { func_800017B8(t->info.unk20); }
                     // L80001D0C
-                    if (arg0->info.unk20 != NULL) {
-                        osSendMesg(arg0->info.unk20, (OSMesg)arg0->info.unk1C, OS_MESG_NOBLOCK);
+                    if (t->info.unk20 != NULL) {
+                        osSendMesg(t->info.unk20, (OSMesg)t->info.unk1C, OS_MESG_NOBLOCK);
                     }
                 }
             }
             break;
         case 7:
-            if (arg0->info.unk20 != NULL) {
-                osSendMesg(arg0->info.unk20, (OSMesg)arg0->info.unk1C, OS_MESG_NOBLOCK);
+            if (task->unk20 != NULL) {
+                osSendMesg(task->unk20, (OSMesg)task->unk1C, OS_MESG_NOBLOCK);
             }
             break;
         case 8:
-            D_80044FCC = (uintptr_t)arg0->info.unk24;
-            D_80044FD0 = arg0->task.t.type;
-            if (arg0->info.unk20 != NULL) {
-                osSendMesg(arg0->info.unk20, (OSMesg)arg0->info.unk1C, OS_MESG_NOBLOCK);
+        {
+            struct SCTaskType8 *t = (void *)task;
+
+            D_80044FCC = t->unk24;
+            D_80044FD0 = t->unk28;
+            if (t->info.unk20 != NULL) {
+                osSendMesg(t->info.unk20, (OSMesg)t->info.unk1C, OS_MESG_NOBLOCK);
             }
             break;
+        }
         case 9:
+        {
+            struct SCTaskType9 *t = (void *)task;
+
             D_80045010 = 1;
-            D_80045014 = (OSMesgQueue *)arg0->info.unk24;
-            if (arg0->info.unk20 != NULL) {
-                osSendMesg(arg0->info.unk20, (OSMesg)arg0->info.unk1C, OS_MESG_NOBLOCK);
+            D_80045014 = t->unk24;
+            if (t->info.unk20 != NULL) {
+                osSendMesg(t->info.unk20, (OSMesg)t->info.unk1C, OS_MESG_NOBLOCK);
             }
             break;
+        }
         case 10:
             D_80045010 = 0;
-            if (arg0->info.unk20 != NULL) {
-                osSendMesg(arg0->info.unk20, (OSMesg)arg0->info.unk1C, OS_MESG_NOBLOCK);
+            if (task->unk20 != NULL) {
+                osSendMesg(task->unk20, (OSMesg)task->unk1C, OS_MESG_NOBLOCK);
             }
             break;
         case 11:
         {
-            struct SpTaskQueue *a0 = D_80044EC4;
+            struct RealSCInfo *a0 = D_80044EC4;
             // struct SpTaskQueue *sp34;
             while (a0 != NULL) {
-                if (a0->info.unk00 == 1 || a0->info.unk00 == 4) {
+                if (a0->unk00 == 1 || a0->unk00 == 4) {
                     // sp34 = a0->unk0C;
                     func_80000CF4(a0);
                     // a0 = sp34;
                 }
                 // L80001E28
-                a0 = a0->info.unk0C;
+                a0 = a0->unk0C;
             }
-        }
             // L80001E30
             D_80044FA0 = NULL;
-            if (arg0->info.unk20 != NULL) {
-                osSendMesg(arg0->info.unk20, (OSMesg)arg0->info.unk1C, OS_MESG_NOBLOCK);
+            if (task->unk20 != NULL) {
+                osSendMesg(task->unk20, (OSMesg)task->unk1C, OS_MESG_NOBLOCK);
             }
             break;
+        }
     }
     // L80001E50
 
@@ -859,13 +883,13 @@ s32 func_80001A00(struct SpTaskQueue *arg0) {
 
 void func_80001E64(void) {
     s32 phi_a0;
-    s32 phi_v0;
+    s32 phi_v0; // cur "priority"
     s32 phi_v1;
-    struct SpTaskQueue *phi_s0;
-    struct SpTaskQueue *temp_s1;
+    struct RealSCInfo *phi_s0;  // cur
+    struct RealSCInfo *temp_s1; // temp for cur
     s32 phi_s2 = 0;
-    s32 phi_s4;
-    s32 phi_s7;
+    s32 phi_s4; // "priority" of D_80044ED4
+    s32 phi_s7; // "priority" of D_80044ECC or D_80044ED0
 
     phi_s7 = D_80044ECC != NULL ? D_80044ECC->info.unk04 : -1;
 
@@ -875,7 +899,7 @@ void func_80001E64(void) {
 
     phi_s0 = D_80044EC4;
     while (phi_s2 == 0) {
-        phi_v0 = phi_s0 != NULL ? phi_s0->info.unk04 : -1;
+        phi_v0 = phi_s0 != NULL ? phi_s0->unk04 : -1;
 
         if (phi_s4 >= phi_v0) {
             phi_v1 = 0;
@@ -897,13 +921,13 @@ void func_80001E64(void) {
                     func_80000DD4(D_80044ED4);
                     break;
                 case 1:
-                    if (phi_s0->info.func == NULL || phi_s0->info.func(phi_s0) != 0) {
+                    if (phi_s0->func == NULL || phi_s0->func(phi_s0) != 0) {
                         phi_s2  = func_80001A00(phi_s0);
-                        temp_s1 = phi_s0->info.unk0C;
+                        temp_s1 = phi_s0->unk0C;
                         func_80000CF4(phi_s0);
                         phi_s0 = temp_s1;
                     } else {
-                        phi_s0 = phi_s0->info.unk0C;
+                        phi_s0 = phi_s0->unk0C;
                     }
                     break;
             }
@@ -1081,9 +1105,9 @@ void func_80002340(void) {
 }
 
 // might only take a struct SpTaskInfo *
-void func_800024EC(struct SpTaskQueue *arg0) {
-    arg0->info.unk08 = 1;
-    func_80000C64(arg0);
+void func_800024EC(struct RealSCInfo *task) {
+    task->unk08 = 1;
+    func_80000C64(task);
     func_80001E64();
 }
 
@@ -1170,7 +1194,7 @@ void thread3_scheduler(UNUSED void *arg) {
             default:
                 if (D_80045020 == 0) {
                     // is this a pointer to only the info struct?
-                    func_800024EC((struct SpTaskQueue *)intrMsg);
+                    func_800024EC((struct RealSCInfo *)intrMsg);
                 }
         }
     }

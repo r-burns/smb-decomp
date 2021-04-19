@@ -259,11 +259,6 @@ struct DObj *func_80004D2C(void) {
     return temp;
 }
 
-struct SCTaskGfxEnd {
-    /* 0x00 */ struct SpMqInfo info;
-    /* 0x28 */ s32 unk28;
-}; // size == 0x2C
-
 struct Unk4DB4_38 {
     /* 0x00 */ u8 pad[0x38];
 }; // size == 0x38
@@ -296,7 +291,7 @@ void schedule_gfx_end(struct SCTaskGfxEnd *mesg, void *arg1, s32 arg2, OSMesgQue
     mesg->info.func  = NULL;
     mesg->info.unk20 = mq;
     mesg->info.unk1C = arg2;
-    mesg->info.unk24 = arg1;
+    mesg->unk24      = arg1;
     mesg->unk28      = D_80046630;
 
     osSendMesg(&gScheduleTaskQueue, (OSMesg)mesg, OS_MESG_NOBLOCK);

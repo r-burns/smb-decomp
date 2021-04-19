@@ -60,7 +60,7 @@ SECTIONS
         src/sys/thread6.asm.o(.text);
         src/sys/gtl.asm.o(.text);
         src/sys/ml.o(.text);
-        src/sys/system_00.asm.o(.text);
+        src/sys/system_00.o(.text);
         asm/system/system_01.o(.text);
         asm/system/system.text.o(.text);
 
@@ -242,7 +242,7 @@ SECTIONS
         src/sys/dma.asm.o(.bss);
         src/sys/thread6.asm.o(.bss);
         src/sys/gtl.asm.o(.bss);
-        src/sys/system_00.asm.o(.bss);
+        src/sys/system_00.o(.bss);
         asm/system/system_01.o(.bss);
         asm/system/system.bss.o(.bss);
 

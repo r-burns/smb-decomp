@@ -15,7 +15,8 @@ u32 D_80046678;
 u32 D_8004667C;
 u32 D_80046680;
 u32 D_80046684;
-s32 D_80046688[3];
+// frame buffers?
+void *D_80046688[3];
 s16 D_80046694;
 s16 D_80046696;
 s16 D_80046698;
@@ -40,31 +41,17 @@ u32 rgba32_to_fill_color(u32 color) {
     return D_80046674 == 3 ? color : (packed << 16) | packed;
 }
 
-struct SCTaskType5 {
-    /* 0x00 */ struct RealSCInfo info;
-    /* 0x24 */ s32 unk24;
-    /* 0x28 */ s32 unk28;
-    /* 0x2C */ s32 unk2C;
-}; // size == 0x30
-
-#ifdef NON_MATCHING
-void func_80006DC4(s32 arg0, s32 arg1, s32 arg2) {
+void func_80006DC4(void *arg0, void *arg1, void *arg2) {
     struct SCTaskType5 mesg;
 
-    D_80046688[0]   = arg0;
     mesg.info.unk00 = 5;
     mesg.info.unk04 = 100;
-    D_80046688[1]   = arg1;
-    D_80046688[2]   = arg2;
-    mesg.unk24      = arg0;
-    mesg.unk28      = arg1;
-    mesg.unk2C      = arg2;
-    func_80000970((void *)&mesg);
+    D_80046688[0] = mesg.unk24[0] = arg0;
+    D_80046688[1] = mesg.unk24[1] = arg1;
+    D_80046688[2] = mesg.unk24[2] = arg2;
+
+    func_80000970(&mesg.info);
 }
-#else
-void func_80006DC4(s32 arg0, s32 arg1, s32 arg2);
-#pragma GLOBAL_ASM("game/nonmatching/system_00/func_80006DC4.s")
-#endif
 
 void func_80006E18(s32 arg0) {
     D_80046680 |= arg0;
@@ -92,17 +79,6 @@ void func_80006E94(s16 arg0, s16 arg1, s16 arg2, s16 arg3) {
     D_8004669A = arg3;
     D_80046684 = 1;
 }
-
-struct SCTaskType4 {
-    /* 0x00 */ struct RealSCInfo info;
-    /* 0x24 */ s32 unk24; // screen width?
-    /* 0x28 */ s32 unk28; // screen height?
-    /* 0x2C */ s32 unk2C;
-    /* 0x30 */ s16 unk30;
-    /* 0x32 */ s16 unk32;
-    /* 0x34 */ s16 unk34;
-    /* 0x36 */ s16 unk36;
-}; // size == 0x38
 
 void func_80006EF4(struct SCTaskType4 *task) {
     task->unk24 = D_80046678;
