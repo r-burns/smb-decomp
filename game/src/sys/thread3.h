@@ -21,28 +21,16 @@ struct SpMqInfo {
     /* 0x00 */ s32 unk00;
     /* 0x04 */ s32 unk04;
     /* 0x08 */ s32 unk08;
-    /* 0x0C */ struct SpTaskQueue
+    /* 0x0C */ struct SCTaskGfx
         *unk0C; // next; should these point to the combined type, or just this info type?
-    /* 0x10 */ struct SpTaskQueue *unk10; // prev
+    /* 0x10 */ struct SCTaskGfx *unk10; // prev
     /* 0x14 */ s32 (*func)(struct SpMqInfo *);
     /* 0x18 */ s32 unk18;
     /* 0x1C */ s32 unk1C;
     /* 0x20 */ OSMesgQueue *unk20;
-    // this may not be part of SqMqInfo, but rather SpTaskQueue
+    // this may not be part of SqMqInfo, but rather SCTaskGfx
     /* 0x24 */ struct MqListNode *unk24; // checked type? (-1 is meaningful)
 };                                       // size = 0x28
-
-struct SpTaskQueue {
-    /* 0x00 */ struct SpMqInfo info;
-    /* 0x28 */ OSTask task;
-    /* 0x68 */ s32 *unk68;
-    /* 0x6C */ s32 *unk6C; // checked type? (-1 is meaningful)
-    /* 0x70 */ u8 pad70[0x04];
-    /* 0x74 */ s32 unk74;
-    /* 0x78 */ s32 unk78;
-    /* 0x7C */ s32 unk7C;
-    /* 0x80 */ u32 unk80; // gfx task id?
-};                        // size = 0x84
 
 // This may be the real form of `struct SpMqInfo`, but I'll have to double check
 // thread3.c to see if I can replace all forms...
@@ -59,8 +47,8 @@ struct RealSCInfo {
 }; // size == 0x24
 
 // Task SubTypes:
-// 1  - OSTask (struct SpTaskQueue )
-// 2  - Also something with an OSTask (using struct SpTaskQueue for now)
+// 1  - OSTask (struct SCTaskGfx )
+// 2  - Also something with an OSTask (using struct SCTaskGfx for now)
 // 3  - Something with Mesq queueing?
 // 4  - OsViMode changing?
 // 5  - frame buffer pointers?
@@ -71,10 +59,22 @@ struct RealSCInfo {
 // 10 - Sets D_80045010..? no special fields
 // 11 - Remove all Type1 and Type4 from D_80044EC4 queue
 
+struct SCTaskGfx {
+    /* 0x00 */ struct RealSCInfo info;
+    /* 0x28 */ OSTask task;
+    /* 0x68 */ s32 *unk68;
+    /* 0x6C */ s32 *unk6C; // checked type? (-1 is meaningful)
+    /* 0x70 */ u8 pad70[0x04];
+    /* 0x74 */ s32 unk74;
+    /* 0x78 */ s32 unk78;
+    /* 0x7C */ s32 unk7C;
+    /* 0x80 */ u32 unk80; // gfx task id?
+};                        // size = 0x84
+
 struct SCTaskType3 {
     /* 0x00 */ struct RealSCInfo info;
     /* 0x24 */ struct MqListNode *unk24;
-}; // size >= 0x28
+}; // size == 0x28
 
 struct SCTaskType4 {
     /* 0x00 */ struct RealSCInfo info;
@@ -95,14 +95,14 @@ struct SCTaskType5 {
 struct SCTaskGfxEnd {
     /* 0x00 */ struct RealSCInfo info;
     /* 0x24 */ void *unk24;
-    /* 0x28 */ s32 unk28; // gfx task id?
-};                        // size == 0x2C
+    /* 0x28 */ u32 unk28; // gfx task id?
+};                        /* size == 0x2C */
 
 struct SCTaskType8 {
     /* 0x00 */ struct RealSCInfo info;
-    /* 0x24 */ s32 unk24;
-    /* 0x28 */ s32 unk28;
-}; // size >= 0x2C
+    /* 0x24 */ void *unk24;
+    /* 0x28 */ s32 unk28; // size
+};                        // size >= 0x2C
 
 struct SCTaskType9 {
     /* 0x00 */ struct RealSCInfo info;

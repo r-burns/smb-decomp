@@ -194,7 +194,7 @@ void check_buffer_lengths(void) {
                 "gtl : DLBuffer over flow !  kind = %d  vol = %d byte\n",
                 i,
                 (uintptr_t)D_800465B0[i] - (uintptr_t)D_80046570[D_80046630][i].start);
-            while (TRUE) { ; }
+            while (TRUE) { }
         }
     }
 
@@ -202,27 +202,22 @@ void check_buffer_lengths(void) {
         fatal_printf(
             "gtl : DynamicBuffer over flow !  %d byte\n",
             (uintptr_t)D_800465D8.ptr - (uintptr_t)D_800465D8.start);
-        while (TRUE) { ; }
+        while (TRUE) { }
     }
 }
 
-void func_80004C5C(struct MqListNode *arg0, u32 bufSize) {
-    // struct SCTaskGfxEnd ?
-    // if so, arg0 is wrong type
-    struct {
-        struct SpMqInfo spmq;
-        u32 size;
-    } temp;
+void func_80004C5C(void *arg0, u32 bufSize) {
+    struct SCTaskType8 t;
 
-    temp.spmq.unk00 = 8;
-    temp.spmq.unk04 = 50;
-    temp.spmq.unk24 = arg0;
-    temp.size       = bufSize;
-    func_80000970(&temp.spmq);
+    t.info.unk00 = 8;
+    t.info.unk04 = 50;
+    t.unk24      = arg0;
+    t.unk28      = bufSize;
+    func_80000970(&t.info);
 
     if ((uintptr_t)&D_80044FC0 & 7) {
         fatal_printf("bad addr sc_rdp_output_len = %x\n", &D_80044FC0);
-        while (TRUE) { ; }
+        while (TRUE) { }
     }
 }
 
@@ -234,7 +229,7 @@ void func_80004CB4(s32 arg0, void *arg1, u32 bufSize) {
     if (arg0 == 2 || arg0 == 1) {
         if (bufSize == 0) {
             fatal_printf("gtl : Buffer size for RDP is zero !!\n");
-            while (TRUE) { ; }
+            while (TRUE) { }
         }
     }
 
@@ -325,7 +320,7 @@ void func_80004F78(void) {
     func_80004AB0();
 }
 
-// is this just a `struct SpTaskQueue`?, or another type of dynamic sp struct?
+// is this just a `struct SCTaskGfx`?, or another type of dynamic sp struct?
 struct SCTaskUnk5018 {
     /* 0x00 */ struct SpMqInfo info;
     /* 0x28 */ OSTask task;
