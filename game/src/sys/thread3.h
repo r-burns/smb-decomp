@@ -18,11 +18,6 @@ struct MqListNode {
     /* 0x04 */ OSMesgQueue *mq;
 }; // size = 0x8
 
-struct Unk80000A34 {
-    /* 0x00 */ u8 pad00[0x70];
-    /* 0x70 */ s32 unk70;
-}; // size = ??
-
 // This may be the real form of `struct SpMqInfo`, but I'll have to double check
 // thread3.c to see if I can replace all forms...
 struct SCTaskInfo {

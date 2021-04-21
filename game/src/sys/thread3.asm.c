@@ -4,6 +4,7 @@
 #include "sys/system.h"
 #include "sys/thread6.h"
 
+#include <config.h>
 #include <macros.h>
 #include <missing_libultra.h>
 #include <ssb_types.h>
@@ -153,6 +154,7 @@ s32 unref_80000A34(struct SCTaskGfx *t) {
     nextFb = osViGetNextFramebuffer();
     curFb  = osViGetCurrentFramebuffer();
 
+    // nonmatching: register swap around `idx` and the pointer from `D_80044F90[idx]`
     idx = t->unk70;
     if (idx != -1 && D_80044F90[idx] && D_80044F90[idx] != curFb && D_80044F90[idx] != nextFb) {
         D_80044FA0 = D_80044F9C = D_80044F90[idx];
@@ -337,7 +339,13 @@ void func_80000F30(u32 arg0, u32 arg1, s32 arg2, s16 arg3, s16 arg4, s16 arg5, s
     s32 sp1C;
     s32 sp20;
 
-    phi_t2 = arg0 < 321 && arg1 > 240 ? 1 : 0;
+    if (arg0 >= SCREEN_WIDTH || arg1 >= SCREEN_HEIGHT) {
+        phi_t2 = 0;
+    } else {
+        phi_t2 = 1;
+    }
+
+    // phi_t2 = arg0 >= SCREEN_WIDTH && arg1 >= SCREEN_HEIGHT ? 0 : 1;
 
     // L80000F5C
     if (arg2 & 0x00004) {
@@ -412,21 +420,25 @@ void func_80000F30(u32 arg0, u32 arg1, s32 arg2, s16 arg3, s16 arg4, s16 arg5, s
     // L800011B4
     if (arg2 & 0x00001) { D_80044FBC.unk_b80 = TRUE; }
     // L800011D0
-    if (arg2 & 0x00001) { D_80044FBC.unk_b80 = FALSE; }
+    if (arg2 & 0x00002) { D_80044FBC.unk_b80 = FALSE; }
+
     // L800011E8
     D_80044F38.comRegs.ctrl &= ~VI_CTRL_ANTIALIAS_MASK;
+
     if (D_80044FBC.unk_b80) {
-        if (D_80044FBC.unk_b04) {
-            phi_a0 = 0x100; // aa & resamp (fetch extra lines if needed)
-        } else {
-            phi_a0 = 0;
-        }
+        phi_a0 = D_80044FBC.ditherFilter ? 0x100 : 0;
+
+        // if (D_80044FBC.ditherFilter) {
+        //     phi_a0 = 0x100; // aa & resamp (fetch extra lines if needed)
+        // } else {
+        //     phi_a0 = 0;
+        // }
+
         // L80001220
         D_80044F38.comRegs.ctrl |= phi_a0;
-    }
-    // L80001238
-    else {
-        if (D_80044FBC.unk_b04 && D_80044FBC.pixelSize32) {
+    } else {
+        // L80001238
+        if (!D_80044FBC.unk_b04 && D_80044FBC.pixelSize32 == 1) {
             D_80044F38.comRegs.ctrl = 0x300; // neither (replicate pixels, no interpolate)
         } else {
             // L8000126C
@@ -435,6 +447,7 @@ void func_80000F30(u32 arg0, u32 arg1, s32 arg2, s16 arg3, s16 arg4, s16 arg5, s
     }
     // L8000127C
     phi_t0 = D_80044FBC.pixelSize32; // tail expression?
+
     if (phi_t2) {
         if (D_80044FBC.serrate) {
             phi_v1 = 0;
@@ -685,6 +698,8 @@ s32 func_80001A00(struct SCTaskInfo *task);
 #ifdef NON_MATCHING
 // execute task?
 s32 func_80001A00(struct SCTaskInfo *task) {
+    /* Nonmatching: reg alloc, likely branches, stack too big */
+
     s32 sp4C = 0;
 
     switch (task->unk00) {
@@ -693,12 +708,12 @@ s32 func_80001A00(struct SCTaskInfo *task) {
             struct SCTaskGfx *t = (void *)task;
 
             if (t->unk68 != NULL) {
-                t->unk68 = D_80044F9C;
+                *t->unk68 = (*t->unk68) | ((uintptr_t)D_80044F9C);
                 osWritebackDCache(t->unk68, sizeof(s32 *));
             }
             // L80001A6C
             if ((uintptr_t)t->task.t.output_buff == (uintptr_t)-1) {
-                t->task.t.output_buff = &D_80044FCC[D_80044FC8];
+                t->task.t.output_buff = (u64 *)((uintptr_t)D_80044FCC + D_80044FC8);
                 osWritebackDCache(&t->task.t.output_buff, sizeof(u64 *));
             }
             // L80001A98
@@ -720,10 +735,12 @@ s32 func_80001A00(struct SCTaskInfo *task) {
         }
         case 3:
         {
-            struct SCTaskType3 *t = (void *)task;
+            struct SCTaskType3 *t   = (void *)task;
+            struct MqListNode *temp = t->unk24;
 
             t->unk24->next = D_80044EC0;
-            D_80044EC0     = t->unk24;
+            D_80044EC0     = temp;
+
             if (t->info.unk20 != NULL) {
                 osSendMesg(t->info.unk20, (OSMesg)t->info.unk1C, OS_MESG_NOBLOCK);
             }
@@ -733,7 +750,7 @@ s32 func_80001A00(struct SCTaskInfo *task) {
         {
             struct SCTaskType4 *t = (void *)task;
 
-            func_80000F30(t->unk24, t->unk28, t->unk2C, t->unk30, t->unk32, t->unk34, t->unk34);
+            func_80000F30(t->unk24, t->unk28, t->unk2C, t->unk30, t->unk32, t->unk34, t->unk36);
 
             if (t->info.unk20 != NULL) {
                 osSendMesg(t->info.unk20, (OSMesg)t->info.unk1C, OS_MESG_NOBLOCK);
@@ -741,81 +758,75 @@ s32 func_80001A00(struct SCTaskInfo *task) {
             break;
         }
         case 5:
-            // v0 = &D_80044F90
-            // a0 = &D_80044F9C
-            // v1 = arg0
-            // L80001B7C
-            {
-                s32 i;
-                struct SCTaskType5 *t = (void *)task;
+        {
+            s32 i;
+            struct SCTaskType5 *t = (void *)task;
 
-                for (i = 0; i < ARRAY_COUNT(D_80044F90); i++) { D_80044F90[i] = t->unk24[i]; }
+            for (i = 0; i < ARRAY_COUNT(D_80044F90); i++) { D_80044F90[i] = t->unk24[i]; }
 
+            if (t->info.unk20 != NULL) {
+                osSendMesg(t->info.unk20, (OSMesg)t->info.unk1C, OS_MESG_NOBLOCK);
+            }
+            break;
+        }
+        case 6:
+        {
+            struct SCTaskGfxEnd *t = (void *)task;
+            struct SCTaskGfx *v1   = NULL; // found
+            struct SCTaskInfo *v0;         // csr
+            // a0 = D_80044ECC;
+            if (D_80044ECC != NULL && D_80044ECC->info.unk00 == 1
+                && D_80044ECC->unk80 == t->unk28) {
+                v1 = D_80044ECC;
+            }
+            // L80001BEC
+            v0 = &D_80044ED4->info;
+            while (v0 != NULL) {
+                if (v0->unk00 == 1) {
+                    if (((struct SCTaskGfx *)v0)->unk80 == t->unk28) { v1 = (void *)v0; }
+                }
+                // L80001C20
+                v0 = v0->unk0C;
+            }
+            // L80001C28
+            v0 = D_80044EC4;
+            while (v0 != NULL) {
+                if (v0->unk00 == 1) {
+                    if (((struct SCTaskGfx *)v0)->unk80 == t->unk28) { v1 = (void *)v0; }
+                }
+                // L80001C5C
+                v0 = v0->unk0C;
+            }
+            // L80001C64
+            v0 = &D_80044EE4->info;
+            if (v0 != NULL) {
+                if (v0->unk00 == 1) {
+                    if (D_80044ECC->unk80 == t->unk28) { v1 = (void *)v0; }
+                }
+            }
+            // L80001C94
+            v0 = &D_80044EDC->info;
+            while (v0 != NULL) {
+                if (v0->unk00 == 1) {
+                    if (((struct SCTaskGfx *)v0)->unk80 == t->unk28) { v1 = (void *)v0; }
+                }
+                v0 = v0->unk0C;
+            }
+            // L80001CD0
+            if (v1 != NULL) {
+                v1->info.unk1C = t->info.unk1C;
+                v1->info.unk20 = t->info.unk20;
+                v1->unk6C      = t->unk24;
+            } else {
+                // L80001CF8
+                if (t->unk24 != NULL) { func_800017B8(t->unk24); }
+                // L80001D0C
                 if (t->info.unk20 != NULL) {
                     osSendMesg(t->info.unk20, (OSMesg)t->info.unk1C, OS_MESG_NOBLOCK);
                 }
             }
             break;
-        case 6:
-            // really big
-            {
-                struct SCTaskGfxEnd *t = (void *)task;
-                struct SCTaskGfx *v1   = NULL; // found
-                struct SCTaskInfo *v0;         // csr
-                // a0 = D_80044ECC;
-                if (D_80044ECC != NULL) {
-                    if (D_80044ECC->info.unk00 == 1) {
-                        if (t->unk28 == D_80044ECC->unk80) { v1 = D_80044ECC; }
-                    }
-                }
-                // L80001BEC
-                v0 = &D_80044ED4->info;
-                while (v0 != NULL) {
-                    if (v0->unk00 == 1) {
-                        if (t->unk28 == ((struct SCTaskGfx *)v0)->unk80) { v1 = (void *)v0; }
-                    }
-                    // L80001C20
-                    v0 = v0->unk0C;
-                }
-                // L80001C28
-                v0 = D_80044EC4;
-                while (v0 != NULL) {
-                    if (v0->unk00 == 1) {
-                        if (t->unk28 == ((struct SCTaskGfx *)v0)->unk80) { v1 = (void *)v0; }
-                    }
-                    // L80001C5C
-                    v0 = v0->unk0C;
-                }
-                // L80001C64
-                v0 = &D_80044EE4->info;
-                if (v0 != NULL) {
-                    if (v0->unk00 == 1) {
-                        if (t->unk28 == D_80044ECC->unk80) { v1 = (void *)v0; }
-                    }
-                }
-                // L80001C94
-                v0 = &D_80044EDC->info;
-                while (v0 != NULL) {
-                    if (v0->unk00 == 1) {
-                        if (t->unk28 == ((struct SCTaskGfx *)v0)->unk80) { v1 = (void *)v0; }
-                    }
-                    v0 = v0->unk0C;
-                }
-                // L80001CD0
-                if (v1 != NULL) {
-                    v1->info.unk1C = t->info.unk1C;
-                    v1->info.unk20 = t->info.unk20;
-                    v1->unk6C      = t->unk24;
-                } else {
-                    // L80001CF8
-                    if (t->unk24 != NULL) { func_800017B8(t->info.unk20); }
-                    // L80001D0C
-                    if (t->info.unk20 != NULL) {
-                        osSendMesg(t->info.unk20, (OSMesg)t->info.unk1C, OS_MESG_NOBLOCK);
-                    }
-                }
-            }
-            break;
+        }
         case 7:
             if (task->unk20 != NULL) {
                 osSendMesg(task->unk20, (OSMesg)task->unk1C, OS_MESG_NOBLOCK);

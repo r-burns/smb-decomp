@@ -112,9 +112,6 @@ struct BumpAllocRegion D_80046648[2];
 void (*D_80046668)(void *); // takes function bundle struct?
 SCTaskCallback D_8004666C;  // function pointer?
 
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wunknown-pragmas"
-
 void func_800048D0(SCTaskGfxCallback arg0) {
     if (arg0 != NULL) {
         D_8004666C = (void *)arg0;
@@ -256,16 +253,14 @@ struct DObj *func_80004D2C(void) {
     return temp;
 }
 
-struct Unk4DB4_38 {
-    /* 0x00 */ u8 pad[0x38];
-}; // size == 0x38
-
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunknown-pragmas"
 #ifdef NON_MATCHING
 void func_80004DB4(
     struct DObj *arg0,
     s32 arg1,
     struct SCTaskGfxEnd *arg2,
-    struct Unk4DB4_38 *arg3) {
+    struct SCTaskType4 *arg3) {
     s32 i;
 
     for (i = 0; i < D_80046640; i++) {
@@ -273,13 +268,14 @@ void func_80004DB4(
         D_80046550[i] = &arg0[arg1 * i];
         D_80046558[i] = &arg0[arg1 * (i + 1)];
         D_80046560[i] = &arg2[i];
-        D_80046568[i] = (void *)&arg3[i];
+        D_80046568[i] = &arg3[i];
     }
 }
 #else
-s32 func_80004DB4(struct DObj *arg0, s32 arg1, struct SCTaskGfxEnd *arg2, struct Unk4DB4_38 *arg3);
+s32 func_80004DB4(struct DObj *arg0, s32 arg1, struct SCTaskGfxEnd *arg2, struct SCTaskType4 *arg3);
 #pragma GLOBAL_ASM("game/nonmatching/gtl/func_80004DB4.s")
 #endif
+#pragma GCC diagnostic pop
 
 // func_80004E90
 void schedule_gfx_end(struct SCTaskGfxEnd *mesg, void *arg1, s32 arg2, OSMesgQueue *mq) {
@@ -875,7 +871,7 @@ void func_80006548(struct BufferSetup *arg0, void (*arg1)(void)) {
         func_80004980(arg0->unk14 * sizeof(struct DObj) * D_80046640, 8),
         arg0->unk14,
         func_80004980(sizeof(struct SCTaskGfxEnd) * D_80046640, 8),
-        func_80004980(sizeof(struct Unk4DB4_38) * D_80046640, 8));
+        func_80004980(sizeof(struct SCTaskType4) * D_80046640, 8));
     // 80006620
     for (i = 0; i < D_80046640; i++) {
         // L80006630
@@ -1030,5 +1026,3 @@ void func_80006B80(void) {
     osCreateMesgQueue(&D_800454C8, D_800454C0, ARRAY_COUNT(D_800454C0));
     D_800454BC = 2;
 }
-
-#pragma GCC diagnostic pop
