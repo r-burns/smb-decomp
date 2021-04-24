@@ -860,7 +860,7 @@ glabel D_ovl3_80188340
 
 glabel D_ovl3_80188410
   .incbin "ovl3.raw.bin", 0x56910, 0x24
-  /* 56934 102E74 80188434 */  .4byte func_80008000
+  /* 56934 102E74 80188434 */  .4byte 0x80008000
   .incbin "ovl3.raw.bin", 0x56938, 0x20
 
 glabel D_ovl3_80188458

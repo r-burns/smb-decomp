@@ -45,7 +45,7 @@ glabel D_ovl9_80369FE0
 
 glabel D_ovl9_8036A0A0
   .incbin "ovl9.raw.bin", 0x0E60, 0xC
-  /* E6C 1AC51C 8036A0AC */  .4byte func_80008000
+  /* E6C 1AC51C 8036A0AC */  .4byte 0x80008000
   .incbin "ovl9.raw.bin", 0x0E70, 0x44
   /* EB4 1AC564 8036A0F4 */
   .asciz " P"

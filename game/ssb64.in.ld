@@ -62,7 +62,7 @@ SECTIONS
         src/sys/ml.o(.text);
         src/sys/system_00.o(.text);
         src/sys/rdp_reset.asm.o(.text);
-        asm/system/om.o(.text);
+        src/sys/om.asm.o(.text);
         asm/system/system_03.o(.text);
         asm/system/system_04.o(.text);
         asm/system/system_05.o(.text);
@@ -236,7 +236,7 @@ SECTIONS
         src/sys/thread6.asm.o(.rodata);
         src/sys/gtl.asm.o(.rodata);
         src/sys/ml.o(.rodata);
-        asm/system/om.o(.rodata);
+        src/sys/om.asm.o(.rodata);
         asm/system/system_03.o(.rodata);
         asm/system/system_04.o(.rodata);
         asm/system/system_05.o(.rodata);
@@ -274,7 +274,7 @@ SECTIONS
         src/sys/gtl.asm.o(.bss);
         src/sys/system_00.o(.bss);
         src/sys/rdp_reset.asm.o(.bss);
-        asm/system/om.o(.bss);
+        src/sys/om.asm.o(.bss);
         asm/system/system_03.o(.bss);
         asm/system/system_04.o(.bss);
         asm/system/system_05.o(.bss);
