@@ -62,7 +62,17 @@ SECTIONS
         src/sys/ml.o(.text);
         src/sys/system_00.o(.text);
         src/sys/rdp_reset.asm.o(.text);
-        asm/system/system.text.o(.text);
+        asm/system/om.o(.text);
+        asm/system/system_03.o(.text);
+        asm/system/system_04.o(.text);
+        asm/system/system_05.o(.text);
+        asm/system/system_06.o(.text);
+        asm/system/system_07.o(.text);
+        asm/system/system_08.o(.text);
+        asm/system/system_09.o(.text);
+        asm/system/system_10.o(.text);
+        asm/system/system_11.o(.text);
+        asm/system/system_12.o(.text);
 
         *libultra.a:setattribute.o(.text);
         asm/system/sprite.o(.text);
@@ -188,7 +198,17 @@ SECTIONS
         src/sys/main.o(.data);
         src/sys/gtl.asm.o(.data);
         src/sys/rdp_reset.asm.o(.data);
-        asm/system/system.data.o(.data);
+        asm/system/om.o(.data);
+        asm/system/system_03.o(.data);
+        asm/system/system_04.o(.data);
+        asm/system/system_05.o(.data);
+        asm/system/system_06.o(.data);
+        asm/system/system_07.o(.data);
+        asm/system/system_08.o(.data);
+        asm/system/system_09.o(.data);
+        asm/system/system_10.o(.data);
+        asm/system/system_11.o(.data);
+        asm/system/system_12.o(.data);
 
         asm/system/sprite.o(.data);
         asm/system/audio.data.o(.data);
@@ -216,7 +236,17 @@ SECTIONS
         src/sys/thread6.asm.o(.rodata);
         src/sys/gtl.asm.o(.rodata);
         src/sys/ml.o(.rodata);
-        asm/system/system.rodata.o(.rodata);
+        asm/system/om.o(.rodata);
+        asm/system/system_03.o(.rodata);
+        asm/system/system_04.o(.rodata);
+        asm/system/system_05.o(.rodata);
+        asm/system/system_06.o(.rodata);
+        asm/system/system_07.o(.rodata);
+        asm/system/system_08.o(.rodata);
+        asm/system/system_09.o(.rodata);
+        asm/system/system_10.o(.rodata);
+        asm/system/system_11.o(.rodata);
+        asm/system/system_12.o(.rodata);
 
         asm/system/sprite.o(.rodata);
         asm/system/audio.rodata.o(.rodata);
@@ -244,7 +274,17 @@ SECTIONS
         src/sys/gtl.asm.o(.bss);
         src/sys/system_00.o(.bss);
         src/sys/rdp_reset.asm.o(.bss);
-        asm/system/system.bss.o(.bss);
+        asm/system/om.o(.bss);
+        asm/system/system_03.o(.bss);
+        asm/system/system_04.o(.bss);
+        asm/system/system_05.o(.bss);
+        asm/system/system_06.o(.bss);
+        asm/system/system_07.o(.bss);
+        asm/system/system_08.o(.bss);
+        asm/system/system_09.o(.bss);
+        asm/system/system_10.o(.bss);
+        asm/system/system_11.o(.bss);
+        asm/system/system_12.o(.bss);
 
         asm/system/sprite.o(.bss);
         asm/system/audio.bss.o(.bss);
