@@ -5,8 +5,8 @@
 
 #include <stddef.h>
 
-#include <PR/ultratypes.h>
 #include <PR/os.h>
+#include <PR/ultratypes.h>
 
 // list head
 struct GObjThread *D_800466B0;
@@ -24,7 +24,7 @@ struct GObjProcess *D_800466CC;
 struct GObjProcess *D_800466D0[5];
 u32 D_800466E4;
 u32 D_800466E8;
-u8 D_800466F0[8];
+struct GObjSub18 *D_800466F0[2];
 u32 D_800466F8;
 u32 D_800466FC;
 u32 D_80046700;
@@ -39,7 +39,7 @@ u32 D_80046724;
 u8 D_80046728[76];
 u32 D_80046774;
 struct GObjSub18 *D_80046778[33];
-u32 D_800467FC;
+struct GObjSub18 *D_800467FC;
 u32 D_80046800;
 u32 D_80046804;
 u8 extend_D_80046804[252 - 4];
@@ -48,9 +48,9 @@ u32 D_80046904;
 u32 D_80046908;
 u32 D_8004690C;
 u8 extend_D_8004690C[256 - 4];
-u32 D_80046A0C;
+s32 D_80046A0C;
 u16 D_80046A10;
-u16 D_80046A12;
+s16 D_80046A12;
 u32 D_80046A14;
 u32 D_80046A18;
 u32 D_80046A1C;
@@ -193,8 +193,8 @@ void func_80007588(struct ThreadStackNode *node) {
         while (TRUE) { }
     }
 
-    node->next = parent->stack;
-    parent->stack  = node;
+    node->next    = parent->stack;
+    parent->stack = node;
     D_800466B8--;
 }
 
@@ -218,9 +218,9 @@ struct GObjProcess *func_80007604(void) {
 
     v1 = D_800466CC;
     if (v1 == NULL) {
-        D_800466CC = func_80004980(sizeof(struct GObjProcess), 4);
+        D_800466CC        = func_80004980(sizeof(struct GObjProcess), 4);
         D_800466CC->unk00 = NULL;
-        v1 = D_800466CC;
+        v1                = D_800466CC;
     }
     // L8000763C
     if (v1 == NULL) {
@@ -238,7 +238,8 @@ struct GObjProcess *func_80007604(void) {
 #endif
 
 struct GObjSub18 {
-    /* 0x00 */ u8 pad00[0x8 - 0];
+    /* 0x00 */ u8 pad00[4 - 0];
+    /* 0x04 */ struct GObjSub18 *unk04;
     /* 0x08 */ struct GObjSub18 *unk08;
     /* 0x0C */ u8 unk0C;
     /* 0x10 */ u32 pad10;
@@ -257,7 +258,7 @@ void func_80007680(struct GObjProcess *arg0) {
     struct GObjSub18 *v0;
 
     v0 = a2 = arg0->unk18;
-    a1 = a2->unk0C;
+    a1      = a2->unk0C;
     while (TRUE) {
         // L80007698
         while (a2 != NULL) {
@@ -267,7 +268,7 @@ void func_80007680(struct GObjProcess *arg0) {
                 // L800076B0
                 if (arg0->unk10 == v1->unk10) {
                     arg0->unk08 = v1->unk08;
-                    v1->unk08 = arg0;
+                    v1->unk08   = arg0;
                     arg0->unk0C = v1;
 
                     goto nested_loop_end;
@@ -278,22 +279,19 @@ void func_80007680(struct GObjProcess *arg0) {
             a2 = a2->unk08;
         }
         // L800076E4
-        if (a1) { 
+        if (a1) {
             a2 = D_80046778[--a1];
         } else {
             // L800076FC
-            arg0->unk08 = D_800466D0[arg0->unk10];
+            arg0->unk08             = D_800466D0[arg0->unk10];
             D_800466D0[arg0->unk10] = arg0;
-            arg0->unk0C = NULL;
+            arg0->unk0C             = NULL;
             break;
         }
     }
-    // L8000771C
-    nested_loop_end:
-    if (arg0->unk08 != NULL) {
-        arg0->unk08->unk0C = arg0;
-
-    } 
+// L8000771C
+nested_loop_end:
+    if (arg0->unk08 != NULL) { arg0->unk08->unk0C = arg0; }
     // L80007730
     if (v0->unk1C != NULL) {
         v0->unk1C->unk00 = arg0;
@@ -303,14 +301,14 @@ void func_80007680(struct GObjProcess *arg0) {
     // L80007744
     arg0->unk04 = v0->unk1C;
     arg0->unk00 = NULL;
-    v0->unk1C = arg0;
+    v0->unk1C   = arg0;
 }
 #else
 #pragma GLOBAL_ASM("game/nonmatching/om/func_80007680.s")
 #endif
 
 void func_80007758(struct GObjProcess *op) {
-    op->unk00 = D_800466CC;
+    op->unk00  = D_800466CC;
     D_800466CC = op;
     D_800466E8--;
 }
@@ -322,9 +320,7 @@ void func_80007784(struct GObjProcess *obj) {
         D_800466D0[obj->unk10] = obj->unk08;
     }
 
-    if (obj->unk08 != NULL) {
-        obj->unk08->unk0C = obj->unk0C;
-    }
+    if (obj->unk08 != NULL) { obj->unk08->unk0C = obj->unk0C; }
 }
 
 void func_800077D0(struct GObjProcess *arg0) {
@@ -355,25 +351,17 @@ struct ObjStack {
 };
 
 struct ObjStack *unref_8000784C(struct GObjProcess *arg0) {
-    if (arg0 == NULL) {
-        arg0 = D_80046A60;
-    }
+    if (arg0 == NULL) { arg0 = D_80046A60; }
 
-    if (arg0 != NULL && arg0->unk14 == 0) {
-        return arg0->unk1C->unk1B8;
-    }
+    if (arg0 != NULL && arg0->unk14 == 0) { return arg0->unk1C->unk1B8; }
 
     return NULL;
 }
 
 s32 unref_80007884(struct GObjProcess *arg0) {
-    if (arg0 == NULL) {
-        arg0 = D_80046A60;
-    }
+    if (arg0 == NULL) { arg0 = D_80046A60; }
 
-    if (arg0 != NULL && arg0->unk14 == 0) {
-        return arg0->unk1C->unk1BC;
-    }
+    if (arg0 != NULL && arg0->unk14 == 0) { return arg0->unk1C->unk1BC; }
 
     return NULL;
 }
@@ -382,25 +370,62 @@ void unref_800078BC(u32 arg0) {
     D_800466C8 = arg0;
 }
 
-#ifdef NON_MATCHING
-#else
-#pragma GLOBAL_ASM("game/nonmatching/om/func_800078C8.s")
-#endif
+s32 func_800078C8(void) {
+    struct GObjSub18 *curr = D_800467FC;
+    s32 i                  = 0;
 
-#ifdef NON_MATCHING
-#else
-#pragma GLOBAL_ASM("game/nonmatching/om/func_800078FC.s")
-#endif
+    while (curr != NULL) {
+        i++;
+        curr = curr->unk04;
+    }
 
-#ifdef NON_MATCHING
-#else
-#pragma GLOBAL_ASM("game/nonmatching/om/func_800079A8.s")
-#endif
+    return i + D_80046A0C;
+}
 
-#ifdef NON_MATCHING
-#else
-#pragma GLOBAL_ASM("game/nonmatching/om/func_800079D4.s")
-#endif
+struct GObjSub18 *func_800078FC(void) {
+    struct GObjSub18 *v1;
+
+    if (D_80046A12 == -1 || D_80046A0C < D_80046A12) {
+        v1 = D_800467FC;
+        if (v1 == NULL) {
+            D_800467FC        = func_80004980(D_80046A10, 8);
+            D_800467FC->unk04 = NULL;
+            v1                = D_800467FC;
+        }
+    } else {
+        return NULL;
+    }
+
+    if (v1 == NULL) { return NULL; }
+
+    D_800467FC = v1->unk04;
+    D_80046A0C++;
+
+    return v1;
+}
+
+void func_800079A8(struct GObjSub18 *arg0) {
+    arg0->unk04 = D_800467FC;
+    D_800467FC  = arg0;
+    D_80046A0C--;
+}
+
+void func_800079D4(struct GObjSub18 *arg0, struct GObjSub18 *arg1) {
+    arg0->unk08 = arg1;
+    if (arg1 != NULL) {
+        arg0->unk04 = arg1->unk04;
+        arg1->unk04 = arg0;
+    } else {
+        arg0->unk04             = D_800466F0[arg0->unk0C];
+        D_800466F0[arg0->unk0C] = arg0;
+    }
+
+    if (arg0->unk04 != NULL) {
+        arg0->unk04->unk08 = arg0;
+    } else {
+        D_80046778[arg0->unk0C] = (void *)arg0;
+    }
+}
 
 #ifdef NON_MATCHING
 #else
