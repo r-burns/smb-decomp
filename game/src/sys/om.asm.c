@@ -242,7 +242,7 @@ struct GObjSub18 {
     /* 0x04 */ struct GObjSub18 *unk04;
     /* 0x08 */ struct GObjSub18 *unk08;
     /* 0x0C */ u8 unk0C;
-    /* 0x10 */ u32 pad10;
+    /* 0x10 */ u32 unk10;
     /* 0x14 */ u32 pad14;
     /* 0x18 */ struct GObjProcess *unk18;
     /* 0x1C */ struct GObjProcess *unk1C;
@@ -423,24 +423,48 @@ void func_800079D4(struct GObjSub18 *arg0, struct GObjSub18 *arg1) {
     if (arg0->unk04 != NULL) {
         arg0->unk04->unk08 = arg0;
     } else {
-        D_80046778[arg0->unk0C] = (void *)arg0;
+        D_80046778[arg0->unk0C] = arg0;
     }
 }
 
-#ifdef NON_MATCHING
-#else
-#pragma GLOBAL_ASM("game/nonmatching/om/func_80007A3C.s")
-#endif
+void func_80007A3C(struct GObjSub18 *arg0) {
+    struct GObjSub18 *curr;
 
-#ifdef NON_MATCHING
-#else
-#pragma GLOBAL_ASM("game/nonmatching/om/func_80007AA8.s")
-#endif
+    curr = D_80046778[arg0->unk0C];
+    while (curr != NULL && curr->unk10 < arg0->unk10) { curr = curr->unk08; }
 
-#ifdef NON_MATCHING
-#else
-#pragma GLOBAL_ASM("game/nonmatching/om/func_80007B30.s")
-#endif
+    func_800079D4(arg0, curr);
+}
+
+void func_80007AA8(struct GObjSub18 *arg0) {
+    struct GObjSub18 *curr;
+    struct GObjSub18 *found;
+
+    curr = D_800466F0[arg0->unk0C];
+    while (curr != NULL && arg0->unk10 < curr->unk10) { curr = curr->unk04; }
+
+    if (curr != NULL) {
+        found = curr->unk08;
+    } else {
+        found = D_80046778[arg0->unk0C];
+    }
+
+    func_800079D4(arg0, found);
+}
+
+void func_80007B30(struct GObjSub18 *arg0) {
+    if (arg0->unk08 != NULL) {
+        arg0->unk08->unk04 = arg0->unk04;
+    } else {
+        D_800466F0[arg0->unk0C] = arg0->unk04;
+    }
+
+    if (arg0->unk04 != NULL) {
+        arg0->unk04->unk08 = arg0->unk08;
+    } else {
+        D_80046778[arg0->unk0C] = arg0->unk08;
+    }
+}
 
 #ifdef NON_MATCHING
 #else
