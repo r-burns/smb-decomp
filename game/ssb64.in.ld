@@ -198,7 +198,7 @@ SECTIONS
         src/sys/main.o(.data);
         src/sys/gtl.asm.o(.data);
         src/sys/rdp_reset.asm.o(.data);
-        asm/system/om.o(.data);
+        src/sys/om.asm.o(.data);
         asm/system/system_03.o(.data);
         asm/system/system_04.o(.data);
         asm/system/system_05.o(.data);

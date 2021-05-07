@@ -2,6 +2,7 @@
 
 #include "sys/main.h"
 #include "sys/ml.h"
+#include "sys/om.h"
 #include "sys/rdp_reset.h"
 #include "sys/system.h"
 #include "sys/system_00.h"

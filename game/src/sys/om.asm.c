@@ -2,11 +2,53 @@
 
 #include "sys/gtl.h"
 #include "sys/system.h"
+#include "sys/system_04.h"
 
+#include <ssb_types.h>
 #include <stddef.h>
 
 #include <PR/os.h>
 #include <PR/ultratypes.h>
+
+// structs
+struct GObjProcess {
+    /* 0x00 */ struct GObjProcess *unk00;
+    /* 0x04 */ struct GObjProcess *unk04;
+    /* 0x08 */ struct GObjProcess *unk08;
+    /* 0x08 */ struct GObjProcess *unk0C;
+    /* 0x10 */ s32 unk10; // priority
+    /* 0x14 */ u8 unk14;  // kind
+    /* 0x15 */ u8 unk15;
+    /* 0x18 */ struct GObjSub18 *unk18;
+    /* 0x1C */ struct GObjThread *unk1C;
+    // typed via unk14 / kind
+    /* 0x20 */ void *unk20;
+}; // size == 0x24
+
+// data
+
+// thread id store
+OSId D_8003B870 = 10000000;
+
+u32 D_8003B874 = 0;
+
+f32 D_8003B878[7] = {0.0, 0.0, 30.0, 4.0 / 3.0, 100.0, 12800.0, 1.0};
+
+f32 D_8003B894[8] = {0.0, -160.0, 160.0, -120.0, 120.0, 100.0, 12800.0, 1.0};
+
+f32 D_8003B8B4[3][3] = {{0.0, 0.0, 0.0}, {1500.0, 0.0, 0.0}, {0.0, 0.0, 1.0}};
+
+u32 D_8003B8D8 = 0;
+
+f32 D_8003B8DC[4] = {0.0, 0.0, 0.0, 0.0};
+
+f32 D_8003B8EC[5] = {0.0, 0.0, 0.0, 0.0, 1.0};
+
+f32 D_8003B900[5] = {0.0, 0.0, 0.0, 0.0, 0.0};
+
+f32 D_8003B914[4] = {0.0, 1.0, 1.0, 1.0};
+
+// bss
 
 // list head
 struct GObjThread *D_800466B0;
@@ -19,7 +61,7 @@ u32 D_800466BC;
 u32 D_800466C0;
 // list head
 struct ThreadStackList *D_800466C4;
-u32 D_800466C8;
+void (*D_800466C8)(struct GObjProcess *);
 struct GObjProcess *D_800466CC;
 struct GObjProcess *D_800466D0[5];
 u32 D_800466E4;
@@ -41,35 +83,29 @@ u32 D_80046774;
 struct GObjSub18 *D_80046778[33];
 struct GObjSub18 *D_800467FC;
 struct GObjSub18 *D_80046800[64];
-//u32 D_80046800;
-//u32 D_80046804;
-//u8 extend_D_80046804[252 - 4];
 u32 D_80046900;
 u32 D_80046904;
 struct GObjSub18 *D_80046908[65];
-//u32 D_80046908;
-//u32 D_8004690C;
-//u8 extend_D_8004690C[256 - 4];
 s32 D_80046A0C;
 u16 D_80046A10;
 s16 D_80046A12;
-u32 D_80046A14;
+struct OMMtx *D_80046A14;
 u32 D_80046A18;
 u32 D_80046A1C;
-u32 D_80046A20;
+struct AObj *D_80046A20;
 u32 D_80046A24;
-u32 D_80046A28;
+struct MObj *D_80046A28;
 u32 D_80046A2C;
-u32 D_80046A30;
+struct DObj *D_80046A30;
 u32 D_80046A34;
-u32 D_80046A38;
-u32 D_80046A3C;
+u16 D_80046A38; // DObj size
+struct SObj *D_80046A3C;
 u32 D_80046A40;
-u32 D_80046A44;
-u32 D_80046A48;
+u16 D_80046A44;
+struct OMCamera *D_80046A48;
 u32 D_80046A4C;
-u32 D_80046A50;
-u32 D_80046A54;
+u16 D_80046A50;
+struct GObjSub18 *D_80046A54;
 u32 D_80046A58;
 u32 D_80046A5C;
 struct GObjProcess *D_80046A60;
@@ -85,8 +121,8 @@ u8 D_80046F88[24];
 struct GObjThread {
     /* 0x000 */ struct GObjThread *next;
     /* 0x004 */ OSThread unk04;
-    /* 0x1B8 */ struct ObjStack *unk1B8;
-    /* 0x1BC */ s32 unk1BC;
+    /* 0x1B8 */ u64 *unk1B8; // stack
+    /* 0x1BC */ u32 unk1BC;
 }; // size == 0x1C0
 
 struct GObjThread *func_800073E0(void);
@@ -199,18 +235,6 @@ void func_80007588(struct ThreadStackNode *node) {
     parent->stack = node;
     D_800466B8--;
 }
-
-struct GObjProcess {
-    /* 0x00 */ struct GObjProcess *unk00;
-    /* 0x04 */ struct GObjProcess *unk04;
-    /* 0x08 */ struct GObjProcess *unk08;
-    /* 0x08 */ struct GObjProcess *unk0C;
-    /* 0x10 */ s32 unk10;
-    /* 0x14 */ u8 unk14; // kind
-    /* 0x18 */ struct GObjSub18 *unk18;
-    /* 0x1C */ struct GObjThread *unk1C;
-    /* 0x20 */ u8 pad20[0x24 - 0x20];
-}; // size == 0x24
 
 struct GObjProcess *func_80007604(void);
 #ifdef NON_MATCHING
@@ -352,11 +376,7 @@ struct GObjProcess *unref_80007840(void) {
     return D_80046A60;
 }
 
-struct ObjStack {
-    /* 0x00 */ s32 pad00;
-};
-
-struct ObjStack *unref_8000784C(struct GObjProcess *arg0) {
+u64 *unref_8000784C(struct GObjProcess *arg0) {
     if (arg0 == NULL) { arg0 = D_80046A60; }
 
     if (arg0 != NULL && arg0->unk14 == 0) { return arg0->unk1C->unk1B8; }
@@ -372,7 +392,7 @@ s32 unref_80007884(struct GObjProcess *arg0) {
     return NULL;
 }
 
-void unref_800078BC(u32 arg0) {
+void unref_800078BC(void (*arg0)(struct GObjProcess *)) {
     D_800466C8 = arg0;
 }
 
@@ -479,7 +499,7 @@ void func_80007B98(struct GObjSub18 *arg0, struct GObjSub18 *arg1) {
         arg0->unk20 = arg1->unk20;
         arg1->unk20 = arg0;
     } else {
-        arg0->unk20 = D_80046800[arg0->unk0D];
+        arg0->unk20             = D_80046800[arg0->unk0D];
         D_80046800[arg0->unk0D] = arg0;
     }
 
@@ -494,9 +514,7 @@ void func_80007C00(struct GObjSub18 *arg0) {
     struct GObjSub18 *csr;
 
     csr = D_80046908[arg0->unk0D];
-    while (csr != NULL && csr->unk28 < arg0->unk28) {
-        csr = csr->unk24;
-    }
+    while (csr != NULL && csr->unk28 < arg0->unk28) { csr = csr->unk24; }
     func_80007B98(arg0, csr);
 }
 
@@ -505,9 +523,7 @@ void func_80007C6C(struct GObjSub18 *arg0) {
     struct GObjSub18 *found;
 
     curr = D_80046800[arg0->unk0D];
-    while (curr != NULL && arg0->unk28 < curr->unk28) {
-        curr = curr->unk20;
-    }
+    while (curr != NULL && arg0->unk28 < curr->unk28) { curr = curr->unk20; }
 
     if (curr != NULL) {
         found = curr->unk24;
@@ -518,95 +534,369 @@ void func_80007C6C(struct GObjSub18 *arg0) {
     func_80007B98(arg0, found);
 }
 
-#ifdef NON_MATCHING
-#else
-#pragma GLOBAL_ASM("game/nonmatching/om/func_80007CF4.s")
-#endif
+void func_80007CF4(struct GObjSub18 *arg0) {
+    if (arg0->unk24 != NULL) {
+        arg0->unk24->unk20 = arg0->unk20;
+    } else {
+        D_80046800[arg0->unk0D] = arg0->unk20;
+    }
 
+    if (arg0->unk20 != NULL) {
+        arg0->unk20->unk24 = arg0->unk24;
+    } else {
+        D_80046908[arg0->unk0D] = arg0->unk24;
+    }
+}
+
+struct OMMtx {
+    /* 0x00 */ struct OMMtx *next;
+    /* 0x04 */ u8 pad04[0x48 - 4];
+}; // size == 0x48
+
+struct OMMtx *func_80007D5C(void);
 #ifdef NON_MATCHING
+struct OMMtx *func_80007D5C(void) {
+    struct OMMtx *v1;
+
+    v1 = D_80046A14;
+    if (v1 == NULL) {
+        D_80046A14       = func_80004980(sizeof(struct OMMtx), 8);
+        D_80046A14->next = NULL;
+    }
+
+    v1 = D_80046A14;
+    if (v1 == NULL) {
+        fatal_printf("om : couldn\'t get OMMtx\n");
+        while (TRUE) { }
+    }
+
+    // nonmatching: regalloc off for D_80046A18 increment
+    D_80046A14 = v1->next;
+    D_80046A18++;
+    return v1;
+}
 #else
 #pragma GLOBAL_ASM("game/nonmatching/om/func_80007D5C.s")
 #endif
 
-#ifdef NON_MATCHING
-#else
-#pragma GLOBAL_ASM("game/nonmatching/om/func_80007DD8.s")
-#endif
+void func_80007DD8(struct OMMtx *mtx) {
+    mtx->next  = D_80046A14;
+    D_80046A14 = mtx;
+    D_80046A18--;
+}
 
+struct AObj {
+    /* 0x00 */ struct AObj *next;
+    /* 0x04 */ u8 pad04[0x24 - 4];
+}; // size == 0x24
+
+struct AObj *func_80007E04(void);
 #ifdef NON_MATCHING
+struct AObj *func_80007E04(void) {
+    struct AObj *v1;
+
+    v1 = D_80046A20;
+    if (v1 == NULL) {
+        D_80046A20       = func_80004980(sizeof(struct AObj), 4);
+        D_80046A20->next = NULL;
+    }
+
+    v1 = D_80046A20;
+    if (v1 == NULL) {
+        fatal_printf("om : couldn\'t get AObj\n");
+        while (TRUE) { }
+    }
+
+    // nonmatching: regalloc off for D_80046A24 increment
+    D_80046A20 = v1->next;
+    D_80046A24++;
+    return v1;
+}
 #else
 #pragma GLOBAL_ASM("game/nonmatching/om/func_80007E04.s")
 #endif
 
-#ifdef NON_MATCHING
-#else
-#pragma GLOBAL_ASM("game/nonmatching/om/func_80007E80.s")
-#endif
+struct OMAnimation {
+    /* 0x00 */ u8 pad00[0x6C - 0];
+    /* 0x6C */ struct AObj *unk6C;
+    /* 0x70 */ u8 pad70[0x90 - 0x70];
+    /* 0x90 */ struct AObj *unk90;
+}; // size >= 0x94
 
-#ifdef NON_MATCHING
-#else
-#pragma GLOBAL_ASM("game/nonmatching/om/func_80007E90.s")
-#endif
+void func_80007E80(struct OMAnimation *arg0, struct AObj *arg1) {
+    arg1->next  = arg0->unk6C;
+    arg0->unk6C = arg1;
+}
 
-#ifdef NON_MATCHING
-#else
-#pragma GLOBAL_ASM("game/nonmatching/om/func_80007EA0.s")
-#endif
+void func_80007E90(struct OMAnimation *arg0, struct AObj *arg1) {
+    arg1->next  = arg0->unk90;
+    arg0->unk90 = arg1;
+}
 
-#ifdef NON_MATCHING
-#else
-#pragma GLOBAL_ASM("game/nonmatching/om/func_80007EB0.s")
-#endif
+// `arg0` might not be an `OMAnimation`, as this function is an exact
+// copy of `func_80007E80`
+void func_80007EA0(struct OMAnimation *arg0, struct AObj *arg1) {
+    arg1->next  = arg0->unk6C;
+    arg0->unk6C = arg1;
+}
 
+void func_80007EB0(struct AObj *a) {
+    a->next = D_80046A20;
+    D_80046A24--;
+    D_80046A20 = a;
+}
+
+struct MObj {
+    /* 0x00 */ struct MObj *next;
+    /* 0x04 */ u8 pad04[0xa8 - 4];
+}; // size = 0xA8
+
+struct MObj *func_80007EDC(void);
 #ifdef NON_MATCHING
+struct MObj *func_80007EDC(void) {
+    struct MObj *v1;
+
+    if ((v1 = D_80046A28) == NULL) {
+        D_80046A28       = func_80004980(sizeof(struct MObj), 4);
+        D_80046A28->next = NULL;
+    }
+
+    if ((v1 = D_80046A28) == NULL) {
+        fatal_printf("om : couldn\'t get MObj\n");
+        while (TRUE) { }
+    }
+
+    // nonmatching: same regalloc issues as other `get_object_***` functions
+    D_80046A28 = v1->next;
+    D_80046A2C++;
+    return v1;
+}
 #else
 #pragma GLOBAL_ASM("game/nonmatching/om/func_80007EDC.s")
 #endif
 
-#ifdef NON_MATCHING
-#else
-#pragma GLOBAL_ASM("game/nonmatching/om/func_80007F58.s")
-#endif
+void func_80007F58(struct MObj *obj) {
+    obj->next = D_80046A28;
+    D_80046A2C--;
+    D_80046A28 = obj;
+}
 
+struct DObj *func_80007F84(void);
 #ifdef NON_MATCHING
+struct DObj *func_80007F84(void) {
+    struct DObj *v1;
+
+    if ((v1 = D_80046A30) == NULL) {
+        D_80046A30       = func_80004980(D_80046A38, 8);
+        D_80046A30->unk0 = NULL;
+    }
+
+    if ((v1 = D_80046A30) == NULL) {
+        fatal_printf("om : couldn\'t get DObj\n");
+        while (TRUE) { }
+    }
+
+    // nonmatching: same regalloc issues as other `get_object_***` functions
+    D_80046A30 = v1->unk0;
+    D_80046A34++;
+    return v1;
+}
 #else
 #pragma GLOBAL_ASM("game/nonmatching/om/func_80007F84.s")
 #endif
 
-#ifdef NON_MATCHING
-#else
-#pragma GLOBAL_ASM("game/nonmatching/om/func_80008004.s")
-#endif
+void func_80008004(struct DObj *obj) {
+    obj->unk0 = D_80046A30;
+    D_80046A34--;
+    D_80046A30 = obj;
+}
+
+struct SObj {
+    /* 0x00 */ struct SObj *next;
+    /* 0x04 */ u8 vla[1];
+}; // size >= 4 + VLA
 
 #ifdef NON_MATCHING
+struct SObj *func_80008030(void) {
+    struct SObj *v1;
+
+    if ((v1 = D_80046A3C) == NULL) {
+        D_80046A3C       = func_80004980(D_80046A44, 8);
+        D_80046A3C->next = NULL;
+    }
+
+    if ((v1 = D_80046A3C) == NULL) {
+        fatal_printf("om : couldn\'t get SObj\n");
+        while (TRUE) { }
+    }
+
+    // nonmatching: same regalloc issues as other `get_object_***` functions
+    D_80046A3C = v1->next;
+    D_80046A40++;
+    return v1;
+}
 #else
 #pragma GLOBAL_ASM("game/nonmatching/om/func_80008030.s")
 #endif
 
-#ifdef NON_MATCHING
-#else
-#pragma GLOBAL_ASM("game/nonmatching/om/func_800080B0.s")
-#endif
+void func_800080B0(struct SObj *obj) {
+    obj->next = D_80046A3C;
+    D_80046A40--;
+    D_80046A3C = obj;
+}
+
+struct OMCamera {
+    /* 0x00 */ struct OMCamera *next;
+    /* 0x04 */ u8 vla[1];
+}; // size >= 4 + VLA
 
 #ifdef NON_MATCHING
+struct OMCamera *func_800080DC(void) {
+    struct OMCamera *v1;
+
+    if ((v1 = D_80046A48) == NULL) {
+        D_80046A48       = func_80004980(D_80046A50, 8);
+        D_80046A48->next = NULL;
+    }
+
+    if ((v1 = D_80046A48) == NULL) {
+        fatal_printf("om : couldn\'t get Camera\n");
+        while (TRUE) { }
+    }
+
+    // nonmatching: same regalloc issues as other `get_object_***` functions
+    D_80046A48 = v1->next;
+    D_80046A4C++;
+    return v1;
+}
 #else
 #pragma GLOBAL_ASM("game/nonmatching/om/func_800080DC.s")
 #endif
 
-#ifdef NON_MATCHING
-#else
-#pragma GLOBAL_ASM("game/nonmatching/om/func_8000815C.s")
-#endif
+void func_8000815C(struct OMCamera *obj) {
+    obj->next = D_80046A48;
+    D_80046A4C--;
+    D_80046A48 = obj;
+}
 
-#ifdef NON_MATCHING
-#else
-#pragma GLOBAL_ASM("game/nonmatching/om/func_80008188.s")
-#endif
+struct GObjProcess *func_80008188(struct GObjSub18 *sub, void *ptr, u8 kind, u32 pri) {
+    struct ThreadStackNode *stackNode; // sp2C
+    struct GObjThread *thread;         // sp28
+    struct GObjProcess *process;       // sp24
 
-#ifdef NON_MATCHING
-#else
-#pragma GLOBAL_ASM("game/nonmatching/om/func_8000848C.s")
-#endif
+    if (sub == NULL) { sub = D_80046A54; }
+
+    process = func_80007604();
+    if (pri >= 6) {
+        fatal_printf("om : GObjProcess\'s priority is bad value\n");
+        while (TRUE) { }
+    }
+    process->unk10 = pri;
+    process->unk14 = kind;
+    process->unk15 = 0;
+    process->unk18 = sub;
+    process->unk20 = ptr;
+
+    switch (kind) {
+        case 0:
+        {
+            thread         = func_800073E0();
+            process->unk1C = thread;
+            stackNode      = func_80007564();
+            thread->unk1B8 = stackNode->stack;
+            thread->unk1BC = D_800466BC;
+            osCreateThread(
+                &thread->unk04, D_8003B870++, ptr, sub, &thread->unk1B8[D_800466BC / 8], 51);
+            thread->unk1B8[7] = 0xFEDCBA98;
+            if (D_8003B870 >= 20000000) { D_8003B870 = 10000000; }
+
+            break;
+        }
+        case 1:
+        {
+            process->unk1C = ptr;
+            break;
+        }
+        default:
+        {
+            fatal_printf("om : GObjProcess\'s kind is bad value\n");
+            while (TRUE) { }
+        }
+    }
+
+    func_80007680(process);
+    return process;
+}
+
+struct GObjProcess *
+unref_80008304(struct GObjSub18 *ctx, void (*entry)(void *), u32 pri, s32 threadId, u32 stackSize) {
+    struct GObjProcess *process; // s0
+    struct GObjThread *thread;   // v1 / sp28
+    struct ThreadStackNode *stackNode;
+    OSId tid;
+
+    if (ctx == NULL) { ctx = D_80046A54; }
+
+    process = func_80007604();
+
+    if (pri >= 6) {
+        fatal_printf("om : GObjProcess\'s priority is bad value\n");
+        while (TRUE) { }
+    }
+
+    process->unk10 = pri;
+    process->unk15 = 0;
+    process->unk18 = ctx;
+    process->unk20 = entry;
+
+    process->unk1C = thread = func_800073E0();
+    process->unk14          = 0;
+
+    stackNode      = stackSize == 0 ? func_80007564() : func_80007488(stackSize);
+    thread->unk1B8 = stackNode->stack;
+    thread->unk1BC = stackSize == 0 ? D_800466BC : stackSize;
+    tid            = threadId != -1 ? threadId : D_8003B870++;
+
+    osCreateThread(&thread->unk04, tid, entry, ctx, &thread->unk1B8[thread->unk1BC / 8], 51);
+    thread->unk1B8[7] = 0xFEDCBA98;
+    if (D_8003B870 >= 20000000) { D_8003B870 = 10000000; }
+
+    func_80007680(process);
+    return process;
+}
+
+void func_8000848C(struct GObjProcess *arg0) {
+    struct ThreadStackNode *tnode;
+
+    if (arg0 == NULL || arg0 == D_80046A60) {
+        D_80046A64 = TRUE;
+        if (D_80046A60->unk14 == 0) { func_8000B1E8(1); }
+        return;
+    }
+
+    if (D_800466C8 != NULL) { D_800466C8(arg0); }
+
+    switch (arg0->unk14) {
+        case 0:
+        {
+            osDestroyThread(&arg0->unk1C->unk04);
+            // cast from stack pointer back to stack node
+            tnode =
+                (void
+                     *)((uintptr_t)(arg0->unk1C->unk1B8) - offsetof(struct ThreadStackNode, stack));
+            func_80007588(tnode);
+            func_8000745C(arg0->unk1C);
+            break;
+        }
+        case 1:
+        {
+            // required empty case
+        }
+    }
+
+    func_800077D0(arg0);
+    func_80007758(arg0);
+}
 
 #ifdef NON_MATCHING
 #else
