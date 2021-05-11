@@ -40,13 +40,13 @@ f32 D_8003B8B4[3][3] = {{0.0, 0.0, 0.0}, {1500.0, 0.0, 0.0}, {0.0, 0.0, 1.0}};
 
 u32 D_8003B8D8 = 0;
 
-f32 D_8003B8DC[4] = {0.0, 0.0, 0.0, 0.0};
+struct Mtx3Float D_8003B8DC = {NULL, {0.0, 0.0, 0.0}};
 
-f32 D_8003B8EC[5] = {0.0, 0.0, 0.0, 0.0, 1.0};
+struct Mtx4Float D_8003B8EC = {NULL, {0.0, 0.0, 0.0, 1.0}};
 
-f32 D_8003B900[5] = {0.0, 0.0, 0.0, 0.0, 0.0};
+struct Mtx4Float D_8003B900 = {NULL, {0.0, 0.0, 0.0, 0.0}};
 
-f32 D_8003B914[4] = {0.0, 1.0, 1.0, 1.0};
+struct Mtx3Float D_8003B914 = {NULL, {1.0, 1.0, 1.0}};
 
 // bss
 
@@ -550,7 +550,10 @@ void func_80007CF4(struct GObjSub18 *arg0) {
 
 struct OMMtx {
     /* 0x00 */ struct OMMtx *next;
-    /* 0x04 */ u8 pad04[0x48 - 4];
+    /* 0x04 */ u8 unk04;
+    /* 0x05 */ u8 unk05;
+    /* 0x08 */ u32 pad08;
+    /* 0x0C */ u8 pad0C[0x48 - 0xc];
 }; // size == 0x48
 
 struct OMMtx *func_80007D5C(void);
@@ -899,6 +902,237 @@ void func_8000848C(struct GObjProcess *arg0) {
 }
 
 #ifdef NON_MATCHING
+// nonmatching: closer than it has any right to be, but the "wtf" loop is still way off
+struct OMMtx *func_8000855C(struct DObj *arg0, u8 arg1, u8 arg2, s32 arg3) {
+    uintptr_t csr;        // v1
+    struct Mtx3Float *t2; // sp28
+    struct Mtx4Float *t1; // sp24
+    struct Mtx3Float *t4; // sp20
+    s32 i;                // a0
+    struct OMMtx *mtx;    // v0
+
+    if (arg0->unk56 == 5) {
+        fatal_printf("om : couldn\'t add OMMtx for DObj\n");
+        while (TRUE) { }
+    }
+    // L8000859C
+    if (arg0->unk4C != NULL) {
+        csr = (uintptr_t)arg0->unk4C->data;
+        for (i = 0; i < 3; i++) {
+            // L800085C8
+            switch (arg0->unk4C->kinds[i]) {
+                case 0: break;
+                case 1:
+                    t2 = (void *)csr;
+                    csr += sizeof(struct Mtx3Float);
+                    break;
+                case 2:
+                    t1 = (void *)csr;
+                    csr += sizeof(struct Mtx4Float);
+                    break;
+                case 3:
+                    t4 = (void *)csr;
+                    csr += sizeof(struct Mtx3Float);
+                    break;
+            }
+            // L80008618
+        }
+    }
+    // L8000862C
+    if (arg3 < arg0->unk56) {
+        for (i = arg3; i < arg0->unk56; i++) {
+            // wtf
+            ((u32 *)arg0)[arg0->unk56 - i + 0x5C] = ((u32 *)arg0)[arg0->unk56 - i + 0x54];
+        }
+    }
+    // L8000866C
+    arg0->unk56 += 1;
+
+    mtx = func_80007D5C();
+
+    arg0->unk58[arg3] = mtx;
+    mtx->unk04        = arg1;
+
+    switch (arg1) {
+        case 18:
+        case 34:
+        case 36:
+        case 38:
+        case 40:
+        case 55:
+        {
+            // L800086D0
+            arg0->unk18     = D_8003B8DC;
+            arg0->unk18.mtx = mtx;
+            break;
+        }
+        case 19:
+        case 23:
+        {
+            // L80008700
+            arg0->unk28     = D_8003B8EC;
+            arg0->unk28.mtx = mtx;
+            break;
+        }
+        case 20:
+        case 24:
+        {
+            // L80008738
+            arg0->unk18     = D_8003B8DC;
+            arg0->unk28     = D_8003B8EC;
+            arg0->unk18.mtx = mtx;
+            arg0->unk28.mtx = mtx;
+            break;
+        }
+        case 21:
+        case 26:
+        case 29:
+        {
+            // L8000879C
+            arg0->unk28     = D_8003B900;
+            arg0->unk28.mtx = mtx;
+            break;
+        }
+        case 22:
+        case 27:
+        case 30:
+        case 51:
+        case 52:
+        {
+            // L800087D4
+            arg0->unk18     = D_8003B8DC;
+            arg0->unk28     = D_8003B900;
+            arg0->unk18.mtx = mtx;
+            arg0->unk28.mtx = mtx;
+            break;
+        }
+        case 25:
+        {
+            // L80008838
+            arg0->unk18     = D_8003B8DC;
+            arg0->unk28     = D_8003B8EC;
+            arg0->unk3C     = D_8003B914;
+            arg0->unk18.mtx = mtx;
+            arg0->unk28.mtx = mtx;
+            arg0->unk3C.mtx = mtx;
+            break;
+        }
+        case 28:
+        case 31:
+        case 54:
+        {
+            // L800088C8
+            arg0->unk18     = D_8003B8DC;
+            arg0->unk28     = D_8003B900;
+            arg0->unk3C     = D_8003B914;
+            arg0->unk18.mtx = mtx;
+            arg0->unk28.mtx = mtx;
+            arg0->unk3C.mtx = mtx;
+            break;
+        }
+        case 32:
+        case 43:
+        case 44:
+        case 47:
+        case 48:
+        case 49:
+        case 50:
+        case 53:
+        {
+            // L80008958
+            arg0->unk3C     = D_8003B914;
+            arg0->unk3C.mtx = mtx;
+            break;
+        }
+        case 45:
+        case 46:
+        {
+            // L80008988
+            arg0->unk28     = D_8003B8EC;
+            arg0->unk3C     = D_8003B914;
+            arg0->unk28.mtx = mtx;
+            arg0->unk3C.mtx = mtx;
+            break;
+        }
+        case 56:
+        {
+            // L800089EC
+            *t2     = D_8003B8DC;
+            t2->mtx = mtx;
+            break;
+        }
+        case 57:
+        {
+            // L80008A1C
+            *t1     = D_8003B8EC;
+            t1->mtx = mtx;
+            break;
+        }
+        case 58:
+        {
+            // L80008A54
+            *t1       = D_8003B900;
+            (t1)->mtx = mtx;
+            break;
+        }
+        case 59:
+        {
+            // L80008A8C
+            *t4     = D_8003B914;
+            t4->mtx = mtx;
+            break;
+        }
+        case 60:
+        {
+            // L80008ABC
+            *t2     = D_8003B8DC;
+            *t1     = D_8003B8EC;
+            t2->mtx = mtx;
+            t1->mtx = mtx;
+            break;
+        }
+        case 61:
+        {
+            // L80008B20
+            *t2     = D_8003B8DC;
+            *t1     = D_8003B8EC;
+            *t4     = D_8003B914;
+            t2->mtx = mtx;
+            t1->mtx = mtx;
+            t4->mtx = mtx;
+            break;
+        }
+        case 62:
+        {
+            // L80008BB0
+            *t2     = D_8003B8DC;
+            *t1     = D_8003B900;
+            t2->mtx = mtx;
+            t1->mtx = mtx;
+            break;
+        }
+        case 63:
+        {
+            // L80008C14
+            *t2     = D_8003B8DC;
+            *t1     = D_8003B900;
+            *t4     = D_8003B914;
+            t2->mtx = mtx;
+            t1->mtx = mtx;
+            t4->mtx = mtx;
+            break;
+        }
+        case 1:
+        case 17:
+        {
+            // empty branch?
+            // could be for any and all cases between 1 and 17
+        }
+    }
+    // L80008CA0
+    mtx->unk05 = arg2;
+    return mtx;
+}
 #else
 #pragma GLOBAL_ASM("game/nonmatching/om/func_8000855C.s")
 #endif
