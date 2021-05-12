@@ -15,6 +15,16 @@ struct Mtx4Float {
     /* 0x04 */ f32 f[4];
 }; // size == 0x14
 
+struct Mtx6Float {
+    /* 0x00 */ struct OMMtx *mtx;
+    /* 0x04 */ f32 f[6];
+}; // size == 0x1C
+
+struct Mtx7Float {
+    /* 0x00 */ struct OMMtx *mtx;
+    /* 0x04 */ f32 f[7];
+}; // size == 0x20
+
 struct DObjDynamicStore {
     /* 0x00 */ u8 kinds[3];
     /* 0x04 */ u8 data[1];

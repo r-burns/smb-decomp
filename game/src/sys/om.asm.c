@@ -32,13 +32,16 @@ OSId D_8003B870 = 10000000;
 
 u32 D_8003B874 = 0;
 
-f32 D_8003B878[7] = {0.0, 0.0, 30.0, 4.0 / 3.0, 100.0, 12800.0, 1.0};
+struct Mtx6Float D_8003B878 = {NULL, {0.0, 30.0, 4.0 / 3.0, 100.0, 12800.0, 1.0}};
 
-f32 D_8003B894[8] = {0.0, -160.0, 160.0, -120.0, 120.0, 100.0, 12800.0, 1.0};
+struct Mtx7Float D_8003B894 = {NULL, {-160.0, 160.0, -120.0, 120.0, 100.0, 12800.0, 1.0}};
 
-f32 D_8003B8B4[3][3] = {{0.0, 0.0, 0.0}, {1500.0, 0.0, 0.0}, {0.0, 0.0, 1.0}};
+struct Mtx3x3Float {
+    struct OMMtx *mtx;
+    f32 array[3][3];
+}; // size == 0x28;
 
-u32 D_8003B8D8 = 0;
+struct Mtx3x3Float D_8003B8B4 = {NULL, {{0.0, 0.0, 1500.0}, {0.0, 0.0, 0.0}, {0.0, 1.0, 0.0}}};
 
 struct Mtx3Float D_8003B8DC = {NULL, {0.0, 0.0, 0.0}};
 
@@ -590,7 +593,15 @@ void func_80007DD8(struct OMMtx *mtx) {
 
 struct AObj {
     /* 0x00 */ struct AObj *next;
-    /* 0x04 */ u8 pad04[0x24 - 4];
+    /* 0x04 */ u8 unk04;
+    /* 0x05 */ u8 unk05;
+    /* 0x08 */ f32 unk08;
+    /* 0x0C */ f32 unk0C;
+    /* 0x10 */ f32 unk10;
+    /* 0x14 */ f32 unk14;
+    /* 0x18 */ f32 unk18;
+    /* 0x1C */ f32 unk1C;
+    /* 0x20 */ s32 unk20;
 }; // size == 0x24
 
 struct AObj *func_80007E04(void);
@@ -622,9 +633,13 @@ struct AObj *func_80007E04(void) {
 struct OMAnimation {
     /* 0x00 */ u8 pad00[0x6C - 0];
     /* 0x6C */ struct AObj *unk6C;
-    /* 0x70 */ u8 pad70[0x90 - 0x70];
+    /* 0x70 */ u8 pad70[0x74 - 0x70];
+    /* 0x74 */ f32 unk74;
+    /* 0x78 */ u8 pad78[0x90 - 0x78];
     /* 0x90 */ struct AObj *unk90;
-}; // size >= 0x94
+    /* 0x94 */ u32 pad94;
+    /* 0x98 */ f32 unk98;
+}; // size >= 0x9C
 
 void func_80007E80(struct OMAnimation *arg0, struct AObj *arg1) {
     arg1->next  = arg0->unk6C;
@@ -750,8 +765,15 @@ void func_800080B0(struct SObj *obj) {
 
 struct OMCamera {
     /* 0x00 */ struct OMCamera *next;
-    /* 0x04 */ u8 vla[1];
-}; // size >= 4 + VLA
+    /* 0x04 */ u8 pad04[0x18 - 4];
+    /* 0x18 */ union {
+        struct Mtx6Float f6;
+        struct Mtx7Float f7;
+    } unk18;
+    /* 0x38 */ struct Mtx3x3Float unk38;
+    /* 0x60 */ s32 unk60;
+    /* 0x64 */ struct OMMtx *unk64[2];
+}; // size >= 0x6C
 
 #ifdef NON_MATCHING
 struct OMCamera *func_800080DC(void) {
@@ -901,6 +923,7 @@ void func_8000848C(struct GObjProcess *arg0) {
     func_80007758(arg0);
 }
 
+struct OMMtx *func_8000855C(struct DObj *arg0, u8 arg1, u8 arg2, s32 arg3);
 #ifdef NON_MATCHING
 // nonmatching: closer than it has any right to be, but the "wtf" loop is still way off
 struct OMMtx *func_8000855C(struct DObj *arg0, u8 arg1, u8 arg2, s32 arg3) {
@@ -1137,40 +1160,166 @@ struct OMMtx *func_8000855C(struct DObj *arg0, u8 arg1, u8 arg2, s32 arg3) {
 #pragma GLOBAL_ASM("game/nonmatching/om/func_8000855C.s")
 #endif
 
-#ifdef NON_MATCHING
-#else
-#pragma GLOBAL_ASM("game/nonmatching/om/func_80008CC0.s")
-#endif
+void func_80008CC0(struct DObj *arg0, u8 arg1, u8 arg2) {
+    func_8000855C(arg0, arg1, arg2, arg0->unk56);
+}
 
-#ifdef NON_MATCHING
-#else
-#pragma GLOBAL_ASM("game/nonmatching/om/func_80008CF0.s")
-#endif
+struct OMMtx *func_80008CF0(struct OMCamera *arg0, u8 arg1, u8 arg2) {
+    struct OMMtx *mtx; // v0
 
-#ifdef NON_MATCHING
-#else
-#pragma GLOBAL_ASM("game/nonmatching/om/func_80008E78.s")
-#endif
+    if (arg0->unk60 == 2) {
+        fatal_printf("om : couldn\'t add OMMtx for Camera\n");
+        while (TRUE) { }
+    }
+    // L80008D2C
+    mtx                      = func_80007D5C();
+    arg0->unk64[arg0->unk60] = mtx;
+    arg0->unk60++;
+    mtx->unk04 = arg1;
 
-#ifdef NON_MATCHING
-#else
-#pragma GLOBAL_ASM("game/nonmatching/om/func_80008EE4.s")
-#endif
+    switch (arg1) {
+        case 3:
+        case 4:
+        {
+            // jtgt_80008D84
+            arg0->unk18.f6     = D_8003B878;
+            arg0->unk18.f6.mtx = mtx;
+            break;
+        }
+        case 5:
+        {
+            // jtgt_80008DCC
+            arg0->unk18.f7     = D_8003B894;
+            arg0->unk18.f7.mtx = mtx;
+            break;
+        }
+        case 6:
+        case 7:
+        case 8:
+        case 9:
+        case 10:
+        case 11:
+        case 12:
+        case 13:
+        case 14:
+        case 15:
+        case 16:
+        case 17:
+        {
+            // jtgt_80008E1C
+            arg0->unk38     = D_8003B8B4;
+            arg0->unk38.mtx = mtx;
+            break;
+        }
+        case 1:
+        case 2:
+        {
+            // empty
+        }
+    }
 
-#ifdef NON_MATCHING
-#else
-#pragma GLOBAL_ASM("game/nonmatching/om/func_80008F44.s")
-#endif
+    mtx->unk05 = arg2;
+    return mtx;
+}
 
-#ifdef NON_MATCHING
-#else
-#pragma GLOBAL_ASM("game/nonmatching/om/func_80008FB0.s")
-#endif
+struct AObj *func_80008E78(struct OMAnimation *anim, u8 index) {
+    struct AObj *aobj = func_80007E04();
 
-#ifdef NON_MATCHING
-#else
-#pragma GLOBAL_ASM("game/nonmatching/om/func_80009010.s")
-#endif
+    aobj->unk04 = index;
+    aobj->unk05 = 0;
+    aobj->unk20 = 0;
+    aobj->unk1C = 0.0;
+    aobj->unk18 = 0.0;
+    aobj->unk14 = 0.0;
+    aobj->unk10 = 0.0;
+    aobj->unk0C = 0.0;
+    aobj->unk08 = 1.0;
+
+    func_80007E80(anim, aobj);
+
+    return aobj;
+}
+
+#define MAX_FLOAT     3.4028235e38
+#define MAX_NEG_FLOAT -MAX_FLOAT
+
+void func_80008EE4(struct OMAnimation *arg0) {
+    struct AObj *curr;
+    struct AObj *origNext;
+
+    curr = arg0->unk6C;
+    while (curr != NULL) {
+        origNext = curr->next;
+        func_80007EB0(curr);
+        curr = origNext;
+    }
+    arg0->unk6C = NULL;
+    arg0->unk74 = MAX_NEG_FLOAT;
+}
+
+struct AObj *func_80008F44(struct OMAnimation *anim, u8 index) {
+    struct AObj *aobj = func_80007E04();
+
+    aobj->unk04 = index;
+    aobj->unk05 = 0;
+    aobj->unk20 = 0;
+    aobj->unk1C = 0.0;
+    aobj->unk18 = 0.0;
+    aobj->unk14 = 0.0;
+    aobj->unk10 = 0.0;
+    aobj->unk0C = 0.0;
+    aobj->unk08 = 1.0;
+
+    func_80007E90(anim, aobj);
+
+    return aobj;
+}
+
+void func_80008FB0(struct OMAnimation *arg0) {
+    struct AObj *curr;
+    struct AObj *origNext;
+
+    curr = arg0->unk90;
+    while (curr != NULL) {
+        origNext = curr->next;
+        func_80007EB0(curr);
+        curr = origNext;
+    }
+    arg0->unk90 = NULL;
+    arg0->unk98 = MAX_NEG_FLOAT;
+}
+
+struct AObj *func_80009010(struct OMAnimation *anim, u8 index) {
+    struct AObj *aobj = func_80007E04();
+
+    aobj->unk04 = index;
+    aobj->unk05 = 0;
+    aobj->unk20 = 0;
+    aobj->unk1C = 0.0;
+    aobj->unk18 = 0.0;
+    aobj->unk14 = 0.0;
+    aobj->unk10 = 0.0;
+    aobj->unk0C = 0.0;
+    aobj->unk08 = 1.0;
+
+    func_80007EA0(anim, aobj);
+
+    return aobj;
+}
+
+void unref_8000907C(struct OMAnimation *arg0) {
+    struct AObj *curr;
+    struct AObj *origNext;
+
+    curr = arg0->unk6C;
+    while (curr != NULL) {
+        origNext = curr->next;
+        func_80007EB0(curr);
+        curr = origNext;
+    }
+    arg0->unk6C = NULL;
+    arg0->unk74 = MAX_NEG_FLOAT;
+}
 
 #ifdef NON_MATCHING
 #else
