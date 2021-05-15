@@ -272,6 +272,8 @@ struct GObjSub18 {
     /* 0x08 */ struct GObjSub18 *unk08;
     /* 0x0C */ u8 unk0C;
     /* 0x0D */ u8 unk0D;
+    /* 0x0E */ u8 pad0E;
+    /* 0x0F */ u8 unk0F;
     /* 0x10 */ u32 unk10;
     /* 0x14 */ u32 pad14;
     /* 0x18 */ struct GObjProcess *unk18;
@@ -279,7 +281,9 @@ struct GObjSub18 {
     /* 0x20 */ struct GObjSub18 *unk20;
     /* 0x24 */ struct GObjSub18 *unk24;
     /* 0x28 */ u32 unk28;
-}; // size >= 0x2C
+    /* 0x2C */ u8 pad2C[0x74 - 0x2C];
+    /* 0x74 */ struct DObj *unk74;
+}; // size >= 0x78
 
 void func_80007680(struct GObjProcess *arg0);
 #ifdef NON_MATCHING
@@ -664,9 +668,35 @@ void func_80007EB0(struct AObj *a) {
     D_80046A20 = a;
 }
 
+// texture scroll? (from K64)
+struct MObjSub {
+    /* 0x00 */ u8 pad00[0x14 - 0];
+    /* 0x14 */ f32 unk14;
+    /* 0x18 */ u32 pad18;
+    /* 0x1C */ f32 unk1C;
+    /* 0x20 */ u32 pad20;
+    /* 0x24 */ f32 unk24;
+    /* 0x28 */ f32 unk28;
+    /* 0x2C */ u8 pad2C[0x54 - 0x2C];
+    /* 0x54 */ u8 unk54;
+    /* 0x58 */ u8 pad58[0x78 - 0x58];
+}; // size == 0x78
+
 struct MObj {
     /* 0x00 */ struct MObj *next;
-    /* 0x04 */ u8 pad04[0xa8 - 4];
+    /* 0x04 */ u32 pad04;
+    /* 0x08 */ struct MObjSub unk08;
+    /* 0x80 */ u16 unk80;
+    /* 0x82 */ u16 unk82;
+    /* 0x84 */ f32 unk84;
+    /* 0x88 */ f32 unk88;
+    /* 0x8C */ u32 pad8C;
+    /* 0x90 */ struct AObj *unk90;
+    /* 0x94 */ s32 unk94;
+    /* 0x98 */ f32 unk98;
+    /* 0x9C */ f32 unk9C;
+    /* 0xA0 */ f32 unkA0;
+    /* 0xA4 */ u32 padA4;
 }; // size = 0xA8
 
 struct MObj *func_80007EDC(void);
@@ -1321,30 +1351,142 @@ void unref_8000907C(struct OMAnimation *arg0) {
     arg0->unk74 = MAX_NEG_FLOAT;
 }
 
+struct MObj *func_800090DC(struct DObj *arg0, struct MObjSub *arg1);
 #ifdef NON_MATCHING
+// nonmatching: regalloc and ordering for the final set of initialization statements
+struct MObj *func_800090DC(struct DObj *arg0, struct MObjSub *arg1) {
+    struct MObj *mobj; // a1, v0?
+
+    mobj = func_80007EDC();
+
+    if (arg0->unk80 != NULL) {
+        struct MObj *curr  = arg0->unk80->next;
+        struct MObj *prior = arg0->unk80;
+        while (curr != NULL) {
+            prior = curr;
+            curr  = curr->next;
+        }
+        prior->next = mobj;
+    } else {
+        // L80009138
+        arg0->unk80 = mobj;
+    }
+
+    mobj->next  = NULL;
+    mobj->unk84 = (f32)arg1->unk54 / 255.0f;
+    mobj->unk08 = *arg1;
+
+    mobj->unk08.unk24 = arg1->unk14;
+    mobj->unk08.unk28 = arg1->unk1C;
+    mobj->unk80       = 0;
+    mobj->unk82       = 0;
+    mobj->unk88       = 0;
+    mobj->unk90       = NULL;
+    mobj->unk94       = 0;
+    mobj->unk98       = MAX_NEG_FLOAT;
+    mobj->unk9C       = 1.0;
+    mobj->unkA0       = 0.0;
+
+    return mobj;
+}
 #else
 #pragma GLOBAL_ASM("game/nonmatching/om/func_800090DC.s")
 #endif
 
-#ifdef NON_MATCHING
-#else
-#pragma GLOBAL_ASM("game/nonmatching/om/func_800091F4.s")
-#endif
+void func_800091F4(struct DObj *obj) {
+    struct MObj *currM;
+    struct MObj *nextM;
+    struct AObj *currA;
+    struct AObj *nextA;
 
+    currM = obj->unk80;
+    while (currM != NULL) {
+        currA = currM->unk90;
+        while (currA != NULL) {
+            nextA = currA->next;
+            func_80007EB0(currA);
+            currA = nextA;
+        }
+        nextM = currM->next;
+        func_80007F58(currM);
+        currM = nextM;
+    }
+    obj->unk80 = NULL;
+}
+
+void func_8000926C(struct DObj *arg0);
 #ifdef NON_MATCHING
+// nonmatching: cannot get the 1 constant to be not constant...
+void func_8000926C(struct DObj *arg0) {
+    s32 i = 1;
+
+    arg0->unk4C = 0;
+    arg0->unk54 = 0;
+    arg0->unk55 = 0;
+    arg0->unk56 = 0;
+
+    arg0->unk58[0] = NULL;
+    for (; i < 5; i++) { arg0->unk58[i] = NULL; }
+    arg0->unk6C = NULL;
+    arg0->unk70 = 0;
+    arg0->unk74 = MAX_NEG_FLOAT;
+    arg0->unk78 = 1.0;
+    arg0->unk7C = 0.0;
+    arg0->unk80 = 0;
+    arg0->unk84 = 0;
+}
 #else
 #pragma GLOBAL_ASM("game/nonmatching/om/func_8000926C.s")
 #endif
 
-#ifdef NON_MATCHING
-#else
-#pragma GLOBAL_ASM("game/nonmatching/om/func_800092D0.s")
-#endif
+struct DObj *func_800092D0(struct GObjSub18 *arg0, s32 arg1) {
+    struct DObj *newObj;
+    struct DObj *curr;
 
-#ifdef NON_MATCHING
-#else
-#pragma GLOBAL_ASM("game/nonmatching/om/func_80009380.s")
-#endif
+    if (arg0 == NULL) { arg0 = D_80046A54; }
+
+    newObj = func_80007F84();
+    if (arg0->unk74 != NULL) {
+        curr = arg0->unk74;
+
+        while (curr->unk8 != NULL) { curr = curr->unk8; }
+
+        curr->unk8   = newObj;
+        newObj->unkC = curr;
+    } else {
+        arg0->unk0F  = 1;
+        arg0->unk74  = newObj;
+        newObj->unkC = NULL;
+    }
+
+    newObj->unk4  = arg0;
+    newObj->unk14 = 1;
+    newObj->unk8  = NULL;
+    newObj->unk10 = NULL;
+    newObj->unk50 = arg1;
+
+    func_8000926C(newObj);
+
+    return newObj;
+}
+
+struct DObj *func_80009380(struct DObj *arg0, s32 arg1) {
+    struct DObj *newObj;
+
+    newObj = func_80007F84();
+    if (arg0->unk8 != NULL) { arg0->unk8->unkC = newObj; }
+    newObj->unkC  = arg0;
+    newObj->unk8  = arg0->unk8;
+    arg0->unk8    = newObj;
+    newObj->unk4  = arg0->unk4;
+    newObj->unk14 = arg0->unk14;
+
+    newObj->unk10 = NULL;
+    newObj->unk50 = arg1;
+    func_8000926C(newObj);
+
+    return newObj;
+}
 
 #ifdef NON_MATCHING
 #else
