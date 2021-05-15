@@ -1,12 +1,14 @@
 #include "sys/om.h"
 
 #include "sys/gtl.h"
+#include "sys/rdp_reset.h"
 #include "sys/system.h"
 #include "sys/system_04.h"
 
 #include <ssb_types.h>
 #include <stddef.h>
 
+#include <PR/mbi.h>
 #include <PR/os.h>
 #include <PR/ultratypes.h>
 
@@ -94,7 +96,7 @@ u16 D_80046A10;
 s16 D_80046A12;
 struct OMMtx *D_80046A14;
 u32 D_80046A18;
-u32 D_80046A1C;
+void (*D_80046A1C)(struct DObjDynamicStore *); // fn to clear?
 struct AObj *D_80046A20;
 u32 D_80046A24;
 struct MObj *D_80046A28;
@@ -282,7 +284,12 @@ struct GObjSub18 {
     /* 0x24 */ struct GObjSub18 *unk24;
     /* 0x28 */ u32 unk28;
     /* 0x2C */ u8 pad2C[0x74 - 0x2C];
-    /* 0x74 */ struct DObj *unk74;
+    // typed based on unk0F?
+    // 0 : NULL
+    // 1 : DObj
+    // 2 : SObj
+    // 3 : OMCamera
+    /* 0x74 */ void *unk74;
 }; // size >= 0x78
 
 void func_80007680(struct GObjProcess *arg0);
@@ -759,11 +766,21 @@ void func_80008004(struct DObj *obj) {
     D_80046A30 = obj;
 }
 
+struct SObjSub10 {
+    /* 0x00 */ u32 pad00;
+    /* 0x04 */ u8 pad04[0x44 - 0x04];
+}; // size == 0x44
+
 struct SObj {
     /* 0x00 */ struct SObj *next;
-    /* 0x04 */ u8 vla[1];
-}; // size >= 4 + VLA
+    /* 0x04 */ struct GObjSub18 *unk04;
+    /* 0x08 */ struct SObj *unk08;
+    /* 0x0C */ struct SObj *unk0C;
+    /* 0x10 */ struct SObjSub10 unk10;
+    /* 0x54 */ s32 unk54;
+}; // size >= 0x58
 
+struct SObj *func_80008030(void);
 #ifdef NON_MATCHING
 struct SObj *func_80008030(void) {
     struct SObj *v1;
@@ -795,7 +812,8 @@ void func_800080B0(struct SObj *obj) {
 
 struct OMCamera {
     /* 0x00 */ struct OMCamera *next;
-    /* 0x04 */ u8 pad04[0x18 - 4];
+    /* 0x04 */ struct GObjSub18 *unk04;
+    /* 0x08 */ Vp unk08;
     /* 0x18 */ union {
         struct Mtx6Float f6;
         struct Mtx7Float f7;
@@ -803,8 +821,18 @@ struct OMCamera {
     /* 0x38 */ struct Mtx3x3Float unk38;
     /* 0x60 */ s32 unk60;
     /* 0x64 */ struct OMMtx *unk64[2];
-}; // size >= 0x6C
+    /* 0x6C */ struct AObj *unk6C;
+    /* 0x70 */ s32 unk70;
+    /* 0x74 */ f32 unk74;
+    /* 0x78 */ f32 unk78;
+    /* 0x7C */ f32 unk7C;
+    /* 0x80 */ s32 unk80;
+    /* 0x84 */ s32 unk84;
+    /* 0x88 */ s32 unk88;
+    /* 0x8C */ s32 unk8C;
+}; // size >= 0x90
 
+struct OMCamera *func_800080DC(void);
 #ifdef NON_MATCHING
 struct OMCamera *func_800080DC(void) {
     struct OMCamera *v1;
@@ -1488,35 +1516,185 @@ struct DObj *func_80009380(struct DObj *arg0, s32 arg1) {
     return newObj;
 }
 
-#ifdef NON_MATCHING
-#else
-#pragma GLOBAL_ASM("game/nonmatching/om/func_800093F4.s")
-#endif
+struct DObj *func_800093F4(struct DObj *arg0, s32 arg1) {
+    struct DObj *newObj;
+    struct DObj *curr;
 
-#ifdef NON_MATCHING
-#else
-#pragma GLOBAL_ASM("game/nonmatching/om/func_8000948C.s")
-#endif
+    newObj = func_80007F84();
+    if (arg0->unk10 != NULL) {
+        curr = arg0->unk10;
 
-#ifdef NON_MATCHING
-#else
-#pragma GLOBAL_ASM("game/nonmatching/om/func_80009614.s")
-#endif
+        while (curr->unk8 != NULL) { curr = curr->unk8; }
 
-#ifdef NON_MATCHING
-#else
-#pragma GLOBAL_ASM("game/nonmatching/om/func_800096EC.s")
-#endif
+        curr->unk8   = newObj;
+        newObj->unkC = curr;
+    } else {
+        arg0->unk10  = newObj;
+        newObj->unkC = NULL;
+    }
 
-#ifdef NON_MATCHING
-#else
-#pragma GLOBAL_ASM("game/nonmatching/om/func_80009760.s")
-#endif
+    newObj->unk4  = arg0->unk4;
+    newObj->unk14 = (uintptr_t)arg0;
+    newObj->unk10 = NULL;
+    newObj->unk8  = NULL;
+    newObj->unk50 = arg1;
 
-#ifdef NON_MATCHING
-#else
-#pragma GLOBAL_ASM("game/nonmatching/om/func_80009810.s")
-#endif
+    func_8000926C(newObj);
+
+    return newObj;
+}
+
+// drop_dobj, cleanup_dobj, free_dobj?
+void func_8000948C(struct DObj *arg0) {
+    s32 i;
+    struct AObj *currA;
+    struct AObj *nextA;
+    struct MObj *currM;
+    struct MObj *nextM;
+
+    while (arg0->unk10 != NULL) { func_8000948C(arg0->unk10); }
+
+    if (arg0->unk14 == 1) {
+        if (arg0 == arg0->unk4->unk74) {
+            arg0->unk4->unk74 = arg0->unk8;
+            if (arg0->unk4->unk74 == NULL) { arg0->unk4->unk0F = 0; }
+        }
+    } else if (arg0 == ((struct DObj *)arg0->unk14)->unk10) {
+        ((struct DObj *)arg0->unk14)->unk10 = arg0->unk8;
+    }
+
+    if (arg0->unkC != NULL) { arg0->unkC->unk8 = arg0->unk8; }
+
+    if (arg0->unk8 != NULL) { arg0->unk8->unkC = arg0->unkC; }
+
+    for (i = 0; i < ARRAY_COUNT(arg0->unk58); i++) {
+        if (arg0->unk58[i] != NULL) { func_80007DD8(arg0->unk58[i]); }
+    }
+
+    if (arg0->unk4C != NULL && D_80046A1C != NULL) { D_80046A1C(arg0->unk4C); }
+
+    currA = arg0->unk6C;
+    while (currA != NULL) {
+        nextA = currA->next;
+        func_80007EB0(currA);
+        currA = nextA;
+    }
+
+    // why not just call func_800091F4?
+    currM = arg0->unk80;
+    while (currM != NULL) {
+        currA = currM->unk90;
+        while (currA != NULL) {
+            nextA = currA->next;
+            func_80007EB0(currA);
+            currA = nextA;
+        }
+        nextM = currM->next;
+        func_80007F58(currM);
+        currM = nextM;
+    }
+
+    func_80008004(arg0);
+}
+
+struct SObj *func_80009614(struct GObjSub18 *arg0, struct SObjSub10 *arg1) {
+    struct SObj *newObj;
+
+    if (arg0 == NULL) { arg0 = D_80046A54; }
+
+    newObj = func_80008030();
+
+    if (arg0->unk74 != NULL) {
+        struct SObj *tail = arg0->unk74;
+
+        while (tail->unk08 != NULL) { tail = tail->unk08; }
+
+        tail->unk08   = newObj;
+        newObj->unk0C = tail;
+    } else {
+        // L80009684
+        arg0->unk0F   = 2;
+        arg0->unk74   = newObj;
+        newObj->unk0C = NULL;
+    }
+    // L80009690
+    newObj->unk04 = arg0;
+    newObj->unk08 = NULL;
+
+    if (arg1 != NULL) { newObj->unk10 = *arg1; }
+    // L800096D4
+    newObj->unk54 = 0;
+    return newObj;
+}
+
+void func_800096EC(struct SObj *obj) {
+    if (obj == obj->unk04->unk74) {
+        obj->unk04->unk74 = (void *)obj->unk08;
+        if (obj->unk04->unk74 == NULL) { obj->unk04->unk0F = 0; }
+    }
+
+    if (obj->unk0C != NULL) { obj->unk0C->unk08 = obj->unk08; }
+
+    if (obj->unk08 != NULL) { obj->unk08->unk0C = obj->unk0C; }
+
+    func_800080B0(obj);
+}
+
+struct OMCamera *func_80009760(struct GObjSub18 *arg0) {
+    s32 i;
+    struct OMCamera *newCam;
+
+    if (arg0 == NULL) { arg0 = D_80046A54; }
+    arg0->unk0F = 3;
+
+    newCam        = func_800080DC();
+    arg0->unk74   = newCam;
+    newCam->unk04 = arg0;
+    setup_viewport(&newCam->unk08);
+    newCam->unk60 = 0;
+    // clang-format off
+    // needs to be on separate lines
+    for (i = 0; i < ARRAY_COUNT(newCam->unk64); i++) { 
+        newCam->unk64[i] = NULL; 
+    }
+    // clang-format on
+    newCam->unk80 = 0;
+    newCam->unk84 = 0;
+    newCam->unk88 = 0;
+    newCam->unk8C = 0;
+    newCam->unk6C = NULL;
+    newCam->unk70 = 0;
+    newCam->unk74 = MAX_NEG_FLOAT;
+    newCam->unk78 = 1.0;
+    newCam->unk7C = 0.0;
+
+    return newCam;
+}
+
+// drop_om_camera, cleanup_om_camera
+void func_80009810(struct OMCamera *cam) {
+    struct GObjSub18 *ctx;
+    s32 i;
+    struct AObj *curr;
+    struct AObj *next;
+
+    ctx        = cam->unk04;
+    ctx->unk0F = 0;
+    ctx->unk74 = NULL;
+
+    for (i = 0; i < ARRAY_COUNT(cam->unk64); i++) {
+        if (cam->unk64[i] != NULL) { func_80007DD8(cam->unk64[i]); }
+    }
+
+    curr = cam->unk6C;
+    while (curr != NULL) {
+        next = curr->next;
+        func_80007EB0(curr);
+        curr = next;
+    }
+
+    func_8000815C(cam);
+}
 
 #ifdef NON_MATCHING
 #else

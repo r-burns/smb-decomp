@@ -1,6 +1,8 @@
 #ifndef SYS_OM_H
 #define SYS_OM_H
 
+#include <ssb_types.h>
+
 #include <PR/ultratypes.h>
 
 struct OMMtx;
@@ -25,6 +27,11 @@ struct Mtx7Float {
     /* 0x04 */ f32 f[7];
 }; // size == 0x20
 
+/// This stores up to 3 `Mtx3Float` and/or `Mtx4Float` structures in the VLA data
+/// based on the kind id in the `kinds` arrays:
+/// Kind 1 - `struct Mtx3Float`
+/// Kind 2 - `struct Mtx4Float`
+/// Kind 3 - `struct Mtx3Float`
 struct DObjDynamicStore {
     /* 0x00 */ u8 kinds[3];
     /* 0x04 */ u8 data[1];
@@ -36,7 +43,7 @@ struct DObj {
     /* 0x08 */ struct DObj *unk8;
     /* 0x0C */ struct DObj *unkC;
     /* 0x10 */ struct DObj *unk10;
-    /* 0x14 */ u32 unk14;
+    /* 0x14 */ uintptr_t unk14; //< 1 or struct DObj *
     /* 0x18 */ struct Mtx3Float unk18;
     /* 0x28 */ struct Mtx4Float unk28;
     /* 0x3C */ struct Mtx3Float unk3C;
@@ -53,7 +60,7 @@ struct DObj {
     // /* 0x60 */ u32 unk60;
     // /* 0x64 */ u32 unk64;
     // /* 0x68 */ u32 unk68;
-    /* 0x6C */ u32 unk6C;
+    /* 0x6C */ struct AObj *unk6C;
     /* 0x70 */ u32 unk70;
     /* 0x74 */ f32 unk74;
     /* 0x78 */ f32 unk78;
