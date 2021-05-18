@@ -269,28 +269,38 @@ struct GObjProcess *func_80007604(void) {
 #endif
 
 struct GObjSub18 {
-    /* 0x00 */ u8 pad00[4 - 0];
+    /* 0x00 */ u32 unk00; // id
     /* 0x04 */ struct GObjSub18 *unk04;
     /* 0x08 */ struct GObjSub18 *unk08;
-    /* 0x0C */ u8 unk0C;
-    /* 0x0D */ u8 unk0D;
-    /* 0x0E */ u8 pad0E;
-    /* 0x0F */ u8 unk0F;
+    /* 0x0C */ u8 unk0C; // link
+    /* 0x0D */ u8 unk0D; // dl link
+    /* 0x0E */ u8 unk0E;
+    /* 0x0F */ u8 unk0F; // ptr kind?
     /* 0x10 */ u32 unk10;
-    /* 0x14 */ u32 pad14;
+    /* 0x14 */ void (*unk14)(void);
     /* 0x18 */ struct GObjProcess *unk18;
     /* 0x1C */ struct GObjProcess *unk1C;
     /* 0x20 */ struct GObjSub18 *unk20;
     /* 0x24 */ struct GObjSub18 *unk24;
     /* 0x28 */ u32 unk28;
-    /* 0x2C */ u8 pad2C[0x74 - 0x2C];
+    /* 0x2C */ u32 unk2C;
+    /* 0x30 */ s64 unk30;
+    /* 0x38 */ s32 unk38;
+    /* 0x3C */ u8 pad3C[4];
+    /* 0x40 */ s64 unk40;
+    /* 0x48 */ u8 pad48[0x70 - 0x48];
+    /* 0x70 */ s32 unk70;
     // typed based on unk0F?
     // 0 : NULL
     // 1 : DObj
     // 2 : SObj
     // 3 : OMCamera
     /* 0x74 */ void *unk74;
-}; // size >= 0x78
+    /* 0x78 */ f32 unk78;
+    /* 0x7C */ s32 unk7C;
+    /* 0x80 */ s32 unk80;
+    /* 0x84 */ s32 unk84;
+}; // size >= 0x88
 
 void func_80007680(struct GObjProcess *arg0);
 #ifdef NON_MATCHING
@@ -952,7 +962,7 @@ void func_8000848C(struct GObjProcess *arg0) {
     struct ThreadStackNode *tnode;
 
     if (arg0 == NULL || arg0 == D_80046A60) {
-        D_80046A64 = TRUE;
+        D_80046A64 = 1;
         if (D_80046A60->unk14 == 0) { func_8000B1E8(1); }
         return;
     }
@@ -1696,70 +1706,274 @@ void func_80009810(struct OMCamera *cam) {
     func_8000815C(cam);
 }
 
-#ifdef NON_MATCHING
-#else
-#pragma GLOBAL_ASM("game/nonmatching/om/func_800098A4.s")
-#endif
+struct GObjSub18 *om_g_add_common(u32 id, void (*arg1)(void), u8 link, u32 arg3) {
+    struct GObjSub18 *com;
 
-#ifdef NON_MATCHING
-#else
-#pragma GLOBAL_ASM("game/nonmatching/om/func_80009968.s")
-#endif
+    if (link > 0x20) {
+        fatal_printf("omGAddCommon() : link num over : link = %d : id = %d\n", link, id);
+        while (TRUE) { }
+    }
 
-#ifdef NON_MATCHING
-#else
-#pragma GLOBAL_ASM("game/nonmatching/om/func_800099A8.s")
-#endif
+    com = func_800078FC();
+    if (com == NULL) { return NULL; }
 
-#ifdef NON_MATCHING
-#else
-#pragma GLOBAL_ASM("game/nonmatching/om/func_80009A84.s")
-#endif
+    com->unk00 = id;
+    com->unk0C = link;
+    com->unk10 = arg3;
+    com->unk14 = arg1;
+    com->unk18 = NULL;
+    com->unk1C = NULL;
+    com->unk70 = 0;
+    com->unk7C = 0;
 
-#ifdef NON_MATCHING
-#else
-#pragma GLOBAL_ASM("game/nonmatching/om/func_80009B48.s")
-#endif
+    com->unk0F = 0;
+    com->unk74 = NULL;
 
-#ifdef NON_MATCHING
-#else
-#pragma GLOBAL_ASM("game/nonmatching/om/func_80009C90.s")
-#endif
+    com->unk0D = 65;
+    com->unk78 = 0.0f;
+    com->unk80 = 0;
+    com->unk84 = 0;
 
-#ifdef NON_MATCHING
-#else
-#pragma GLOBAL_ASM("game/nonmatching/om/func_80009CC8.s")
-#endif
+    return com;
+}
 
-#ifdef NON_MATCHING
-#else
-#pragma GLOBAL_ASM("game/nonmatching/om/func_80009D78.s")
-#endif
+struct GObjSub18 *func_80009968(u32 id, void (*arg1)(void), u8 link, u32 arg3) {
+    struct GObjSub18 *com = om_g_add_common(id, arg1, link, arg3);
 
-#ifdef NON_MATCHING
-#else
-#pragma GLOBAL_ASM("game/nonmatching/om/func_80009DF4.s")
-#endif
+    if (com == NULL) { return NULL; }
 
-#ifdef NON_MATCHING
-#else
-#pragma GLOBAL_ASM("game/nonmatching/om/func_80009F28.s")
-#endif
+    func_80007A3C(com);
 
-#ifdef NON_MATCHING
-#else
-#pragma GLOBAL_ASM("game/nonmatching/om/func_80009F74.s")
-#endif
+    return com;
+}
 
-#ifdef NON_MATCHING
-#else
-#pragma GLOBAL_ASM("game/nonmatching/om/func_8000A0D0.s")
-#endif
+struct GObjSub18 *func_800099A8(u32 id, void (*arg1)(void), u8 link, u32 arg3) {
+    struct GObjSub18 *com = om_g_add_common(id, arg1, link, arg3);
 
-#ifdef NON_MATCHING
-#else
-#pragma GLOBAL_ASM("game/nonmatching/om/func_8000A14C.s")
-#endif
+    if (com == NULL) { return NULL; }
+
+    func_80007AA8(com);
+
+    return com;
+}
+
+struct GObjSub18 *unref_800099E8(u32 id, void (*arg1)(void), struct GObjSub18 *arg2) {
+    struct GObjSub18 *com = om_g_add_common(id, arg1, arg2->unk0C, arg2->unk10);
+
+    if (com == NULL) { return NULL; }
+
+    func_800079D4(com, arg2);
+
+    return com;
+}
+
+struct GObjSub18 *unref_80009A34(u32 id, void (*arg1)(void), struct GObjSub18 *arg2) {
+    struct GObjSub18 *com = om_g_add_common(id, arg1, arg2->unk0C, arg2->unk10);
+
+    if (com == NULL) { return NULL; }
+
+    func_800079D4(com, arg2->unk08);
+
+    return com;
+}
+
+// system_04
+extern void func_8000B39C(struct GObjSub18 *);
+extern void func_8000B70C(struct GObjSub18 *);
+extern void func_8000B760(struct GObjSub18 *);
+
+void func_80009A84(struct GObjSub18 *arg0) {
+    if (arg0 == NULL || arg0 == D_80046A54) {
+        D_80046A64 = 2;
+        return;
+    }
+
+    func_8000B39C(arg0);
+    switch (arg0->unk0F) {
+        case 1: func_8000B70C(arg0); break;
+        case 2: func_8000B760(arg0); break;
+        case 3: func_80009810(arg0->unk74); break;
+    }
+
+    if (arg0->unk0D != 65) { func_80007CF4(arg0); }
+    func_80007B30(arg0);
+    func_800079A8(arg0);
+}
+
+void om_g_move_common(s32 arg0, struct GObjSub18 *arg1, u8 link, u32 arg3, struct GObjSub18 *arg4) {
+    struct GObjProcess *csr;
+    struct GObjProcess *orig;
+    struct GObjProcess *next;
+
+    if (link > 32) {
+        fatal_printf("omGMoveCommon() : link num over : link = %d : id = %d\n", link, arg1->unk00);
+
+        while (TRUE) { }
+    }
+
+    if (arg1 == NULL) { arg1 = D_80046A54; }
+
+    orig        = arg1->unk18;
+    arg1->unk18 = NULL;
+    arg1->unk1C = NULL;
+
+    csr = orig;
+    while (csr != NULL) {
+        func_80007784(csr);
+        csr = csr->unk00;
+    }
+    func_80007B30(arg1);
+    arg1->unk0C = link;
+    arg1->unk10 = arg3;
+
+    switch (arg0) {
+        case 0: func_80007A3C(arg1); break;
+        case 1: func_80007AA8(arg1); break;
+        case 2: func_800079D4(arg1, arg4); break;
+        case 3: func_800079D4(arg1, arg4->unk08); break;
+    }
+
+    csr = orig;
+    while (csr != NULL) {
+        next = csr->unk00;
+        func_80007680(csr);
+        csr = next;
+    }
+}
+
+void func_80009C90(struct GObjSub18 *arg0, u8 link, u32 arg2) {
+    om_g_move_common(0, arg0, link, arg2, NULL);
+}
+
+void func_80009CC8(struct GObjSub18 *arg0, u8 link, u32 arg2) {
+    om_g_move_common(1, arg0, link, arg2, NULL);
+}
+
+void unref_80009D00(struct GObjSub18 *arg0, struct GObjSub18 *arg1) {
+    om_g_move_common(2, arg0, arg1->unk0C, arg1->unk10, arg1);
+}
+
+void unref_80009D3C(struct GObjSub18 *arg0, struct GObjSub18 *arg1) {
+    om_g_move_common(3, arg0, arg1->unk0C, arg1->unk10, arg1);
+}
+
+// in gtl
+extern s32 D_8003B6E8;
+
+void func_80009D78(struct GObjSub18 *arg0, s32 arg1, u8 dlLink, s32 arg3, s32 arg4) {
+    if (dlLink >= 64) {
+        fatal_printf(
+            "omGLinkObjDLCommon() : dl_link num over : dl_link = %d : id = %d\n",
+            dlLink,
+            arg0->unk00);
+        while (TRUE) { }
+    }
+
+    arg0->unk0D = dlLink;
+    arg0->unk28 = arg3;
+    arg0->unk2C = arg1;
+    arg0->unk38 = arg4;
+    arg0->unk0E = D_8003B6E8 - 1;
+}
+
+void func_80009DF4(struct GObjSub18 *arg0, s32 arg1, u8 dlLink, s32 arg3, s32 arg4) {
+    if (arg0 == NULL) { arg0 = D_80046A54; }
+    func_80009D78(arg0, arg1, dlLink, arg3, arg4);
+    func_80007C00(arg0);
+}
+
+void unref_80009E38(struct GObjSub18 *arg0, s32 arg1, u8 dlLink, s32 arg3, s32 arg4) {
+    if (arg0 == NULL) { arg0 = D_80046A54; }
+    func_80009D78(arg0, arg1, dlLink, arg3, arg4);
+    func_80007C6C(arg0);
+}
+
+void unref_80009E7C(struct GObjSub18 *arg0, s32 arg1, s32 arg2, struct GObjSub18 *arg3) {
+    if (arg0 == NULL) { arg0 = D_80046A54; }
+    func_80009D78(arg0, arg1, arg3->unk0D, arg3->unk28, arg2);
+    func_80007B98(arg0, arg3);
+}
+
+void unref_80009ED0(struct GObjSub18 *arg0, s32 arg1, s32 arg2, struct GObjSub18 *arg3) {
+    if (arg0 == NULL) { arg0 = D_80046A54; }
+    func_80009D78(arg0, arg1, arg3->unk0D, arg3->unk28, arg2);
+    func_80007B98(arg0, arg3->unk08);
+}
+
+void func_80009F28(struct GObjSub18 *arg0, u32 arg1, u32 arg2, s64 arg3, s32 arg4) {
+    arg0->unk0D = 64;
+    arg0->unk28 = arg2;
+    arg0->unk2C = arg1;
+    arg0->unk30 = arg3;
+    arg0->unk38 = arg4;
+    arg0->unk40 = 0;
+    arg0->unk0E = D_8003B6E8 - 1;
+}
+
+void func_80009F74(struct GObjSub18 *arg0, u32 arg1, u32 arg2, s64 arg3, s32 arg4) {
+    if (arg0 == NULL) { arg0 = D_80046A54; }
+    func_80009F28(arg0, arg1, arg2, arg3, arg4);
+    func_80007C00(arg0);
+}
+
+void unref_80009FC0(struct GObjSub18 *arg0, u32 arg1, u32 arg2, s64 arg3, s32 arg4) {
+    if (arg0 == NULL) { arg0 = D_80046A54; }
+    func_80009F28(arg0, arg1, arg2, arg3, arg4);
+    func_80007C6C(arg0);
+}
+
+void unref_8000A00C(struct GObjSub18 *arg0, u32 arg1, s64 arg2, s32 arg3, struct GObjSub18 *arg4) {
+    if (arg0 == NULL) { arg0 = D_80046A54; }
+    func_80009F28(arg0, arg1, arg4->unk28, arg2, arg3);
+    func_80007B98(arg0, arg4);
+}
+
+void unref_8000A06C(struct GObjSub18 *arg0, u32 arg1, s64 arg2, s32 arg3, struct GObjSub18 *arg4) {
+    if (arg0 == NULL) { arg0 = D_80046A54; }
+    func_80009F28(arg0, arg1, arg4->unk28, arg2, arg3);
+    func_80007B98(arg0, arg4->unk08);
+}
+
+void om_g_move_obj_dl(struct GObjSub18 *arg0, u8 dlLink, u32 arg2) {
+    if (dlLink >= 64) {
+        fatal_printf(
+            "omGMoveObjDL() : dl_link num over : dl_link = %d : id = %d\n", dlLink, arg0->unk00);
+        while (TRUE) { }
+    }
+
+    func_80007CF4(arg0);
+    arg0->unk0D = dlLink;
+    arg0->unk28 = arg2;
+    func_80007C00(arg0);
+}
+
+void func_8000A14C(struct GObjSub18 *arg0, u8 dlLink, u32 arg2) {
+    if (dlLink >= 64) {
+        fatal_printf(
+            "omGMoveObjDLHead() : dl_link num over : dl_link = %d : id = %d\n",
+            dlLink,
+            arg0->unk00);
+        while (TRUE) { }
+    }
+    func_80007CF4(arg0);
+    arg0->unk0D = dlLink;
+    arg0->unk28 = arg2;
+    func_80007C6C(arg0);
+}
+
+void unref_8000A1C8(struct GObjSub18 *arg0, struct GObjSub18 *arg1) {
+    func_80007CF4(arg0);
+    arg0->unk0D = arg1->unk0D;
+    arg0->unk28 = arg1->unk28;
+    func_80007B98(arg0, arg1);
+}
+
+void unref_8000A208(struct GObjSub18 *arg0, struct GObjSub18 *arg1) {
+    func_80007CF4(arg0);
+    arg0->unk0D = arg1->unk0D;
+    arg0->unk28 = arg1->unk28;
+    func_80007B98(arg0, arg1->unk24);
+}
 
 #ifdef NON_MATCHING
 #else
