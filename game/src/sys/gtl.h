@@ -41,7 +41,7 @@ struct Wrapper683C {
     /* 0x58 */ s32 unk58;
     /* 0x5C */ s32 unk5C;
     /* 0x60 */ s32 unk60;
-    /* 0x64 */ s32 unk64;
+    /* 0x64 */ void *unk64; // fn pointer void(*)(struct DObjDynamicStore *)
     /* 0x68 */ s32 unk68;
     /* 0x6C */ s32 unk6C;
     /* 0x70 */ s32 unk70;

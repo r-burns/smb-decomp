@@ -918,7 +918,7 @@ void unref_800067E4(struct BufferSetup *arg) {
 }
 
 void func_8000683C(struct Wrapper683C *arg) {
-    struct TempUnkA6E0 sp24;
+    struct OMSetup sp24;
 
     func_80004950(arg->setup.unk0C, arg->setup.unk10);
     // what is this struct?

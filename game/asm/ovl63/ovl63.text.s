@@ -89,8 +89,8 @@ glabel func_ovl63_8018D14C
 glabel func_ovl63_8018D1D4
   /* 18A7E4 8018D1D4 27BDFFE0 */     addiu $sp, $sp, -0x20
   /* 18A7E8 8018D1D8 AFB00014 */        sw $s0, 0x14($sp)
-  /* 18A7EC 8018D1DC 3C108004 */       lui $s0, %hi(D_800466FC)
-  /* 18A7F0 8018D1E0 8E1066FC */        lw $s0, %lo(D_800466FC)($s0)
+  /* 18A7EC 8018D1DC 3C108004 */       lui $s0, %hi(D_800466F0 + (0x03 * 4))
+  /* 18A7F0 8018D1E0 8E1066FC */        lw $s0, %lo(D_800466F0 + (0x03 * 4))($s0)
   /* 18A7F4 8018D1E4 AFBF001C */        sw $ra, 0x1c($sp)
   /* 18A7F8 8018D1E8 AFB10018 */        sw $s1, 0x18($sp)
   /* 18A7FC 8018D1EC 1200000D */      beqz $s0, .L8018D224

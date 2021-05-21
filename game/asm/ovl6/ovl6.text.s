@@ -682,8 +682,8 @@ glabel func_ovl6_8018D8DC
 glabel func_ovl6_8018DA2C
   /* 11216C 8018DA2C 27BDFFD8 */     addiu $sp, $sp, -0x28
   /* 112170 8018DA30 AFB00014 */        sw $s0, 0x14($sp)
-  /* 112174 8018DA34 3C108004 */       lui $s0, %hi(D_800466FC)
-  /* 112178 8018DA38 8E1066FC */        lw $s0, %lo(D_800466FC)($s0)
+  /* 112174 8018DA34 3C108004 */       lui $s0, %hi(D_800466F0 + (0x03 * 4))
+  /* 112178 8018DA38 8E1066FC */        lw $s0, %lo(D_800466F0 + (0x03 * 4))($s0)
   /* 11217C 8018DA3C AFBF0024 */        sw $ra, 0x24($sp)
   /* 112180 8018DA40 AFB30020 */        sw $s3, 0x20($sp)
   /* 112184 8018DA44 AFB2001C */        sw $s2, 0x1c($sp)
