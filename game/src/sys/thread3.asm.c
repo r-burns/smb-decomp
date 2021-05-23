@@ -1,7 +1,7 @@
 #include "sys/thread3.h"
 
 #include "sys/main.h"
-#include "sys/system.h"
+#include "sys/system_11.h"
 #include "sys/thread6.h"
 
 #include <config.h>

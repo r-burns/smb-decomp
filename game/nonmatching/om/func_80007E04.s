@@ -7,20 +7,20 @@ glabel D_8003D9B0
 
 .section .text
 glabel func_80007E04
-  /* 008A04 80007E04 3C068004 */       lui $a2, %hi(D_80046A20)
-  /* 008A08 80007E08 24C66A20 */     addiu $a2, $a2, %lo(D_80046A20)
-  /* 008A0C 80007E0C 8CC30000 */        lw $v1, ($a2) # D_80046A20 + 0
+  /* 008A04 80007E04 3C068004 */       lui $a2, %hi(sAObjHead)
+  /* 008A08 80007E08 24C66A20 */     addiu $a2, $a2, %lo(sAObjHead)
+  /* 008A0C 80007E0C 8CC30000 */        lw $v1, ($a2) # sAObjHead + 0
   /* 008A10 80007E10 27BDFFE8 */     addiu $sp, $sp, -0x18
   /* 008A14 80007E14 AFBF0014 */        sw $ra, 0x14($sp)
   /* 008A18 80007E18 14600008 */      bnez $v1, .L80007E3C
   /* 008A1C 80007E1C 24040024 */     addiu $a0, $zero, 0x24
   /* 008A20 80007E20 0C001260 */       jal func_80004980
   /* 008A24 80007E24 24050004 */     addiu $a1, $zero, 4
-  /* 008A28 80007E28 3C068004 */       lui $a2, %hi(D_80046A20)
-  /* 008A2C 80007E2C 24C66A20 */     addiu $a2, $a2, %lo(D_80046A20)
-  /* 008A30 80007E30 ACC20000 */        sw $v0, ($a2) # D_80046A20 + 0
+  /* 008A28 80007E28 3C068004 */       lui $a2, %hi(sAObjHead)
+  /* 008A2C 80007E2C 24C66A20 */     addiu $a2, $a2, %lo(sAObjHead)
+  /* 008A30 80007E30 ACC20000 */        sw $v0, ($a2) # sAObjHead + 0
   /* 008A34 80007E34 AC400000 */        sw $zero, ($v0)
-  /* 008A38 80007E38 8CC30000 */        lw $v1, ($a2) # D_80046A20 + 0
+  /* 008A38 80007E38 8CC30000 */        lw $v1, ($a2) # sAObjHead + 0
   .L80007E3C:
   /* 008A3C 80007E3C 14600006 */      bnez $v1, .L80007E58
   /* 008A40 80007E40 3C058004 */       lui $a1, 0x8004

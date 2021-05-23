@@ -32,26 +32,33 @@ struct BufferSetup {
 
 struct Wrapper683C {
     /* 0x00 */ struct BufferSetup setup;
-    /* 0x40 */ u32 unk40;
-    /* 0x44 */ s32 unk44;
-    /* 0x48 */ s32 unk48;
+    /* 0x40 */ u32 numOMThreads;
+    /* 0x44 */ u32 omThreadStackSize;
+    /* 0x48 */ u32 numOMStacks;
     /* 0x4C */ s32 unk4C;
-    /* 0x50 */ s32 unk50;
-    /* 0x54 */ s32 unk54;
-    /* 0x58 */ s32 unk58;
-    /* 0x5C */ s32 unk5C;
-    /* 0x60 */ s32 unk60;
+    /* 0x50 */ u32 numOMProcesses;
+    /* 0x54 */ u32 numOMCommons;
+    /* 0x58 */ u32 omCommonSize;
+    /* 0x5C */ u32 numOMMtx;
+    /* 0x60 */ void *unk60;
     /* 0x64 */ void *unk64; // fn pointer void(*)(struct DObjDynamicStore *)
-    /* 0x68 */ s32 unk68;
-    /* 0x6C */ s32 unk6C;
-    /* 0x70 */ s32 unk70;
-    /* 0x74 */ s32 unk74;
-    /* 0x78 */ s32 unk78;
-    /* 0x7C */ s32 unk7C;
-    /* 0x80 */ s32 unk80;
-    /* 0x84 */ s32 unk84;
+    /* 0x68 */ u32 numOMAobjs;
+    /* 0x6C */ u32 numOMMobjs;
+    /* 0x70 */ u32 numOMDobjs;
+    /* 0x74 */ u32 omDobjSize;
+    /* 0x78 */ u32 numOMSobjs;
+    /* 0x7C */ u32 omSobjSize;
+    /* 0x80 */ u32 numOMCameras;
+    /* 0x84 */ u32 omCameraSize;
     /* 0x88 */ void (*unk88)(void);
 }; // size >= 0x8C
+
+union WeirdBytewise {
+    u32 word;
+    u8 parts[4];
+};
+
+extern union WeirdBytewise D_8003B6E8;
 
 extern void func_800048D0(SCTaskGfxCallback arg0);
 extern void func_800048F8(Gfx **dl);

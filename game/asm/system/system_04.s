@@ -369,10 +369,10 @@ glabel jtbl_8003E0C4
 glabel func_8000AEF0
   /* 00BAF0 8000AEF0 27BDFFD8 */     addiu $sp, $sp, -0x28
   /* 00BAF4 8000AEF4 AFB00014 */        sw $s0, 0x14($sp)
-  /* 00BAF8 8000AEF8 3C108004 */       lui $s0, %hi(D_800466F0)
+  /* 00BAF8 8000AEF8 3C108004 */       lui $s0, %hi(gOMObjCommonLinks)
   /* 00BAFC 8000AEFC 00047080 */       sll $t6, $a0, 2
   /* 00BB00 8000AF00 020E8021 */      addu $s0, $s0, $t6
-  /* 00BB04 8000AF04 8E1066F0 */        lw $s0, %lo(D_800466F0)($s0)
+  /* 00BB04 8000AF04 8E1066F0 */        lw $s0, %lo(gOMObjCommonLinks)($s0)
   /* 00BB08 8000AF08 AFB30020 */        sw $s3, 0x20($sp)
   /* 00BB0C 8000AF0C AFB2001C */        sw $s2, 0x1c($sp)
   /* 00BB10 8000AF10 00C09025 */        or $s2, $a2, $zero
@@ -402,16 +402,16 @@ glabel func_8000AF58
   /* 00BB60 8000AF60 AFB40024 */        sw $s4, 0x24($sp)
   /* 00BB64 8000AF64 AFB30020 */        sw $s3, 0x20($sp)
   /* 00BB68 8000AF68 AFB2001C */        sw $s2, 0x1c($sp)
-  /* 00BB6C 8000AF6C 3C148004 */       lui $s4, %hi(D_800466F0)
-  /* 00BB70 8000AF70 3C158004 */       lui $s5, %hi(D_800466F0 + (0x21 * 4))
+  /* 00BB6C 8000AF6C 3C148004 */       lui $s4, %hi(gOMObjCommonLinks)
+  /* 00BB70 8000AF70 3C158004 */       lui $s5, %hi(gOMObjCommonLinks + (0x21 * 4))
   /* 00BB74 8000AF74 00A09025 */        or $s2, $a1, $zero
   /* 00BB78 8000AF78 00809825 */        or $s3, $a0, $zero
   /* 00BB7C 8000AF7C AFBF002C */        sw $ra, 0x2c($sp)
   /* 00BB80 8000AF80 AFB10018 */        sw $s1, 0x18($sp)
   /* 00BB84 8000AF84 AFB00014 */        sw $s0, 0x14($sp)
-  /* 00BB88 8000AF88 26B56774 */     addiu $s5, $s5, %lo(D_800466F0 + (0x21 * 4))
-  /* 00BB8C 8000AF8C 269466F0 */     addiu $s4, $s4, %lo(D_800466F0)
-  /* 00BB90 8000AF90 8E900000 */        lw $s0, ($s4) # D_800466F0 + 0
+  /* 00BB88 8000AF88 26B56774 */     addiu $s5, $s5, %lo(gOMObjCommonLinks + (0x21 * 4))
+  /* 00BB8C 8000AF8C 269466F0 */     addiu $s4, $s4, %lo(gOMObjCommonLinks)
+  /* 00BB90 8000AF90 8E900000 */        lw $s0, ($s4) # gOMObjCommonLinks + 0
   .L8000AF94:
   /* 00BB94 8000AF94 52000008 */      beql $s0, $zero, .L8000AFB8
   /* 00BB98 8000AF98 26940004 */     addiu $s4, $s4, 4
@@ -425,7 +425,7 @@ glabel func_8000AF58
   /* 00BBB4 8000AFB4 26940004 */     addiu $s4, $s4, 4
   .L8000AFB8:
   /* 00BBB8 8000AFB8 5695FFF6 */      bnel $s4, $s5, .L8000AF94
-  /* 00BBBC 8000AFBC 8E900000 */        lw $s0, ($s4) # D_800466F0 + 0
+  /* 00BBBC 8000AFBC 8E900000 */        lw $s0, ($s4) # gOMObjCommonLinks + 0
   /* 00BBC0 8000AFC0 8FBF002C */        lw $ra, 0x2c($sp)
   /* 00BBC4 8000AFC4 8FB00014 */        lw $s0, 0x14($sp)
   /* 00BBC8 8000AFC8 8FB10018 */        lw $s1, 0x18($sp)
@@ -439,10 +439,10 @@ glabel func_8000AF58
 glabel func_8000AFE4
   /* 00BBE4 8000AFE4 27BDFFC8 */     addiu $sp, $sp, -0x38
   /* 00BBE8 8000AFE8 AFB00018 */        sw $s0, 0x18($sp)
-  /* 00BBEC 8000AFEC 3C108004 */       lui $s0, %hi(D_800466F0)
+  /* 00BBEC 8000AFEC 3C108004 */       lui $s0, %hi(gOMObjCommonLinks)
   /* 00BBF0 8000AFF0 00047080 */       sll $t6, $a0, 2
   /* 00BBF4 8000AFF4 020E8021 */      addu $s0, $s0, $t6
-  /* 00BBF8 8000AFF8 8E1066F0 */        lw $s0, %lo(D_800466F0)($s0)
+  /* 00BBF8 8000AFF8 8E1066F0 */        lw $s0, %lo(gOMObjCommonLinks)($s0)
   /* 00BBFC 8000AFFC AFB60030 */        sw $s6, 0x30($sp)
   /* 00BC00 8000B000 AFB5002C */        sw $s5, 0x2c($sp)
   /* 00BC04 8000B004 AFB40028 */        sw $s4, 0x28($sp)
@@ -493,18 +493,18 @@ glabel func_8000B08C
   /* 00BCA0 8000B0A0 AFB30020 */        sw $s3, 0x20($sp)
   /* 00BCA4 8000B0A4 AFB2001C */        sw $s2, 0x1c($sp)
   /* 00BCA8 8000B0A8 AFB10018 */        sw $s1, 0x18($sp)
-  /* 00BCAC 8000B0AC 3C168004 */       lui $s6, %hi(D_800466F0)
-  /* 00BCB0 8000B0B0 3C178004 */       lui $s7, %hi(D_800466F0 + (0x21 * 4))
+  /* 00BCAC 8000B0AC 3C168004 */       lui $s6, %hi(gOMObjCommonLinks)
+  /* 00BCB0 8000B0B0 3C178004 */       lui $s7, %hi(gOMObjCommonLinks + (0x21 * 4))
   /* 00BCB4 8000B0B4 00A08825 */        or $s1, $a1, $zero
   /* 00BCB8 8000B0B8 00809025 */        or $s2, $a0, $zero
   /* 00BCBC 8000B0BC 00C09825 */        or $s3, $a2, $zero
   /* 00BCC0 8000B0C0 AFBF0034 */        sw $ra, 0x34($sp)
   /* 00BCC4 8000B0C4 AFB00014 */        sw $s0, 0x14($sp)
   /* 00BCC8 8000B0C8 0000A825 */        or $s5, $zero, $zero
-  /* 00BCCC 8000B0CC 26F76774 */     addiu $s7, $s7, %lo(D_800466F0 + (0x21 * 4))
-  /* 00BCD0 8000B0D0 26D666F0 */     addiu $s6, $s6, %lo(D_800466F0)
+  /* 00BCCC 8000B0CC 26F76774 */     addiu $s7, $s7, %lo(gOMObjCommonLinks + (0x21 * 4))
+  /* 00BCD0 8000B0D0 26D666F0 */     addiu $s6, $s6, %lo(gOMObjCommonLinks)
   /* 00BCD4 8000B0D4 24140001 */     addiu $s4, $zero, 1
-  /* 00BCD8 8000B0D8 8EC40000 */        lw $a0, ($s6) # D_800466F0 + 0
+  /* 00BCD8 8000B0D8 8EC40000 */        lw $a0, ($s6) # gOMObjCommonLinks + 0
   .L8000B0DC:
   /* 00BCDC 8000B0DC 5080000D */      beql $a0, $zero, .L8000B114
   /* 00BCE0 8000B0E0 26D60004 */     addiu $s6, $s6, 4
@@ -524,7 +524,7 @@ glabel func_8000B08C
   /* 00BD10 8000B110 26D60004 */     addiu $s6, $s6, 4
   .L8000B114:
   /* 00BD14 8000B114 56D7FFF1 */      bnel $s6, $s7, .L8000B0DC
-  /* 00BD18 8000B118 8EC40000 */        lw $a0, ($s6) # D_800466F0 + 0
+  /* 00BD18 8000B118 8EC40000 */        lw $a0, ($s6) # gOMObjCommonLinks + 0
   /* 00BD1C 8000B11C 02A01025 */        or $v0, $s5, $zero
   /* 00BD20 8000B120 8FBF0034 */        lw $ra, 0x34($sp)
   .L8000B124:
@@ -614,8 +614,8 @@ glabel func_8000B1E8
   /* 00BE3C 8000B23C 8D050000 */        lw $a1, ($t0)
   .L8000B240:
   /* 00BE40 8000B240 1200000B */      beqz $s0, .L8000B270
-  /* 00BE44 8000B244 3C118004 */       lui $s1, %hi(D_80046A70)
-  /* 00BE48 8000B248 26316A70 */     addiu $s1, $s1, %lo(D_80046A70)
+  /* 00BE44 8000B244 3C118004 */       lui $s1, %hi(gOMMq)
+  /* 00BE48 8000B248 26316A70 */     addiu $s1, $s1, %lo(gOMMq)
   /* 00BE4C 8000B24C 02202025 */        or $a0, $s1, $zero
   .L8000B250:
   /* 00BE50 8000B250 24050001 */     addiu $a1, $zero, 1
@@ -1033,14 +1033,14 @@ glabel func_8000B7B4
   /* 00C3B4 8000B7B4 27BDFFD8 */     addiu $sp, $sp, -0x28
   /* 00C3B8 8000B7B8 AFB30020 */        sw $s3, 0x20($sp)
   /* 00C3BC 8000B7BC AFB2001C */        sw $s2, 0x1c($sp)
-  /* 00C3C0 8000B7C0 3C128004 */       lui $s2, %hi(D_800466F0)
-  /* 00C3C4 8000B7C4 3C138004 */       lui $s3, %hi(D_800466F0 + (0x21 * 4))
+  /* 00C3C0 8000B7C0 3C128004 */       lui $s2, %hi(gOMObjCommonLinks)
+  /* 00C3C4 8000B7C4 3C138004 */       lui $s3, %hi(gOMObjCommonLinks + (0x21 * 4))
   /* 00C3C8 8000B7C8 AFBF0024 */        sw $ra, 0x24($sp)
   /* 00C3CC 8000B7CC AFB10018 */        sw $s1, 0x18($sp)
   /* 00C3D0 8000B7D0 AFB00014 */        sw $s0, 0x14($sp)
-  /* 00C3D4 8000B7D4 26736774 */     addiu $s3, $s3, %lo(D_800466F0 + (0x21 * 4))
-  /* 00C3D8 8000B7D8 265266F0 */     addiu $s2, $s2, %lo(D_800466F0)
-  /* 00C3DC 8000B7DC 8E500000 */        lw $s0, ($s2) # D_800466F0 + 0
+  /* 00C3D4 8000B7D4 26736774 */     addiu $s3, $s3, %lo(gOMObjCommonLinks + (0x21 * 4))
+  /* 00C3D8 8000B7D8 265266F0 */     addiu $s2, $s2, %lo(gOMObjCommonLinks)
+  /* 00C3DC 8000B7DC 8E500000 */        lw $s0, ($s2) # gOMObjCommonLinks + 0
   .L8000B7E0:
   /* 00C3E0 8000B7E0 52000007 */      beql $s0, $zero, .L8000B800
   /* 00C3E4 8000B7E4 26520004 */     addiu $s2, $s2, 4
@@ -1053,7 +1053,7 @@ glabel func_8000B7B4
   /* 00C3FC 8000B7FC 26520004 */     addiu $s2, $s2, 4
   .L8000B800:
   /* 00C400 8000B800 5653FFF7 */      bnel $s2, $s3, .L8000B7E0
-  /* 00C404 8000B804 8E500000 */        lw $s0, ($s2) # D_800466F0 + 0
+  /* 00C404 8000B804 8E500000 */        lw $s0, ($s2) # gOMObjCommonLinks + 0
   /* 00C408 8000B808 8FBF0024 */        lw $ra, 0x24($sp)
   /* 00C40C 8000B80C 8FB00014 */        lw $s0, 0x14($sp)
   /* 00C410 8000B810 8FB10018 */        lw $s1, 0x18($sp)

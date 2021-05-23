@@ -7,21 +7,21 @@ glabel D_8003DA10
 
 .section .text
 glabel func_800080DC
-  /* 008CDC 800080DC 3C068004 */       lui $a2, %hi(D_80046A48)
-  /* 008CE0 800080E0 24C66A48 */     addiu $a2, $a2, %lo(D_80046A48)
-  /* 008CE4 800080E4 8CC30000 */        lw $v1, ($a2) # D_80046A48 + 0
+  /* 008CDC 800080DC 3C068004 */       lui $a2, %hi(sCameraHead)
+  /* 008CE0 800080E0 24C66A48 */     addiu $a2, $a2, %lo(sCameraHead)
+  /* 008CE4 800080E4 8CC30000 */        lw $v1, ($a2) # sCameraHead + 0
   /* 008CE8 800080E8 27BDFFE8 */     addiu $sp, $sp, -0x18
   /* 008CEC 800080EC AFBF0014 */        sw $ra, 0x14($sp)
   /* 008CF0 800080F0 14600009 */      bnez $v1, .L80008118
-  /* 008CF4 800080F4 3C048004 */       lui $a0, %hi(D_80046A50)
-  /* 008CF8 800080F8 94846A50 */       lhu $a0, %lo(D_80046A50)($a0)
+  /* 008CF4 800080F4 3C048004 */       lui $a0, %hi(sCameraSize)
+  /* 008CF8 800080F8 94846A50 */       lhu $a0, %lo(sCameraSize)($a0)
   /* 008CFC 800080FC 0C001260 */       jal func_80004980
   /* 008D00 80008100 24050008 */     addiu $a1, $zero, 8
-  /* 008D04 80008104 3C068004 */       lui $a2, %hi(D_80046A48)
-  /* 008D08 80008108 24C66A48 */     addiu $a2, $a2, %lo(D_80046A48)
-  /* 008D0C 8000810C ACC20000 */        sw $v0, ($a2) # D_80046A48 + 0
+  /* 008D04 80008104 3C068004 */       lui $a2, %hi(sCameraHead)
+  /* 008D08 80008108 24C66A48 */     addiu $a2, $a2, %lo(sCameraHead)
+  /* 008D0C 8000810C ACC20000 */        sw $v0, ($a2) # sCameraHead + 0
   /* 008D10 80008110 AC400000 */        sw $zero, ($v0)
-  /* 008D14 80008114 8CC30000 */        lw $v1, ($a2) # D_80046A48 + 0
+  /* 008D14 80008114 8CC30000 */        lw $v1, ($a2) # sCameraHead + 0
   .L80008118:
   /* 008D18 80008118 14600006 */      bnez $v1, .L80008134
   /* 008D1C 8000811C 3C058004 */       lui $a1, 0x8004

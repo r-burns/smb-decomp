@@ -7,20 +7,20 @@ glabel D_8003D9C8
 
 .section .text
 glabel func_80007EDC
-  /* 008ADC 80007EDC 3C068004 */       lui $a2, %hi(D_80046A28)
-  /* 008AE0 80007EE0 24C66A28 */     addiu $a2, $a2, %lo(D_80046A28)
-  /* 008AE4 80007EE4 8CC30000 */        lw $v1, ($a2) # D_80046A28 + 0
+  /* 008ADC 80007EDC 3C068004 */       lui $a2, %hi(sMObjHead)
+  /* 008AE0 80007EE0 24C66A28 */     addiu $a2, $a2, %lo(sMObjHead)
+  /* 008AE4 80007EE4 8CC30000 */        lw $v1, ($a2) # sMObjHead + 0
   /* 008AE8 80007EE8 27BDFFE8 */     addiu $sp, $sp, -0x18
   /* 008AEC 80007EEC AFBF0014 */        sw $ra, 0x14($sp)
   /* 008AF0 80007EF0 14600008 */      bnez $v1, .L80007F14
   /* 008AF4 80007EF4 240400A8 */     addiu $a0, $zero, 0xa8
   /* 008AF8 80007EF8 0C001260 */       jal func_80004980
   /* 008AFC 80007EFC 24050004 */     addiu $a1, $zero, 4
-  /* 008B00 80007F00 3C068004 */       lui $a2, %hi(D_80046A28)
-  /* 008B04 80007F04 24C66A28 */     addiu $a2, $a2, %lo(D_80046A28)
-  /* 008B08 80007F08 ACC20000 */        sw $v0, ($a2) # D_80046A28 + 0
+  /* 008B00 80007F00 3C068004 */       lui $a2, %hi(sMObjHead)
+  /* 008B04 80007F04 24C66A28 */     addiu $a2, $a2, %lo(sMObjHead)
+  /* 008B08 80007F08 ACC20000 */        sw $v0, ($a2) # sMObjHead + 0
   /* 008B0C 80007F0C AC400000 */        sw $zero, ($v0)
-  /* 008B10 80007F10 8CC30000 */        lw $v1, ($a2) # D_80046A28 + 0
+  /* 008B10 80007F10 8CC30000 */        lw $v1, ($a2) # sMObjHead + 0
   .L80007F14:
   /* 008B14 80007F14 14600006 */      bnez $v1, .L80007F30
   /* 008B18 80007F18 3C058004 */       lui $a1, 0x8004

@@ -25,8 +25,8 @@ glabel func_ovl64_8018D0C0
 glabel func_ovl64_8018D0E0
   /* 18BE20 8018D0E0 27BDFFE0 */     addiu $sp, $sp, -0x20
   /* 18BE24 8018D0E4 AFB00018 */        sw $s0, 0x18($sp)
-  /* 18BE28 8018D0E8 3C108004 */       lui $s0, %hi(D_800466F0 + (0x03 * 4))
-  /* 18BE2C 8018D0EC 8E1066FC */        lw $s0, %lo(D_800466F0 + (0x03 * 4))($s0)
+  /* 18BE28 8018D0E8 3C108004 */       lui $s0, %hi(gOMObjCommonLinks + (0x03 * 4))
+  /* 18BE2C 8018D0EC 8E1066FC */        lw $s0, %lo(gOMObjCommonLinks + (0x03 * 4))($s0)
   /* 18BE30 8018D0F0 AFBF001C */        sw $ra, 0x1c($sp)
   /* 18BE34 8018D0F4 12000006 */      beqz $s0, .L8018D110
   /* 18BE38 8018D0F8 00000000 */       nop 

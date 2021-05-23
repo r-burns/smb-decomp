@@ -4,13 +4,15 @@
 #include "sys/ml.h"
 #include "sys/om.h"
 #include "sys/rdp_reset.h"
-#include "sys/system.h"
 #include "sys/system_00.h"
+#include "sys/system_04.h"
+#include "sys/system_11.h"
 #include "sys/thread3.h"
 #include "sys/thread6.h"
 
 #include <macros.h>
 #include <ssb_types.h>
+#include <stddef.h>
 
 #include <PR/mbi.h>
 #include <PR/ucode.h>
@@ -34,12 +36,7 @@ struct FnBundle {
 s32 D_8003B6E0 = 0;
 u32 D_8003B6E4 = 0;
 
-union {
-    u32 word;
-    u8 parts[4];
-} D_8003B6E8 = {0};
-
-// Ten total ucodes + a terminator?
+union WeirdBytewise D_8003B6E8 = {0};
 
 // match Nintendo's name to make the text and data symbols
 #define NewUcodeInfo(ucode) \
@@ -47,6 +44,8 @@ union {
 #define NullUcodeInfo \
     { NULL, NULL }
 #define EndUncodeInfoArray NullUcodeInfo
+
+// Ten total ucodes + a terminator?
 struct UcodeInfo D_8003B6EC[11] = {
     NewUcodeInfo(gspF3DEX2_fifo),
     NullUcodeInfo,
@@ -918,47 +917,56 @@ void unref_800067E4(struct BufferSetup *arg) {
 }
 
 void func_8000683C(struct Wrapper683C *arg) {
-    struct OMSetup sp24;
+    struct OMSetup omSetup;
 
     func_80004950(arg->setup.unk0C, arg->setup.unk10);
-    // what is this struct?
-    sp24.unk00 = func_80004980(0x1C0U * arg->unk40, 8);
-    sp24.unk04 = arg->unk40;
-    sp24.unk08 = arg->unk44;
-    if (arg->unk44 != 0) {
-        sp24.unk0C = func_80004980((arg->unk44 + 8) * arg->unk48, 8);
+
+    omSetup.threads         = func_80004980(sizeof(struct GObjThread) * arg->numOMThreads, 8);
+    omSetup.numThreads      = arg->numOMThreads;
+    omSetup.threadStackSize = arg->omThreadStackSize;
+    if (arg->omThreadStackSize != 0) {
+        omSetup.stacks = func_80004980(
+            (arg->omThreadStackSize + offsetof(struct ThreadStackNode, stack)) * arg->numOMStacks,
+            8);
     } else {
-        sp24.unk0C = NULL;
+        omSetup.stacks = NULL;
     }
-    // L800068BC
-    sp24.unk10 = arg->unk48;
-    sp24.unk14 = arg->unk4C;
-    // what is this struct?
-    sp24.unk18 = func_80004980(0x24U * arg->unk50, 4);
-    sp24.unk1C = arg->unk50;
-    sp24.unk20 = func_80004980(arg->unk58 * arg->unk54, 8);
-    sp24.unk24 = arg->unk54;
-    sp24.unk28 = arg->unk58;
-    sp24.unk2C = func_80004980(0x48U * arg->unk5C, 8);
-    sp24.unk30 = arg->unk5C;
+
+    omSetup.numStacks = arg->numOMStacks;
+    omSetup.unk14     = arg->unk4C;
+
+    omSetup.processes    = func_80004980(sizeof(struct GObjProcess) * arg->numOMProcesses, 4);
+    omSetup.numProcesses = arg->numOMProcesses;
+
+    omSetup.commons    = func_80004980(arg->omCommonSize * arg->numOMCommons, 8);
+    omSetup.numCommons = arg->numOMCommons;
+    omSetup.commonSize = arg->omCommonSize;
+
+    omSetup.matrices    = func_80004980(sizeof(struct OMMtx) * arg->numOMMtx, 8);
+    omSetup.numMatrices = arg->numOMMtx;
+
     func_80010734(arg->unk60);
-    sp24.unk34 = arg->unk64;
-    sp24.unk38 = func_80004980(0x24U * arg->unk68, 4);
-    sp24.unk3C = arg->unk68;
-    sp24.unk40 = func_80004980(0xA8U * arg->unk6C, 4);
-    sp24.unk44 = arg->unk6C;
+    omSetup.cleanupFn = arg->unk64;
 
-    sp24.unk48 = func_80004980(arg->unk74 * arg->unk70, 8U);
-    sp24.unk4C = arg->unk70;
-    sp24.unk50 = arg->unk74;
-    sp24.unk54 = func_80004980(arg->unk7C * arg->unk78, 8U);
-    sp24.unk58 = arg->unk78;
-    sp24.unk5C = arg->unk7C;
-    sp24.unk60 = func_80004980(arg->unk84 * arg->unk80, 8U);
-    sp24.unk64 = arg->unk80;
-    sp24.unk68 = arg->unk84;
+    omSetup.aobjs    = func_80004980(sizeof(struct AObj) * arg->numOMAobjs, 4);
+    omSetup.numAObjs = arg->numOMAobjs;
 
-    func_8000A6E0(&sp24);
+    omSetup.mobjs    = func_80004980(sizeof(struct MObj) * arg->numOMMobjs, 4);
+    omSetup.numMObjs = arg->numOMMobjs;
+
+    omSetup.dobjs    = func_80004980(arg->omDobjSize * arg->numOMDobjs, 8);
+    omSetup.numDObjs = arg->numOMDobjs;
+    omSetup.dobjSize = arg->omDobjSize;
+
+    omSetup.sobjs    = func_80004980(arg->omSobjSize * arg->numOMSobjs, 8);
+    omSetup.numSObjs = arg->numOMSobjs;
+    omSetup.sobjSize = arg->omSobjSize;
+
+    omSetup.cameras    = func_80004980(arg->omCameraSize * arg->numOMCameras, 8);
+    omSetup.numCameras = arg->numOMCameras;
+    omSetup.cameraSize = arg->omCameraSize;
+
+    set_up_object_manager(&omSetup);
     D_800465F8.fn08 = func_80006350;
     D_800465F8.fn10 = func_800063A0;
     func_80006548(&arg->setup, arg->unk88);

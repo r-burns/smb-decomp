@@ -7,20 +7,20 @@ glabel D_8003D974
 
 .section .text
 glabel func_80007604
-  /* 008204 80007604 3C068004 */       lui $a2, %hi(D_800466CC)
-  /* 008208 80007608 24C666CC */     addiu $a2, $a2, %lo(D_800466CC)
-  /* 00820C 8000760C 8CC30000 */        lw $v1, ($a2) # D_800466CC + 0
+  /* 008204 80007604 3C068004 */       lui $a2, %hi(sObjProcessHead)
+  /* 008208 80007608 24C666CC */     addiu $a2, $a2, %lo(sObjProcessHead)
+  /* 00820C 8000760C 8CC30000 */        lw $v1, ($a2) # sObjProcessHead + 0
   /* 008210 80007610 27BDFFE8 */     addiu $sp, $sp, -0x18
   /* 008214 80007614 AFBF0014 */        sw $ra, 0x14($sp)
   /* 008218 80007618 14600008 */      bnez $v1, .L8000763C
   /* 00821C 8000761C 24040024 */     addiu $a0, $zero, 0x24
   /* 008220 80007620 0C001260 */       jal func_80004980
   /* 008224 80007624 24050004 */     addiu $a1, $zero, 4
-  /* 008228 80007628 3C068004 */       lui $a2, %hi(D_800466CC)
-  /* 00822C 8000762C 24C666CC */     addiu $a2, $a2, %lo(D_800466CC)
-  /* 008230 80007630 ACC20000 */        sw $v0, ($a2) # D_800466CC + 0
+  /* 008228 80007628 3C068004 */       lui $a2, %hi(sObjProcessHead)
+  /* 00822C 8000762C 24C666CC */     addiu $a2, $a2, %lo(sObjProcessHead)
+  /* 008230 80007630 ACC20000 */        sw $v0, ($a2) # sObjProcessHead + 0
   /* 008234 80007634 AC400000 */        sw $zero, ($v0)
-  /* 008238 80007638 8CC30000 */        lw $v1, ($a2) # D_800466CC + 0
+  /* 008238 80007638 8CC30000 */        lw $v1, ($a2) # sObjProcessHead + 0
   .L8000763C:
   /* 00823C 8000763C 14600006 */      bnez $v1, .L80007658
   /* 008240 80007640 3C058004 */       lui $a1, 0x8004
