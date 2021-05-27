@@ -1,5 +1,5 @@
-use std::{ffi::OsStr, path::PathBuf};
 use anyhow::Result;
+use std::{ffi::OsStr, path::PathBuf};
 
 mod convert;
 
@@ -39,7 +39,7 @@ enum Args {
         input: PathBuf,
         ldscript: PathBuf,
         header: PathBuf,
-    }
+    },
 }
 
 impl Args {
@@ -47,17 +47,25 @@ impl Args {
         fn to_pathbuf(s: &OsStr) -> Result<PathBuf, pico_args::Error> {
             Ok(PathBuf::from(s.to_os_string()))
         }
-        
+
         let mut args = pico_args::Arguments::from_env();
 
-        if args.contains(["-h", "--help"]) { return Ok(Self::Help) }
-        if args.contains(["-v", "--version"]) { return Ok(Self::Version) }
+        if args.contains(["-h", "--help"]) {
+            return Ok(Self::Help);
+        }
+        if args.contains(["-v", "--version"]) {
+            return Ok(Self::Version);
+        }
 
         let input = args.value_from_os_str(["-i", "--input"], to_pathbuf)?;
         let ldscript = args.value_from_os_str(["-l", "--ld"], to_pathbuf)?;
         let header = args.value_from_os_str(["-c", "--header"], to_pathbuf)?;
 
-        Ok(Self::Convert {input, ldscript, header})
+        Ok(Self::Convert {
+            input,
+            ldscript,
+            header,
+        })
     }
 }
 
@@ -67,6 +75,10 @@ fn main() -> Result<()> {
     match args {
         Args::Help => Ok(print_usage()),
         Args::Version => Ok(print_version()),
-        Args::Convert {input, ldscript, header } => convert::specfile(input, ldscript, header),
+        Args::Convert {
+            input,
+            ldscript,
+            header,
+        } => convert::specfile(input, ldscript, header),
     }
 }

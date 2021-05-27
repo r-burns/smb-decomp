@@ -1,17 +1,23 @@
-
 use super::{Segment, SpecialSegment};
-use anyhow::{Result, Context};
-use std::{fs::File, io::{self, BufWriter, Write}, path::Path};
+use anyhow::{Context, Result};
 use indoc::writedoc;
+use std::{
+    fs::File,
+    io::{self, BufWriter, Write},
+    path::Path,
+};
 
 pub(super) fn write_c_header(segments: &[Segment], outfile: &Path) -> Result<()> {
     let mut wtr = BufWriter::new(File::create(outfile).context("creating header file")?);
 
-    writedoc!(&mut wtr, "
+    writedoc!(
+        &mut wtr,
+        "
         #ifndef GENERATED_LINKER_SEGMENTS_H
         #define GENERATED_LINKER_SEGMENTS_H
 
-    ")?;
+    "
+    )?;
 
     for seg in segments {
         let name = seg.name.as_str();
@@ -43,7 +49,12 @@ pub(super) fn write_c_header(segments: &[Segment], outfile: &Path) -> Result<()>
     Ok(())
 }
 
-fn write_extern(out: &mut BufWriter<File>, name: &str, location: &str, position: &str) -> io::Result<()> {
+fn write_extern(
+    out: &mut BufWriter<File>,
+    name: &str,
+    location: &str,
+    position: &str,
+) -> io::Result<()> {
     writeln!(out, "extern char _{}{}{}[];", name, location, position)
 }
 
