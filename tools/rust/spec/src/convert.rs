@@ -136,7 +136,7 @@ fn seg_write<W: Write>(mut out: W, seg: &Segment, held: Holder) -> Result<()> {
     let end_seg = |out: &mut W| writedoc!(out, "
             {sp}}}
             {sp}_{name}SegEnd = ADDR(.{name}) + SIZEOF(.{name});
-            {sp}_{name}SegROMEnd = {rp} + SIZEOF(.{name});
+            {sp}_{name}SegRomEnd = {rp} + SIZEOF(.{name});
             {sp}{rp} += SIZEOF(.{name});
 
         ", sp = INDENT, name = seg.name, rp = ROMPOS);
@@ -152,7 +152,7 @@ fn seg_write<W: Write>(mut out: W, seg: &Segment, held: Holder) -> Result<()> {
     };
     let end_noload = |out: &mut W| { writedoc!(out, "
             {sp}}}
-            {sp}_{name}SegNoloadEnd = ADDR(.{name}.noload) + SIZEOF(.name.noload);
+            {sp}_{name}SegNoloadEnd = ADDR(.{name}.noload) + SIZEOF(.{name}.noload);
 
         ",
         name = seg.name,
@@ -241,7 +241,7 @@ fn seg_write<W: Write>(mut out: W, seg: &Segment, held: Holder) -> Result<()> {
         begin_noload(out)?;
         print_section_store(out, ss)?;
         // entry.s assume 8-byte alignment for system BSS
-        writeln!(out, "\n{sp}{sp}. = ALIGN(8)", sp = INDENT)?;
+        writeln!(out, "\n{sp}{sp}. = ALIGN(8);", sp = INDENT)?;
         end_noload(out)?;
         // split noload size symbols for gas for entry.s
         writeln!(out, "{sp}_{name}SegNoloadSizeHi = SIZEOF(.{name}.noload) >> 16;", sp = INDENT, name = seg.name)?;

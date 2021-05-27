@@ -41,20 +41,19 @@ n64gfx = rust_output_dir / 'n64gfx'
 imgbank = rust_output_dir / 'imgbank'
 restool = rust_output_dir / 'resources'
 extract = rust_output_dir / 'extract'
-rust_tools = [n64gfx, imgbank, restool, extract]
+spec = rust_output_dir / 'spec'
+rust_tools = [n64gfx, imgbank, restool, extract, spec]
 
 def task_rust_tools():
     ''' Use cargo to check and rebuild rust based tools '''
     cargo_build = ['cargo', 'build', '--release', '--manifest-path', rust_manifest]
-    outputs = []
     for tool in rust_tools:
         name = tool.name
         cargo_build.extend(['-p', name])
-        outputs.append(tool)
 
     return {
         'actions': [cargo_build],
-        'targets': outputs
+        'targets': rust_tools
     }
 
 # Libultra 64bit mips3 Patcher
@@ -294,8 +293,10 @@ s_files = list(asm_dir.rglob('*.s'))
 s_objs = list(map(lambda f: config.to_output(f, '.o'), s_files))
 
 # Linker Scripts
-ssb_lds_in = config.game_dir / 'ssb64.in.ld'
-ssb_lds = config.to_output(ssb_lds_in.with_name('ssb64'), ".ld")
+# ssb_lds_in = config.game_dir / 'ssb64.in.ld'
+specfile = config.game_dir / 'spec.dhall'
+# todo `config.in_output` => ensure the output directory creation and make path
+ssb_lds = config.to_output(config.game_dir / 'ssb64.ld', '.ld')
 unk_symbols = list(asm_dir.rglob('*.unresolved.ld')) + [
     config.game_dir / 'hardware-registers.ld',
     config.game_dir / 'not-found-sym.ld',
@@ -357,13 +358,12 @@ def task_build_rom():
         'clean': [f'rm -rf {config.all_builds}'],
     }
 
-def task_preprocess_ldscript():
-    ''' Run C preprocessor on game ldscript '''
+def task_convert_specfile():
+    ''' Convert the dhall specfile into the game linkscript and sections header '''
+    convert_spec = [spec, '--input', specfile, '--ld', ssb_lds, '--header', 'test.h']
     return {
-        'actions': [
-            tc.system.CPP + ['-P', '-o', ssb_lds, ssb_lds_in]
-        ],
-        'file_dep': [ssb_lds_in],
+        'actions': [convert_spec],
+        'file_dep': [spec, specfile],
         'targets': [ssb_lds],
     }
 
