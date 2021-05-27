@@ -10,6 +10,7 @@
 
 #include <macros.h>
 #include <ssb_types.h>
+#include <linkersegs.h>
 
 #include <PR/R4300.h>
 #include <PR/os.h>
@@ -34,29 +35,17 @@ void __osSetWatchLo(u32);
 #define THREAD5_PRI 50
 #define THREAD6_PRI 115
 
-// generate an overlay_symbols.h?
-extern u32 _loadovlSegRomStart;
-extern u32 _loadovlSegRomEnd;
-extern void *_loadovlSegStart;
-extern void *_loadovlSegEnd;
-extern void *_loadovlTextStart;
-extern void *_loadovlTextEnd;
-extern void *_loadovlDataStart;
-extern void *_loadovlDataEnd;
-extern void *_loadovlSegNoloadStart;
-extern void *_loadovlSegNoloadEnd;
-
 // data
 static struct Overlay OverlayManager = {
-    (u32)&_loadovlSegRomStart,
-    (u32)&_loadovlSegRomEnd,
-    &_loadovlSegStart,
-    &_loadovlTextStart,
-    &_loadovlTextEnd,
-    &_loadovlDataStart,
-    &_loadovlDataEnd,
-    &_loadovlSegNoloadStart,
-    &_loadovlSegNoloadEnd};
+    (u32)_loadovlSegRomStart,
+    (u32)_loadovlSegRomEnd,
+    _loadovlSegStart,
+    _loadovlTextStart,
+    _loadovlTextEnd,
+    _loadovlDataStart,
+    _loadovlDataEnd,
+    _loadovlSegNoloadStart,
+    _loadovlSegNoloadEnd};
 u32 sNoThread5 = 0;
 
 // bss

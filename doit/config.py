@@ -79,7 +79,7 @@ class Config():
         return o
 
     def create_output_dir(self, directory_path):
-        ''' Given an `game_dir` relative directory path, 
+        ''' Given a `game_dir` relative directory path, 
             create that directory under the proper build directory
             This also ensures that the directory is created
         '''
@@ -89,6 +89,13 @@ class Config():
 
         return o
 
+    def make_output_dir(self, directory):
+        ''' Create a directory in the output path '''
+
+        o = self.build_dir.joinpath(directory)
+        o.mkdir(parents=True, exist_ok=True)
+
+        return o
     
     def __str__(self):
         common = (

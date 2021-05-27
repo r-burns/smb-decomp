@@ -279,6 +279,10 @@ def ensure_asset_extraction():
 
     return [] if assets_are_extracted else ['extract_assets']
 
+########## Generated Headers #########################
+generated_incs = config.make_output_dir('include')
+linker_segs = generated_incs / 'linkersegs.h'
+
 ########## ROM Linking and Creation ##################
 # ROM and Build Artifacts
 rom_name = f"ssb64.{config.target_version}"
@@ -360,11 +364,16 @@ def task_build_rom():
 
 def task_convert_specfile():
     ''' Convert the dhall specfile into the game linkscript and sections header '''
-    convert_spec = [spec, '--input', specfile, '--ld', ssb_lds, '--header', 'test.h']
+    convert_spec = [
+        spec, 
+        '--input', specfile, 
+        '--ld', ssb_lds, 
+        '--header', linker_segs,
+    ]
     return {
         'actions': [convert_spec],
         'file_dep': [spec, specfile],
-        'targets': [ssb_lds],
+        'targets': [ssb_lds, linker_segs],
     }
 
 ########## Game Assembling ###########################
@@ -398,7 +407,7 @@ c_files = c_dir.rglob('*.c')
 def task_cc():
     ''' Compile .c files into .o '''
 
-    includes = [inc_dir, c_dir]
+    includes = [inc_dir, c_dir, generated_incs]
     tools_dep = get_toolchain_deps(config.toolchain)
 
     for f in c_files:
@@ -577,7 +586,7 @@ def get_make_dependencies(src_file, obj_file):
     d = obj_file.with_suffix('.d')
     found_deps = parse_mk_dependencies(d)
     if found_deps is None:
-        deps = [src_file]
+        deps = [src_file, linker_segs]
     else:
         deps = found_deps[obj_file]
 

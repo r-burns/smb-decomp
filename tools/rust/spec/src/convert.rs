@@ -2,6 +2,8 @@ use std::{fs::File, io::{BufWriter, Write}, path::{Path, PathBuf}, usize};
 use anyhow::{Result, Context};
 use serde::Deserialize;
 
+mod header;
+
 #[derive(Debug, Clone, PartialEq, Eq, Deserialize)]
 struct Segment {
     /// name of the segment
@@ -74,10 +76,11 @@ enum SpecialSegment {
 }
 
 
-pub fn specfile(input: PathBuf, ldscript: PathBuf, _header: PathBuf) -> Result<()> {
+pub fn specfile(input: PathBuf, ldscript: PathBuf, header: PathBuf) -> Result<()> {
     let segments: Vec<Segment> = serde_dhall::from_file(&input).parse().context("parsing dhall spec file")?;
 
     write_ldscript(&segments, &ldscript)?;
+    header::write_c_header(&segments, &header)?;
 
     Ok(())
 }
