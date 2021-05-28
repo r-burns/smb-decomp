@@ -8,9 +8,9 @@
 #include "sys/thread3.h"
 #include "sys/thread6.h"
 
+#include <linkersegs.h>
 #include <macros.h>
 #include <ssb_types.h>
-#include <linkersegs.h>
 
 #include <PR/R4300.h>
 #include <PR/os.h>

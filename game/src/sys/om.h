@@ -23,6 +23,11 @@ struct ThreadStackNode {
     /* 0x08 */ u64 stack[1];
 }; // size == 0x08 + VLA
 
+struct MaybeCommonLink {
+    struct GObjCommon *unk00;
+    s32 unk04;
+}; // size == 8
+
 struct GObjCommon {
     /* 0x00 */ u32 unk00; // id
     /* 0x04 */ struct GObjCommon *unk04;
@@ -43,7 +48,8 @@ struct GObjCommon {
     /* 0x38 */ s32 unk38;
     /* 0x3C */ u8 pad3C[4];
     /* 0x40 */ s64 unk40;
-    /* 0x48 */ u8 pad48[0x70 - 0x48];
+    /* 0x48 */ struct MaybeCommonLink unk48[5];
+    // active/len of unk48
     /* 0x70 */ s32 unk70;
     // typed based on unk0F?
     // 0 : NULL

@@ -12,12 +12,13 @@ Collection of things that should be explained more throughly
 utils/split_asm.py <input.s> game/nonmatching/ game/src/<output directory>
 ```
 5. Delete routines from the split asm from step 2
-6. Add new `.c` file into `ssb64.in.ld` (named as `{filename}.asm.o`)
+6. Add new object file into `spec.dhall` (named as `{filename}.asm.o`). Add it as a new `Obj` before the old asm object.
 7. Check that rebuild works.
 8. Move over any `.rodata` (strings and arrays) and `.late_rodata` (jump tables and float constants) from split asm file into that data's nonmatching file. This helps with `mips2c`
   * TODO: update asm-preprocessor to make/edit `.d` for included ASM files
   * `.4byte` not supported. Change to `.word` or update asm-preprocessor
   * Also, replace any `.incbin` with the raw data. The data probably is padding zeroes.
+  * TODO: `CustomObj` in spec file, as the game expected text -> data -> rodata -> bss
 9. Check that build is still OK
 10. Move bss over:
 ```
