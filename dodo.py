@@ -440,6 +440,7 @@ def task_fmt():
         '-Wno-format-security', '-Wno-main', 
         f'-I{inc_dir}',
         f'-I{c_dir}',
+        f'-I{generated_incs}',
         '-D_LANGUAGE_C','-D_MIPS_SZINT=32', '-D_MIPS_SZLONG=32', '-DF3DEX_GBI_2'
     ]
 

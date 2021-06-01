@@ -599,13 +599,13 @@ glabel func_ovl64_8018D8C0
   /* 18C604 8018D8C4 28810002 */      slti $at, $a0, 2
   /* 18C608 8018D8C8 10200005 */      beqz $at, .L8018D8E0
   /* 18C60C 8018D8CC AFBF0014 */        sw $ra, 0x14($sp)
-  /* 18C610 8018D8D0 3C02800A */       lui $v0, %hi(D_800A4ADD)
+  /* 18C610 8018D8D0 3C02800A */       lui $v0, %hi((D_800A4AD0 + 0xD))
   /* 18C614 8018D8D4 00441021 */      addu $v0, $v0, $a0
   /* 18C618 8018D8D8 1000001A */         b .L8018D944
-  /* 18C61C 8018D8DC 90424ADD */       lbu $v0, %lo(D_800A4ADD)($v0)
+  /* 18C61C 8018D8DC 90424ADD */       lbu $v0, %lo((D_800A4AD0 + 0xD))($v0)
   .L8018D8E0:
-  /* 18C620 8018D8E0 3C04800A */       lui $a0, %hi(D_800A4938)
-  /* 18C624 8018D8E4 94844938 */       lhu $a0, %lo(D_800A4938)($a0)
+  /* 18C620 8018D8E0 3C04800A */       lui $a0, %hi((D_800A44E0 + 0x458))
+  /* 18C624 8018D8E4 94844938 */       lhu $a0, %lo((D_800A44E0 + 0x458))($a0)
   /* 18C628 8018D8E8 3484036F */       ori $a0, $a0, 0x36f
   /* 18C62C 8018D8EC 3084FFFF */      andi $a0, $a0, 0xffff
   /* 18C630 8018D8F0 0C0635FF */       jal func_ovl64_8018D7FC

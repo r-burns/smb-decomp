@@ -405,8 +405,8 @@ glabel func_ovl23_80132040
   /* 12AA9C 801320DC 00000000 */       nop 
 
 glabel func_ovl23_801320E0
-  /* 12AAA0 801320E0 3C0E800A */       lui $t6, %hi(D_800A4AD9)
-  /* 12AAA4 801320E4 91CE4AD9 */       lbu $t6, %lo(D_800A4AD9)($t6)
+  /* 12AAA0 801320E0 3C0E800A */       lui $t6, %hi((D_800A4AD0 + 0x9))
+  /* 12AAA4 801320E4 91CE4AD9 */       lbu $t6, %lo((D_800A4AD0 + 0x9))($t6)
   /* 12AAA8 801320E8 44802000 */      mtc1 $zero, $f4
   /* 12AAAC 801320EC 3C018013 */       lui $at, %hi(D_ovl23_80132488)
   /* 12AAB0 801320F0 AC2E2488 */        sw $t6, %lo(D_ovl23_80132488)($at)

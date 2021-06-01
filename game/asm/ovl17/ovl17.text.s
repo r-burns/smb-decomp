@@ -705,8 +705,8 @@ glabel func_ovl17_80132510
   /* 11D4E4 80132554 00000000 */       nop 
 
 glabel func_ovl17_80132558
-  /* 11D4E8 80132558 3C02800A */       lui $v0, %hi(D_800A4AD1)
-  /* 11D4EC 8013255C 90424AD1 */       lbu $v0, %lo(D_800A4AD1)($v0)
+  /* 11D4E8 80132558 3C02800A */       lui $v0, %hi((D_800A4AD0 + 0x1))
+  /* 11D4EC 8013255C 90424AD1 */       lbu $v0, %lo((D_800A4AD0 + 0x1))($v0)
   /* 11D4F0 80132560 24010008 */     addiu $at, $zero, 8
   /* 11D4F4 80132564 24084650 */     addiu $t0, $zero, 0x4650
   /* 11D4F8 80132568 1041000C */       beq $v0, $at, .L8013259C
@@ -1100,8 +1100,8 @@ glabel func_ovl17_801325E8
   /* 11DA74 80132AE4 00000000 */       nop 
   /* 11DA78 80132AE8 0C04C7EC */       jal func_ovl17_80131FB0
   /* 11DA7C 80132AEC 00000000 */       nop 
-  /* 11DA80 80132AF0 3C02800A */       lui $v0, %hi(D_800A4AD1)
-  /* 11DA84 80132AF4 90424AD1 */       lbu $v0, %lo(D_800A4AD1)($v0)
+  /* 11DA80 80132AF0 3C02800A */       lui $v0, %hi((D_800A4AD0 + 0x1))
+  /* 11DA84 80132AF4 90424AD1 */       lbu $v0, %lo((D_800A4AD0 + 0x1))($v0)
   /* 11DA88 80132AF8 24010008 */     addiu $at, $zero, 8
   /* 11DA8C 80132AFC 10410009 */       beq $v0, $at, .L80132B24
   /* 11DA90 80132B00 24010009 */     addiu $at, $zero, 9

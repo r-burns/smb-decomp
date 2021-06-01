@@ -31,6 +31,7 @@ def run_cpp(file):
     cmd = cpp + ['-P', 
         '-Igame/include',
         '-Igame/src',
+        '-Ibuild/us/include',
         '-undef',
         '-D__sgi',
         '-D_LANGUAGE_C',

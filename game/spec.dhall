@@ -245,9 +245,10 @@ let System = Command "system"
     , Obj "asm/system/rsp.o"
     ]
 let LoadOvl = Command "loadovl" 
-    [ CustomObj "asm/loadovl/loadovl.text.o" [ Section.Text ]
-    , CustomObj "asm/loadovl/loadovl.data.o" [ Section.Data ]
-    , CustomObj "asm/loadovl/loadovl.bss.o" [ Section.BSS ]
+    [ CustomObj "src/loadovl/loadovl.asm.o" [ Section.Text ]
+    , CustomObj "asm/loadovl/loadovl.o" [ Section.Data ]
+    , CustomObj "src/loadovl/loadovl.asm.o" [ Section.Rodata ]
+    , CustomObj "src/loadovl/loadovl.asm.o" [ Section.BSS ]
     ]
 let Ovl0 = Command "ovl0" 
     [ CustomObj "asm/ovl0/ovl0.text.o" [ Section.Text ]
