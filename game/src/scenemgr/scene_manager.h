@@ -6,9 +6,27 @@
 // types
 // the fields are only here to faciliate the entry of the raw data
 // change as needed to fit the actual shape of the struct
+
+#define SSB64_NUM_PLAYABLE_CHARACTERS 12
+
+struct RecordCharCombo {
+    /* 0x00 */ u16 gamesWith;
+    /* 0x02 */ u16 playedAgainst;
+}; // size == 4
+
+struct VsRecordData {
+    /* 0x00 */ u16 kos[SSB64_NUM_PLAYABLE_CHARACTERS];
+    /* 0x18 */ u32 timeUsed; //< in seconds
+    /* 0x1C */ u32 damageDealt;
+    /* 0x20 */ u32 damageReceived;
+    /* 0x24 */ u16 totalSDs;
+    /* 0x26 */ u16 gamesPlayed;
+    /* 0x28 */ u16 gamesPlayedAgainst;
+    /* 0x2C */ struct RecordCharCombo combinations[SSB64_NUM_PLAYABLE_CHARACTERS];
+}; // size == 0x5C
+
 struct BigA44E0 {
-    // VS Record Data for the first field
-    /* 0x000 */ u8 unk00[0x450 - 0];
+    /* 0x000 */ struct VsRecordData vsRecords[SSB64_NUM_PLAYABLE_CHARACTERS];
     /* 0x450 */ u32 unk540[(0x5EC - 0x450) / 4];
 }; // size == 0x5EC
 
@@ -17,10 +35,55 @@ struct UnkA4AD0 {
     /* 0x01 */ u8 pad01[0x48 - 0x01];
 }; // size == 0x48
 
-// Global Game Data
-struct Unk1F0Sized {
-    /* 0x00 */ u32 pad00[0x1F0 / 4];
+struct BattlePlayerState {
+    /* 0x00 */ u8 cpuLevel;
+    /* 0x01 */ u8 handicapLevel;
+    /* 0x02 */ u8 controlledBy;
+    /* 0x03 */ u8 character;
+    /* 0x04 */ u8 team;
+    /* 0x05 */ u8 unk05;
+    /* 0x06 */ u8 charColor;
+    /* 0x08 */ u16 unk08[(0x74 - 0x8) / 2];
+}; // size == 0x74
+
+struct BattleState {
+    /* 0x00 */ u8 unk00;
+    /* 0x01 */ u8 stageIdx;
+    /* 0x02 */ u8 isTeamMode;
+    /* 0x03 */ u8 timeStock;
+    /* 0x04 */ u8 manPanelsOpen;
+    /* 0x05 */ u8 cpuPanelsOpen;
+    /* 0x06 */ u8 startingTime;
+    /* 0x07 */ u8 startingStock; //< stock - 1
+    /* 0x08 */ u8 handicapMode;
+    /* 0x09 */ u8 teamAttackOn;
+    /* 0x0A */ u8 vsModeStageSelect;
+    /* 0x0B */ u8 damagePercentage;
+    /* 0x0C */ u32 itemFlags;
+    /* 0x10 */ u8 unk10;
+    /* 0x11 */ u8 pauseState;
+    /* 0x14 */ u32 timeRemaining; //< in frames
+    /* 0x18 */ u32 frameCounter;
+    /* 0x1C */ u8 itemApperanceRate;
+    /* 0x1D */ u8 unk1D;
+    /* 0x1E */ u16 pad1E;
+    /* 0x20 */ struct BattlePlayerState players[4];
 }; // size == 0x1F0
+
+enum TimeStockFlag { TIMESTOCK_TIME_ON = 1 << 0, TIMESTOCK_STOCK_ON = 1 << 1 };
+
+enum HandicapMode { HANDICAP_MODE_OFF, HANDICAP_MODE_MANUAL, HANDICAP_MODE_AUTO };
+
+enum ItemAppearanceRate {
+    ITEM_RATE_NONE,
+    ITEM_RATE_VERY_LOW,
+    ITEM_RATE_LOW,
+    ITEM_RATE_MIDDLE,
+    ITEM_RATE_HIGH,
+    ITEM_RATE_VERY_HIGH
+};
+
+enum PlayerControlledBy { PLAYER_CONTROL_MAN, PLAYER_CONTROL_CPU, PLAYER_NOT_PRESENT };
 
 struct FighterInfo {
     /* 0x000 */ u8 pad00[0x08 - 0];
@@ -77,14 +140,14 @@ struct EffectInfo {
 // data
 extern struct BigA44E0 D_800A3994;
 extern struct UnkA4AD0 D_800A3F80;
-extern struct Unk1F0Sized D_800A3FC8;
+extern struct BattleState D_800A3FC8;
 
 // bss
 extern struct BigA44E0 D_800A44E0;
 extern struct UnkA4AD0 D_800A4AD0;
-extern struct Unk1F0Sized D_800A4B18;
-extern struct Unk1F0Sized D_800A4D08;
-extern struct Unk1F0Sized D_800A4EF8;
+extern struct BattleState D_800A4B18;
+extern struct BattleState D_800A4D08;
+extern struct BattleState D_800A4EF8;
 extern u32 D_800A50E8;
 extern u32 D_800A50EC;
 extern u8 D_800A50F0[8];
