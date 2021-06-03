@@ -1,6 +1,6 @@
 #include "sys/main.h"
 
-#include "loadovl/loader.h"
+#include "scenemgr/scene_manager.h"
 #include "sys/dma.h"
 #include "sys/gtl.h"
 #include "sys/system_10.h"
@@ -37,15 +37,15 @@ void __osSetWatchLo(u32);
 
 // data
 static struct Overlay OverlayManager = {
-    (u32)_loadovlSegRomStart,
-    (u32)_loadovlSegRomEnd,
-    _loadovlSegStart,
-    _loadovlTextStart,
-    _loadovlTextEnd,
-    _loadovlDataStart,
-    _loadovlDataEnd,
-    _loadovlSegNoloadStart,
-    _loadovlSegNoloadEnd};
+    (u32)_scenemgrSegRomStart,
+    (u32)_scenemgrSegRomEnd,
+    _scenemgrSegStart,
+    _scenemgrTextStart,
+    _scenemgrTextEnd,
+    _scenemgrDataStart,
+    _scenemgrDataEnd,
+    _scenemgrSegNoloadStart,
+    _scenemgrSegNoloadEnd};
 u32 sNoThread5 = 0;
 
 // bss
@@ -150,7 +150,7 @@ void thread5_main(UNUSED void *arg) {
 
     func_80006B80();
     load_overlay(&OverlayManager);
-    load_overlay_set(0);
+    start_scene_manager(0);
 }
 
 void thread1_idle(void *arg) {

@@ -11,6 +11,13 @@
 #define UNUSED
 #endif
 
+/// Apply compiler printf format checking to function
+#ifdef __GNUC__
+#define PRINTF_CHECK(fmtpos, vargpos) __attribute__ ((__format__ (__printf__, (fmtpos), (vargpos))))
+#else
+#define PRINTF_CHECK(fmtpos, vargpos)
+#endif
+
 #define GLUE(a, b) a ## b
 #define GLUE2(a, b) GLUE(a, b)
 

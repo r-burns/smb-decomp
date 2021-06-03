@@ -1,8 +1,16 @@
-#include "loadovl/loader.h"
+#include "scenemgr/scene_manager.h"
+
+#include "ovl0/ovl0.h"
+#include "ovl2/ovl2.h"
+#include "scenemgr/entries.h"
 #include "sys/dma.h"
 #include "sys/gtl.h"
 #include "sys/om.h"
 #include "sys/system_00.h"
+#include "sys/system_04.h"
+#include "sys/system_05.h"
+#include "sys/system_10.h"
+#include "sys/system_11.h"
 #include "sys/thread6.h"
 
 #include <linkersegs.h>
@@ -11,14 +19,17 @@
 #include <PR/mbi.h>
 #include <PR/ultratypes.h>
 
+// types
+
+// what is this struct? is it just `struct GObjCommon`?
+struct UnkA26D8 {
+    /* 0x00 */ u8 pad00[0x74 - 0];
+    /* 0x74 */ void *unk74;
+}; // size >= 0x78
+
+// bss
 u8 D_800A44D0[16];
-
-struct BigA44E0 {
-    /* 0x00 */ u8 pad00[0x5EC - 0];
-}; // size == 0x5EC
-
 struct BigA44E0 D_800A44E0;
-
 /*
 u8 D_800A44E0[24];
 u8 D_800A44F8[14];
@@ -53,16 +64,9 @@ u8 D_800A4AC2;
 u8 D_800A4AC3;
 u32 extend_D_800A4AC4;
 u8 extend_D_800A4AC8[8];
-// one giagantic structure..?
 */
 
-struct UnkA4AD0 {
-    /* 0x00 */ u8 unk00;
-    /* 0x01 */ u8 pad01[0x48 - 0x01];
-}; // size == 0x48
-
 struct UnkA4AD0 D_800A4AD0;
-
 /*
 u8 D_800A4AD0;
 u8 D_800A4AD1;
@@ -94,12 +98,6 @@ u8 D_800A4B08[12];
 u32 D_800A4B14;
 */
 
-struct Unk1F0Sized {
-    /* 0x00 */ u8 pad00[0x1F0];
-}; // size == 0x1F0
-
-// 0x1F0 struct
-
 struct Unk1F0Sized D_800A4B18;
 /*
 u8 D_800A4B18[40];
@@ -115,7 +113,6 @@ u8 extend_D_800A4B6C[408];
 
 struct Unk1F0Sized D_800A4D08;
 /*
-// 0x1F0 struct
 u16 D_800A4D08;
 u8 D_800A4D0A;
 u8 D_800A4D0B;
@@ -190,12 +187,9 @@ u8 D_800A4E98[96];
 */
 
 struct Unk1F0Sized D_800A4EF8;
-
 /*
-// 0x1F0 struct
 u8 D_800A4EF8[464];
 u8 D_800A50C8[32];
-// end 0x1f0}}
 */
 
 u32 D_800A50E8;
@@ -204,105 +198,24 @@ u8 D_800A50F0[8];
 u8 D_800A50F8[324];
 u32 D_800A523C;
 
-// system_10
-extern s8 D_8003CB6D;
-extern s32 func_80021048(void);
-extern void func_8002102C(void);
-extern s32 func_8002103C(void);
-extern void func_80020A40(s32);
-
-// system_11
-extern void set_debug_fn(void (*)(void));
-extern void start_new_debug_thread(void);
-
-// overlays
-extern s32 func_ovl0_800D4644(void);          // ovl 0
-extern void func_ovl0_800D46F4(void);         // ovl 0
-extern void func_ovl2_800D6FE0(void);         // ovl 2
-extern void title_screen_entry(void);         // ovl 10
-extern void n64_logo_entry(void);             // ovl 11
-extern void debug_sss_entry(void);            // ovl 12
-extern void debug_system_entry(void);         // ovl 13
-extern void debug_battle_entry(void);         // ovl 14
-extern void debug_falls_entry(void);          // ovl 15
-extern void debug_button_test_entry(void);    // ovl 16
-extern void menu_main_entry(void);            // ovl 17
-extern void menu_1p_entry(void);              // ovl 18
-extern void menu_options_entry(void);         // ovl 60
-extern void menu_data_entry(void);            // ovl 61
-extern void menu_vs_entry(void);              // ovl 19
-extern void options_vs_entry(void);           // ovl 20
-extern void overlay_set11_entry(void);        // ovl 21
-extern void overlay_set12_entry(void);        // ovl 22
-extern void overlay_set13_entry(void);        // ovl 23
-extern void classic_map_entry(void);          // ovl 24
-extern void screen_adjust_entry(void);        // ovl 25
-extern void vs_css_entry(void);               // ovl 26
-extern void stage_select_entry(void);         // ovl 30
-extern void vs_battle_entry(void);            // ovl 4
-extern void overlay_set23_entry(void);        // ovl 5
-extern void func_ovl2_800D67DC(void);         // ovl 2
-extern void bonus_game_play_entry(void);      // ovl 6
-extern void training_mode_battle_entry(void); // ovl 7
-extern void vs_results_entry(void);           // ovl 31
-extern void vs_records_entry(void);           // ovl 32
-extern void char_bkg_info_entry(void);        // ovl 33
-extern void overlay_set27_entry(void);        // ovl 58
-extern void intro_firstscene_entry(void);     // ovl 34
-extern void intro_portrait_wipes_entry(void); // ovl 35
-extern void intro_focus_mario_entry(void);    // ovl 36
-extern void intro_focus_dk_entry(void);       // ovl 37
-extern void intro_focus_samus_entry(void);    // ovl 38
-extern void intro_focus_fox_entry(void);      // ovl 39
-extern void intro_focus_link_entry(void);     // ovl 40
-extern void intro_focus_yoshi_entry(void);    // ovl 41
-extern void intro_focus_pikachu_entry(void);  // ovl 42
-extern void intro_focus_kirby_entry(void);    // ovl 43
-extern void intro_chars_running_entry(void);  // ovl 44
-extern void intro_yoshi_nest_entry(void);     // ovl 45
-extern void intro_link_hill_entry(void);      // ovl 46
-extern void intro_mario_vs_kirby_entry(void); // ovl 47
-extern void intro_pika_pokeball_entry(void);  // ovl 48
-extern void intro_sex_kicks_entry(void);      // ovl 49
-extern void intro_great_fox_entry(void);      // ovl 50
-extern void intro_dk_vs_samus_entry(void);    // ovl 51
-extern void intro_hidden_chars_entry(void);   // ovl 52
-extern void classic_css_entry(void);          // ovl 27
-extern void training_css_entry(void);         // ovl 28
-extern void bonus_css_entry(void);            // ovl 29
-extern void menu_backup_clear_entry(void);    // ovl 53
-extern void overlay_set48_entry(void);        // ovl 54
-extern void overlay_set49_entry(void);        // ovl 55
-extern void overlay_set50_51_entry(void);     // ovl 56
-extern void overlay_set56_entry(void);        // ovl 59
-extern void overlay_set55_entry(void);        // ovl 57
-extern void overlay_set59_entry(void);        // ovl 62
-extern void how_to_play_entry(void);          // ovl 63
-extern void demo_battle_entry(void);          // ovl 64
-
-void maybe_print_info_debug(void);
-
-// extern struct Overlay D_800A3070; // ovl 0
-// extern struct Overlay D_800A3094; // ovl 1
-// extern struct Overlay D_800A30B8; // ovl 2
-
+// data
 extern struct Overlay D_800A3070[65];
 
 extern struct BigA44E0 D_800A3994;
 extern struct UnkA4AD0 D_800A3F80;
 extern struct Unk1F0Sized D_800A3FC8;
 
-// frame buffer?
-extern u16 D_NF_80392A00[224000];
+// declarations
+void crash_print_gobj_state(void);
 
-void load_overlay_set(UNUSED u32 set) {
+void start_scene_manager(UNUSED u32 set) {
     u16 *csr;
     uintptr_t end;
     struct Unk1F0Sized sp220;
     struct Unk1F0Sized sp30;
 
     set_contstatus_delay(60);
-    set_debug_fn(maybe_print_info_debug);
+    set_debug_fn(crash_print_gobj_state);
     start_new_debug_thread();
     load_overlay(&D_800A3070[0]);
     load_overlay(&D_800A3070[2]);
@@ -329,8 +242,7 @@ void load_overlay_set(UNUSED u32 set) {
     func_ovl0_800D46F4();
 
     // it needs to be something like this to match
-    // csr = (void *)D_NF_80392A00;
-    csr = (void *)_ovl1SegNoloadEnd;
+    csr = (void *)_ovl1SegNoloadEnd; // 0x80392A00
     end = 0x80400000;
     while ((uintptr_t)csr < end) { *(csr++) = GPACK_RGBA5551(0, 0, 0, 1); }
 
@@ -667,21 +579,6 @@ void func_800A26B8(void) {
     func_8000A340();
 }
 
-struct UnkA26D8 {
-    /* 0x00 */ u8 pad00[0x74 - 0];
-    /* 0x74 */ void *unk74;
-}; // size >= 0x78
-
-// system_05
-extern void func_80016338(Gfx **, void *, s32); // arg1 is a type, not void *
-// system_11
-extern void func_800218E0(s32, s32, s32, s32, s32);
-
-// ovl 0
-extern u16 D_ovl0_800D6448;
-extern u16 D_ovl0_800D644A;
-extern u16 D_ovl0_800D644C;
-
 void func_800A26D8(struct UnkA26D8 *arg0) {
     s32 width; // sp74
     UNUSED s32 spPad70;
@@ -728,26 +625,6 @@ void func_800A26D8(struct UnkA26D8 *arg0) {
     gDPSetRenderMode((*D_800465B0)++, G_RM_AA_ZB_OPA_SURF, G_RM_AA_ZB_OPA_SURF2);
 }
 
-// system_04
-extern struct GObjCommon *func_8000B198(u32 id);
-extern struct GObjCommon *func_8000B93C(
-    u32 id,
-    void (*arg1)(void),
-    s32 link,
-    u32 arg3,
-    void (*arg4)(struct UnkA26D8 *),
-    s32 arg5,
-    s64 arg7,
-    s32 arg8,
-    s32 arg9,
-    s32 arg10,
-    s32 arg11,
-    s32 arg12,
-    s32 arg13);
-
-// system_11
-struct GObjCommon *func_80022368(s32 link, u32 arg1, s32 arg2);
-
 struct GObjCommon *func_800A2B18(s32 link, u32 arg1, s32 arg2) {
     if (func_8000B198(0xEFFFFFFF) != NULL) { return NULL; }
 
@@ -773,61 +650,7 @@ void unref_800A2BA8(s32 link, u32 arg1, s32 arg2) {
     }
 }
 
-// system_11
-// __attribute__ ((__format__ (__printf, 1, 2)))
-void crash_printf(const char *fmt, ...);
-
-struct FighterInfo {
-    /* 0x000 */ u8 pad00[0x08 - 0];
-    /* 0x008 */ s32 kind;
-    /* 0x00C */ u8 pad0C[0xD - 0xC];
-    /* 0x00D */ u8 player;
-    /* 0x00E */ u8 pad0E[0x20 - 0xE];
-    /* 0x020 */ s32 pkind;
-    /* 0x024 */ s32 stat;
-    /* 0x028 */ s32 mstat;
-    /* 0x02C */ u8 pad2C[0x14C - 0x2C];
-    /* 0x14C */ s32 ga;
-}; // size >= 0x150
-
-struct WeaponInfo {
-    /* 0x000 */ u8 pad00[0xC - 0x0];
-    /* 0x00C */ s32 kind;
-    /* 0x010 */ u8 pad10;
-    /* 0x011 */ u8 player;
-    /* 0x012 */ u8 pad12[0xFC - 0x12];
-    /* 0x0FC */ s32 ga;
-    /* 0x100 */ s32 attackStat;
-}; // size >= 0x104
-
-struct ItemInfo {
-    /* 0x000 */ u8 pad00[0xC - 0x0];
-    /* 0x00C */ s32 kind;
-    /* 0x010 */ u8 pad10[0x15 - 0x10];
-    /* 0x015 */ u8 player;
-    /* 0x016 */ u8 pad16[0x108 - 0x16];
-    /* 0x108 */ s32 ga;
-    /* 0x10C */ s32 attackStat;
-    /* 0x110 */ u8 pad110[0x378 - 0x110];
-    /* 0x378 */ void *procUpdate;
-    /* 0x37C */ void *procMap;
-    /* 0x380 */ void *procHit;
-    /* 0x384 */ void *procShield;
-    /* 0x388 */ void *procHop;
-    /* 0x38C */ void *procSetoff;
-    /* 0x390 */ void *procReflector;
-    /* 0x394 */ void *procDamage;
-}; // size >= 0x398
-
-struct EffectInfo {
-    /* 0x00 */ u32 pad00;
-    /* 0x04 */ void *fgObj;
-    /* 0x08 */ u8 pad08[0x14 - 0x8];
-    /* 0x14 */ void *procFunc;
-
-}; // size >= 0x18
-
-void func_800A2C30(struct GObjCommon *obj) {
+void crash_inspect_gobj(struct GObjCommon *obj) {
     crash_printf("gobj id:%d:", obj->unk00);
     switch (obj->unk00) {
         case 0x3E8:
@@ -889,7 +712,7 @@ void func_800A2C30(struct GObjCommon *obj) {
     }
 }
 
-void maybe_print_info_debug(void) {
+void crash_print_gobj_state(void) {
     switch (D_8003B874) {
         case 0:
         {
@@ -901,7 +724,7 @@ void maybe_print_info_debug(void) {
             crash_printf("BF\n");
             if (D_80046A54 != NULL) {
                 crash_printf("addr:%x\n", D_80046A54->unk14);
-                func_800A2C30(D_80046A54);
+                crash_inspect_gobj(D_80046A54);
             }
             break;
         }
@@ -918,8 +741,7 @@ void maybe_print_info_debug(void) {
                         case 1: crash_printf("func:%x\n", D_80046A60->unk1C.cb); break;
                     }
                 }
-                // L800A2F88
-                func_800A2C30(D_80046A54);
+                crash_inspect_gobj(D_80046A54);
             }
             break;
         }
@@ -928,7 +750,7 @@ void maybe_print_info_debug(void) {
             crash_printf("DFC\n");
             if (D_80046A58 != NULL) {
                 crash_printf("addr:%x\n", D_80046A58->unk2C);
-                func_800A2C30(D_80046A58);
+                crash_inspect_gobj(D_80046A58);
             }
             break;
         }
@@ -938,16 +760,13 @@ void maybe_print_info_debug(void) {
             if (D_80046A58 != NULL) { crash_printf("cam addr:%x\n", D_80046A58->unk2C); }
             if (D_80046A5C != NULL) {
                 crash_printf("disp addr:%x\n", D_80046A5C->unk2C);
-                func_800A2C30(D_80046A5C);
+                crash_inspect_gobj(D_80046A5C);
             }
             break;
         }
     }
 }
 
-// system_11
-void func_80023778(void (*)(void));
-
 void func_800A3040(void) {
-    func_80023778(maybe_print_info_debug);
+    func_80023778(crash_print_gobj_state);
 }
