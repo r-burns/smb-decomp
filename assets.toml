@@ -11,7 +11,6 @@
 # Code .text/.data/.rodata binaries
 "game/asm/boot/boot.raw.bin" = {us = 0x40, size = 0xfc0}
 "game/asm/system/system.raw.bin" = {us = 0x1000, size = 0x3f6d0}
-"game/asm/loadovl/loadovl.raw.bin" = {us = 0x406d0, size = 0x2b50}
 "game/asm/ovl0/ovl0.raw.bin" = {us = 0x43220, size = 0xea70}
 "game/asm/ovl2/ovl2.raw.bin" = {us = 0x51c90, size = 0x5a8b0}
 "game/asm/ovl3/ovl3.raw.bin" = {us = 0xac540, size = 0x5b480}

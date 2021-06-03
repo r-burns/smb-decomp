@@ -245,10 +245,8 @@ let System = Command "system"
     , Obj "asm/system/rsp.o"
     ]
 let LoadOvl = Command "scenemgr" 
-    [ CustomObj "src/scenemgr/scene_manager.o" [ Section.Text ]
-    , CustomObj "asm/loadovl/loadovl.o" [ Section.Data ]
-    , CustomObj "src/scenemgr/scene_manager.o" [ Section.Rodata ]
-    , CustomObj "src/scenemgr/scene_manager.o" [ Section.BSS ]
+    [ Obj "src/scenemgr/timestamp.o"
+    , Obj "src/scenemgr/scene_manager.o"
     ]
 let Ovl0 = Command "ovl0" 
     [ CustomObj "asm/ovl0/ovl0.text.o" [ Section.Text ]

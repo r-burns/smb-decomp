@@ -4,17 +4,22 @@
 #include <PR/ultratypes.h>
 
 // types
+// the fields are only here to faciliate the entry of the raw data
+// change as needed to fit the actual shape of the struct
 struct BigA44E0 {
-    /* 0x00 */ u8 pad00[0x5EC - 0];
+    // VS Record Data for the first field
+    /* 0x000 */ u8 unk00[0x450 - 0];
+    /* 0x450 */ u32 unk540[(0x5EC - 0x450) / 4];
 }; // size == 0x5EC
 
 struct UnkA4AD0 {
-    /* 0x00 */ u8 unk00;
+    /* 0x00 */ u8 scene;
     /* 0x01 */ u8 pad01[0x48 - 0x01];
 }; // size == 0x48
 
+// Global Game Data
 struct Unk1F0Sized {
-    /* 0x00 */ u8 pad00[0x1F0];
+    /* 0x00 */ u32 pad00[0x1F0 / 4];
 }; // size == 0x1F0
 
 struct FighterInfo {
@@ -68,6 +73,11 @@ struct EffectInfo {
     /* 0x14 */ void *procFunc;
 
 }; // size >= 0x18
+
+// data
+extern struct BigA44E0 D_800A3994;
+extern struct UnkA4AD0 D_800A3F80;
+extern struct Unk1F0Sized D_800A3FC8;
 
 // bss
 extern struct BigA44E0 D_800A44E0;
