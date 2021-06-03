@@ -944,27 +944,27 @@ glabel func_ovl41_8018DE7C
 
 glabel func_ovl41_8018DE88
   /* 16CAD8 8018DE88 3C038019 */       lui $v1, %hi(D_ovl41_8018E448)
-  /* 16CADC 8018DE8C 3C0E800A */       lui $t6, %hi(D_800A3FC8)
+  /* 16CADC 8018DE8C 3C0E800A */       lui $t6, %hi(gDefaultBattleSettings)
   /* 16CAE0 8018DE90 2463E448 */     addiu $v1, $v1, %lo(D_ovl41_8018E448)
   /* 16CAE4 8018DE94 27BDFFE0 */     addiu $sp, $sp, -0x20
   /* 16CAE8 8018DE98 3C02800A */       lui $v0, %hi(D_800A50E8)
-  /* 16CAEC 8018DE9C 25CE3FC8 */     addiu $t6, $t6, %lo(D_800A3FC8)
+  /* 16CAEC 8018DE9C 25CE3FC8 */     addiu $t6, $t6, %lo(gDefaultBattleSettings)
   /* 16CAF0 8018DEA0 244250E8 */     addiu $v0, $v0, %lo(D_800A50E8)
   /* 16CAF4 8018DEA4 AFBF001C */        sw $ra, 0x1c($sp)
   /* 16CAF8 8018DEA8 24040004 */     addiu $a0, $zero, 4
   /* 16CAFC 8018DEAC 25C801EC */     addiu $t0, $t6, 0x1ec
   /* 16CB00 8018DEB0 0060C825 */        or $t9, $v1, $zero
   .L8018DEB4:
-  /* 16CB04 8018DEB4 8DD80000 */        lw $t8, ($t6) # D_800A3FC8 + 0
+  /* 16CB04 8018DEB4 8DD80000 */        lw $t8, ($t6) # gDefaultBattleSettings + 0
   /* 16CB08 8018DEB8 25CE000C */     addiu $t6, $t6, 0xc
   /* 16CB0C 8018DEBC 2739000C */     addiu $t9, $t9, 0xc
   /* 16CB10 8018DEC0 AF38FFF4 */        sw $t8, -0xc($t9)
-  /* 16CB14 8018DEC4 8DCFFFF8 */        lw $t7, -8($t6) # D_800A3FC8 + -8
+  /* 16CB14 8018DEC4 8DCFFFF8 */        lw $t7, -8($t6) # gDefaultBattleSettings + -8
   /* 16CB18 8018DEC8 AF2FFFF8 */        sw $t7, -8($t9)
-  /* 16CB1C 8018DECC 8DD8FFFC */        lw $t8, -4($t6) # D_800A3FC8 + -4
+  /* 16CB1C 8018DECC 8DD8FFFC */        lw $t8, -4($t6) # gDefaultBattleSettings + -4
   /* 16CB20 8018DED0 15C8FFF8 */       bne $t6, $t0, .L8018DEB4
   /* 16CB24 8018DED4 AF38FFFC */        sw $t8, -4($t9)
-  /* 16CB28 8018DED8 8DD80000 */        lw $t8, ($t6) # D_800A3FC8 + 0
+  /* 16CB28 8018DED8 8DD80000 */        lw $t8, ($t6) # gDefaultBattleSettings + 0
   /* 16CB2C 8018DEDC 240A0005 */     addiu $t2, $zero, 5
   /* 16CB30 8018DEE0 240C0001 */     addiu $t4, $zero, 1
   /* 16CB34 8018DEE4 AF380000 */        sw $t8, ($t9)

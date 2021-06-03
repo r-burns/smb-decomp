@@ -51,25 +51,25 @@ glabel func_ovl63_8018D0C0
 
 glabel func_ovl63_8018D14C
   /* 18A75C 8018D14C 3C028019 */       lui $v0, %hi(D_ovl63_8018E7F0)
-  /* 18A760 8018D150 3C0E800A */       lui $t6, %hi(D_800A3FC8)
+  /* 18A760 8018D150 3C0E800A */       lui $t6, %hi(gDefaultBattleSettings)
   /* 18A764 8018D154 2442E7F0 */     addiu $v0, $v0, %lo(D_ovl63_8018E7F0)
   /* 18A768 8018D158 3C03800A */       lui $v1, %hi(D_800A50E8)
-  /* 18A76C 8018D15C 25CE3FC8 */     addiu $t6, $t6, %lo(D_800A3FC8)
+  /* 18A76C 8018D15C 25CE3FC8 */     addiu $t6, $t6, %lo(gDefaultBattleSettings)
   /* 18A770 8018D160 246350E8 */     addiu $v1, $v1, %lo(D_800A50E8)
   /* 18A774 8018D164 24040005 */     addiu $a0, $zero, 5
   /* 18A778 8018D168 25C801EC */     addiu $t0, $t6, 0x1ec
   /* 18A77C 8018D16C 0040C825 */        or $t9, $v0, $zero
   .L8018D170:
-  /* 18A780 8018D170 8DD80000 */        lw $t8, ($t6) # D_800A3FC8 + 0
+  /* 18A780 8018D170 8DD80000 */        lw $t8, ($t6) # gDefaultBattleSettings + 0
   /* 18A784 8018D174 25CE000C */     addiu $t6, $t6, 0xc
   /* 18A788 8018D178 2739000C */     addiu $t9, $t9, 0xc
   /* 18A78C 8018D17C AF38FFF4 */        sw $t8, -0xc($t9)
-  /* 18A790 8018D180 8DCFFFF8 */        lw $t7, -8($t6) # D_800A3FC8 + -8
+  /* 18A790 8018D180 8DCFFFF8 */        lw $t7, -8($t6) # gDefaultBattleSettings + -8
   /* 18A794 8018D184 AF2FFFF8 */        sw $t7, -8($t9)
-  /* 18A798 8018D188 8DD8FFFC */        lw $t8, -4($t6) # D_800A3FC8 + -4
+  /* 18A798 8018D188 8DD8FFFC */        lw $t8, -4($t6) # gDefaultBattleSettings + -4
   /* 18A79C 8018D18C 15C8FFF8 */       bne $t6, $t0, .L8018D170
   /* 18A7A0 8018D190 AF38FFFC */        sw $t8, -4($t9)
-  /* 18A7A4 8018D194 8DD80000 */        lw $t8, ($t6) # D_800A3FC8 + 0
+  /* 18A7A4 8018D194 8DD80000 */        lw $t8, ($t6) # gDefaultBattleSettings + 0
   /* 18A7A8 8018D198 24090003 */     addiu $t1, $zero, 3
   /* 18A7AC 8018D19C 240B000B */     addiu $t3, $zero, 0xb
   /* 18A7B0 8018D1A0 AF380000 */        sw $t8, ($t9)

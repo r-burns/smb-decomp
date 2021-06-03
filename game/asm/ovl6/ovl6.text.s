@@ -31,11 +31,11 @@ glabel func_ovl6_8018D0D0
 glabel func_ovl6_8018D0F0
   /* 111830 8018D0F0 3C038019 */       lui $v1, %hi(D_ovl6_8018F1B0)
   /* 111834 8018D0F4 3C05800A */       lui $a1, %hi(D_800A4AD0)
-  /* 111838 8018D0F8 3C0E800A */       lui $t6, %hi(D_800A3FC8)
+  /* 111838 8018D0F8 3C0E800A */       lui $t6, %hi(gDefaultBattleSettings)
   /* 11183C 8018D0FC 24A54AD0 */     addiu $a1, $a1, %lo(D_800A4AD0)
   /* 111840 8018D100 2463F1B0 */     addiu $v1, $v1, %lo(D_ovl6_8018F1B0)
   /* 111844 8018D104 3C06800A */       lui $a2, %hi(D_800A50E8)
-  /* 111848 8018D108 25CE3FC8 */     addiu $t6, $t6, %lo(D_800A3FC8)
+  /* 111848 8018D108 25CE3FC8 */     addiu $t6, $t6, %lo(gDefaultBattleSettings)
   /* 11184C 8018D10C 24C650E8 */     addiu $a2, $a2, %lo(D_800A50E8)
   /* 111850 8018D110 24070002 */     addiu $a3, $zero, 2
   /* 111854 8018D114 24080034 */     addiu $t0, $zero, 0x34
@@ -43,16 +43,16 @@ glabel func_ovl6_8018D0F0
   /* 11185C 8018D11C 25CA01EC */     addiu $t2, $t6, 0x1ec
   /* 111860 8018D120 0060C825 */        or $t9, $v1, $zero
   .L8018D124:
-  /* 111864 8018D124 8DD80000 */        lw $t8, ($t6) # D_800A3FC8 + 0
+  /* 111864 8018D124 8DD80000 */        lw $t8, ($t6) # gDefaultBattleSettings + 0
   /* 111868 8018D128 25CE000C */     addiu $t6, $t6, 0xc
   /* 11186C 8018D12C 2739000C */     addiu $t9, $t9, 0xc
   /* 111870 8018D130 AF38FFF4 */        sw $t8, -0xc($t9)
-  /* 111874 8018D134 8DCFFFF8 */        lw $t7, -8($t6) # D_800A3FC8 + -8
+  /* 111874 8018D134 8DCFFFF8 */        lw $t7, -8($t6) # gDefaultBattleSettings + -8
   /* 111878 8018D138 AF2FFFF8 */        sw $t7, -8($t9)
-  /* 11187C 8018D13C 8DD8FFFC */        lw $t8, -4($t6) # D_800A3FC8 + -4
+  /* 11187C 8018D13C 8DD8FFFC */        lw $t8, -4($t6) # gDefaultBattleSettings + -4
   /* 111880 8018D140 15CAFFF8 */       bne $t6, $t2, .L8018D124
   /* 111884 8018D144 AF38FFFC */        sw $t8, -4($t9)
-  /* 111888 8018D148 8DD80000 */        lw $t8, ($t6) # D_800A3FC8 + 0
+  /* 111888 8018D148 8DD80000 */        lw $t8, ($t6) # gDefaultBattleSettings + 0
   /* 11188C 8018D14C 240C0005 */     addiu $t4, $zero, 5
   /* 111890 8018D150 00002025 */        or $a0, $zero, $zero
   /* 111894 8018D154 AF380000 */        sw $t8, ($t9)

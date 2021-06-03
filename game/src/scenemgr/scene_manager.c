@@ -63,7 +63,7 @@ void start_scene_manager(UNUSED u32 set) {
 
     D_800A44E0 = D_800A3994;
     D_800A4AD0 = D_800A3F80;
-    sp30       = D_800A3FC8;
+    sp30       = gDefaultBattleSettings;
     D_800A4EF8 = sp30;
     sp220      = sp30;
     D_800A4D08 = sp220;
@@ -1356,7 +1356,7 @@ struct UnkA4AD0 D_800A3F80 = {27, {0x1B, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x0
                                    0x00, 0x00, 0x00, 0x00, 0x00}};
 
 // clang-format off
-struct BattleState D_800A3FC8 = {
+struct BattleState gDefaultBattleSettings = {
     /* 00 */ 0, 0, 0, TIMESTOCK_TIME_ON,
     /* 04 */ 0, 0, 3, 2,
     /* 08 */ HANDICAP_MODE_OFF, FALSE, 1, 100,

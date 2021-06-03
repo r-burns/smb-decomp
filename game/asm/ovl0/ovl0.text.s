@@ -14464,10 +14464,10 @@ glabel func_ovl0_800D473C
   .L800D48B4:
   /* 050294 800D48B4 17000008 */      bnez $t8, .L800D48D8
   /* 050298 800D48B8 3C02800A */       lui $v0, %hi(D_800A4D08)
-  /* 05029C 800D48BC 3C03800A */       lui $v1, %hi(D_800A3FC8)
-  /* 0502A0 800D48C0 24633FC8 */     addiu $v1, $v1, %lo(D_800A3FC8)
-  /* 0502A4 800D48C4 8C68000C */        lw $t0, 0xc($v1) # D_800A3FC8 + 12
-  /* 0502A8 800D48C8 9079001C */       lbu $t9, 0x1c($v1) # D_800A3FC8 + 28
+  /* 05029C 800D48BC 3C03800A */       lui $v1, %hi(gDefaultBattleSettings)
+  /* 0502A0 800D48C0 24633FC8 */     addiu $v1, $v1, %lo(gDefaultBattleSettings)
+  /* 0502A4 800D48C4 8C68000C */        lw $t0, 0xc($v1) # gDefaultBattleSettings + 12
+  /* 0502A8 800D48C8 9079001C */       lbu $t9, 0x1c($v1) # gDefaultBattleSettings + 28
   /* 0502AC 800D48CC 24424D08 */     addiu $v0, $v0, %lo(D_800A4D08)
   /* 0502B0 800D48D0 AC48000C */        sw $t0, 0xc($v0) # D_800A4D08 + 12
   /* 0502B4 800D48D4 A059001C */        sb $t9, 0x1c($v0) # D_800A4D08 + 28

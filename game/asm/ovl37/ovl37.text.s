@@ -928,11 +928,11 @@ glabel func_ovl37_8018DE3C
 
 glabel func_ovl37_8018DE48
   /* 1685B8 8018DE48 3C038019 */       lui $v1, %hi(D_ovl37_8018E3E8)
-  /* 1685BC 8018DE4C 3C0E800A */       lui $t6, %hi(D_800A3FC8)
+  /* 1685BC 8018DE4C 3C0E800A */       lui $t6, %hi(gDefaultBattleSettings)
   /* 1685C0 8018DE50 2463E3E8 */     addiu $v1, $v1, %lo(D_ovl37_8018E3E8)
   /* 1685C4 8018DE54 27BDFFE0 */     addiu $sp, $sp, -0x20
   /* 1685C8 8018DE58 3C02800A */       lui $v0, %hi(D_800A50E8)
-  /* 1685CC 8018DE5C 25CE3FC8 */     addiu $t6, $t6, %lo(D_800A3FC8)
+  /* 1685CC 8018DE5C 25CE3FC8 */     addiu $t6, $t6, %lo(gDefaultBattleSettings)
   /* 1685D0 8018DE60 244250E8 */     addiu $v0, $v0, %lo(D_800A50E8)
   /* 1685D4 8018DE64 AFBF001C */        sw $ra, 0x1c($sp)
   /* 1685D8 8018DE68 24040004 */     addiu $a0, $zero, 4
@@ -940,16 +940,16 @@ glabel func_ovl37_8018DE48
   /* 1685E0 8018DE70 25C801EC */     addiu $t0, $t6, 0x1ec
   /* 1685E4 8018DE74 0060C825 */        or $t9, $v1, $zero
   .L8018DE78:
-  /* 1685E8 8018DE78 8DD80000 */        lw $t8, ($t6) # D_800A3FC8 + 0
+  /* 1685E8 8018DE78 8DD80000 */        lw $t8, ($t6) # gDefaultBattleSettings + 0
   /* 1685EC 8018DE7C 25CE000C */     addiu $t6, $t6, 0xc
   /* 1685F0 8018DE80 2739000C */     addiu $t9, $t9, 0xc
   /* 1685F4 8018DE84 AF38FFF4 */        sw $t8, -0xc($t9)
-  /* 1685F8 8018DE88 8DCFFFF8 */        lw $t7, -8($t6) # D_800A3FC8 + -8
+  /* 1685F8 8018DE88 8DCFFFF8 */        lw $t7, -8($t6) # gDefaultBattleSettings + -8
   /* 1685FC 8018DE8C AF2FFFF8 */        sw $t7, -8($t9)
-  /* 168600 8018DE90 8DD8FFFC */        lw $t8, -4($t6) # D_800A3FC8 + -4
+  /* 168600 8018DE90 8DD8FFFC */        lw $t8, -4($t6) # gDefaultBattleSettings + -4
   /* 168604 8018DE94 15C8FFF8 */       bne $t6, $t0, .L8018DE78
   /* 168608 8018DE98 AF38FFFC */        sw $t8, -4($t9)
-  /* 16860C 8018DE9C 8DD80000 */        lw $t8, ($t6) # D_800A3FC8 + 0
+  /* 16860C 8018DE9C 8DD80000 */        lw $t8, ($t6) # gDefaultBattleSettings + 0
   /* 168610 8018DEA0 240B0001 */     addiu $t3, $zero, 1
   /* 168614 8018DEA4 AF380000 */        sw $t8, ($t9)
   /* 168618 8018DEA8 AC430000 */        sw $v1, ($v0) # D_800A50E8 + 0

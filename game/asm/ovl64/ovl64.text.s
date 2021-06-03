@@ -658,11 +658,11 @@ glabel func_ovl64_8018D990
   /* 18C6D0 8018D990 27BDFFD0 */     addiu $sp, $sp, -0x30
   /* 18C6D4 8018D994 AFB20020 */        sw $s2, 0x20($sp)
   /* 18C6D8 8018D998 3C038019 */       lui $v1, %hi(D_ovl64_8018E2F0)
-  /* 18C6DC 8018D99C 3C0E800A */       lui $t6, %hi(D_800A3FC8)
+  /* 18C6DC 8018D99C 3C0E800A */       lui $t6, %hi(gDefaultBattleSettings)
   /* 18C6E0 8018D9A0 2463E2F0 */     addiu $v1, $v1, %lo(D_ovl64_8018E2F0)
   /* 18C6E4 8018D9A4 3C12800A */       lui $s2, %hi(D_800A50E8)
   /* 18C6E8 8018D9A8 3C02800A */       lui $v0, %hi(D_800A4AD0)
-  /* 18C6EC 8018D9AC 25CE3FC8 */     addiu $t6, $t6, %lo(D_800A3FC8)
+  /* 18C6EC 8018D9AC 25CE3FC8 */     addiu $t6, $t6, %lo(gDefaultBattleSettings)
   /* 18C6F0 8018D9B0 24424AD0 */     addiu $v0, $v0, %lo(D_800A4AD0)
   /* 18C6F4 8018D9B4 265250E8 */     addiu $s2, $s2, %lo(D_800A50E8)
   /* 18C6F8 8018D9B8 AFBF002C */        sw $ra, 0x2c($sp)
@@ -673,16 +673,16 @@ glabel func_ovl64_8018D990
   /* 18C70C 8018D9CC 25C801EC */     addiu $t0, $t6, 0x1ec
   /* 18C710 8018D9D0 0060C825 */        or $t9, $v1, $zero
   .L8018D9D4:
-  /* 18C714 8018D9D4 8DD80000 */        lw $t8, ($t6) # D_800A3FC8 + 0
+  /* 18C714 8018D9D4 8DD80000 */        lw $t8, ($t6) # gDefaultBattleSettings + 0
   /* 18C718 8018D9D8 25CE000C */     addiu $t6, $t6, 0xc
   /* 18C71C 8018D9DC 2739000C */     addiu $t9, $t9, 0xc
   /* 18C720 8018D9E0 AF38FFF4 */        sw $t8, -0xc($t9)
-  /* 18C724 8018D9E4 8DCFFFF8 */        lw $t7, -8($t6) # D_800A3FC8 + -8
+  /* 18C724 8018D9E4 8DCFFFF8 */        lw $t7, -8($t6) # gDefaultBattleSettings + -8
   /* 18C728 8018D9E8 AF2FFFF8 */        sw $t7, -8($t9)
-  /* 18C72C 8018D9EC 8DD8FFFC */        lw $t8, -4($t6) # D_800A3FC8 + -4
+  /* 18C72C 8018D9EC 8DD8FFFC */        lw $t8, -4($t6) # gDefaultBattleSettings + -4
   /* 18C730 8018D9F0 15C8FFF8 */       bne $t6, $t0, .L8018D9D4
   /* 18C734 8018D9F4 AF38FFFC */        sw $t8, -4($t9)
-  /* 18C738 8018D9F8 8DD80000 */        lw $t8, ($t6) # D_800A3FC8 + 0
+  /* 18C738 8018D9F8 8DD80000 */        lw $t8, ($t6) # gDefaultBattleSettings + 0
   /* 18C73C 8018D9FC 3C0B8019 */       lui $t3, %hi(D_ovl64_8018E168)
   /* 18C740 8018DA00 240F0001 */     addiu $t7, $zero, 1
   /* 18C744 8018DA04 AF380000 */        sw $t8, ($t9)

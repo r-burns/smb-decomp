@@ -76,10 +76,10 @@ glabel func_ovl5_8018D160
 glabel func_ovl5_8018D1A0
   /* 10B450 8018D1A0 27BDFF38 */     addiu $sp, $sp, -0xc8
   /* 10B454 8018D1A4 3C038019 */       lui $v1, %hi(D_ovl5_8018D758)
-  /* 10B458 8018D1A8 3C0E800A */       lui $t6, %hi(D_800A3FC8)
+  /* 10B458 8018D1A8 3C0E800A */       lui $t6, %hi(gDefaultBattleSettings)
   /* 10B45C 8018D1AC 2463D758 */     addiu $v1, $v1, %lo(D_ovl5_8018D758)
   /* 10B460 8018D1B0 3C02800A */       lui $v0, %hi(D_800A50E8)
-  /* 10B464 8018D1B4 25CE3FC8 */     addiu $t6, $t6, %lo(D_800A3FC8)
+  /* 10B464 8018D1B4 25CE3FC8 */     addiu $t6, $t6, %lo(gDefaultBattleSettings)
   /* 10B468 8018D1B8 244250E8 */     addiu $v0, $v0, %lo(D_800A50E8)
   /* 10B46C 8018D1BC AFBF005C */        sw $ra, 0x5c($sp)
   /* 10B470 8018D1C0 AFBE0058 */        sw $fp, 0x58($sp)
@@ -97,16 +97,16 @@ glabel func_ovl5_8018D1A0
   /* 10B4A0 8018D1F0 25C801EC */     addiu $t0, $t6, 0x1ec
   /* 10B4A4 8018D1F4 0060C825 */        or $t9, $v1, $zero
   .L8018D1F8:
-  /* 10B4A8 8018D1F8 8DD80000 */        lw $t8, ($t6) # D_800A3FC8 + 0
+  /* 10B4A8 8018D1F8 8DD80000 */        lw $t8, ($t6) # gDefaultBattleSettings + 0
   /* 10B4AC 8018D1FC 25CE000C */     addiu $t6, $t6, 0xc
   /* 10B4B0 8018D200 2739000C */     addiu $t9, $t9, 0xc
   /* 10B4B4 8018D204 AF38FFF4 */        sw $t8, -0xc($t9)
-  /* 10B4B8 8018D208 8DCFFFF8 */        lw $t7, -8($t6) # D_800A3FC8 + -8
+  /* 10B4B8 8018D208 8DCFFFF8 */        lw $t7, -8($t6) # gDefaultBattleSettings + -8
   /* 10B4BC 8018D20C AF2FFFF8 */        sw $t7, -8($t9)
-  /* 10B4C0 8018D210 8DD8FFFC */        lw $t8, -4($t6) # D_800A3FC8 + -4
+  /* 10B4C0 8018D210 8DD8FFFC */        lw $t8, -4($t6) # gDefaultBattleSettings + -4
   /* 10B4C4 8018D214 15C8FFF8 */       bne $t6, $t0, .L8018D1F8
   /* 10B4C8 8018D218 AF38FFFC */        sw $t8, -4($t9)
-  /* 10B4CC 8018D21C 8DD80000 */        lw $t8, ($t6) # D_800A3FC8 + 0
+  /* 10B4CC 8018D21C 8DD80000 */        lw $t8, ($t6) # gDefaultBattleSettings + 0
   /* 10B4D0 8018D220 240B0001 */     addiu $t3, $zero, 1
   /* 10B4D4 8018D224 24080004 */     addiu $t0, $zero, 4
   /* 10B4D8 8018D228 AF380000 */        sw $t8, ($t9)

@@ -140,7 +140,7 @@ struct EffectInfo {
 // data
 extern struct BigA44E0 D_800A3994;
 extern struct UnkA4AD0 D_800A3F80;
-extern struct BattleState D_800A3FC8;
+extern struct BattleState gDefaultBattleSettings;
 
 // bss
 extern struct BigA44E0 D_800A44E0;

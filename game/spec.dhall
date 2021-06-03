@@ -87,7 +87,7 @@ let System = Command "system"
     , Obj "asm/system/system_09.o"
     , Obj "asm/system/system_10.o"
     , Obj "asm/system/system_11.o"
-    , Obj "asm/system/system_12.o"
+    , Obj "src/sys/system_12.o"
     , Libultra 
         [ "setattribute.o"
         ]
