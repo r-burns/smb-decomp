@@ -86,7 +86,7 @@ u32 sCamerasActive;
 u16 sCameraSize;
 struct GObjCommon *D_80046A54;
 struct GObjCommon *D_80046A58;
-void *D_80046A5C;
+struct GObjCommon *D_80046A5C;
 struct GObjProcess *D_80046A60;
 u32 D_80046A64;
 OSMesg sOMMsg[1];
@@ -1559,7 +1559,7 @@ struct GObjCommon *om_g_add_common(u32 id, void (*arg1)(void), u8 link, u32 arg3
     com->unk0D = 65;
     com->unk78 = 0.0f;
     com->unk80 = 0;
-    com->unk84 = 0;
+    com->unk84 = NULL;
 
     return com;
 }

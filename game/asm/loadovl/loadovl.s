@@ -696,6 +696,8 @@ glabel D_800A3FC3
   .incbin "loadovl.raw.bin", 0x2643, 0x5
 
 # end another struct size = 0x48
+
+# 0x1F0 struct + padding?
 glabel D_800A3FC8
   .incbin "loadovl.raw.bin", 0x2648, 0x1F8
 

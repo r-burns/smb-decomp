@@ -1,12 +1,10 @@
 /* Symbols in "loadovl" that are in multiple locations */
     D_unkmulti_800D6490 = 0x800D6490; /* in ovl2, ovl11, ovl12, ovl15, ovl16 */
     D_unkmulti_800D67C0 = 0x800D67C0; /* in ovl2, ovl11, ovl12, ovl15, ovl16 */
-    func_unkmulti_800D67DC = 0x800D67DC; /* in ovl2, ovl11, ovl12, ovl15, ovl16 */
     D_unkmulti_800D69E0 = 0x800D69E0; /* in ovl2, ovl11, ovl12, ovl15, ovl16 */
     D_unkmulti_800D69F0 = 0x800D69F0; /* in ovl2, ovl11, ovl15, ovl16 */
     D_unkmulti_800D6A00 = 0x800D6A00; /* in ovl2, ovl11, ovl16 */
     D_unkmulti_800D6B30 = 0x800D6B30; /* in ovl2, ovl16 */
-    func_unkmulti_800D6FE0 = 0x800D6FE0; /* in ovl2, ovl16 */
     D_unkmulti_800D7110 = 0x800D7110; /* in ovl2, ovl16 */
     D_unkmulti_80131B00 = 0x80131B00; /* in ovl3, ovl10, ovl13, ovl14, ovl17, ovl18, ovl19, ovl20, ovl21, ovl22, ovl23, ovl24, ovl25, ovl26, ovl27, ovl28, ovl29, ovl30, ovl31, ovl32, ovl33, ovl34, ovl35, ovl44, ovl45, ovl46, ovl47, ovl48, ovl49, ovl50, ovl52, ovl53, ovl54, ovl55, ovl56, ovl57, ovl58, ovl59, ovl60, ovl61, ovl62 */
     func_multiple_80131EF0 = 0x80131EF0; /* could be: overlay_set27_entry, func_ovl60_80131EF0 */

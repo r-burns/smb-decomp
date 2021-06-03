@@ -484,6 +484,7 @@ glabel func_8000AFE4
   /* 00BC84 8000B084 03E00008 */        jr $ra
   /* 00BC88 8000B088 27BD0038 */     addiu $sp, $sp, 0x38
 
+# ?? func_8000B08C(struct GObjCommon *(*arg0)(struct GObjCommon *, s32), s32 id, s32 unk)
 glabel func_8000B08C
   /* 00BC8C 8000B08C 27BDFFC8 */     addiu $sp, $sp, -0x38
   /* 00BC90 8000B090 AFB70030 */        sw $s7, 0x30($sp)
@@ -539,6 +540,7 @@ glabel func_8000B08C
   /* 00BD44 8000B144 03E00008 */        jr $ra
   /* 00BD48 8000B148 27BD0038 */     addiu $sp, $sp, 0x38
 
+# struct GObjCommon *func_8000B14C(struct GObjCommon *, s32 id)
 glabel func_8000B14C
   /* 00BD4C 8000B14C 8C8E0000 */        lw $t6, ($a0)
   /* 00BD50 8000B150 00001825 */        or $v1, $zero, $zero
@@ -564,6 +566,7 @@ glabel func_8000B16C
   /* 00BD90 8000B190 03E00008 */        jr $ra
   /* 00BD94 8000B194 00000000 */       nop 
 
+# struct GObjCommon *func_8000B198(s32 id)
 glabel func_8000B198
   /* 00BD98 8000B198 27BDFFE8 */     addiu $sp, $sp, -0x18
   /* 00BD9C 8000B19C 00802825 */        or $a1, $a0, $zero
@@ -1141,6 +1144,7 @@ glabel func_8000B8BC
   /* 00C534 8000B934 03E00008 */        jr $ra
   /* 00C538 8000B938 00000000 */       nop 
 
+# struct GObjCommon *func_8000B93C(s32 id, void (*arg1)(void), s32 link, u32 arg3, void (*arg4)(struct UnkA26D8 *), s32 arg5, s64 arg7, s32 arg8, s32 arg9, s32 arg10, s32 arg11, s32 arg12, s32 arg13)
 glabel func_8000B93C
   /* 00C53C 8000B93C 27BDFFC8 */     addiu $sp, $sp, -0x38
   /* 00C540 8000B940 AFBF002C */        sw $ra, 0x2c($sp)

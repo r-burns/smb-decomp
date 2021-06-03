@@ -18,7 +18,7 @@ struct Overlay {
     void *ramDataEnd;
     void *ramNoloadStart;
     void *ramNoloadEnd;
-};
+}; // size == 0x24
 
 extern OSPiHandle *gRomPiHandle;
 

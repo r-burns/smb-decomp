@@ -60,7 +60,7 @@ struct GObjCommon {
     /* 0x78 */ f32 unk78;
     /* 0x7C */ s32 unk7C;
     /* 0x80 */ s32 unk80;
-    /* 0x84 */ s32 unk84;
+    /* 0x84 */ void *unk84;
 }; // size >= 0x88
 
 struct GObjProcess {
@@ -290,8 +290,7 @@ extern struct GObjCommon *gOMObjCommonDLLinks[OM_COMMON_MAX_DL_LINKS];
 // Something to do with an initial object to be passed to a new GObjProcess
 extern struct GObjCommon *D_80046A54;
 extern struct GObjCommon *D_80046A58;
-// something with debugging? type TBD
-extern void *D_80046A5C;
+extern struct GObjCommon *D_80046A5C;
 extern struct GObjProcess *D_80046A60;
 extern OSMesgQueue gOMMq;
 extern u8 D_80046A88[1280];

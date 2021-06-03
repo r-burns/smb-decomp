@@ -1,6 +1,7 @@
 #ifndef SYS_GTL_H
 #define SYS_GTL_H
 
+#include "sys/ml.h"
 #include "sys/thread3.h"
 
 #include <PR/mbi.h>
@@ -59,6 +60,8 @@ union WeirdBytewise {
 };
 
 extern union WeirdBytewise D_8003B6E8;
+extern Gfx *D_800465B0[4];
+extern struct BumpAllocRegion D_800465E8;
 
 extern void func_800048D0(SCTaskGfxCallback arg0);
 extern void func_800048F8(Gfx **dl);

@@ -1645,6 +1645,7 @@ glabel func_80021B30
   /* 022F60 80022360 03E00008 */        jr $ra
   /* 022F64 80022364 27BD0090 */     addiu $sp, $sp, 0x90
 
+# struct GObjCommon *func_80022368(s32 link, u32 arg1, s32 arg2);
 glabel func_80022368
   /* 022F68 80022368 27BDFFC0 */     addiu $sp, $sp, -0x40
   /* 022F6C 8002236C AFBF003C */        sw $ra, 0x3c($sp)
@@ -2624,7 +2625,8 @@ glabel func_80023024
   /* 023D4C 8002314C 03E00008 */        jr $ra
   /* 023D50 80023150 27BD0150 */     addiu $sp, $sp, 0x150
 
-glabel func_80023154
+# void crash_printf(const char *fmt, ...);
+glabel crash_printf
   /* 023D54 80023154 27BDFFE0 */     addiu $sp, $sp, -0x20
   /* 023D58 80023158 AFA50024 */        sw $a1, 0x24($sp)
   /* 023D5C 8002315C 03A02825 */        or $a1, $sp, $zero

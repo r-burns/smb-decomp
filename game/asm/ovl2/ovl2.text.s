@@ -265,6 +265,7 @@ glabel func_ovl2_800D6738
   /* 051FD4 800D67D4 03E00008 */        jr $ra
   /* 051FD8 800D67D8 00000000 */       nop 
 
+glabel func_ovl2_800D67DC
   /* 051FDC 800D67DC 27BDFFA0 */     addiu $sp, $sp, -0x60
   /* 051FE0 800D67E0 AFB20020 */        sw $s2, 0x20($sp)
   /* 051FE4 800D67E4 3C12800A */       lui $s2, %hi(D_800A4AD0)
@@ -815,6 +816,7 @@ glabel func_ovl2_800D6738
   /* 0527DC 800D6FDC 00000000 */       nop 
 
 # Likely start of new file
+glabel func_ovl2_800D6FE0
   /* 0527E0 800D6FE0 27BDFF80 */     addiu $sp, $sp, -0x80
   /* 0527E4 800D6FE4 3C0E001B */       lui $t6, %hi(D_NF_001AC870)
   /* 0527E8 800D6FE8 3C0F0000 */       lui $t7, %hi(D_NF_00000854)
