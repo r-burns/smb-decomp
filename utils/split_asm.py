@@ -67,7 +67,7 @@ def write_split_files(nm_dir, c_out, routines):
             f.write(text)
             f.close()
 
-            cf.write(f'\n#ifdef NON_MATCHING\n#else\n#pragma GLOBAL_ASM("{nm_out}")\n#endif\n')
+            cf.write(f'\n#ifdef MIPS_TO_C\n#else\n#pragma GLOBAL_ASM("{nm_out}")\n#endif\n')
         
         cf.write('#pragma GCC diagnostic pop\n')
 

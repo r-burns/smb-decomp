@@ -25,6 +25,7 @@ struct VsRecordData {
     /* 0x2C */ struct RecordCharCombo combinations[SSB64_NUM_PLAYABLE_CHARACTERS];
 }; // size == 0x5C
 
+// is this the saved data structure?
 struct BigA44E0 {
     /* 0x000 */ struct VsRecordData vsRecords[SSB64_NUM_PLAYABLE_CHARACTERS];
     /* 0x450 */ u32 unk540[(0x5EC - 0x450) / 4];
