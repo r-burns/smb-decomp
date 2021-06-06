@@ -7487,7 +7487,7 @@ glabel func_ovl0_800CE418
   /* 049E74 800CE494 A4206448 */        sh $zero, %lo(D_ovl0_800D6448)($at)
   /* 049E78 800CE498 3C01800D */       lui $at, %hi(D_ovl0_800D644E)
   /* 049E7C 800CE49C A420644E */        sh $zero, %lo(D_ovl0_800D644E)($at)
-  /* 049E80 800CE4A0 0C002C66 */       jal func_8000B198
+  /* 049E80 800CE4A0 0C002C66 */       jal find_gobj_with_id
   /* 049E84 800CE4A4 2404FFFA */     addiu $a0, $zero, -6
   /* 049E88 800CE4A8 10400003 */      beqz $v0, .L800CE4B8
   /* 049E8C 800CE4AC 00000000 */       nop 

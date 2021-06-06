@@ -7,6 +7,7 @@
 #include "sys/gtl.h"
 #include "sys/om.h"
 #include "sys/system_00.h"
+#include "sys/system_03_1.h"
 #include "sys/system_04.h"
 #include "sys/system_05.h"
 #include "sys/system_10.h"
@@ -466,7 +467,7 @@ void func_800A26D8(struct UnkA26D8 *arg0) {
 }
 
 struct GObjCommon *func_800A2B18(s32 link, u32 arg1, s32 arg2) {
-    if (func_8000B198(0xEFFFFFFF) != NULL) { return NULL; }
+    if (find_gobj_with_id(0xEFFFFFFF) != NULL) { return NULL; }
 
     return func_8000B93C(0xEFFFFFFF, NULL, link, arg1, func_800A26D8, arg2, 0, 0, 0, 0, 0, 0, 0);
 }
@@ -475,14 +476,14 @@ struct GObjCommon *func_800A2B18(s32 link, u32 arg1, s32 arg2) {
 void unref_800A2BA8(s32 link, u32 arg1, s32 arg2) {
     struct GObjCommon *com;
 
-    com = func_8000B198(0xFFFFFFFE);
+    com = find_gobj_with_id(0xFFFFFFFE);
     if (com != NULL) {
         func_80009A84(com);
     } else {
         func_80022368(link, arg1, arg2);
     }
 
-    com = func_8000B198(0xEFFFFFFF);
+    com = find_gobj_with_id(0xEFFFFFFF);
     if (com != NULL) {
         func_80009A84(com);
     } else {

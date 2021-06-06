@@ -2,7 +2,7 @@
 
 #include "sys/gtl.h"
 #include "sys/rdp_reset.h"
-#include "sys/system_04.h"
+#include "sys/system_03_1.h"
 #include "sys/system_05.h"
 #include "sys/system_11.h"
 
@@ -794,7 +794,7 @@ void func_8000848C(struct GObjProcess *arg0) {
 
     if (arg0 == NULL || arg0 == D_80046A60) {
         D_80046A64 = 1;
-        if (D_80046A60->unk14 == 0) { func_8000B1E8(1); }
+        if (D_80046A60->unk14 == 0) { stop_current_process(1); }
         return;
     }
 

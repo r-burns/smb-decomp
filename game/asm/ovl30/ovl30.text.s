@@ -2225,7 +2225,7 @@ glabel func_ovl30_801339C4
   .L80133A48:
   /* 14F5B8 80133A48 46001506 */     mov.s $f20, $f2
   .L80133A4C:
-  /* 14F5BC 80133A4C 0C002C7A */       jal func_8000B1E8
+  /* 14F5BC 80133A4C 0C002C7A */       jal stop_current_process
   /* 14F5C0 80133A50 24040001 */     addiu $a0, $zero, 1
   /* 14F5C4 80133A54 1000FFEF */         b .L80133A14
   /* 14F5C8 80133A58 00000000 */       nop 

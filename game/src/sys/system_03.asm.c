@@ -2,6 +2,7 @@
 
 #include "sys/om.h"
 #include "sys/system_04.h"
+#include "sys/system_03_1.h"
 
 #include <macros.h>
 
@@ -24,17 +25,17 @@ s32 func_8000ACD0(struct GObjCommon *arg0, s32 arg1, struct GObjCommon *arg2) {
     return 0;
 }
 
-s32 func_8000AD38(struct GObjCommon *arg0, struct MaybeCommonLink *arg1) {
-    return func_8000ACD0(arg0, arg1->unk04, arg1->unk00);
+struct GObjCommon *func_8000AD38(struct GObjCommon *obj, void *link) {
+    return (struct GObjCommon *)func_8000ACD0(obj, ((struct MaybeCommonLink *)link)->unk04, ((struct MaybeCommonLink *)link)->unk00);
 }
 
-void unref_8000AD60(s32 arg0, s32 arg1, struct GObjCommon *arg2) {
+void unref_8000AD60(s32 idx, s32 arg1, struct GObjCommon *arg2) {
     struct MaybeCommonLink link;
 
     link.unk00 = arg2 != NULL ? arg2 : D_80046A54;
     link.unk04 = arg1;
 
-    func_8000AFE4(arg0, func_8000AD38, &link, 0);
+    func_8000AFE4(idx, func_8000AD38, &link, 0);
 }
 
 #ifdef NON_MATCHING
