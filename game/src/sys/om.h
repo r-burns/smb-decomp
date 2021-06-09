@@ -93,6 +93,16 @@ struct Mtx3Float {
     /* 0x04 */ f32 f[3];
 }; // size == 0x10
 
+// this is a guess, it could be something else
+struct Vec3i {
+    s32 x, y, z;
+};
+
+struct Mtx3Int {
+    /* 0x00 */ struct OMMtx *mtx;
+    /* 0x04 */ struct Vec3i v;
+}; // size == 0x10
+
 struct Mtx4Float {
     /* 0x00 */ struct OMMtx *mtx;
     /* 0x04 */ f32 f[4];
@@ -113,9 +123,9 @@ struct Mtx3x3Float {
     f32 array[3][3];
 }; // size == 0x28;
 
-/// This stores up to 3 `Mtx3Float` and/or `Mtx4Float` structures in the VLA data
+/// This stores up to 3 `Mtx3Int`/`Mtx3Float`/`Mtx4Float` structures in the VLA data
 /// based on the kind id in the `kinds` arrays:
-/// Kind 1 - `struct Mtx3Float`
+/// Kind 1 - `struct Mtx3Int`
 /// Kind 2 - `struct Mtx4Float`
 /// Kind 3 - `struct Mtx3Float`
 struct DObjDynamicStore {
@@ -130,7 +140,7 @@ struct DObj {
     /* 0x0C */ struct DObj *unkC;
     /* 0x10 */ struct DObj *unk10;
     /* 0x14 */ uintptr_t unk14; //< `1` or `struct DObj *`
-    /* 0x18 */ struct Mtx3Float unk18;
+    /* 0x18 */ struct Mtx3Int unk18;
     /* 0x28 */ struct Mtx4Float unk28;
     /* 0x3C */ struct Mtx3Float unk3C;
     /* 0x4C */ struct DObjDynamicStore *unk4C;
@@ -279,7 +289,7 @@ extern s32 D_8003B874;
 extern struct Mtx6Float D_8003B878;
 extern struct Mtx7Float D_8003B894;
 extern struct Mtx3x3Float D_8003B8B4;
-extern struct Mtx3Float D_8003B8DC;
+extern struct Mtx3Int D_8003B8DC;
 extern struct Mtx4Float D_8003B900;
 extern struct Mtx3Float D_8003B914;
 

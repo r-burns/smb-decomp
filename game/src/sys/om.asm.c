@@ -40,7 +40,7 @@ struct Mtx7Float D_8003B894 = {NULL, {-160.0, 160.0, -120.0, 120.0, 100.0, 12800
 
 struct Mtx3x3Float D_8003B8B4 = {NULL, {{0.0, 0.0, 1500.0}, {0.0, 0.0, 0.0}, {0.0, 1.0, 0.0}}};
 
-struct Mtx3Float D_8003B8DC = {NULL, {0.0, 0.0, 0.0}};
+struct Mtx3Int D_8003B8DC = {NULL, {0.0, 0.0, 0.0}};
 
 struct Mtx4Float D_8003B8EC = {NULL, {0.0, 0.0, 0.0, 1.0}};
 
@@ -827,7 +827,7 @@ struct OMMtx *func_8000855C(struct DObj *arg0, u8 arg1, u8 arg2, s32 arg3);
 // nonmatching: closer than it has any right to be, but the "wtf" loop is still way off
 struct OMMtx *func_8000855C(struct DObj *arg0, u8 arg1, u8 arg2, s32 arg3) {
     uintptr_t csr;        // v1
-    struct Mtx3Float *t2; // sp28
+    struct Mtx3Int *t2;   // sp28
     struct Mtx4Float *t1; // sp24
     struct Mtx3Float *t4; // sp20
     s32 i;                // a0
@@ -846,7 +846,7 @@ struct OMMtx *func_8000855C(struct DObj *arg0, u8 arg1, u8 arg2, s32 arg3) {
                 case 0: break;
                 case 1:
                     t2 = (void *)csr;
-                    csr += sizeof(struct Mtx3Float);
+                    csr += sizeof(struct Mtx3Int);
                     break;
                 case 2:
                     t1 = (void *)csr;

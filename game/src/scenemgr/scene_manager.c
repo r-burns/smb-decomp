@@ -20,14 +20,6 @@
 #include <PR/mbi.h>
 #include <PR/ultratypes.h>
 
-// types
-
-// what is this struct? is it just `struct GObjCommon`?
-struct UnkA26D8 {
-    /* 0x00 */ u8 pad00[0x74 - 0];
-    /* 0x74 */ void *unk74;
-}; // size >= 0x78
-
 // bss
 u8 D_800A44D0[16];
 struct BigA44E0 D_800A44E0;
@@ -420,7 +412,7 @@ void func_800A26B8(void) {
     func_8000A340();
 }
 
-void func_800A26D8(struct UnkA26D8 *arg0) {
+void func_800A26D8(struct GObjCommon *arg0) {
     s32 width; // sp74
     UNUSED s32 spPad70;
     s32 barY = 203; // sp6C
