@@ -1,6 +1,10 @@
 #ifndef SSB_C_MACROS_H
 #define SSB_C_MACROS_H
 
+/// Floating Point Constants
+#define FLOAT_MAX     3.4028235e38
+#define FLOAT_NEG_MAX -FLOAT_MAX
+
 /// Count the number of elements in a static array
 #define ARRAY_COUNT(arr) (s32)(sizeof(arr) / sizeof(arr[0]))
 

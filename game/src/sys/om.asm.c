@@ -8,14 +8,11 @@
 
 #include <ssb_types.h>
 #include <stddef.h>
+#include <macros.h>
 
 #include <PR/mbi.h>
 #include <PR/os.h>
 #include <PR/ultratypes.h>
-
-// todo: some sort of system header?
-#define FLOAT_MAX     3.4028235e38
-#define FLOAT_NEG_MAX -FLOAT_MAX
 
 // TODOs:
 // permutter on alloc_om_ etc functions
@@ -1139,7 +1136,8 @@ struct AObj *func_80008E78(struct OMAnimation *anim, u8 index) {
     return aobj;
 }
 
-void func_80008EE4(struct OMAnimation *arg0) {
+// this could take an OMAnimation, if that structure has a DObj at the start
+void func_80008EE4(struct DObj *arg0) {
     struct AObj *curr;
     struct AObj *origNext;
 

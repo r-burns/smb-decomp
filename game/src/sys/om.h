@@ -173,6 +173,7 @@ struct AObj {
 }; // size == 0x24
 
 struct OMAnimation {
+    // does this start with a DObj (to 0x88)?
     /* 0x00 */ u8 pad00[0x6C - 0];
     /* 0x6C */ struct AObj *unk6C;
     /* 0x70 */ u8 pad70[0x74 - 0x70];
@@ -313,7 +314,7 @@ extern void func_8000848C(struct GObjProcess *);
 extern void func_80008CC0(struct DObj *, u8, u8);
 extern struct OMMtx *func_80008CF0(struct OMCamera *, u8, u8);
 extern struct AObj *func_80008E78(struct OMAnimation *anim, u8 index);
-extern void func_80008EE4(struct OMAnimation *);
+extern void func_80008EE4(struct DObj *);
 extern struct AObj *func_80008F44(struct OMAnimation *anim, u8 index);
 extern void func_80008FB0(struct OMAnimation *);
 extern struct AObj *func_80009010(struct OMAnimation *anim, u8 index);
