@@ -88,19 +88,29 @@ struct OMMtx {
     /* 0x0C */ u8 pad0C[0x48 - 0xc];
 }; // size == 0x48
 
-struct Mtx3Float {
-    /* 0x00 */ struct OMMtx *mtx;
-    /* 0x04 */ f32 f[3];
-}; // size == 0x10
-
 // this is a guess, it could be something else
 struct Vec3i {
     s32 x, y, z;
 };
 
+struct Vec3f {
+    f32 x, y, z;
+};
+
+struct Mtx3Float {
+    /* 0x00 */ struct OMMtx *mtx;
+    /* 0x04 */ struct Vec3f v;
+}; // size == 0x10
+
 struct Mtx3Int {
     /* 0x00 */ struct OMMtx *mtx;
     /* 0x04 */ struct Vec3i v;
+}; // size == 0x10
+
+// or are the 3-vecs a union?
+union Mtx3fi {
+    struct Mtx3Float f;
+    struct Mtx3Int i;
 }; // size == 0x10
 
 struct Mtx4Float {
@@ -125,7 +135,7 @@ struct Mtx3x3Float {
 
 /// This stores up to 3 `Mtx3Int`/`Mtx3Float`/`Mtx4Float` structures in the VLA data
 /// based on the kind id in the `kinds` arrays:
-/// Kind 1 - `struct Mtx3Int`
+/// Kind 1 - `struct Mtx3Int` or `union Mtx3fi`
 /// Kind 2 - `struct Mtx4Float`
 /// Kind 3 - `struct Mtx3Float`
 struct DObjDynamicStore {
@@ -140,19 +150,22 @@ struct DObj {
     /* 0x0C */ struct DObj *unkC;
     /* 0x10 */ struct DObj *unk10;
     /* 0x14 */ uintptr_t unk14; //< `1` or `struct DObj *`
-    /* 0x18 */ struct Mtx3Int unk18;
+    /* 0x18 */ union Mtx3fi unk18;
     /* 0x28 */ struct Mtx4Float unk28;
     /* 0x3C */ struct Mtx3Float unk3C;
     /* 0x4C */ struct DObjDynamicStore *unk4C;
     /* 0x50 */ s32 unk50;
+    // is this a union? WeirdBytewise...?
     /* 0x54 */ u8 unk54;
     /* 0x55 */ u8 unk55;
     /* 0x56 */ u8 unk56;
     /* 0x57 */ u8 unk57;
     /* 0x58 */ struct OMMtx *unk58[5];
     /* 0x6C */ struct AObj *unk6C;
-    /* 0x70 */ u32 unk70;
-    /* 0x74 */ f32 unk74;
+    // some sort of union struct for the animation `union {u32 u; f32 f;}`?
+    /* 0x70 */ u32 *unk70;
+    // Vec3fi?
+    /* 0x74 */ f32 unk74; // scale? only in OMAnimation
     /* 0x78 */ f32 unk78;
     /* 0x7C */ f32 unk7C;
     /* 0x80 */ struct MObj *unk80;
@@ -172,17 +185,23 @@ struct AObj {
     /* 0x20 */ s32 unk20;
 }; // size == 0x24
 
+// how is this struct related to DObj? 
 struct OMAnimation {
+    /* 0x00 */ struct DObj dobj;
     // does this start with a DObj (to 0x88)?
-    /* 0x00 */ u8 pad00[0x6C - 0];
-    /* 0x6C */ struct AObj *unk6C;
-    /* 0x70 */ u8 pad70[0x74 - 0x70];
-    /* 0x74 */ f32 unk74;
-    /* 0x78 */ u8 pad78[0x90 - 0x78];
+    // /* 0x00 */ u8 pad00[0x6C - 0];
+    // /* 0x6C */ struct AObj *unk6C;
+    // /* 0x70 */ u8 pad70[0x74 - 0x70];
+    // /* 0x74 */ f32 unk74; // scale?
+    // /* 0x78 */ u8 pad78[0x90 - 0x78];
+    /* 0x88 */ u8 pad88[8];
     /* 0x90 */ struct AObj *unk90;
-    /* 0x94 */ u32 pad94;
+    // is this another pointer to the animation union?
+    /* 0x94 */ u32 *unk94;
     /* 0x98 */ f32 unk98;
-}; // size >= 0x9C
+    /* 0x9C */ f32 unk9C;
+    /* 0xA0 */ f32 unkA0;
+}; // size >= 0xA4
 
 // texture scroll? (from K64)
 struct MObjSub {
@@ -290,7 +309,7 @@ extern s32 D_8003B874;
 extern struct Mtx6Float D_8003B878;
 extern struct Mtx7Float D_8003B894;
 extern struct Mtx3x3Float D_8003B8B4;
-extern struct Mtx3Int D_8003B8DC;
+extern union Mtx3fi D_8003B8DC;
 extern struct Mtx4Float D_8003B900;
 extern struct Mtx3Float D_8003B914;
 

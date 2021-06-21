@@ -37,7 +37,7 @@ struct Mtx7Float D_8003B894 = {NULL, {-160.0, 160.0, -120.0, 120.0, 100.0, 12800
 
 struct Mtx3x3Float D_8003B8B4 = {NULL, {{0.0, 0.0, 1500.0}, {0.0, 0.0, 0.0}, {0.0, 1.0, 0.0}}};
 
-struct Mtx3Int D_8003B8DC = {NULL, {0.0, 0.0, 0.0}};
+union Mtx3fi D_8003B8DC = {{NULL, {0.0, 0.0, 0.0}}};
 
 struct Mtx4Float D_8003B8EC = {NULL, {0.0, 0.0, 0.0, 1.0}};
 
@@ -548,8 +548,8 @@ struct AObj *func_80007E04(void) {
 #endif
 
 void func_80007E80(struct OMAnimation *arg0, struct AObj *arg1) {
-    arg1->next  = arg0->unk6C;
-    arg0->unk6C = arg1;
+    arg1->next  = arg0->dobj.unk6C;
+    arg0->dobj.unk6C = arg1;
 }
 
 void func_80007E90(struct OMAnimation *arg0, struct AObj *arg1) {
@@ -560,8 +560,8 @@ void func_80007E90(struct OMAnimation *arg0, struct AObj *arg1) {
 // `arg0` might not be an `OMAnimation`, as this function is an exact
 // copy of `func_80007E80`
 void func_80007EA0(struct OMAnimation *arg0, struct AObj *arg1) {
-    arg1->next  = arg0->unk6C;
-    arg0->unk6C = arg1;
+    arg1->next  = arg0->dobj.unk6C;
+    arg0->dobj.unk6C = arg1;
 }
 
 void func_80007EB0(struct AObj *a) {
@@ -824,7 +824,7 @@ struct OMMtx *func_8000855C(struct DObj *arg0, u8 arg1, u8 arg2, s32 arg3);
 // nonmatching: closer than it has any right to be, but the "wtf" loop is still way off
 struct OMMtx *func_8000855C(struct DObj *arg0, u8 arg1, u8 arg2, s32 arg3) {
     uintptr_t csr;        // v1
-    struct Mtx3Int *t2;   // sp28
+    union Mtx3fi *t2;   // sp28
     struct Mtx4Float *t1; // sp24
     struct Mtx3Float *t4; // sp20
     s32 i;                // a0
@@ -843,7 +843,7 @@ struct OMMtx *func_8000855C(struct DObj *arg0, u8 arg1, u8 arg2, s32 arg3) {
                 case 0: break;
                 case 1:
                     t2 = (void *)csr;
-                    csr += sizeof(struct Mtx3Int);
+                    csr += sizeof(union Mtx3fi);
                     break;
                 case 2:
                     t1 = (void *)csr;
@@ -882,7 +882,7 @@ struct OMMtx *func_8000855C(struct DObj *arg0, u8 arg1, u8 arg2, s32 arg3) {
         {
             // L800086D0
             arg0->unk18     = D_8003B8DC;
-            arg0->unk18.mtx = mtx;
+            arg0->unk18.f.mtx = mtx;
             break;
         }
         case 19:
@@ -899,7 +899,7 @@ struct OMMtx *func_8000855C(struct DObj *arg0, u8 arg1, u8 arg2, s32 arg3) {
             // L80008738
             arg0->unk18     = D_8003B8DC;
             arg0->unk28     = D_8003B8EC;
-            arg0->unk18.mtx = mtx;
+            arg0->unk18.f.mtx = mtx;
             arg0->unk28.mtx = mtx;
             break;
         }
@@ -921,7 +921,7 @@ struct OMMtx *func_8000855C(struct DObj *arg0, u8 arg1, u8 arg2, s32 arg3) {
             // L800087D4
             arg0->unk18     = D_8003B8DC;
             arg0->unk28     = D_8003B900;
-            arg0->unk18.mtx = mtx;
+            arg0->unk18.f.mtx = mtx;
             arg0->unk28.mtx = mtx;
             break;
         }
@@ -931,7 +931,7 @@ struct OMMtx *func_8000855C(struct DObj *arg0, u8 arg1, u8 arg2, s32 arg3) {
             arg0->unk18     = D_8003B8DC;
             arg0->unk28     = D_8003B8EC;
             arg0->unk3C     = D_8003B914;
-            arg0->unk18.mtx = mtx;
+            arg0->unk18.f.mtx = mtx;
             arg0->unk28.mtx = mtx;
             arg0->unk3C.mtx = mtx;
             break;
@@ -944,7 +944,7 @@ struct OMMtx *func_8000855C(struct DObj *arg0, u8 arg1, u8 arg2, s32 arg3) {
             arg0->unk18     = D_8003B8DC;
             arg0->unk28     = D_8003B900;
             arg0->unk3C     = D_8003B914;
-            arg0->unk18.mtx = mtx;
+            arg0->unk18.f.mtx = mtx;
             arg0->unk28.mtx = mtx;
             arg0->unk3C.mtx = mtx;
             break;
@@ -977,7 +977,7 @@ struct OMMtx *func_8000855C(struct DObj *arg0, u8 arg1, u8 arg2, s32 arg3) {
         {
             // L800089EC
             *t2     = D_8003B8DC;
-            t2->mtx = mtx;
+            t2->f.mtx = mtx;
             break;
         }
         case 57:
@@ -1006,7 +1006,7 @@ struct OMMtx *func_8000855C(struct DObj *arg0, u8 arg1, u8 arg2, s32 arg3) {
             // L80008ABC
             *t2     = D_8003B8DC;
             *t1     = D_8003B8EC;
-            t2->mtx = mtx;
+            t2->f.mtx = mtx;
             t1->mtx = mtx;
             break;
         }
@@ -1016,7 +1016,7 @@ struct OMMtx *func_8000855C(struct DObj *arg0, u8 arg1, u8 arg2, s32 arg3) {
             *t2     = D_8003B8DC;
             *t1     = D_8003B8EC;
             *t4     = D_8003B914;
-            t2->mtx = mtx;
+            t2->f.mtx = mtx;
             t1->mtx = mtx;
             t4->mtx = mtx;
             break;
@@ -1026,7 +1026,7 @@ struct OMMtx *func_8000855C(struct DObj *arg0, u8 arg1, u8 arg2, s32 arg3) {
             // L80008BB0
             *t2     = D_8003B8DC;
             *t1     = D_8003B900;
-            t2->mtx = mtx;
+            t2->f.mtx = mtx;
             t1->mtx = mtx;
             break;
         }
@@ -1036,7 +1036,7 @@ struct OMMtx *func_8000855C(struct DObj *arg0, u8 arg1, u8 arg2, s32 arg3) {
             *t2     = D_8003B8DC;
             *t1     = D_8003B900;
             *t4     = D_8003B914;
-            t2->mtx = mtx;
+            t2->f.mtx = mtx;
             t1->mtx = mtx;
             t4->mtx = mtx;
             break;
@@ -1205,14 +1205,14 @@ void unref_8000907C(struct OMAnimation *arg0) {
     struct AObj *curr;
     struct AObj *origNext;
 
-    curr = arg0->unk6C;
+    curr = arg0->dobj.unk6C;
     while (curr != NULL) {
         origNext = curr->next;
         func_80007EB0(curr);
         curr = origNext;
     }
-    arg0->unk6C = NULL;
-    arg0->unk74 = FLOAT_NEG_MAX;
+    arg0->dobj.unk6C = NULL;
+    arg0->dobj.unk74 = FLOAT_NEG_MAX;
 }
 
 #ifdef NON_MATCHING
@@ -1291,7 +1291,7 @@ void func_8000926C(struct DObj *arg0) {
     arg0->unk58[0] = NULL;
     for (; i < 5; i++) { arg0->unk58[i] = NULL; }
     arg0->unk6C = NULL;
-    arg0->unk70 = 0;
+    arg0->unk70 = NULL;
     arg0->unk74 = FLOAT_NEG_MAX;
     arg0->unk78 = 1.0;
     arg0->unk7C = 0.0;

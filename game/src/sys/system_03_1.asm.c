@@ -298,7 +298,7 @@ void unref_8000B618(struct GObjCommon *arg0, struct MaybeDObjChain *arg1, struct
             dobj     = func_8000B4F8(arg0, arg1->unk04);
             store[0] = dobj;
         }
-        dobj->unk18.v = arg1->v;
+        dobj->unk18.i.v = arg1->v;
 
         if (arg2 != NULL) {
             *arg2 = dobj;

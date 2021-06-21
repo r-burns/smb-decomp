@@ -85,7 +85,7 @@ glabel func_8000CCBC
   /* 00D984 8000CD84 C6020008 */      lwc1 $f2, 8($s0)
   /* 00D988 8000CD88 10000035 */         b .L8000CE60
   /* 00D98C 8000CD8C 92080004 */       lbu $t0, 4($s0)
-  .L8000CD90:
+  .L8000CD90: #2
   /* 00D990 8000CD90 C608000C */      lwc1 $f8, 0xc($s0)
   /* 00D994 8000CD94 C60A0018 */      lwc1 $f10, 0x18($s0)
   /* 00D998 8000CD98 C6060010 */      lwc1 $f6, 0x10($s0)
@@ -93,7 +93,7 @@ glabel func_8000CCBC
   /* 00D9A0 8000CDA0 1000002E */         b .L8000CE5C
   /* 00D9A4 8000CDA4 46043680 */     add.s $f26, $f6, $f4
   /* 00D9A8 8000CDA8 C6020008 */      lwc1 $f2, 8($s0)
-  .L8000CDAC:
+  .L8000CDAC: #3
   /* 00D9AC 8000CDAC C600000C */      lwc1 $f0, 0xc($s0)
   /* 00D9B0 8000CDB0 3C014040 */       lui $at, (0x40400000 >> 16) # 3.0
   /* 00D9B4 8000CDB4 46021402 */     mul.s $f16, $f2, $f2
@@ -129,7 +129,7 @@ glabel func_8000CCBC
   /* 00DA2C 8000CE2C 46183282 */     mul.s $f10, $f6, $f24
   /* 00DA30 8000CE30 1000000A */         b .L8000CE5C
   /* 00DA34 8000CE34 460A4680 */     add.s $f26, $f8, $f10
-  .L8000CE38:
+  .L8000CE38: #1
   /* 00DA38 8000CE38 C604000C */      lwc1 $f4, 0xc($s0)
   /* 00DA3C 8000CE3C C6060008 */      lwc1 $f6, 8($s0)
   /* 00DA40 8000CE40 4604303E */    c.le.s $f6, $f4
@@ -141,7 +141,7 @@ glabel func_8000CCBC
   /* 00DA58 8000CE58 C61A0010 */      lwc1 $f26, 0x10($s0)
   .L8000CE5C:
   /* 00DA5C 8000CE5C 92080004 */       lbu $t0, 4($s0)
-  .L8000CE60:
+  .L8000CE60: # break
   /* 00DA60 8000CE60 2509FFFF */     addiu $t1, $t0, -1
   /* 00DA64 8000CE64 2D21000A */     sltiu $at, $t1, 0xa
   /* 00DA68 8000CE68 10200028 */      beqz $at, .L8000CF0C
