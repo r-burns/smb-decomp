@@ -775,7 +775,7 @@ int wrapper_fprintf(uint8_t *mem, uint32_t fp_addr, uint32_t format_addr, uint32
         }
         ++pos;
         // after a '%'
-        bool finished_format = FALSE;
+        bool finished_format = false;
         while (!finished_format) {
             ch = MEM_S8(pos);
             //fprintf(stdout, "At '%c' in \"%s\"\n", ch, format);
@@ -787,7 +787,7 @@ int wrapper_fprintf(uint8_t *mem, uint32_t fp_addr, uint32_t format_addr, uint32
                     return ret;
                 }
                 ++ret;
-                finished_format = TRUE;
+                finished_format = true;
                 break;
             }
             case 's':
@@ -801,7 +801,7 @@ int wrapper_fprintf(uint8_t *mem, uint32_t fp_addr, uint32_t format_addr, uint32
                 }
                 sp += 4;
                 ++ret;
-                finished_format = TRUE;
+                finished_format = true;
                 break;
             }
             case 'i':
@@ -819,7 +819,7 @@ int wrapper_fprintf(uint8_t *mem, uint32_t fp_addr, uint32_t format_addr, uint32
                 }
                 sp += 4;
                 ++ret;
-                finished_format = TRUE;
+                finished_format = true;
                 memset(requested_format, '\0', sizeof(requested_format));
                 rf_pos = 0;
                 break;
@@ -838,7 +838,7 @@ int wrapper_fprintf(uint8_t *mem, uint32_t fp_addr, uint32_t format_addr, uint32
                 }
                 sp += 4;
                 ++ret;
-                finished_format = TRUE;
+                finished_format = true;
                 memset(requested_format, '\0', sizeof(requested_format));
                 rf_pos = 0;
                 break;
