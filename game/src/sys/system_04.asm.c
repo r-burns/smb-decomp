@@ -571,13 +571,8 @@ f32 func_8000CC40(struct AObj *aobj) {
 // first arg could be to either the float or int 3mtx, or maybe a union type pointer?
 extern func_8001E530(struct Vec3f *, s32, f32);
 
-void func_8000CCBC(struct OMAnimation *anim);
-#ifdef NONMATCHING
-#define FLOAT_MAYBE_SCALE_MIN -1.1342745e38f
 
-// nonmatching: the first switch statement has its case values put into saved
-//              regs instead of doing a simple comparsion. 
-//              Also, `anim` is saved when it should not be
+#define FLOAT_MAYBE_SCALE_MIN -1.1342745e38f
 void func_8000CCBC(struct OMAnimation *anim) {
     f32 f26; // sp54
     struct AObj *aobj;
@@ -613,6 +608,7 @@ void func_8000CCBC(struct OMAnimation *anim) {
                     case 1:
                         f26 = aobj->unk08 <= aobj->unk0C ? aobj->unk14 : aobj->unk10;
                         break;
+                    default: {}
                     }
 
                     // L8000CE5C L8000CE60
@@ -667,9 +663,6 @@ void func_8000CCBC(struct OMAnimation *anim) {
     }
     // L8000CF48
 }
-#else
-#pragma GLOBAL_ASM("game/nonmatching/system_04/func_8000CCBC.s")
-#endif
 
 #ifdef MIPS_TO_C
 // does this take an MObj *?
