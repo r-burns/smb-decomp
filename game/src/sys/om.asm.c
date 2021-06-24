@@ -547,9 +547,9 @@ struct AObj *func_80007E04(void) {
 #pragma GLOBAL_ASM("game/nonmatching/om/func_80007E04.s")
 #endif
 
-void func_80007E80(struct OMAnimation *arg0, struct AObj *arg1) {
-    arg1->next  = arg0->dobj.unk6C;
-    arg0->dobj.unk6C = arg1;
+void append_aobj_to_dobj(struct DObj *dobj, struct AObj *aobj) {
+    aobj->next  = dobj->unk6C;
+    dobj->unk6C = aobj;
 }
 
 void func_80007E90(struct OMAnimation *arg0, struct AObj *arg1) {
@@ -558,7 +558,7 @@ void func_80007E90(struct OMAnimation *arg0, struct AObj *arg1) {
 }
 
 // `arg0` might not be an `OMAnimation`, as this function is an exact
-// copy of `func_80007E80`
+// copy of `append_aobj_to_dobj`
 void func_80007EA0(struct OMAnimation *arg0, struct AObj *arg1) {
     arg1->next  = arg0->dobj.unk6C;
     arg0->dobj.unk6C = arg1;
@@ -1118,7 +1118,7 @@ struct OMMtx *func_80008CF0(struct OMCamera *arg0, u8 arg1, u8 arg2) {
     return mtx;
 }
 
-struct AObj *func_80008E78(struct OMAnimation *anim, u8 index) {
+struct AObj *create_aobj_for_dobj(struct DObj *dobj, u8 index) {
     struct AObj *aobj = func_80007E04();
 
     aobj->unk04 = index;
@@ -1131,7 +1131,7 @@ struct AObj *func_80008E78(struct OMAnimation *anim, u8 index) {
     aobj->unk0C = 0.0;
     aobj->unk08 = 1.0;
 
-    func_80007E80(anim, aobj);
+    append_aobj_to_dobj(dobj, aobj);
 
     return aobj;
 }
@@ -1556,7 +1556,7 @@ struct GObjCommon *om_g_add_common(u32 id, void (*arg1)(void), u8 link, u32 arg3
 
     com->unk0D = 65;
     com->unk78 = 0.0f;
-    com->unk80 = 0;
+    com->unk80 = NULL;
     com->unk84 = NULL;
 
     return com;

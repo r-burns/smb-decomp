@@ -77,7 +77,7 @@ void unref_8000BCBC(struct GObjCommon *arg0) {
 // Negation of VAX F_Float upper bound??
 #define LOWER_BOUND -1.7014117e38
 
-void func_8000BD1C(struct DObj *arg0, u32 *arg1, f32 arg2) {
+void func_8000BD1C(struct DObj *arg0, union AnimCmd *arg1, f32 arg2) {
     struct AObj *aobj = arg0->unk6C;
 
     while (aobj != NULL) {
@@ -101,7 +101,7 @@ void func_8000BD54(struct MObj *arg0, u32 arg1, f32 arg2) {
     arg0->unkA0 = arg2;
 }
 
-void func_8000BD8C(struct GObjCommon *arg0, u32 **arg1, f32 arg2) {
+void func_8000BD8C(struct GObjCommon *arg0, union AnimCmd **arg1, f32 arg2) {
     struct DObj *dobj;
     u8 s2 = 1;
 
@@ -148,7 +148,7 @@ void func_8000BE28(struct GObjCommon *arg0, u32 **arg1, f32 arg2) {
     }
 }
 
-void func_8000BED8(struct GObjCommon *arg0, u32 **arg1, u32 **arg2, f32 arg3) {
+void func_8000BED8(struct GObjCommon *arg0, union AnimCmd **arg1, u32 **arg2, f32 arg3) {
     struct DObj *dobj = arg0->unk74;
     struct MObj *mobj;
     u32 *ptr;
@@ -187,144 +187,321 @@ void func_8000BED8(struct GObjCommon *arg0, u32 **arg1, u32 **arg2, f32 arg3) {
 
 
 #define PROCESSED_DEFAULT -1.1342745e38
-void func_8000BFE8(struct OMAnimation *anim);
-#ifdef MIPS_TO_C
 // according to Kirby64, this is the animation processor
 // could be a struct DObj as well (what is the relationship between these two?)
-void func_8000BFE8(struct OMAnimation *anim) {
+void func_8000BFE8(struct DObj *dobj) {
     struct AObj *sp80[10];
-    s32 i;
     struct AObj *aobj;
+    s32 i;
+    u32 cmd;
+    u32 subcmd;
+    f32 payload;
 
-    if (anim->dobj.unk74 != FLOAT_NEG_MAX) {
-        if (anim->dobj.unk74 == LOWER_BOUND) {
-            anim->dobj.unk74 = -anim->dobj.unk7C;
+    if (dobj->unk74 != (f32)FLOAT_NEG_MAX) {
+        if (dobj->unk74 == (f32)LOWER_BOUND) {
+            dobj->unk74 = -dobj->unk7C;
         } else {
-            // L8000C080
+            dobj->unk74 -= dobj->unk78;
+            dobj->unk7C += dobj->unk78;
+            dobj->unk4->unk78 = dobj->unk7C;
 
-            anim->dobj.unk74 -= anim->dobj.unk7C;
-            anim->dobj.unk7C += anim->dobj.unk78;
-            anim->dobj.unk4->unk78 = anim->dobj.unk7C;
-
-            if (anim->dobj.unk74 > 0) { return; }
+            if (dobj->unk74 > 0.0f) { return; }
         }
-        // L8000C0B8
+        
         for (i = 0; i < ARRAY_COUNT(sp80); i++) {
             sp80[i] = NULL;
         }
-        // 8000C0D8
-        aobj = anim->dobj.unk6C;
+        
+        aobj = dobj->unk6C;
         while (aobj != NULL) {
-            if (aobj->unk04 > 0 && aobj->unk04 < ARRAY_COUNT(sp80)) {
+            if (aobj->unk04 > 0 && aobj->unk04 < ARRAY_COUNT(sp80) + 1) {
                 sp80[aobj->unk04 - 1] = aobj;
             }
             aobj = aobj->next;
         }
-        // L8000C110
+        
         do {
-            u32 cmd;
-            // L8000C11C
-            if (anim->dobj.unk70 == NULL) {
-                aobj = anim->dobj.unk6C;
+            if (dobj->unk70 == NULL) {
+                aobj = dobj->unk6C;
                 while (aobj != NULL) {
                     if (aobj->unk05) {
-                        aobj->unk0C += anim->dobj.unk78 + anim->dobj.unk74;
+                        aobj->unk0C += dobj->unk78 + dobj->unk74;
                     }
                     aobj = aobj->next;
                 }
-                anim->dobj.unk7C = anim->dobj.unk74;
-                anim->dobj.unk74 = PROCESSED_DEFAULT;
+                dobj->unk7C = dobj->unk74;
+                dobj->unk4->unk78 = dobj->unk74;
+                dobj->unk74 = PROCESSED_DEFAULT;
                 return;
             }
-            // L8000C184
-            cmd = *anim->dobj.unk70 >> 25;
+            
+            cmd = dobj->unk70->w >> 25;
             switch (cmd) {
             case 8:
             case 9:
             {
-                u32 subcmd;
-                s32 i;
-                f32 payload;
-
-                payload = (f32)(*anim->dobj.unk70 & 0x7FFF);
-                subcmd = (*anim->dobj.unk70 << 7) >> 22;
-                anim->dobj.unk70++;
+                payload = (f32)(dobj->unk70->w & 0x7FFF);
+                subcmd = (dobj->unk70++->w << 7) >> 22;
 
                 for (i = 0; i < ARRAY_COUNT(sp80); i++) {
                     if (subcmd == 0) { break; }
 
                     if (subcmd & 1) {
                         if (sp80[i] == NULL) {
-                            sp80[i] = func_80008E78(anim, i + 1);
+                            sp80[i] = create_aobj_for_dobj(dobj, i + 1);
                         }
 
                         sp80[i]->unk10 = sp80[i]->unk14;
-                        sp80[i]->unk14 = *(f32 *)(anim->dobj.unk70);
-                        anim->dobj.unk70++;
+                        sp80[i]->unk14 = dobj->unk70->f;
+                        dobj->unk70++;
                         sp80[i]->unk18 = sp80[i]->unk1C;
-                        sp80[i]->unk1C = 0;
+                        sp80[i]->unk1C = 0.0f;
                         sp80[i]->unk05 = 3;
-                        if (payload != 0) {
-                            sp80[i]->unk08 = 1.0 / payload;
+                        if (payload != 0.0f) {
+                            sp80[i]->unk08 = 1.0f / payload;
                         }
-                        sp80[i]->unk0C = -anim->dobj.unk74 - anim->dobj.unk78;
+                        sp80[i]->unk0C = -dobj->unk74 - dobj->unk78;
                     }
-                    // L8000C284
+                    subcmd >>= 1;
                 }
-                // L8000C290
+
                 if (cmd == 8) {
-                    anim->dobj.unk74 += payload;
+                    dobj->unk74 += payload;
                 }
                 break;
             }
             case 3:
             case 4:
             {
-                f32 payload;
-                u32 subcmd;
-                s32 i;
-
-                payload = (f32)(*anim->dobj.unk70 & 0x7FFF);
-                subcmd = (*anim->dobj.unk70 << 7) >> 22;
-                anim->dobj.unk70++;
+                payload = (f32)(dobj->unk70->w & 0x7FFF);
+                subcmd = (dobj->unk70++->w << 7) >> 22;
 
                 for (i = 0; i < ARRAY_COUNT(sp80); i++) {
-                    if (subcmd == 0 || !(subcmd & 1)) { break; }
+                    if (subcmd == 0) { break; }
 
-                    if (sp80[i] == NULL) {
-                        sp80[i] = func_80008E78(anim, i + 1);
+                    if (subcmd & 1) {
+
+                        if (sp80[i] == NULL) {
+                            sp80[i] = create_aobj_for_dobj(dobj, i + 1);
+                        }
+                        sp80[i]->unk10 = sp80[i]->unk14;
+                        sp80[i]->unk14 = dobj->unk70->f;
+                        dobj->unk70++;
+                        sp80[i]->unk05 = 2;
+                        if (payload != 0.0f) {
+                            sp80[i]->unk18 = (sp80[i]->unk14 - sp80[i]->unk10) / payload;
+                        }
+                        sp80[i]->unk0C = -dobj->unk74 - dobj->unk78;
+                        sp80[i]->unk1C = 0.0f;
                     }
-                    sp80[i]->unk10 = sp80[i]->unk14;
-                    sp80[i]->unk14 = *((f32 *)anim->dobj.unk70);
-                    anim->dobj.unk70++;
-                    sp80[i]->unk05 = 2;
-                    if (payload != 0) {
-                        sp80[i]->unk18 = (sp80[i]->unk14 - sp80[i]->unk10) / payload;
-                    }
-                    // L8000C36C
-                    sp80[i]->unk0C = -anim->dobj.unk74 - anim->dobj.unk78;
-                    //L8000C38C
+                    subcmd >>= 1;
                 }
-                // L8000C398
+                
                 if (cmd == 3) {
-                    anim->dobj.unk74 += payload;
+                    dobj->unk74 += payload;
                 }
                 break;
             }
+            case 5:
+            case 6:
+            {
+                payload = (f32)(dobj->unk70->w & 0x7FFF);
+                subcmd = (dobj->unk70++->w << 7) >> 22;
 
+                for (i = 0; i < ARRAY_COUNT(sp80); i++) {
+                    if (subcmd == 0) { break; }
 
+                    if (subcmd & 1) {
+                        if (sp80[i] == NULL) {
+                            sp80[i] = create_aobj_for_dobj(dobj, i + 1);
+                        }
 
+                        sp80[i]->unk10 = sp80[i]->unk14;
+                        sp80[i]->unk14 = dobj->unk70->f;
+                        dobj->unk70++;
+                        sp80[i]->unk18 = sp80[i]->unk1C;
+                        sp80[i]->unk1C = dobj->unk70->f;
+                        dobj->unk70++;
+                        sp80[i]->unk05 = 3;
+                        if (payload != 0.0f) {
+                            sp80[i]->unk08 = 1.0f / payload;
+                        }
+                        sp80[i]->unk0C = -dobj->unk74 - dobj->unk78;
+                    }
+
+                    subcmd >>= 1;
+                }
+                
+                if (cmd == 5) {
+                    dobj->unk74 += payload;
+                }
+                break;
             }
-            // L8000C9D8
+            case 7:
+            {
+                subcmd = (dobj->unk70++->w << 7) >> 22;
 
-        } while (anim->dobj.unk74 <= 0);
+                for (i = 0; i < ARRAY_COUNT(sp80); i++) {
+                    if (subcmd == 0) { break; }
+
+                    if (subcmd & 1) {
+                        if (sp80[i] == NULL) {
+                            sp80[i] = create_aobj_for_dobj(dobj, i + 1);
+                        }
+
+                        sp80[i]->unk1C = dobj->unk70->f;
+                        dobj->unk70++;
+                    }
+                    subcmd >>= 1;
+                }
+                break;
+            }
+            case 2:
+            {
+                dobj->unk74 += (f32)(dobj->unk70++->w & 0x7FFF);
+                break;
+            }
+            case 10:
+            case 11:
+            {
+                payload = (f32)(dobj->unk70->w & 0x7FFF);
+                subcmd = (dobj->unk70++->w << 7) >> 22;
+
+                for (i = 0; i < ARRAY_COUNT(sp80); i++) {
+                    if (subcmd == 0) { break; }
+
+                    if (subcmd & 1) {
+                        if (sp80[i] == NULL) {
+                            sp80[i] = create_aobj_for_dobj(dobj, i + 1);
+                        }
+
+                        sp80[i]->unk10 = sp80[i]->unk14;
+                        sp80[i]->unk14 = dobj->unk70->f;
+                        dobj->unk70++;
+                        sp80[i]->unk05 = 1;
+                        sp80[i]->unk08 = payload;
+                        sp80[i]->unk0C = -dobj->unk74 - dobj->unk78;
+                        sp80[i]->unk1C = 0.0f;
+                    }
+
+                    subcmd >>= 1;
+                }
+                
+                if (cmd == 10) {
+                    dobj->unk74 += payload;
+                }
+                break;
+            }
+            case 14:
+            {
+                dobj->unk70++;
+                dobj->unk70 = dobj->unk70->ptr;
+                dobj->unk7C = -dobj->unk74;
+                dobj->unk4->unk78 = -dobj->unk74;
+
+                if (dobj->unk55 != 0 && dobj->unk4->unk80 != NULL) {
+                    dobj->unk4->unk80(dobj, -2, 0);
+                }
+                break;
+            }
+            case 1:
+            {
+                dobj->unk70++;
+                dobj->unk70 = dobj->unk70->ptr;
+
+                if (dobj->unk55 != 0 && dobj->unk4->unk80 != NULL) {
+                    dobj->unk4->unk80(dobj, -2, 0);
+                }
+                break;
+            }
+            case 12:
+            {
+                payload = (f32)(dobj->unk70->w & 0x7FFF);
+                subcmd = (dobj->unk70++->w << 7) >> 22;
+
+                for (i = 0; i < ARRAY_COUNT(sp80); i++) {
+                    if (subcmd == 0) { break; }
+
+                    if (subcmd & 1) {
+                        if (sp80[i] == NULL) {
+                            sp80[i] = create_aobj_for_dobj(dobj, i + 1);
+                        }
+
+                        sp80[i]->unk0C += payload;
+                    }
+                    subcmd >>= 1;
+                }
+
+                break;
+            }
+            case 13:
+            {
+                dobj->unk70++;
+                if (sp80[3] == NULL) {
+                    sp80[3] = create_aobj_for_dobj(dobj, 3 + 1);
+                }
+                sp80[3]->unk20 = dobj->unk70->w;
+                dobj->unk70++;
+                break;
+            }
+            case 0:
+            {
+                aobj = dobj->unk6C;
+                while (aobj != NULL) {
+                    if (aobj->unk05 != 0) {
+                        aobj->unk0C += dobj->unk78 + dobj->unk74;
+                    }
+                    aobj = aobj->next;
+                }
+                dobj->unk7C = dobj->unk74;
+                dobj->unk4->unk78 = dobj->unk74;
+                dobj->unk74 = PROCESSED_DEFAULT;
+                if (dobj->unk55 != 0 && dobj->unk4->unk80 != NULL) { 
+                    dobj->unk4->unk80(dobj, -1, 0);
+                }
+                return; // not break
+            }
+            case 15:
+            {
+                dobj->unk54 = (dobj->unk70->w << 7) >> 22;
+                dobj->unk74 += (f32)(dobj->unk70++->w & 0x7FFF);
+                break;
+            }
+            case 16:
+            {
+                if (dobj->unk4->unk80 != NULL) {
+                    // only seems to match when spelled out...
+                    dobj->unk4->unk80(dobj, ((dobj->unk70->w << 7) >> 22) >> 8, ((dobj->unk70->w << 7) >> 22) & 0xFF);
+                }
+
+                dobj->unk74 += (f32)(dobj->unk70++->w & 0x7FFF);;
+                break;
+            }
+            case 17:
+            {
+                subcmd = (dobj->unk70->w << 7) >> 22;
+                dobj->unk74 += (f32)(dobj->unk70++->w & 0x7FFF);
+
+                for (i = 4; i < 14; i++) {
+                    if (subcmd == 0) { break; }
+
+                    if (subcmd & 1) {
+                        if (dobj->unk4->unk80 != NULL) {
+                            dobj->unk4->unk80(dobj, i, dobj->unk70->f);
+                        }
+                        dobj->unk70++;
+                        
+                    }
+                    subcmd >>= 1;
+                }
+                break;
+            }
+            // empty, but necessary
+            default: {}
+            }
+        } while (dobj->unk74 <= 0.0f);
     }
-    // L8000C9EC
-    // L8000C9F0
 }
-#else
-#pragma GLOBAL_ASM("game/nonmatching/system_04/func_8000BFE8.s")
-#endif
 
 #define SQUARE(x) ((x) * (x))
 #define CUBE(x) ((x) * (x) * (x))
@@ -495,6 +672,7 @@ void func_8000CCBC(struct OMAnimation *anim) {
 #endif
 
 #ifdef MIPS_TO_C
+// does this take an MObj *?
 void func_8000CF6C(struct OMAnimation *anim) {
     struct AObj *sp90[10];
     struct AObj *sp7C[5];

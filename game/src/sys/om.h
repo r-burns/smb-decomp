@@ -28,6 +28,9 @@ struct MaybeCommonLink {
     s32 unk04;
 }; // size == 8
 
+// forward dec
+struct DObj;
+
 struct GObjCommon {
     /* 0x00 */ u32 unk00; // id
     /* 0x04 */ struct GObjCommon *unk04;
@@ -59,7 +62,7 @@ struct GObjCommon {
     /* 0x74 */ void *unk74;
     /* 0x78 */ f32 unk78;
     /* 0x7C */ s32 unk7C;
-    /* 0x80 */ s32 unk80;
+    /* 0x80 */ void (*unk80)(struct DObj *, u32, f32);
     /* 0x84 */ void *unk84;
 }; // size >= 0x88
 
@@ -143,6 +146,12 @@ struct DObjDynamicStore {
     /* 0x04 */ u8 data[1];
 }; // size == 4 + VLA
 
+union AnimCmd {
+    u32 w;
+    f32 f;
+    void *ptr;
+};
+
 struct DObj {
     /* 0x00 */ struct DObj *unk0;
     /* 0x04 */ struct GObjCommon *unk4;
@@ -163,7 +172,7 @@ struct DObj {
     /* 0x58 */ struct OMMtx *unk58[5];
     /* 0x6C */ struct AObj *unk6C;
     // some sort of union struct for the animation `union {u32 u; f32 f;}`?
-    /* 0x70 */ u32 *unk70;
+    /* 0x70 */ union AnimCmd *unk70;
     // Vec3fi?
     /* 0x74 */ f32 unk74; // scale? only in OMAnimation
     /* 0x78 */ f32 unk78;
@@ -332,7 +341,7 @@ extern struct GObjProcess *func_80008188(struct GObjCommon *com, void *ptr, u8 k
 extern void func_8000848C(struct GObjProcess *);
 extern void func_80008CC0(struct DObj *, u8, u8);
 extern struct OMMtx *func_80008CF0(struct OMCamera *, u8, u8);
-extern struct AObj *func_80008E78(struct OMAnimation *anim, u8 index);
+extern struct AObj *create_aobj_for_dobj(struct DObj *dobj, u8 index);
 extern void func_80008EE4(struct DObj *);
 extern struct AObj *func_80008F44(struct OMAnimation *anim, u8 index);
 extern void func_80008FB0(struct OMAnimation *);
