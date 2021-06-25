@@ -20,7 +20,7 @@ glabel jtbl_8003DEE4
   /* 3DB04 03EB04 8003DF04 */  .word L8000DD2C
   /* 3DB08 03EB08 8003DF08 */  .word L8000DD34
 
-glabel D_8003DF0C
+glabel jtbl_8003DF0C
   /* 3DB0C 03EB0C 8003DF0C */  .word L8000DEAC
   /* 3DB10 03EB10 8003DF10 */  .word L8000DEB8
   /* 3DB14 03EB14 8003DF14 */  .word L8000DEC4
@@ -346,9 +346,9 @@ glabel func_8000DA40
   /* 00EA8C 8000DE8C 2DA10005 */     sltiu $at, $t5, 5
   /* 00EA90 8000DE90 10200014 */      beqz $at, .L8000DEE4
   /* 00EA94 8000DE94 000D6880 */       sll $t5, $t5, 2
-  /* 00EA98 8000DE98 3C018004 */       lui $at, %hi(D_8003DF0C)
+  /* 00EA98 8000DE98 3C018004 */       lui $at, %hi(jtbl_8003DF0C)
   /* 00EA9C 8000DE9C 002D0821 */      addu $at, $at, $t5
-  /* 00EAA0 8000DEA0 8C2DDF0C */        lw $t5, %lo(D_8003DF0C)($at)
+  /* 00EAA0 8000DEA0 8C2DDF0C */        lw $t5, %lo(jtbl_8003DF0C)($at)
   /* 00EAA4 8000DEA4 01A00008 */        jr $t5
   /* 00EAA8 8000DEA8 00000000 */       nop 
   glabel L8000DEAC

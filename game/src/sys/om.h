@@ -171,7 +171,6 @@ struct DObj {
     /* 0x57 */ u8 unk57;
     /* 0x58 */ struct OMMtx *unk58[5];
     /* 0x6C */ struct AObj *unk6C;
-    // some sort of union struct for the animation `union {u32 u; f32 f;}`?
     /* 0x70 */ union AnimCmd *unk70;
     // Vec3fi?
     /* 0x74 */ f32 unk74; // scale? only in OMAnimation
@@ -191,6 +190,7 @@ struct AObj {
     /* 0x14 */ f32 unk14;
     /* 0x18 */ f32 unk18;
     /* 0x1C */ f32 unk1C;
+    // s16 *? struct *?
     /* 0x20 */ s32 unk20;
 }; // size == 0x24
 
@@ -221,9 +221,15 @@ struct MObjSub {
     /* 0x20 */ u32 pad20;
     /* 0x24 */ f32 unk24;
     /* 0x28 */ f32 unk28;
-    /* 0x2C */ u8 pad2C[0x54 - 0x2C];
+    /* 0x2C */ u8 pad2C[0x4C - 0x2C];
+    /* 0x4C */ u32 unk4C;
+    /* 0x50 */ u8 pad50[0x54 - 0x50];
     /* 0x54 */ u8 unk54;
-    /* 0x58 */ u8 pad58[0x78 - 0x58];
+    /* 0x58 */ u8 pad58[0x68 - 0x58];
+    /* 0x68 */ s32 unk68;
+    /* 0x6C */ s32 unk6C;
+    /* 0x70 */ s32 unk70;
+    /* 0x74 */ s32 unk74;
 }; // size == 0x78
 
 struct MObj {
@@ -236,7 +242,7 @@ struct MObj {
     /* 0x88 */ f32 unk88;
     /* 0x8C */ u32 pad8C;
     /* 0x90 */ struct AObj *unk90;
-    /* 0x94 */ s32 unk94;
+    /* 0x94 */ union AnimCmd *unk94;
     /* 0x98 */ f32 unk98;
     /* 0x9C */ f32 unk9C;
     /* 0xA0 */ f32 unkA0;
@@ -343,8 +349,8 @@ extern void func_80008CC0(struct DObj *, u8, u8);
 extern struct OMMtx *func_80008CF0(struct OMCamera *, u8, u8);
 extern struct AObj *create_aobj_for_dobj(struct DObj *dobj, u8 index);
 extern void func_80008EE4(struct DObj *);
-extern struct AObj *func_80008F44(struct OMAnimation *anim, u8 index);
-extern void func_80008FB0(struct OMAnimation *);
+extern struct AObj *create_aobj_for_mobj(struct MObj *mobj, u8 index);
+extern void func_80008FB0(struct MObj *);
 extern struct AObj *func_80009010(struct OMAnimation *anim, u8 index);
 extern struct MObj *func_800090DC(struct DObj *, struct MObjSub *);
 extern void func_800091F4(struct DObj *obj);

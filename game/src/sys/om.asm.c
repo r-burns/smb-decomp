@@ -552,7 +552,7 @@ void append_aobj_to_dobj(struct DObj *dobj, struct AObj *aobj) {
     dobj->unk6C = aobj;
 }
 
-void func_80007E90(struct OMAnimation *arg0, struct AObj *arg1) {
+void func_80007E90(struct MObj *arg0, struct AObj *arg1) {
     arg1->next  = arg0->unk90;
     arg0->unk90 = arg1;
 }
@@ -564,7 +564,7 @@ void func_80007EA0(struct OMAnimation *arg0, struct AObj *arg1) {
     arg0->dobj.unk6C = arg1;
 }
 
-void func_80007EB0(struct AObj *a) {
+void free_aobj(struct AObj *a) {
     a->next = sAObjHead;
     sAObjsActive--;
     sAObjHead = a;
@@ -594,7 +594,7 @@ struct MObj *func_80007EDC(void) {
 #pragma GLOBAL_ASM("game/nonmatching/om/func_80007EDC.s")
 #endif
 
-void func_80007F58(struct MObj *obj) {
+void free_mobj(struct MObj *obj) {
     obj->next = sMObjHead;
     sMObjsActive--;
     sMObjHead = obj;
@@ -1136,7 +1136,6 @@ struct AObj *create_aobj_for_dobj(struct DObj *dobj, u8 index) {
     return aobj;
 }
 
-// this could take an OMAnimation, if that structure has a DObj at the start
 void func_80008EE4(struct DObj *arg0) {
     struct AObj *curr;
     struct AObj *origNext;
@@ -1144,14 +1143,14 @@ void func_80008EE4(struct DObj *arg0) {
     curr = arg0->unk6C;
     while (curr != NULL) {
         origNext = curr->next;
-        func_80007EB0(curr);
+        free_aobj(curr);
         curr = origNext;
     }
     arg0->unk6C = NULL;
     arg0->unk74 = FLOAT_NEG_MAX;
 }
 
-struct AObj *func_80008F44(struct OMAnimation *anim, u8 index) {
+struct AObj *create_aobj_for_mobj(struct MObj *mobj, u8 index) {
     struct AObj *aobj = func_80007E04();
 
     aobj->unk04 = index;
@@ -1164,25 +1163,27 @@ struct AObj *func_80008F44(struct OMAnimation *anim, u8 index) {
     aobj->unk0C = 0.0;
     aobj->unk08 = 1.0;
 
-    func_80007E90(anim, aobj);
+    func_80007E90(mobj, aobj);
 
     return aobj;
 }
 
-void func_80008FB0(struct OMAnimation *arg0) {
+// free struct AObj list at unk90
+void func_80008FB0(struct MObj *mobj) {
     struct AObj *curr;
     struct AObj *origNext;
 
-    curr = arg0->unk90;
+    curr = mobj->unk90;
     while (curr != NULL) {
         origNext = curr->next;
-        func_80007EB0(curr);
+        free_aobj(curr);
         curr = origNext;
     }
-    arg0->unk90 = NULL;
-    arg0->unk98 = FLOAT_NEG_MAX;
+    mobj->unk90 = NULL;
+    mobj->unk98 = FLOAT_NEG_MAX;
 }
 
+// could be dobj, but maybe it's another type; probably matches `func_80007EA0`
 struct AObj *func_80009010(struct OMAnimation *anim, u8 index) {
     struct AObj *aobj = func_80007E04();
 
@@ -1201,18 +1202,19 @@ struct AObj *func_80009010(struct OMAnimation *anim, u8 index) {
     return aobj;
 }
 
-void unref_8000907C(struct OMAnimation *arg0) {
+// could be dobj, but maybe it's another type; probably matches `func_80007EA0`
+void unref_8000907C(struct DObj *dobj) {
     struct AObj *curr;
     struct AObj *origNext;
 
-    curr = arg0->dobj.unk6C;
+    curr = dobj->unk6C;
     while (curr != NULL) {
         origNext = curr->next;
-        func_80007EB0(curr);
+        free_aobj(curr);
         curr = origNext;
     }
-    arg0->dobj.unk6C = NULL;
-    arg0->dobj.unk74 = FLOAT_NEG_MAX;
+    dobj->unk6C = NULL;
+    dobj->unk74 = FLOAT_NEG_MAX;
 }
 
 #ifdef NON_MATCHING
@@ -1245,7 +1247,7 @@ struct MObj *func_800090DC(struct DObj *arg0, struct MObjSub *arg1) {
     mobj->unk82       = 0;
     mobj->unk88       = 0;
     mobj->unk90       = NULL;
-    mobj->unk94       = 0;
+    mobj->unk94       = NULL;
     mobj->unk98       = FLOAT_NEG_MAX;
     mobj->unk9C       = 1.0;
     mobj->unkA0       = 0.0;
@@ -1267,11 +1269,11 @@ void func_800091F4(struct DObj *obj) {
         currA = currM->unk90;
         while (currA != NULL) {
             nextA = currA->next;
-            func_80007EB0(currA);
+            free_aobj(currA);
             currA = nextA;
         }
         nextM = currM->next;
-        func_80007F58(currM);
+        free_mobj(currM);
         currM = nextM;
     }
     obj->unk80 = NULL;
@@ -1411,7 +1413,7 @@ void func_8000948C(struct DObj *arg0) {
     currA = arg0->unk6C;
     while (currA != NULL) {
         nextA = currA->next;
-        func_80007EB0(currA);
+        free_aobj(currA);
         currA = nextA;
     }
 
@@ -1421,11 +1423,11 @@ void func_8000948C(struct DObj *arg0) {
         currA = currM->unk90;
         while (currA != NULL) {
             nextA = currA->next;
-            func_80007EB0(currA);
+            free_aobj(currA);
             currA = nextA;
         }
         nextM = currM->next;
-        func_80007F58(currM);
+        free_mobj(currM);
         currM = nextM;
     }
 
@@ -1524,7 +1526,7 @@ void func_80009810(struct OMCamera *cam) {
     curr = cam->unk6C;
     while (curr != NULL) {
         next = curr->next;
-        func_80007EB0(curr);
+        free_aobj(curr);
         curr = next;
     }
 
