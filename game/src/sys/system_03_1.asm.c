@@ -446,9 +446,9 @@ struct DObj *func_8000BAA0(struct DObj *arg0) {
 
     do {
         struct DObj *csr;
-        csr = (struct DObj *)arg0->unk14;
+        csr = arg0->unk14;
 
-        switch (arg0->unk14) {
+        switch ((uintptr_t)arg0->unk14) {
             case 1: return NULL;
         }
 

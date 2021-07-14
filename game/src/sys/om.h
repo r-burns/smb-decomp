@@ -158,11 +158,13 @@ struct DObj {
     /* 0x08 */ struct DObj *unk8;
     /* 0x0C */ struct DObj *unkC;
     /* 0x10 */ struct DObj *unk10;
-    /* 0x14 */ uintptr_t unk14; //< `1` or `struct DObj *`
+    //! checked with `1` for a NULL?
+    /* 0x14 */ struct DObj *unk14;
     /* 0x18 */ union Mtx3fi unk18;
     /* 0x28 */ struct Mtx4Float unk28;
     /* 0x3C */ struct Mtx3Float unk3C;
     /* 0x4C */ struct DObjDynamicStore *unk4C;
+    // could be DObj *unk50
     /* 0x50 */ s32 unk50;
     // is this a union? WeirdBytewise...?
     /* 0x54 */ u8 unk54;
@@ -194,7 +196,7 @@ struct AObj {
     /* 0x20 */ s32 unk20;
 }; // size == 0x24
 
-// how is this struct related to DObj? 
+// how is this struct related to DObj?
 struct OMAnimation {
     /* 0x00 */ struct DObj dobj;
     // does this start with a DObj (to 0x88)?
@@ -214,14 +216,22 @@ struct OMAnimation {
 
 // texture scroll? (from K64)
 struct MObjSub {
-    /* 0x00 */ u8 pad00[0x14 - 0];
+    /* 0x00 */ f32 unk00;
+    /* 0x04 */ f32 unk04;
+    /* 0x08 */ f32 unk08;
+    /* 0x0C */ f32 unk0C;
+    /* 0x10 */ f32 unk10;
     /* 0x14 */ f32 unk14;
-    /* 0x18 */ u32 pad18;
+    // next three part of vec3f?
+    /* 0x18 */ f32 unk18;
     /* 0x1C */ f32 unk1C;
-    /* 0x20 */ u32 pad20;
+    /* 0x20 */ f32 unk20;
     /* 0x24 */ f32 unk24;
     /* 0x28 */ f32 unk28;
-    /* 0x2C */ u8 pad2C[0x4C - 0x2C];
+    /* 0x2C */ u8 pad2C[0x3C - 0x2C];
+    /* 0x3C */ f32 unk3C;
+    /* 0x40 */ f32 unk40;
+    /* 0x44 */ u8 pad44[0x4C - 0x44];
     /* 0x4C */ u32 unk4C;
     /* 0x50 */ u8 pad50[0x54 - 0x50];
     /* 0x54 */ u8 unk54;

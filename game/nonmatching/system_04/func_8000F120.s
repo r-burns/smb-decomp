@@ -23,6 +23,7 @@ glabel func_8000F120
   /* 00FD6C 8000F16C AC40FFFC */        sw $zero, -4($v0)
   /* 00FD70 8000F170 1443FFFB */       bne $v0, $v1, .L8000F160
   /* 00FD74 8000F174 AC40FFF0 */        sw $zero, -0x10($v0)
+  
   /* 00FD78 8000F178 8E430000 */        lw $v1, ($s2)
   /* 00FD7C 8000F17C 24150012 */     addiu $s5, $zero, 0x12
   /* 00FD80 8000F180 27B40044 */     addiu $s4, $sp, 0x44

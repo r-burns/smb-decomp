@@ -1,9 +1,12 @@
 #include "sys/system_04.h"
-#include "sys/system_03_1.h"
-#include "sys/om.h"
 
-#include <PR/ultratypes.h>
+#include "sys/om.h"
+#include "sys/system_03_1.h"
+
 #include <macros.h>
+
+#include <PR/gu.h>
+#include <PR/ultratypes.h>
 
 /*********** data **********/
 s32 D_8003B930 = 10;
@@ -45,7 +48,7 @@ void unref_8000BC54(struct GObjCommon *arg0) {
     while (dobj != NULL) {
         // this pointer is used as an OMAnimation...?
         // is the function or the field type wrong?
-        struct MObj *typingOff; 
+        struct MObj *typingOff;
 
         func_80008EE4(dobj);
         typingOff = dobj->unk80;
@@ -63,7 +66,7 @@ void unref_8000BCBC(struct GObjCommon *arg0) {
     while (dobj != NULL) {
         // this pointer is used as an OMAnimation...?
         // is the function or the field type wrong?
-        struct MObj *typingOff; 
+        struct MObj *typingOff;
 
         typingOff = dobj->unk80;
         while (typingOff != NULL) {
@@ -82,7 +85,7 @@ void func_8000BD1C(struct DObj *arg0, union AnimCmd *arg1, f32 arg2) {
 
     while (aobj != NULL) {
         aobj->unk05 = 0;
-        aobj = aobj->next;
+        aobj        = aobj->next;
     }
     arg0->unk70 = arg1;
     arg0->unk74 = LOWER_BOUND;
@@ -94,7 +97,7 @@ void func_8000BD54(struct MObj *arg0, union AnimCmd *arg1, f32 arg2) {
 
     while (aobj != NULL) {
         aobj->unk05 = 0;
-        aobj = aobj->next;
+        aobj        = aobj->next;
     }
     arg0->unk94 = arg1;
     arg0->unk98 = LOWER_BOUND;
@@ -105,13 +108,13 @@ void func_8000BD8C(struct GObjCommon *arg0, union AnimCmd **arg1, f32 arg2) {
     struct DObj *dobj;
     u8 s2 = 1;
 
-    dobj = arg0->unk74;
+    dobj        = arg0->unk74;
     arg0->unk78 = arg2;
     while (dobj != NULL) {
         if (*arg1 != NULL) {
             func_8000BD1C(dobj, *arg1, arg2);
             dobj->unk55 = s2;
-            s2 = 0;
+            s2          = 0;
         } else {
             dobj->unk74 = FLOAT_NEG_MAX;
             dobj->unk55 = 0;
@@ -127,17 +130,15 @@ void func_8000BE28(struct GObjCommon *arg0, union AnimCmd ***arg1, f32 arg2) {
     struct MObj *mobj;
     union AnimCmd **cmdlist;
 
-    dobj = arg0->unk74;
+    dobj        = arg0->unk74;
     arg0->unk78 = arg2;
     while (dobj != NULL) {
         if (arg1 != NULL) {
             if (*arg1 != NULL) {
                 cmdlist = *arg1;
-                mobj = dobj->unk80;
+                mobj    = dobj->unk80;
                 while (mobj != NULL) {
-                    if (*cmdlist != NULL) {
-                        func_8000BD54(mobj, *cmdlist, arg2);
-                    }
+                    if (*cmdlist != NULL) { func_8000BD54(mobj, *cmdlist, arg2); }
                     cmdlist++;
                     mobj = mobj->next;
                 }
@@ -160,7 +161,7 @@ void func_8000BED8(struct GObjCommon *arg0, union AnimCmd **arg1, union AnimCmd 
             if (*arg1 != NULL) {
                 func_8000BD1C(dobj, *arg1, arg3);
                 dobj->unk55 = s5;
-                s5 = 0;
+                s5          = 0;
             } else {
                 dobj->unk74 = FLOAT_NEG_MAX;
                 dobj->unk55 = 0;
@@ -170,11 +171,9 @@ void func_8000BED8(struct GObjCommon *arg0, union AnimCmd **arg1, union AnimCmd 
         if (arg2 != NULL) {
             if (*arg2 != NULL) {
                 cmdlist = *arg2;
-                mobj = dobj->unk80;
+                mobj    = dobj->unk80;
                 while (mobj != NULL) {
-                    if (*cmdlist != NULL) {
-                        func_8000BD54(mobj, *cmdlist, arg3);
-                    }
+                    if (*cmdlist != NULL) { func_8000BD54(mobj, *cmdlist, arg3); }
                     cmdlist++;
                     mobj = mobj->next;
                 }
@@ -184,7 +183,6 @@ void func_8000BED8(struct GObjCommon *arg0, union AnimCmd **arg1, union AnimCmd 
         dobj = func_8000BAA0(dobj);
     }
 }
-
 
 #define PROCESSED_DEFAULT -1.1342745e38
 // according to Kirby64, this is the animation processor
@@ -207,11 +205,13 @@ void func_8000BFE8(struct DObj *dobj) {
 
             if (dobj->unk74 > 0.0f) { return; }
         }
-        
-        for (i = 0; i < ARRAY_COUNT(sp80); i++) {
-            sp80[i] = NULL;
+
+        // clang-format off
+        for (i = 0; i < ARRAY_COUNT(sp80); i++) { 
+            sp80[i] = NULL; 
         }
-        
+        // clang-format on
+
         aobj = dobj->unk6C;
         while (aobj != NULL) {
             if (aobj->unk04 > 0 && aobj->unk04 < ARRAY_COUNT(sp80) + 1) {
@@ -219,292 +219,266 @@ void func_8000BFE8(struct DObj *dobj) {
             }
             aobj = aobj->next;
         }
-        
+
         do {
             if (dobj->unk70 == NULL) {
                 aobj = dobj->unk6C;
                 while (aobj != NULL) {
-                    if (aobj->unk05) {
-                        aobj->unk0C += dobj->unk78 + dobj->unk74;
-                    }
+                    if (aobj->unk05) { aobj->unk0C += dobj->unk78 + dobj->unk74; }
                     aobj = aobj->next;
                 }
-                dobj->unk7C = dobj->unk74;
+                dobj->unk7C       = dobj->unk74;
                 dobj->unk4->unk78 = dobj->unk74;
-                dobj->unk74 = PROCESSED_DEFAULT;
+                dobj->unk74       = PROCESSED_DEFAULT;
                 return;
             }
-            
+
             cmd = dobj->unk70->w >> 25;
             switch (cmd) {
-            case 8:
-            case 9:
-            {
-                payload = (f32)(dobj->unk70->w & 0x7FFF);
-                subcmd = (dobj->unk70++->w << 7) >> 22;
+                case 8:
+                case 9:
+                {
+                    payload = (f32)(dobj->unk70->w & 0x7FFF);
+                    subcmd  = (dobj->unk70++->w << 7) >> 22;
 
-                for (i = 0; i < ARRAY_COUNT(sp80); i++) {
-                    if (subcmd == 0) { break; }
+                    for (i = 0; i < ARRAY_COUNT(sp80); i++) {
+                        if (subcmd == 0) { break; }
 
-                    if (subcmd & 1) {
-                        if (sp80[i] == NULL) {
-                            sp80[i] = create_aobj_for_dobj(dobj, i + 1);
+                        if (subcmd & 1) {
+                            if (sp80[i] == NULL) { sp80[i] = create_aobj_for_dobj(dobj, i + 1); }
+
+                            sp80[i]->unk10 = sp80[i]->unk14;
+                            sp80[i]->unk14 = dobj->unk70->f;
+                            dobj->unk70++;
+                            sp80[i]->unk18 = sp80[i]->unk1C;
+                            sp80[i]->unk1C = 0.0f;
+                            sp80[i]->unk05 = 3;
+                            if (payload != 0.0f) { sp80[i]->unk08 = 1.0f / payload; }
+                            sp80[i]->unk0C = -dobj->unk74 - dobj->unk78;
                         }
-
-                        sp80[i]->unk10 = sp80[i]->unk14;
-                        sp80[i]->unk14 = dobj->unk70->f;
-                        dobj->unk70++;
-                        sp80[i]->unk18 = sp80[i]->unk1C;
-                        sp80[i]->unk1C = 0.0f;
-                        sp80[i]->unk05 = 3;
-                        if (payload != 0.0f) {
-                            sp80[i]->unk08 = 1.0f / payload;
-                        }
-                        sp80[i]->unk0C = -dobj->unk74 - dobj->unk78;
-                    }
-                    subcmd >>= 1;
-                }
-
-                if (cmd == 8) {
-                    dobj->unk74 += payload;
-                }
-                break;
-            }
-            case 3:
-            case 4:
-            {
-                payload = (f32)(dobj->unk70->w & 0x7FFF);
-                subcmd = (dobj->unk70++->w << 7) >> 22;
-
-                for (i = 0; i < ARRAY_COUNT(sp80); i++) {
-                    if (subcmd == 0) { break; }
-
-                    if (subcmd & 1) {
-
-                        if (sp80[i] == NULL) {
-                            sp80[i] = create_aobj_for_dobj(dobj, i + 1);
-                        }
-                        sp80[i]->unk10 = sp80[i]->unk14;
-                        sp80[i]->unk14 = dobj->unk70->f;
-                        dobj->unk70++;
-                        sp80[i]->unk05 = 2;
-                        if (payload != 0.0f) {
-                            sp80[i]->unk18 = (sp80[i]->unk14 - sp80[i]->unk10) / payload;
-                        }
-                        sp80[i]->unk0C = -dobj->unk74 - dobj->unk78;
-                        sp80[i]->unk1C = 0.0f;
-                    }
-                    subcmd >>= 1;
-                }
-                
-                if (cmd == 3) {
-                    dobj->unk74 += payload;
-                }
-                break;
-            }
-            case 5:
-            case 6:
-            {
-                payload = (f32)(dobj->unk70->w & 0x7FFF);
-                subcmd = (dobj->unk70++->w << 7) >> 22;
-
-                for (i = 0; i < ARRAY_COUNT(sp80); i++) {
-                    if (subcmd == 0) { break; }
-
-                    if (subcmd & 1) {
-                        if (sp80[i] == NULL) {
-                            sp80[i] = create_aobj_for_dobj(dobj, i + 1);
-                        }
-
-                        sp80[i]->unk10 = sp80[i]->unk14;
-                        sp80[i]->unk14 = dobj->unk70->f;
-                        dobj->unk70++;
-                        sp80[i]->unk18 = sp80[i]->unk1C;
-                        sp80[i]->unk1C = dobj->unk70->f;
-                        dobj->unk70++;
-                        sp80[i]->unk05 = 3;
-                        if (payload != 0.0f) {
-                            sp80[i]->unk08 = 1.0f / payload;
-                        }
-                        sp80[i]->unk0C = -dobj->unk74 - dobj->unk78;
+                        subcmd >>= 1;
                     }
 
-                    subcmd >>= 1;
+                    if (cmd == 8) { dobj->unk74 += payload; }
+                    break;
                 }
-                
-                if (cmd == 5) {
-                    dobj->unk74 += payload;
+                case 3:
+                case 4:
+                {
+                    payload = (f32)(dobj->unk70->w & 0x7FFF);
+                    subcmd  = (dobj->unk70++->w << 7) >> 22;
+
+                    for (i = 0; i < ARRAY_COUNT(sp80); i++) {
+                        if (subcmd == 0) { break; }
+
+                        if (subcmd & 1) {
+                            if (sp80[i] == NULL) { sp80[i] = create_aobj_for_dobj(dobj, i + 1); }
+                            sp80[i]->unk10 = sp80[i]->unk14;
+                            sp80[i]->unk14 = dobj->unk70->f;
+                            dobj->unk70++;
+                            sp80[i]->unk05 = 2;
+                            if (payload != 0.0f) {
+                                sp80[i]->unk18 = (sp80[i]->unk14 - sp80[i]->unk10) / payload;
+                            }
+                            sp80[i]->unk0C = -dobj->unk74 - dobj->unk78;
+                            sp80[i]->unk1C = 0.0f;
+                        }
+                        subcmd >>= 1;
+                    }
+
+                    if (cmd == 3) { dobj->unk74 += payload; }
+                    break;
                 }
-                break;
-            }
-            case 7:
-            {
-                subcmd = (dobj->unk70++->w << 7) >> 22;
+                case 5:
+                case 6:
+                {
+                    payload = (f32)(dobj->unk70->w & 0x7FFF);
+                    subcmd  = (dobj->unk70++->w << 7) >> 22;
 
-                for (i = 0; i < ARRAY_COUNT(sp80); i++) {
-                    if (subcmd == 0) { break; }
+                    for (i = 0; i < ARRAY_COUNT(sp80); i++) {
+                        if (subcmd == 0) { break; }
 
-                    if (subcmd & 1) {
-                        if (sp80[i] == NULL) {
-                            sp80[i] = create_aobj_for_dobj(dobj, i + 1);
+                        if (subcmd & 1) {
+                            if (sp80[i] == NULL) { sp80[i] = create_aobj_for_dobj(dobj, i + 1); }
+
+                            sp80[i]->unk10 = sp80[i]->unk14;
+                            sp80[i]->unk14 = dobj->unk70->f;
+                            dobj->unk70++;
+                            sp80[i]->unk18 = sp80[i]->unk1C;
+                            sp80[i]->unk1C = dobj->unk70->f;
+                            dobj->unk70++;
+                            sp80[i]->unk05 = 3;
+                            if (payload != 0.0f) { sp80[i]->unk08 = 1.0f / payload; }
+                            sp80[i]->unk0C = -dobj->unk74 - dobj->unk78;
                         }
 
-                        sp80[i]->unk1C = dobj->unk70->f;
-                        dobj->unk70++;
+                        subcmd >>= 1;
                     }
-                    subcmd >>= 1;
+
+                    if (cmd == 5) { dobj->unk74 += payload; }
+                    break;
                 }
-                break;
-            }
-            case 2:
-            {
-                dobj->unk74 += (f32)(dobj->unk70++->w & 0x7FFF);
-                break;
-            }
-            case 10:
-            case 11:
-            {
-                payload = (f32)(dobj->unk70->w & 0x7FFF);
-                subcmd = (dobj->unk70++->w << 7) >> 22;
+                case 7:
+                {
+                    subcmd = (dobj->unk70++->w << 7) >> 22;
 
-                for (i = 0; i < ARRAY_COUNT(sp80); i++) {
-                    if (subcmd == 0) { break; }
+                    for (i = 0; i < ARRAY_COUNT(sp80); i++) {
+                        if (subcmd == 0) { break; }
 
-                    if (subcmd & 1) {
-                        if (sp80[i] == NULL) {
-                            sp80[i] = create_aobj_for_dobj(dobj, i + 1);
+                        if (subcmd & 1) {
+                            if (sp80[i] == NULL) { sp80[i] = create_aobj_for_dobj(dobj, i + 1); }
+
+                            sp80[i]->unk1C = dobj->unk70->f;
+                            dobj->unk70++;
+                        }
+                        subcmd >>= 1;
+                    }
+                    break;
+                }
+                case 2:
+                {
+                    dobj->unk74 += (f32)(dobj->unk70++->w & 0x7FFF);
+                    break;
+                }
+                case 10:
+                case 11:
+                {
+                    payload = (f32)(dobj->unk70->w & 0x7FFF);
+                    subcmd  = (dobj->unk70++->w << 7) >> 22;
+
+                    for (i = 0; i < ARRAY_COUNT(sp80); i++) {
+                        if (subcmd == 0) { break; }
+
+                        if (subcmd & 1) {
+                            if (sp80[i] == NULL) { sp80[i] = create_aobj_for_dobj(dobj, i + 1); }
+
+                            sp80[i]->unk10 = sp80[i]->unk14;
+                            sp80[i]->unk14 = dobj->unk70->f;
+                            dobj->unk70++;
+                            sp80[i]->unk05 = 1;
+                            sp80[i]->unk08 = payload;
+                            sp80[i]->unk0C = -dobj->unk74 - dobj->unk78;
+                            sp80[i]->unk1C = 0.0f;
                         }
 
-                        sp80[i]->unk10 = sp80[i]->unk14;
-                        sp80[i]->unk14 = dobj->unk70->f;
-                        dobj->unk70++;
-                        sp80[i]->unk05 = 1;
-                        sp80[i]->unk08 = payload;
-                        sp80[i]->unk0C = -dobj->unk74 - dobj->unk78;
-                        sp80[i]->unk1C = 0.0f;
+                        subcmd >>= 1;
                     }
 
-                    subcmd >>= 1;
+                    if (cmd == 10) { dobj->unk74 += payload; }
+                    break;
                 }
-                
-                if (cmd == 10) {
-                    dobj->unk74 += payload;
+                case 14:
+                {
+                    dobj->unk70++;
+                    dobj->unk70       = dobj->unk70->ptr;
+                    dobj->unk7C       = -dobj->unk74;
+                    dobj->unk4->unk78 = -dobj->unk74;
+
+                    if (dobj->unk55 != 0 && dobj->unk4->unk80 != NULL) {
+                        dobj->unk4->unk80(dobj, -2, 0);
+                    }
+                    break;
                 }
-                break;
-            }
-            case 14:
-            {
-                dobj->unk70++;
-                dobj->unk70 = dobj->unk70->ptr;
-                dobj->unk7C = -dobj->unk74;
-                dobj->unk4->unk78 = -dobj->unk74;
+                case 1:
+                {
+                    dobj->unk70++;
+                    dobj->unk70 = dobj->unk70->ptr;
 
-                if (dobj->unk55 != 0 && dobj->unk4->unk80 != NULL) {
-                    dobj->unk4->unk80(dobj, -2, 0);
+                    if (dobj->unk55 != 0 && dobj->unk4->unk80 != NULL) {
+                        dobj->unk4->unk80(dobj, -2, 0);
+                    }
+                    break;
                 }
-                break;
-            }
-            case 1:
-            {
-                dobj->unk70++;
-                dobj->unk70 = dobj->unk70->ptr;
+                case 12:
+                {
+                    payload = (f32)(dobj->unk70->w & 0x7FFF);
+                    subcmd  = (dobj->unk70++->w << 7) >> 22;
 
-                if (dobj->unk55 != 0 && dobj->unk4->unk80 != NULL) {
-                    dobj->unk4->unk80(dobj, -2, 0);
-                }
-                break;
-            }
-            case 12:
-            {
-                payload = (f32)(dobj->unk70->w & 0x7FFF);
-                subcmd = (dobj->unk70++->w << 7) >> 22;
+                    for (i = 0; i < ARRAY_COUNT(sp80); i++) {
+                        if (subcmd == 0) { break; }
 
-                for (i = 0; i < ARRAY_COUNT(sp80); i++) {
-                    if (subcmd == 0) { break; }
+                        if (subcmd & 1) {
+                            if (sp80[i] == NULL) { sp80[i] = create_aobj_for_dobj(dobj, i + 1); }
 
-                    if (subcmd & 1) {
-                        if (sp80[i] == NULL) {
-                            sp80[i] = create_aobj_for_dobj(dobj, i + 1);
+                            sp80[i]->unk0C += payload;
                         }
-
-                        sp80[i]->unk0C += payload;
+                        subcmd >>= 1;
                     }
-                    subcmd >>= 1;
-                }
 
-                break;
-            }
-            case 13:
-            {
-                dobj->unk70++;
-                if (sp80[3] == NULL) {
-                    sp80[3] = create_aobj_for_dobj(dobj, 3 + 1);
+                    break;
                 }
-                sp80[3]->unk20 = dobj->unk70->w;
-                dobj->unk70++;
-                break;
-            }
-            case 0:
-            {
-                aobj = dobj->unk6C;
-                while (aobj != NULL) {
-                    if (aobj->unk05 != 0) {
-                        aobj->unk0C += dobj->unk78 + dobj->unk74;
+                case 13:
+                {
+                    dobj->unk70++;
+                    if (sp80[3] == NULL) { sp80[3] = create_aobj_for_dobj(dobj, 3 + 1); }
+                    sp80[3]->unk20 = dobj->unk70->w;
+                    dobj->unk70++;
+                    break;
+                }
+                case 0:
+                {
+                    aobj = dobj->unk6C;
+                    while (aobj != NULL) {
+                        if (aobj->unk05 != 0) { aobj->unk0C += dobj->unk78 + dobj->unk74; }
+                        aobj = aobj->next;
                     }
-                    aobj = aobj->next;
+                    dobj->unk7C       = dobj->unk74;
+                    dobj->unk4->unk78 = dobj->unk74;
+                    dobj->unk74       = PROCESSED_DEFAULT;
+                    if (dobj->unk55 != 0 && dobj->unk4->unk80 != NULL) {
+                        dobj->unk4->unk80(dobj, -1, 0);
+                    }
+                    return; // not break
                 }
-                dobj->unk7C = dobj->unk74;
-                dobj->unk4->unk78 = dobj->unk74;
-                dobj->unk74 = PROCESSED_DEFAULT;
-                if (dobj->unk55 != 0 && dobj->unk4->unk80 != NULL) { 
-                    dobj->unk4->unk80(dobj, -1, 0);
+                case 15:
+                {
+                    dobj->unk54 = (dobj->unk70->w << 7) >> 22;
+                    dobj->unk74 += (f32)(dobj->unk70++->w & 0x7FFF);
+                    break;
                 }
-                return; // not break
-            }
-            case 15:
-            {
-                dobj->unk54 = (dobj->unk70->w << 7) >> 22;
-                dobj->unk74 += (f32)(dobj->unk70++->w & 0x7FFF);
-                break;
-            }
-            case 16:
-            {
-                if (dobj->unk4->unk80 != NULL) {
-                    // only seems to match when spelled out...
-                    dobj->unk4->unk80(dobj, ((dobj->unk70->w << 7) >> 22) >> 8, ((dobj->unk70->w << 7) >> 22) & 0xFF);
+                case 16:
+                {
+                    if (dobj->unk4->unk80 != NULL) {
+                        // only seems to match when spelled out...
+                        dobj->unk4->unk80(
+                            dobj,
+                            ((dobj->unk70->w << 7) >> 22) >> 8,
+                            ((dobj->unk70->w << 7) >> 22) & 0xFF);
+                    }
+
+                    dobj->unk74 += (f32)(dobj->unk70++->w & 0x7FFF);
+                    ;
+                    break;
                 }
+                case 17:
+                {
+                    subcmd = (dobj->unk70->w << 7) >> 22;
+                    dobj->unk74 += (f32)(dobj->unk70++->w & 0x7FFF);
 
-                dobj->unk74 += (f32)(dobj->unk70++->w & 0x7FFF);;
-                break;
-            }
-            case 17:
-            {
-                subcmd = (dobj->unk70->w << 7) >> 22;
-                dobj->unk74 += (f32)(dobj->unk70++->w & 0x7FFF);
+                    for (i = 4; i < 14; i++) {
+                        if (subcmd == 0) { break; }
 
-                for (i = 4; i < 14; i++) {
-                    if (subcmd == 0) { break; }
-
-                    if (subcmd & 1) {
-                        if (dobj->unk4->unk80 != NULL) {
-                            dobj->unk4->unk80(dobj, i, dobj->unk70->f);
+                        if (subcmd & 1) {
+                            if (dobj->unk4->unk80 != NULL) {
+                                dobj->unk4->unk80(dobj, i, dobj->unk70->f);
+                            }
+                            dobj->unk70++;
                         }
-                        dobj->unk70++;
-                        
+                        subcmd >>= 1;
                     }
-                    subcmd >>= 1;
+                    break;
                 }
-                break;
-            }
-            // empty, but necessary
-            default: {}
+                // empty, but necessary
+                default:
+                {
+                }
             }
         } while (dobj->unk74 <= 0.0f);
     }
 }
 
 #define SQUARE(x) ((x) * (x))
-#define CUBE(x) ((x) * (x) * (x))
+#define CUBE(x)   ((x) * (x) * (x))
 
 f32 func_8000CA28(f32 arg0, f32 arg1, f32 arg2, f32 arg3, f32 arg4, f32 arg5) {
     f32 sp18;
@@ -513,17 +487,18 @@ f32 func_8000CA28(f32 arg0, f32 arg1, f32 arg2, f32 arg3, f32 arg4, f32 arg5) {
     f32 temp_f10;
     f32 temp_f16;
     f32 temp_f18; // arg0^2
-    f32 temp_f2; // arg1^2
+    f32 temp_f2;  // arg1^2
 
-    temp_f2 = SQUARE(arg1);
+    temp_f2  = SQUARE(arg1);
     temp_f18 = SQUARE(arg0);
     temp_f16 = temp_f2 * arg1 * temp_f18; // arg1^3 * arg0^2
-    temp_f10 = 2.0f * temp_f16 * arg0; // 2.0f * arg1^3 * arg0^3
-    sp14 = 3.0f * temp_f2 * temp_f18; // 3 * arg1^2 * arg0^2
-    sp18 = temp_f2 * arg0; // arg0^3
-    sp10 = temp_f16 - sp18; // arg1^3 * arg0^2 - arg0^3
+    temp_f10 = 2.0f * temp_f16 * arg0;    // 2.0f * arg1^3 * arg0^3
+    sp14     = 3.0f * temp_f2 * temp_f18; // 3 * arg1^2 * arg0^2
+    sp18     = temp_f2 * arg0;            // arg0^3
+    sp10     = temp_f16 - sp18;           // arg1^3 * arg0^2 - arg0^3
 
-    return (((temp_f10 - sp14) + 1.0f) * arg2) + (arg3 * (sp14 - temp_f10)) + (arg4 * ((sp10 - sp18) + arg1)) + (arg5 * sp10);
+    return (((temp_f10 - sp14) + 1.0f) * arg2) + (arg3 * (sp14 - temp_f10))
+         + (arg4 * ((sp10 - sp18) + arg1)) + (arg5 * sp10);
 }
 
 f32 func_8000CADC(f32 arg0, f32 arg1, f32 arg2, f32 arg3, f32 arg4, f32 arg5) {
@@ -531,23 +506,22 @@ f32 func_8000CADC(f32 arg0, f32 arg1, f32 arg2, f32 arg3, f32 arg4, f32 arg5) {
     f32 temp_f16;
     f32 temp_f2;
 
-    temp_f2 = 2.0f * arg1 * arg0;
+    temp_f2  = 2.0f * arg1 * arg0;
     temp_f16 = 3.0f * arg1 * arg1 * arg0 * arg0;
     temp_f18 = 6.0f * arg1;
 
-    return (((temp_f18 * arg1 * arg0 * arg0 * arg0) - (temp_f18 * arg0 * arg0)) * (arg2 - arg3)) + (arg4 * ((temp_f16 - (2.0f * temp_f2)) + 1.0f)) + (arg5 * (temp_f16 - temp_f2));
+    return (((temp_f18 * arg1 * arg0 * arg0 * arg0) - (temp_f18 * arg0 * arg0)) * (arg2 - arg3))
+         + (arg4 * ((temp_f16 - (2.0f * temp_f2)) + 1.0f)) + (arg5 * (temp_f16 - temp_f2));
 }
 
 f32 func_8000CB94(struct AObj *aobj) {
     switch (aobj->unk05) {
-        case 2:
-            return aobj->unk10 + (aobj->unk0C * aobj->unk18);
+        case 2: return aobj->unk10 + (aobj->unk0C * aobj->unk18);
         case 3:
-            return func_8000CA28(aobj->unk08, aobj->unk0C, aobj->unk10, aobj->unk14, aobj->unk18, aobj->unk1C);
-        case 1:
-            return aobj->unk08 <= aobj->unk0C ? aobj->unk14 : aobj->unk10;
+            return func_8000CA28(
+                aobj->unk08, aobj->unk0C, aobj->unk10, aobj->unk14, aobj->unk18, aobj->unk1C);
+        case 1: return aobj->unk08 <= aobj->unk0C ? aobj->unk14 : aobj->unk10;
     }
-
 #ifdef AVOID_UB
     return 0.0f;
 #endif
@@ -555,12 +529,11 @@ f32 func_8000CB94(struct AObj *aobj) {
 
 f32 func_8000CC40(struct AObj *aobj) {
     switch (aobj->unk05) {
-        case 2:
-            return aobj->unk18;
+        case 2: return aobj->unk18;
         case 3:
-            return func_8000CADC(aobj->unk08, aobj->unk0C, aobj->unk10, aobj->unk14, aobj->unk18, aobj->unk1C);
-        case 1:
-            return 0.0f;
+            return func_8000CADC(
+                aobj->unk08, aobj->unk0C, aobj->unk10, aobj->unk14, aobj->unk18, aobj->unk1C);
+        case 1: return 0.0f;
     }
 #ifdef AVOID_UB
     return 0.0f;
@@ -569,87 +542,65 @@ f32 func_8000CC40(struct AObj *aobj) {
 
 // system 9
 // first arg could be to either the float or int 3mtx, or maybe a union type pointer?
-extern func_8001E530(struct Vec3f *, s32, f32);
-
+extern void func_8001E530(struct Vec3f *, s32, f32);
 
 #define FLOAT_MAYBE_SCALE_MIN -1.1342745e38f
 void func_8000CCBC(struct DObj *dobj) {
     f32 f26; // sp54
     struct AObj *aobj;
 
-    if (dobj->unk74 != (f32) FLOAT_NEG_MAX) {
+    if (dobj->unk74 != (f32)FLOAT_NEG_MAX) {
         aobj = dobj->unk6C;
 
         while (aobj != NULL) {
             // L8000CD20
             if (aobj->unk05 != 0) {
-                if (dobj->unk74 != FLOAT_MAYBE_SCALE_MIN) {
-                    aobj->unk0C += dobj->unk78;
-                }
+                if (dobj->unk74 != FLOAT_MAYBE_SCALE_MIN) { aobj->unk0C += dobj->unk78; }
                 // L8000CD58
                 if (!(dobj->unk4->unk7C & 2)) {
                     switch (aobj->unk05) {
-                    case 2:
-                        f26 = aobj->unk10 + (aobj->unk0C * aobj->unk18);
-                        break;
-                    case 3:
-                    {
-                        f32 temp_f16 = SQUARE(aobj->unk08);
-                        f32 temp_f12 = SQUARE(aobj->unk0C);
-                        f32 temp_f18 = aobj->unk08 * temp_f12;
-                        f32 temp_f14 = aobj->unk0C * temp_f12 * temp_f16;
-                        f32 temp_f20 = 2.0f * temp_f14 * aobj->unk08;
-                        f32 temp_f22 = 3.0f * temp_f12 * temp_f16;
-                        f32 temp_f24 = temp_f14 - temp_f18;
-                        
-                        f26 = (aobj->unk10 * ((temp_f20 - temp_f22) + 1.0f)) + (aobj->unk14 * (temp_f22 - temp_f20)) + (aobj->unk18 * ((temp_f24 - temp_f18) + aobj->unk0C)) + (aobj->unk1C * temp_f24);
-                        break;
-                    }
-                    case 1:
-                        f26 = aobj->unk08 <= aobj->unk0C ? aobj->unk14 : aobj->unk10;
-                        break;
-                    default: {}
+                        case 2: f26 = aobj->unk10 + (aobj->unk0C * aobj->unk18); break;
+                        case 3:
+                        {
+                            f32 temp_f16 = SQUARE(aobj->unk08);
+                            f32 temp_f12 = SQUARE(aobj->unk0C);
+                            f32 temp_f18 = aobj->unk08 * temp_f12;
+                            f32 temp_f14 = aobj->unk0C * temp_f12 * temp_f16;
+                            f32 temp_f20 = 2.0f * temp_f14 * aobj->unk08;
+                            f32 temp_f22 = 3.0f * temp_f12 * temp_f16;
+                            f32 temp_f24 = temp_f14 - temp_f18;
+
+                            f26 = (aobj->unk10 * ((temp_f20 - temp_f22) + 1.0f))
+                                + (aobj->unk14 * (temp_f22 - temp_f20))
+                                + (aobj->unk18 * ((temp_f24 - temp_f18) + aobj->unk0C))
+                                + (aobj->unk1C * temp_f24);
+                            break;
+                        }
+                        case 1: f26 = aobj->unk08 <= aobj->unk0C ? aobj->unk14 : aobj->unk10; break;
+                        default:
+                        {
+                        }
                     }
 
                     // L8000CE5C L8000CE60
                     switch (aobj->unk04) {
-                    case 1:
-                        dobj->unk28.f[1] = f26;
-                        break;
-                    case 2:
-                        dobj->unk28.f[2] = f26;
-                        break;
-                    case 3:
-                        dobj->unk28.f[3] = f26;
-                        break;
-                    case 4:
-                        if (f26 < 0.0f) {
-                            f26 = 0.0f;
-                        } else {
-                            if (f26 > 1.0f) {
-                                f26 = 1.0f;
+                        case 1: dobj->unk28.f[1] = f26; break;
+                        case 2: dobj->unk28.f[2] = f26; break;
+                        case 3: dobj->unk28.f[3] = f26; break;
+                        case 4:
+                            if (f26 < 0.0f) {
+                                f26 = 0.0f;
+                            } else {
+                                if (f26 > 1.0f) { f26 = 1.0f; }
                             }
-                        }
-                        func_8001E530(&dobj->unk18.f.v, aobj->unk20, f26);
-                        break;
-                    case 5:
-                        dobj->unk18.f.v.x = f26;
-                        break;
-                    case 6:
-                        dobj->unk18.f.v.y = f26;
-                        break;
-                    case 7:
-                        dobj->unk18.f.v.z = f26;
-                        break;
-                    case 8:
-                        dobj->unk3C.v.x = f26;
-                        break;
-                    case 9:
-                        dobj->unk3C.v.y = f26;
-                        break;
-                    case 10:
-                        dobj->unk3C.v.z = f26;
-                        break;
+                            func_8001E530(&dobj->unk18.f.v, aobj->unk20, f26);
+                            break;
+                        case 5: dobj->unk18.f.v.x = f26; break;
+                        case 6: dobj->unk18.f.v.y = f26; break;
+                        case 7: dobj->unk18.f.v.z = f26; break;
+                        case 8: dobj->unk3C.v.x = f26; break;
+                        case 9: dobj->unk3C.v.y = f26; break;
+                        case 10: dobj->unk3C.v.z = f26; break;
                     }
                 }
             }
@@ -657,9 +608,7 @@ void func_8000CCBC(struct DObj *dobj) {
             aobj = aobj->next;
         }
         // L8000CF20
-        if (dobj->unk74 == FLOAT_MAYBE_SCALE_MIN) {
-            dobj->unk74 = FLOAT_NEG_MAX;
-        }
+        if (dobj->unk74 == FLOAT_MAYBE_SCALE_MIN) { dobj->unk74 = FLOAT_NEG_MAX; }
     }
     // L8000CF48
 }
@@ -681,457 +630,1307 @@ void func_8000CF6C(struct MObj *mobj) {
             mobj->unk98 -= mobj->unk9C;
             mobj->unkA0 += mobj->unk9C;
 
-            if (mobj->unk98 > 0.0f) {
-                return;
-            }
-        }
-        
-        for (i = 0; i < ARRAY_COUNT(sp90); i++) {
-            sp90[i] = NULL;
+            if (mobj->unk98 > 0.0f) { return; }
         }
 
-        for (i = 0; i < ARRAY_COUNT(sp7C); i++) {
-            sp7C[i] = NULL;
+        // clang-format off
+        for (i = 0; i < ARRAY_COUNT(sp90); i++) { 
+            sp90[i] = NULL; 
         }
+
+        for (i = 0; i < ARRAY_COUNT(sp7C); i++) { 
+            sp7C[i] = NULL; 
+        }
+        // clang-format on
 
         aobj = mobj->unk90;
         while (aobj != NULL) {
-            if (aobj->unk04 >= 13 && aobj->unk04 < 23) {
-                sp90[aobj->unk04 - 13] = aobj;
-            }
+            if (aobj->unk04 >= 13 && aobj->unk04 < 23) { sp90[aobj->unk04 - 13] = aobj; }
 
-            if (aobj->unk04 >= 37 && aobj->unk04 < 42) {
-                sp7C[aobj->unk04 - 37] = aobj;
-            }
+            if (aobj->unk04 >= 37 && aobj->unk04 < 42) { sp7C[aobj->unk04 - 37] = aobj; }
 
             aobj = aobj->next;
         }
-        
+
         do {
             if (mobj->unk94 == NULL) {
                 aobj = mobj->unk90;
                 while (aobj != NULL) {
-                    if (aobj->unk05 != 0) {
-                        aobj->unk0C += mobj->unk9C + mobj->unk98;
-                    }
+                    if (aobj->unk05 != 0) { aobj->unk0C += mobj->unk9C + mobj->unk98; }
                     aobj = aobj->next;
                 }
                 mobj->unkA0 = mobj->unk98;
                 mobj->unk98 = PROCESSED_DEFAULT;
 
-                break;  // or return?
+                break; // or return?
             }
-            
+
             cmd = mobj->unk94->w >> 25;
             switch (cmd) {
-            case 8:
-            case 9:
-            {
-                payload = (f32)(mobj->unk94->w & 0x7FFF);
-                subcmd = (mobj->unk94++->w << 7) >> 22;
+                case 8:
+                case 9:
+                {
+                    payload = (f32)(mobj->unk94->w & 0x7FFF);
+                    subcmd  = (mobj->unk94++->w << 7) >> 22;
 
-                for (i = 0; i < ARRAY_COUNT(sp90); i++) {
-                    if (subcmd == 0) { break; }
+                    for (i = 0; i < ARRAY_COUNT(sp90); i++) {
+                        if (subcmd == 0) { break; }
 
-                    if (subcmd & 1) {
-                        if (sp90[i] == NULL) {
-                            sp90[i] = create_aobj_for_mobj(mobj, i + 13);
+                        if (subcmd & 1) {
+                            if (sp90[i] == NULL) { sp90[i] = create_aobj_for_mobj(mobj, i + 13); }
+                            sp90[i]->unk10 = sp90[i]->unk14;
+                            sp90[i]->unk14 = mobj->unk94->f;
+                            mobj->unk94++;
+                            sp90[i]->unk18 = sp90[i]->unk1C;
+                            sp90[i]->unk1C = 0.0f;
+                            sp90[i]->unk05 = 3;
+
+                            if (payload != 0.0f) { sp90[i]->unk08 = 1.0f / payload; }
+                            sp90[i]->unk0C = -mobj->unk98 - mobj->unk9C;
                         }
-                        sp90[i]->unk10 = sp90[i]->unk14;
-                        sp90[i]->unk14 = mobj->unk94->f;
-                        mobj->unk94++;
-                        sp90[i]->unk18 = sp90[i]->unk1C;
-                        sp90[i]->unk1C = 0.0f;
-                        sp90[i]->unk05 = 3;
-
-                        if (payload != 0.0f) {
-                            sp90[i]->unk08 = 1.0f / payload;
-                        }
-                        sp90[i]->unk0C = -mobj->unk98 - mobj->unk9C;
+                        subcmd >>= 1;
                     }
-                    subcmd >>= 1;
+
+                    if (cmd == 8) { mobj->unk98 += payload; }
+                    break;
                 }
-                
-                if (cmd == 8) {
-                    mobj->unk98 += payload;
-                }
-                break;
-            }
-            case 3:
-            case 4:
-            {
-                payload = (f32)(mobj->unk94->w & 0x7FFF);
-                subcmd = (mobj->unk94++->w << 7) >> 22;
+                case 3:
+                case 4:
+                {
+                    payload = (f32)(mobj->unk94->w & 0x7FFF);
+                    subcmd  = (mobj->unk94++->w << 7) >> 22;
 
-                for (i = 0; i < ARRAY_COUNT(sp90); i++) {
-                    if (subcmd == 0) { break; }
+                    for (i = 0; i < ARRAY_COUNT(sp90); i++) {
+                        if (subcmd == 0) { break; }
 
-                    if (subcmd & 1) {
-                        if (sp90[i] == NULL) {
-                            sp90[i] = create_aobj_for_mobj(mobj, i + 13);
+                        if (subcmd & 1) {
+                            if (sp90[i] == NULL) { sp90[i] = create_aobj_for_mobj(mobj, i + 13); }
+
+                            sp90[i]->unk10 = sp90[i]->unk14;
+                            sp90[i]->unk14 = mobj->unk94->f;
+                            mobj->unk94++;
+                            sp90[i]->unk05 = 2;
+                            if (payload != 0.0f) {
+                                sp90[i]->unk18 = (sp90[i]->unk14 - sp90[i]->unk10) / payload;
+                            }
+                            sp90[i]->unk0C = -mobj->unk98 - mobj->unk9C;
+                            sp90[i]->unk1C = 0.0f;
                         }
-
-                        sp90[i]->unk10 = sp90[i]->unk14;
-                        sp90[i]->unk14 = mobj->unk94->f;
-                        mobj->unk94++;
-                        sp90[i]->unk05 = 2;
-                        if (payload != 0.0f) {
-                            sp90[i]->unk18 = (sp90[i]->unk14 - sp90[i]->unk10) / payload;
-                        }
-                        sp90[i]->unk0C = -mobj->unk98 - mobj->unk9C;
-                        sp90[i]->unk1C = 0.0f;
+                        subcmd >>= 1;
                     }
-                    subcmd >>= 1;
+
+                    if (cmd == 3) { mobj->unk98 += payload; }
+                    break;
                 }
-                
-                if (cmd == 3) {
-                    mobj->unk98 += payload;
-                }
-                break;
-            }
-            case 5:
-            case 6:
-            {
-                payload = (f32)(mobj->unk94->w & 0x7FFF);
-                subcmd = (mobj->unk94++->w << 7) >> 22;
+                case 5:
+                case 6:
+                {
+                    payload = (f32)(mobj->unk94->w & 0x7FFF);
+                    subcmd  = (mobj->unk94++->w << 7) >> 22;
 
-                for (i = 0; i < ARRAY_COUNT(sp90); i++) {
-                    if (subcmd == 0) { break; }
+                    for (i = 0; i < ARRAY_COUNT(sp90); i++) {
+                        if (subcmd == 0) { break; }
 
-                    if (subcmd & 1) {
-                        if (sp90[i] == NULL) {
-                            sp90[i] = create_aobj_for_mobj(mobj, i + 13);
+                        if (subcmd & 1) {
+                            if (sp90[i] == NULL) { sp90[i] = create_aobj_for_mobj(mobj, i + 13); }
+                            sp90[i]->unk10 = sp90[i]->unk14;
+                            sp90[i]->unk14 = mobj->unk94->f;
+                            mobj->unk94++;
+                            sp90[i]->unk18 = sp90[i]->unk1C;
+                            sp90[i]->unk1C = mobj->unk94->f;
+                            mobj->unk94++;
+
+                            sp90[i]->unk05 = 3;
+                            if (payload != 0.0f) { sp90[i]->unk08 = 1.0f / payload; }
+                            sp90[i]->unk0C = -mobj->unk98 - mobj->unk9C;
                         }
-                        sp90[i]->unk10 = sp90[i]->unk14;
-                        sp90[i]->unk14 = mobj->unk94->f;
-                        mobj->unk94++;
-                        sp90[i]->unk18 = sp90[i]->unk1C;
-                        sp90[i]->unk1C = mobj->unk94->f;
-                        mobj->unk94++;
-
-                        sp90[i]->unk05 = 3;
-                        if (payload != 0.0f) {
-                            sp90[i]->unk08 = 1.0f / payload;
-                        }
-                        sp90[i]->unk0C = -mobj->unk98 - mobj->unk9C;
+                        subcmd >>= 1;
                     }
-                    subcmd >>= 1;
-                }
-                
-                if (cmd == 5) {
-                    mobj->unk98 += payload;
-                }
-                break;
-            }
-            case 7:
-            {
-                subcmd = (mobj->unk94++->w << 7) >> 22;
 
-                for (i = 0; i < ARRAY_COUNT(sp90); i++) {
-                    if (subcmd == 0) { break; }
+                    if (cmd == 5) { mobj->unk98 += payload; }
+                    break;
+                }
+                case 7:
+                {
+                    subcmd = (mobj->unk94++->w << 7) >> 22;
 
-                    if (subcmd & 1) {
-                        if (sp90[i] == NULL) {
-                            sp90[i] = create_aobj_for_mobj(mobj, i + 13);
+                    for (i = 0; i < ARRAY_COUNT(sp90); i++) {
+                        if (subcmd == 0) { break; }
+
+                        if (subcmd & 1) {
+                            if (sp90[i] == NULL) { sp90[i] = create_aobj_for_mobj(mobj, i + 13); }
+                            sp90[i]->unk1C = mobj->unk94->f;
+                            mobj->unk94++;
                         }
-                        sp90[i]->unk1C = mobj->unk94->f;
-                        mobj->unk94++;
+                        subcmd >>= 1;
                     }
-                    subcmd >>= 1;
+                    break;
                 }
-                break;
-            }
-            case 2:
-            {
-                mobj->unk98 += (f32)(mobj->unk94->w & 0x7FFF);
-                mobj->unk94++;
-
-                break;
-            }
-            case 10:
-            case 11:
-            {
-                payload = (f32)(mobj->unk94->w & 0x7FFF);
-                subcmd = (mobj->unk94++->w << 7) >> 22;
-
-                for (i = 0; i < ARRAY_COUNT(sp90); i++) {
-                    if (subcmd == 0) { break; }
-
-                    if (subcmd & 1) {
-                        if (sp90[i] == NULL) {
-                            sp90[i] = create_aobj_for_mobj(mobj, i + 13);
-                        }
-                        sp90[i]->unk10 = sp90[i]->unk14;
-                        sp90[i]->unk14 = mobj->unk94->f;
-                        mobj->unk94++;
-
-                        sp90[i]->unk05 = 1;
-                        sp90[i]->unk08 = payload;
-                        sp90[i]->unk0C = -mobj->unk98 - mobj->unk9C;
-                        sp90[i]->unk1C = 0.0f;
-                    }
-                    subcmd >>= 1;
-                }
-                
-                if (cmd == 10) {
-                    mobj->unk98 += payload;
-                }
-                break;
-            }
-            case 14:
-            {
-                mobj->unk94++;
-                mobj->unk94 = mobj->unk94->ptr;
-                mobj->unkA0 = -mobj->unk98;
-                break;
-            }
-            case 1:
-            {
-                mobj->unk94++;
-                mobj->unk94 = mobj->unk94->ptr;
-                break;
-            }
-            case 12: 
-            {
-                payload = (f32)(mobj->unk94->w & 0x7FFF);
-                subcmd = (mobj->unk94++->w << 7) >> 22;
-                
-                for (i = 0; i < ARRAY_COUNT(sp90); i++) {
-                    if (subcmd == 0) { break; }
-
-                    if (subcmd & 1) {
-                        if (sp90[i] == NULL) {
-                            sp90[i] = create_aobj_for_mobj(mobj, i + 13);
-                        }
-                        sp90[i]->unk0C += payload;
-                    }
-                    subcmd >>= 1;
-                }
-                
-                break;
-            }
-            case 0:
-            {
-                aobj = mobj->unk90;
-                while (aobj != NULL) {
-                    if (aobj->unk05 != 0) {
-                        aobj->unk0C += mobj->unk9C + mobj->unk98;
-                    }
-                    aobj = aobj->next;
-                }
-                
-                mobj->unkA0 = mobj->unk98;
-                mobj->unk98 = PROCESSED_DEFAULT;
-                return; // not break
-            }
-            case 18:
-            case 19:
-            {
-                payload = (f32)(mobj->unk94->w & 0x7FFF);
-                subcmd = (mobj->unk94++->w << 7) >> 22;
-
-                for (i = 0; i < ARRAY_COUNT(sp7C); i++) {
-                    if (subcmd == 0) { break; }
-
-                    if (subcmd & 1) {
-                        if (sp7C[i] == NULL) {
-                            sp7C[i] = create_aobj_for_mobj(mobj, i + 37);
-                        }
-                        sp7C[i]->unk10 = sp7C[i]->unk14;
-                        sp7C[i]->unk14 = mobj->unk94->f;
-                        mobj->unk94++;
-
-                        sp7C[i]->unk05 = 1;
-                        sp7C[i]->unk08 = payload;
-                        sp7C[i]->unk0C = -mobj->unk98 - mobj->unk9C;
-                    }
-                    subcmd >>= 1;
-                }
-                
-                if (cmd == 18) {
-                    mobj->unk98 += payload;
-                }
-                break;
-            }
-            case 20:
-            case 21:
-            {
-                payload = (f32)(mobj->unk94->w & 0x7FFF);
-                subcmd = (mobj->unk94++->w << 7) >> 22;
-                
-                for (i = 0; i < ARRAY_COUNT(sp7C); i++) {
-                    if (subcmd == 0) { break; }
-
-                    if (subcmd & 1) {
-                        if (sp7C[i] == NULL) {
-                            sp7C[i] = create_aobj_for_mobj(mobj, i + 37);
-                        }
-                        sp7C[i]->unk10 = sp7C[i]->unk14;
-                        sp7C[i]->unk14 = mobj->unk94->f;
-                        mobj->unk94++;
-
-                        sp7C[i]->unk05 = 2;
-                        if (payload != 0.0f) {
-                            sp7C[i]->unk08 = 1.0f / payload;
-                        }
-                        sp7C[i]->unk0C = -mobj->unk98 - mobj->unk9C;
-                    }
-                    subcmd >>= 1;
-                }
-                
-                if (cmd == 20) {
-                    mobj->unk98 += payload;
-                }
-                break;
-            }
-            case 22:
-            {
-                mobj->unk98 = (f32)(mobj->unk94->w & 0x7FFF);
-
-                subcmd = (mobj->unk94++->w << 7) >> 22;
-
-                if (subcmd & 0x01) {
-                    mobj->unk08.unk4C = mobj->unk94->w;
+                case 2:
+                {
+                    mobj->unk98 += (f32)(mobj->unk94->w & 0x7FFF);
                     mobj->unk94++;
+
+                    break;
                 }
-                if (subcmd & 0x02) {
-                    mobj->unk08.unk6C = mobj->unk94->w;
+                case 10:
+                case 11:
+                {
+                    payload = (f32)(mobj->unk94->w & 0x7FFF);
+                    subcmd  = (mobj->unk94++->w << 7) >> 22;
+
+                    for (i = 0; i < ARRAY_COUNT(sp90); i++) {
+                        if (subcmd == 0) { break; }
+
+                        if (subcmd & 1) {
+                            if (sp90[i] == NULL) { sp90[i] = create_aobj_for_mobj(mobj, i + 13); }
+                            sp90[i]->unk10 = sp90[i]->unk14;
+                            sp90[i]->unk14 = mobj->unk94->f;
+                            mobj->unk94++;
+
+                            sp90[i]->unk05 = 1;
+                            sp90[i]->unk08 = payload;
+                            sp90[i]->unk0C = -mobj->unk98 - mobj->unk9C;
+                            sp90[i]->unk1C = 0.0f;
+                        }
+                        subcmd >>= 1;
+                    }
+
+                    if (cmd == 10) { mobj->unk98 += payload; }
+                    break;
+                }
+                case 14:
+                {
                     mobj->unk94++;
+                    mobj->unk94 = mobj->unk94->ptr;
+                    mobj->unkA0 = -mobj->unk98;
+                    break;
                 }
-                if (subcmd & 0x04) {
-                    mobj->unk08.unk68 = mobj->unk94->w;
+                case 1:
+                {
                     mobj->unk94++;
+                    mobj->unk94 = mobj->unk94->ptr;
+                    break;
                 }
-                if (subcmd & 0x08) {
-                    mobj->unk08.unk74 = mobj->unk94->w;
-                    mobj->unk94++;
+                case 12:
+                {
+                    payload = (f32)(mobj->unk94->w & 0x7FFF);
+                    subcmd  = (mobj->unk94++->w << 7) >> 22;
+
+                    for (i = 0; i < ARRAY_COUNT(sp90); i++) {
+                        if (subcmd == 0) { break; }
+
+                        if (subcmd & 1) {
+                            if (sp90[i] == NULL) { sp90[i] = create_aobj_for_mobj(mobj, i + 13); }
+                            sp90[i]->unk0C += payload;
+                        }
+                        subcmd >>= 1;
+                    }
+
+                    break;
                 }
-                if (subcmd & 0x10) {
-                    mobj->unk08.unk70 = mobj->unk94->w;
-                    mobj->unk94++;
+                case 0:
+                {
+                    aobj = mobj->unk90;
+                    while (aobj != NULL) {
+                        if (aobj->unk05 != 0) { aobj->unk0C += mobj->unk9C + mobj->unk98; }
+                        aobj = aobj->next;
+                    }
+
+                    mobj->unkA0 = mobj->unk98;
+                    mobj->unk98 = PROCESSED_DEFAULT;
+                    return; // not break
                 }
-                break;
-            }
-            default: {}
+                case 18:
+                case 19:
+                {
+                    payload = (f32)(mobj->unk94->w & 0x7FFF);
+                    subcmd  = (mobj->unk94++->w << 7) >> 22;
+
+                    for (i = 0; i < ARRAY_COUNT(sp7C); i++) {
+                        if (subcmd == 0) { break; }
+
+                        if (subcmd & 1) {
+                            if (sp7C[i] == NULL) { sp7C[i] = create_aobj_for_mobj(mobj, i + 37); }
+                            sp7C[i]->unk10 = sp7C[i]->unk14;
+                            sp7C[i]->unk14 = mobj->unk94->f;
+                            mobj->unk94++;
+
+                            sp7C[i]->unk05 = 1;
+                            sp7C[i]->unk08 = payload;
+                            sp7C[i]->unk0C = -mobj->unk98 - mobj->unk9C;
+                        }
+                        subcmd >>= 1;
+                    }
+
+                    if (cmd == 18) { mobj->unk98 += payload; }
+                    break;
+                }
+                case 20:
+                case 21:
+                {
+                    payload = (f32)(mobj->unk94->w & 0x7FFF);
+                    subcmd  = (mobj->unk94++->w << 7) >> 22;
+
+                    for (i = 0; i < ARRAY_COUNT(sp7C); i++) {
+                        if (subcmd == 0) { break; }
+
+                        if (subcmd & 1) {
+                            if (sp7C[i] == NULL) { sp7C[i] = create_aobj_for_mobj(mobj, i + 37); }
+                            sp7C[i]->unk10 = sp7C[i]->unk14;
+                            sp7C[i]->unk14 = mobj->unk94->f;
+                            mobj->unk94++;
+
+                            sp7C[i]->unk05 = 2;
+                            if (payload != 0.0f) { sp7C[i]->unk08 = 1.0f / payload; }
+                            sp7C[i]->unk0C = -mobj->unk98 - mobj->unk9C;
+                        }
+                        subcmd >>= 1;
+                    }
+
+                    if (cmd == 20) { mobj->unk98 += payload; }
+                    break;
+                }
+                case 22:
+                {
+                    mobj->unk98 = (f32)(mobj->unk94->w & 0x7FFF);
+
+                    subcmd = (mobj->unk94++->w << 7) >> 22;
+
+                    if (subcmd & 0x01) {
+                        mobj->unk08.unk4C = mobj->unk94->w;
+                        mobj->unk94++;
+                    }
+                    if (subcmd & 0x02) {
+                        mobj->unk08.unk6C = mobj->unk94->w;
+                        mobj->unk94++;
+                    }
+                    if (subcmd & 0x04) {
+                        mobj->unk08.unk68 = mobj->unk94->w;
+                        mobj->unk94++;
+                    }
+                    if (subcmd & 0x08) {
+                        mobj->unk08.unk74 = mobj->unk94->w;
+                        mobj->unk94++;
+                    }
+                    if (subcmd & 0x10) {
+                        mobj->unk08.unk70 = mobj->unk94->w;
+                        mobj->unk94++;
+                    }
+                    break;
+                }
+                default:
+                {
+                }
             }
         } while (mobj->unk98 <= 0.0f);
     }
 }
 
+void func_8000DA40(struct MObj *mobj);
 #ifdef MIPS_TO_C
+void func_8000DA40(struct MObj *mobj) {
+    struct AObj *aobj;
+    f32 temp_f26;
+
+    if (mobj->unk98 != (f32)FLOAT_NEG_MAX) {
+        aobj = mobj->unk90;
+        while (aobj != NULL) {
+            // L8000DA94
+            if (aobj->unk05 != 0) {
+                if (mobj->unk98 != FLOAT_MAYBE_SCALE_MIN) { aobj->unk0C += mobj->unk9C; }
+                // L8000DAD0
+                if (aobj->unk04 < 37) {
+                    switch (aobj->unk05) {
+                        case 2: temp_f26 = aobj->unk10 + (aobj->unk0C * aobj->unk18); break;
+                        case 3:
+                        {
+                            f32 temp_f16 = SQUARE(aobj->unk08);
+                            f32 temp_f12 = SQUARE(aobj->unk0C);
+                            f32 temp_f18 = aobj->unk08 * temp_f12;
+                            f32 temp_f14 = aobj->unk0C * temp_f12 * temp_f16;
+                            f32 temp_f20 = 2.0f * temp_f14 * aobj->unk08;
+                            f32 temp_f22 = 3.0f * temp_f12 * temp_f16;
+                            f32 temp_f24 = temp_f14 - temp_f18;
+
+                            temp_f26 = (aobj->unk10 * ((temp_f20 - temp_f22) + 1.0f))
+                                     + (aobj->unk14 * (temp_f22 - temp_f20))
+                                     + (aobj->unk18 * ((temp_f24 - temp_f18) + aobj->unk0C))
+                                     + (aobj->unk1C * temp_f24);
+                            break;
+                        }
+                        case 1:
+                            temp_f26 = aobj->unk08 <= aobj->unk0C ? aobj->unk14 : aobj->unk10;
+                            break;
+                        default: break;
+                    }
+                    // L8000DBD0
+                    switch (aobj->unk04) {
+                        case 13: mobj->unk80 = temp_f26; break;
+                        case 14: mobj->unk08.unk14 = temp_f26; break;
+                        case 15: mobj->unk08.unk18 = temp_f26; break;
+                        case 16: mobj->unk08.unk1C = temp_f26; break;
+                        case 17: mobj->unk08.unk20 = temp_f26; break;
+                        case 18: mobj->unk82 = temp_f26; break;
+                        case 19: mobj->unk08.unk3C = temp_f26; break;
+                        case 20: mobj->unk08.unk40 = temp_f26; break;
+                        case 21: mobj->unk84 = temp_f26; break;
+                        case 22: mobj->unk88 = temp_f26; break;
+                        default: break;
+                    }
+                    // L8000DD3C
+                } else {
+                    // L8000DD3C
+                    if (aobj->unk05 != 1) {
+                        if (aobj->unk05 == 2) {
+                            s32 v1;
+
+                            v1 = (s32)(aobj->unk0C * aobj->unk08 * 256.0f);
+                            if (v1 < 0) { v1 = 0; }
+                            if (v1 > 256) { v1 = 256; }
+                        }
+                    } else {
+                    }
+                }
+            }
+            // L8000DEE4 L8000DEE8
+            aobj = aobj->next;
+        }
+        // L8000DEF8
+    }
+    // L8000DF20
+}
 #else
 #pragma GLOBAL_ASM("game/nonmatching/system_04/func_8000DA40.s")
 #endif
 
-#ifdef MIPS_TO_C
-#else
-#pragma GLOBAL_ASM("game/nonmatching/system_04/func_8000DF34.s")
-#endif
+void func_8000DF34(struct GObjCommon *arg0) {
+    struct DObj *dobj;
+    struct MObj *mobj;
 
-#ifdef MIPS_TO_C
-#else
-#pragma GLOBAL_ASM("game/nonmatching/system_04/func_8000E008.s")
-#endif
+    dobj = arg0->unk74;
+    while (dobj != NULL) {
+        // L8000DF58
+        func_8000BFE8(dobj);
+        func_8000CCBC(dobj);
 
-#ifdef MIPS_TO_C
-#else
-#pragma GLOBAL_ASM("game/nonmatching/system_04/func_8000E044.s")
-#endif
+        mobj = dobj->unk80;
+        while (mobj != NULL) {
+            func_8000CF6C(mobj);
+            func_8000DA40(mobj);
 
-#ifdef MIPS_TO_C
-#else
-#pragma GLOBAL_ASM("game/nonmatching/system_04/func_8000E084.s")
-#endif
+            mobj = mobj->next;
+        }
 
-#ifdef MIPS_TO_C
-#else
-#pragma GLOBAL_ASM("game/nonmatching/system_04/func_8000E0F4.s")
-#endif
+        if (dobj->unk10 != NULL) {
+            dobj = dobj->unk10;
+        } else if (dobj->unk8 != NULL) {
+            dobj = dobj->unk8;
+        } else {
+            while (TRUE) {
+                if ((uintptr_t)dobj->unk14 == 1) {
+                    dobj = NULL;
+                    break;
+                }
 
-#ifdef MIPS_TO_C
-#else
-#pragma GLOBAL_ASM("game/nonmatching/system_04/func_8000E164.s")
-#endif
+                if (dobj->unk14->unk8 != NULL) {
+                    dobj = dobj->unk14->unk8;
+                    break;
+                }
 
+                dobj = dobj->unk14;
+            }
+        }
+    }
+}
+
+struct AObj *func_8000E008(struct AObj *aobj, u8 key) {
+    while (aobj != NULL) {
+        if (aobj->unk04 == key) { return aobj; }
+
+        aobj = aobj->next;
+    }
+
+    return NULL;
+}
+
+void func_8000E044(struct DObj *dobj, f32 arg1) {
+    struct AObj *aobj;
+
+    aobj        = dobj->unk6C;
+    dobj->unk74 = dobj->unk78 + arg1;
+    while (aobj != NULL) {
+        aobj->unk08 = 1.0f / arg1;
+        aobj        = aobj->next;
+    }
+}
+
+f32 func_8000E084(struct DObj *dobj, s32 idx) {
+    switch (idx) {
+        case 1: return dobj->unk28.f[1];
+        case 2: return dobj->unk28.f[2];
+        case 3: return dobj->unk28.f[3];
+        // no four?
+        case 5: return dobj->unk18.f.v.x;
+        case 6: return dobj->unk18.f.v.y;
+        case 7: return dobj->unk18.f.v.z;
+        case 8: return dobj->unk3C.v.x;
+        case 9: return dobj->unk3C.v.y;
+        case 10: return dobj->unk3C.v.z;
+    }
+#ifdef AVOID_UB
+    // todo: return NaN?
+    return 0.0f;
+#endif
+}
+
+struct UnkEC64Arg3 {
+    /* 0x00 */ s32 unk00;
+    /* 0x04 */ s32 unk04;
+    /* 0x08 */ struct Vec3f unk08;
+    /* 0x14 */ struct Vec3f unk14;
+    /* 0x08 */ struct Vec3f unk20;
+}; // size == 0x2C
+
+f32 func_8000E0F4(struct UnkEC64Arg3 *arg0, s32 idx) {
+    switch (idx) {
+        case 1: return arg0->unk14.x;
+        case 2: return arg0->unk14.y;
+        case 3: return arg0->unk14.z;
+        // no four?
+        case 5: return arg0->unk08.x;
+        case 6: return arg0->unk08.y;
+        case 7: return arg0->unk08.z;
+        case 8: return arg0->unk20.x;
+        case 9: return arg0->unk20.y;
+        case 10: return arg0->unk20.z;
+    }
+#ifdef AVOID_UB
+    // todo: return NaN?
+    return 0.0f;
+#endif
+}
+
+s32 func_8000E164(
+    s32 arg0,
+    struct DObj *arg1,
+    f32 *arg2,
+    f32 *arg3,
+    struct AObj *arg4,
+    struct UnkEC64Arg3 *arg5,
+    s32 arg6,
+    s32 arg7,
+    struct Vec3f *arg8,
+    s32 *arg9) {
+    struct AObj *aobj; // sp24
+
+    aobj = func_8000E008(arg4, arg6);
+
+    if (aobj != NULL && aobj->unk05 != 0) {
+        if (arg0 == 0 && arg1->unk74 != (f32)PROCESSED_DEFAULT) { aobj->unk0C += arg1->unk78; }
+        // L8000E1DC
+        *arg2 = func_8000CB94(aobj);
+        if (arg7 != 0) { *arg3 = func_8000CC40(aobj); }
+    } else {
+        // L8000E20C
+        if (arg6 == 5 || arg6 == 6 || arg6 == 7) {
+            if (*arg9 != 0) {
+                switch (arg6) {
+                    case 5: *arg2 = arg8->x; break;
+                    case 6: *arg2 = arg8->y; break;
+                    case 7: *arg2 = arg8->z; break;
+                }
+            } else {
+                // L8000E284
+                aobj = func_8000E008(arg4, 4);
+                if (aobj != NULL && aobj->unk05 != 0) {
+                    if (arg0 == 0 && arg1->unk74 != (f32)PROCESSED_DEFAULT) {
+                        aobj->unk0C += arg1->unk78;
+                    }
+                    // L8000E2DC
+                    *arg2 = func_8000CB94(aobj);
+                    if (*arg2 < 0.0f) {
+                        *arg2 = 0.0f;
+                    } else if (*arg2 > 1.0f) {
+                        *arg2 = 1.0f;
+                    }
+                    // L8000E330
+                    func_8001E530(arg8, aobj->unk20, *arg2);
+                    switch (arg6) {
+                        case 5: *arg2 = arg8->x; break;
+                        case 6: *arg2 = arg8->y; break;
+                        case 7: *arg2 = arg8->z; break;
+                    }
+
+                    *arg9 = 1;
+                } else {
+                    // L8000E39C
+                    if (arg0 == 0) {
+                        if (arg5 == 0) { return 1; }
+                        // L8000E3B8
+                        *arg2 = func_8000E0F4(arg5, arg6);
+                    } else {
+                        // L8000E3C8
+                        *arg2 = func_8000E084(arg1, arg6);
+                    }
+                }
+            }
+        } else {
+            // L8000E3D8
+            if (arg0 == 0) {
+                if (arg5 == 0) { return 1; }
+                // L8000E3F4
+                *arg2 = func_8000E0F4(arg5, arg6);
+            } else {
+                // L8000E404
+                *arg2 = func_8000E084(arg1, arg6);
+            }
+        }
+    }
+    // L8000E410 L8000E414
+    return 0;
+}
+
+void func_8000E428(s32 arg0, f32 arg1, f32 arg2, f32 arg3, f32 *arg4, struct AObj *arg5);
 #ifdef MIPS_TO_C
+void func_8000E428(s32 arg0, f32 arg1, f32 arg2, f32 arg3, f32 *arg4, struct AObj *arg5) {
+    f32 sp3C;
+    f32 sp38;
+
+    f32 sp2C;
+    f32 sp28;
+    f32 sp24;
+
+    f32 sp20;
+    f32 sp1C;
+
+    f32 temp;
+
+    switch (arg0) {
+        case 1:
+        case 2:
+        case 3: sp2C = arg2; break;
+        // no four
+        case 5:
+        case 6:
+        case 7: sp2C = arg1; break;
+        case 8:
+        case 9:
+        case 10: sp2C = arg3; break;
+    }
+    // L8000E478
+    if (sp2C != 0.0f) {
+        sp3C = 2.0f * arg5->unk18 + arg5->unk1C;
+        sp28 = -6.0f * sp2C;
+        sp38 = sp28 * (arg5->unk14 - arg5->unk10);
+        sp24 = SQUARE(sp3C);
+        if (sp38 < sp24) {
+            sp1C = -sp3C;
+            sp20 = sp24 - sp38;
+            temp = (sqrtf(sp20) + sp1C) / sp2C;
+            if (*arg4 < temp) { *arg4 = temp; }
+            // L8000E53C
+            temp = (sp1C - sqrtf(sp20)) / sp2C;
+            if (*arg4 < temp) { *arg4 = temp; }
+            // L8000E584
+        } else if (sp24 - sp38 == 0.0f) {
+            // L8000E58C
+            temp = -sp3C / sp2C;
+            if (*arg4 < temp) { *arg4 = temp; }
+        }
+        // L8000E5CC
+        sp20 = sp24 + (sp24 * sp38);
+        if (0.0f < sp20) {
+            sp1C = -sp3C;
+            temp = (sqrtf(sp20) + sp1C) / -sp2C;
+            if (*arg4 < temp) { *arg4 = temp; }
+            // L8000E62C
+            temp = (sp1C - sqrtf(sp20)) / sp24;
+            if (*arg4 < temp) { *arg4 = temp; }
+            // L8000E668
+        } else if (sp20 == 0.0f) {
+            // L8000E674
+
+            temp = -sp3C / sp2C;
+            if (*arg4 < temp) { *arg4 = temp; }
+        }
+        // L8000E6A8
+        sp3C = -(arg5->unk18 + (2.0f * arg5->unk1C));
+        sp38 = sp28 * (arg5->unk10 - arg5->unk14);
+        sp24 = SQUARE(sp3C);
+
+        if (sp38 < sp24) {
+            sp20 = sp24 - sp38;
+            sp1C = -sp3C;
+            temp = (sqrtf(sp20) - sp1C) / sp2C;
+            if (*arg4 < temp) { *arg4 = temp; }
+            // L8000E740
+            temp = (sp1C - sqrtf(sp20)) / sp2C;
+            if (*arg4 < temp) { *arg4 = temp; }
+
+        } else if (sp24 - sp3C == 0.0f) {
+            // L8000E78C
+            temp = -sp3C / sp2C;
+            if (*arg4 < temp) { *arg4 = temp; }
+        }
+        // L8000E7C8
+        sp20 = sp24 + sp38;
+        if (sp20 < sp2C) {
+            sp1C = -sp3C;
+            sp24 = -sp2C;
+
+            temp = (sqrtf(sp20) + sp1C) / sp24;
+            if (*arg4 < temp) { *arg4 = temp; }
+            // L8000E82C
+            temp = (sp1C - sqrtf(sp20)) / sp24;
+            if (*arg4 < temp) { *arg4 = temp; }
+        } else if (sp20 == 0.0f) {
+            // L8000E868
+            temp = -sp3C / -sp2C;
+            if (*arg4 < temp) { *arg4 = temp; }
+        }
+    }
+    // L8000E89C return
+}
 #else
 #pragma GLOBAL_ASM("game/nonmatching/system_04/func_8000E428.s")
 #endif
 
-#ifdef MIPS_TO_C
+f32 func_8000E8A8(
+    struct DObj *arg0,
+    union AnimCmd **arg1,
+    f32 arg2,
+    struct UnkEC64Arg3 *arg3,
+    s32 arg4,
+    f32 arg5,
+    f32 arg6,
+    f32 arg7,
+    f32 arg8);
+#ifdef NON_MATCHING
+f32 func_8000E8A8(
+    struct DObj *arg0,
+    union AnimCmd **arg1,
+    f32 arg2,
+    struct UnkEC64Arg3 *arg3,
+    s32 arg4,
+    f32 arg5,
+    f32 arg6,
+    f32 arg7,
+    f32 arg8) {
+    f32 temp_f0; // A0
+    struct AObj *newAObj;
+    struct AObj *origAObj;
+    s32 i;
+
+    struct AObj *spC4;
+    struct AObj *spC0;
+    f32 phi_f16; // bc
+    f32 phi_f14; // b8
+    f32 spB4;
+    f32 spB0;
+    f32 spAC;
+    f32 spA8;
+    f32 spA4;
+    f32 phi_f12; // a0
+    s32 sp9C;
+    s32 sp98;
+    struct Vec3f sp8C;
+    struct Vec3f sp80;
+
+    spC0 = NULL;
+    sp9C = 0;
+    sp98 = 0;
+    spA4 = 0.0f;
+
+    if (arg1 == NULL || *arg1 == NULL) {
+        if (arg3 == NULL) {
+            func_80008EE4(arg0);
+            return 0;
+        }
+    }
+    // L8000E928
+    spC4        = arg0->unk6C;
+    arg0->unk6C = NULL;
+    if (arg1 != NULL && *arg1 != NULL) {
+        arg0->unk70 = *arg1;
+        arg0->unk74 = LOWER_BOUND;
+        arg0->unk7C = arg2;
+        func_8000BFE8(arg0);
+        spC0        = arg0->unk6C;
+        arg0->unk6C = NULL;
+    }
+    // L8000E968
+    for (i = 1; i <= 10; i++) {
+        if (i == 4) { continue; }
+        spA8 = 0.0f;
+        spAC = 0.0f;
+
+        if (func_8000E164(0, arg0, &spB0, &spA8, spC0, arg3, i, arg4, &sp80, &sp98) != 0) {
+            continue;
+        }
+
+        func_8000E164(1, arg0, &spB4, &spAC, spC4, arg3, i, arg4, &sp8C, &sp9C);
+
+        if (spB0 != spB4 || spA8 != spAC) {
+            // L8000EA40
+            newAObj = create_aobj_for_dobj(arg0, i);
+
+            if (i == 1 || i == 2 || i == 3) {
+                temp_f0 = spB4 + 6.2831855f; // 2*pi
+
+                if (spB0 < spB4) {
+                    phi_f14 = (spB0 - spB4);
+                    phi_f16 = -phi_f14;
+                } else {
+                    phi_f14 = (spB0 - spB4);
+                    phi_f16 = phi_f14;
+                }
+                // L8000EA8C
+                if (spB0 < temp_f0) {
+                    phi_f12 = -(spB0 - temp_f0);
+                } else {
+                    phi_f12 = spB0 - temp_f0;
+                }
+                // L8000EAAC
+                if (phi_f12 < phi_f16) {
+                    // spB4 = temp_f0;
+                    phi_f14 = spB0 - temp_f0;
+                }
+                // L8000EAC8
+                temp_f0 = spB4 - 6.2831855f;
+                if (spB0 < spB4) {
+                    phi_f16 = -phi_f14;
+                } else {
+                    phi_f16 = phi_f14;
+                }
+                // L8000EAE0
+                if (spB0 < temp_f0) {
+                    phi_f12 = -(spB0 - temp_f0);
+                } else {
+                    phi_f12 = spB0 - temp_f0;
+                }
+                // L8000EB00
+                if (phi_f12 < phi_f16) { spB4 = temp_f0; }
+            }
+            // L8000EB14
+            switch (arg4) {
+                case 0:
+                    newAObj->unk10 = spB4;
+                    newAObj->unk14 = spB0;
+                    newAObj->unk05 = 2;
+                    newAObj->unk08 = 1.0f / arg5;
+                    newAObj->unk0C = -arg0->unk78;
+                    newAObj->unk18 = (newAObj->unk14 - newAObj->unk10) / arg5;
+                    newAObj->unk1C = 0.0f;
+                    break;
+                case 1:
+                case 2:
+                    newAObj->unk10 = spB4;
+                    newAObj->unk14 = spB0;
+                    newAObj->unk05 = 3;
+                    newAObj->unk08 = 1.0f / arg5;
+                    newAObj->unk0C = -arg0->unk78;
+                    newAObj->unk18 = spAC;
+                    newAObj->unk1C = spA8;
+
+                    if (arg4 == 2) { func_8000E428(i, arg6, arg7, arg8, &spA4, newAObj); }
+                    break;
+                default:
+                {
+                }
+            }
+        }
+        // L8000EBDC L8000EBE0
+    }
+    // 8000EBEC
+    origAObj    = arg0->unk6C;
+    arg0->unk6C = spC4;
+    func_80008EE4(arg0);
+    arg0->unk6C = spC0;
+    func_80008EE4(arg0);
+
+    arg0->unk6C = origAObj;
+    arg0->unk70 = NULL;
+    arg0->unk74 = arg0->unk78 + arg5;
+    arg0->unk7C = -arg0->unk78;
+
+    return spA4;
+}
 #else
 #pragma GLOBAL_ASM("game/nonmatching/system_04/func_8000E8A8.s")
 #endif
 
-#ifdef MIPS_TO_C
+#ifdef NON_MATCHING
+
+f32 unref_8000EC64(
+    struct GObjCommon *arg0,
+    union AnimCmd **arg1,
+    f32 arg2,
+    struct UnkEC64Arg3 *arg3,
+    s32 arg4,
+    f32 arg5,
+    f32 arg6,
+    f32 arg7,
+    f32 arg8,
+    f32 arg9) {
+    f32 sp68;
+
+    f32 foundMax; // sp8C
+    f32 ret;
+
+    struct DObj *dobj; // s2
+
+    dobj        = arg0->unk74;
+    arg0->unk78 = arg2;
+    if (arg4 == 2) {
+        sp68     = arg5;
+        foundMax = 0.0f;
+        while (dobj != NULL) {
+            ret = func_8000E8A8(dobj, arg1, arg2, arg3, arg4, foundMax, arg7, arg8, arg9);
+            if (foundMax < ret) { foundMax = ret; }
+
+            if (arg1 != NULL) { arg1++; }
+
+            if (arg3 != NULL) { arg3++; }
+
+            dobj = func_8000BAA0(dobj);
+        }
+        dobj = arg0->unk74;
+        // L8000ED3C
+        if (foundMax < sp68) {
+            foundMax = sp68;
+        } else if (arg6 < foundMax) {
+            foundMax = arg6;
+        }
+
+        while (dobj != NULL) {
+            func_8000E044(dobj, foundMax);
+            dobj = func_8000BAA0(dobj);
+        }
+        // L8000ED94
+        arg5 = foundMax;
+    } else {
+        // L8000ED9C
+        while (dobj != NULL) {
+            func_8000E8A8(dobj, arg1, arg2, arg3, arg4, arg5, arg7, arg8, arg9);
+
+            if (arg1 != NULL) { arg1++; }
+
+            if (arg3 != NULL) { arg3++; }
+
+            dobj = func_8000BAA0(dobj);
+        }
+    }
+    // L8000EE00
+    arg0->unk78 = 0.0f;
+
+    return arg5;
+}
+
 #else
 #pragma GLOBAL_ASM("game/nonmatching/system_04/unref_8000EC64.s")
 #endif
 
-#ifdef MIPS_TO_C
+void unref_8000EE40(
+    struct GObjCommon *arg0,
+    union AnimCmd **arg1,
+    f32 arg2,
+    struct UnkEC64Arg3 *arg3);
+#ifdef NON_MATCHING
+void unref_8000EE40(
+    struct GObjCommon *arg0,
+    union AnimCmd **arg1,
+    f32 arg2,
+    struct UnkEC64Arg3 *arg3) {
+    s32 i;
+    struct DObj *dobj;
+
+    f32 sp84;
+    UNUSED u32 pad80;
+    s32 sp7C;
+    struct Vec3f sp70;
+    s32 sp6C;
+
+    dobj        = arg0->unk74;
+    sp7C        = 0;
+    sp6C        = 1;
+    arg0->unk78 = arg2;
+
+    while (dobj != NULL) {
+        // L8000EEB4
+        if (*arg1 != NULL) {
+            func_8000BD1C(dobj, *arg1, arg2);
+            dobj->unk55 = sp6C;
+            sp6C        = 0;
+
+            for (i = 1; i <= 10; i++) {
+                if (i == 4) { continue; }
+
+                func_8000E164(0, dobj, &sp84, NULL, dobj->unk6C, arg3, i, 0, &sp70, &sp7C);
+
+                switch (i) {
+                    case 1: dobj->unk28.f[1] = sp84; break;
+                    case 2: dobj->unk28.f[2] = sp84; break;
+                    case 3: dobj->unk28.f[3] = sp84; break;
+                    case 5: dobj->unk18.f.v.x = sp84; break;
+                    case 6: dobj->unk18.f.v.y = sp84; break;
+                    case 7: dobj->unk18.f.v.z = sp84; break;
+                    case 8: dobj->unk3C.v.x = sp84; break;
+                    case 9: dobj->unk3C.v.y = sp84; break;
+                    case 10: dobj->unk3C.v.z = sp84; break;
+                }
+            }
+        } else {
+            // L8000EFB4
+            dobj->unk74 = (f32)FLOAT_NEG_MAX;
+            dobj->unk55 = 0;
+            if (arg3 != NULL) {
+                dobj->unk18.f.v                      = arg3->unk08;
+                *((struct Vec3f *)&dobj->unk28.f[1]) = arg3->unk14;
+                dobj->unk3C.v                        = arg3->unk20;
+            }
+        }
+
+        arg1++;
+
+        if (arg3 != NULL) { arg3++; }
+
+        dobj = func_8000BAA0(dobj);
+    }
+    // L8000F020
+}
 #else
 #pragma GLOBAL_ASM("game/nonmatching/system_04/unref_8000EE40.s")
 #endif
 
-#ifdef MIPS_TO_C
-#else
-#pragma GLOBAL_ASM("game/nonmatching/system_04/func_8000F058.s")
-#endif
+void func_8000F058(struct DObj *dobj) {
+    func_80008CC0(dobj, 27, 0);
+    func_80008CC0(dobj, 32, 0);
+}
 
-#ifdef MIPS_TO_C
-#else
-#pragma GLOBAL_ASM("game/nonmatching/system_04/unref_8000F090.s")
-#endif
+struct DObj *unref_8000F090(struct GObjCommon *arg0, s32 arg1) {
+    struct DObj *dobj;
 
-#ifdef MIPS_TO_C
-#else
-#pragma GLOBAL_ASM("game/nonmatching/system_04/unref_8000F0C0.s")
-#endif
+    dobj = func_800092D0(arg0, arg1);
+    func_8000F058(dobj);
 
-#ifdef MIPS_TO_C
-#else
-#pragma GLOBAL_ASM("game/nonmatching/system_04/unref_8000F0F0.s")
-#endif
+    return dobj;
+}
 
-#ifdef MIPS_TO_C
+struct DObj *unref_8000F0C0(struct DObj *arg0, s32 arg1) {
+    struct DObj *newDObj;
+
+    newDObj = func_80009380(arg0, arg1);
+    func_8000F058(newDObj);
+
+    return newDObj;
+}
+
+struct DObj *unref_8000F0F0(struct DObj *arg0, s32 arg1) {
+    struct DObj *newDObj;
+
+    newDObj = func_800093F4(arg0, arg1);
+    func_8000F058(newDObj);
+
+    return newDObj;
+}
+
+void func_8000F120(struct GObjCommon *arg0, struct UnkEC64Arg3 *arg1, struct DObj **arg2);
+#ifdef NON_MATCHING
+// nonmatching: regalloc around arg1->unk00 in v0 not v1
+void func_8000F120(struct GObjCommon *arg0, struct UnkEC64Arg3 *arg1, struct DObj **arg2) {
+    int i;
+    struct DObj *dobj;
+    s32 trunc;
+    struct DObj *sp44[18];
+
+    // clang-format off
+    for (i = 0; i < ARRAY_COUNT(sp44); i++) {
+        sp44[i] = NULL;
+    }
+    // clang-format on
+
+    while (arg1->unk00 != 18) {
+        // L8000F18C
+        trunc = arg1->unk00 & 0xFFF;
+        if (trunc) {
+            dobj = sp44[trunc] = func_800093F4(sp44[trunc - 1], arg1->unk04);
+        } else {
+            dobj = sp44[0] = func_800092D0(arg0, arg1->unk04);
+        }
+        // L8000F1C4
+        if (arg1->unk00 & 0xF000) { func_80008CC0(dobj, 18, 0); }
+
+        // L8000F1EC
+        if (arg1->unk00 & 0x8000) {
+            func_80008CC0(dobj, 44, 0);
+        } else if (arg1->unk00 & 0x4000) {
+            func_80008CC0(dobj, 46, 0);
+        } else if (arg1->unk00 & 0x2000) {
+            func_80008CC0(dobj, 48, 0);
+        } else if (arg1->unk00 & 0x1000) {
+            func_80008CC0(dobj, 50, 0);
+        } else {
+            func_8000F058(dobj);
+        }
+        // L8000F274
+        dobj->unk18.f.v                      = arg1->unk08;
+        *((struct Vec3f *)&dobj->unk28.f[1]) = arg1->unk14;
+        dobj->unk3C.v                        = arg1->unk20;
+
+        if (arg2 != NULL) {
+            *arg2 = dobj;
+            arg2++;
+        }
+
+        arg1++;
+    }
+    // L8000F2D4
+}
 #else
 #pragma GLOBAL_ASM("game/nonmatching/system_04/func_8000F120.s")
 #endif
 
-#ifdef MIPS_TO_C
-#else
-#pragma GLOBAL_ASM("game/nonmatching/system_04/func_8000F2FC.s")
-#endif
+void func_8000F2FC(struct DObj *arg0, u8 arg1, u8 arg2, u8 arg3) {
+    if (arg1 != 0) { func_80008CC0(arg0, arg1, 0); }
+    if (arg2 != 0) { func_80008CC0(arg0, arg2, 0); }
+    if (arg3 != 0) { func_80008CC0(arg0, arg3, 0); }
+}
 
-#ifdef MIPS_TO_C
-#else
-#pragma GLOBAL_ASM("game/nonmatching/system_04/func_8000F364.s")
-#endif
+void func_8000F364(struct DObj *arg0, u8 arg1, u8 arg2, u8 arg3, s32 arg4) {
+    s32 phi_t0 = 0;
+    s32 phi_t1 = 0; // sp20
+    s32 phi_v1 = 0; // sp1C
 
-#ifdef MIPS_TO_C
-#else
-#pragma GLOBAL_ASM("game/nonmatching/system_04/func_8000F590.s")
-#endif
+    switch (arg1) {
+        case 18: phi_t0 = 1; break;
+        case 26: phi_v1 = 1; break;
+        case 27:
+            phi_v1 = 1;
+            phi_t0 = 1;
+            break;
+        case 28:
+            phi_t1 = 1;
+            phi_v1 = 1;
+            phi_t0 = 1;
+            break;
+        case 29: phi_v1 = 2; break;
+        case 30:
+            phi_v1 = 2;
+            phi_t0 = 1;
+            break;
+        case 31:
+            phi_v1 = 2;
+            phi_t1 = 1;
+            phi_t0 = 1;
+            break;
+        case 32: phi_t1 = 1; break;
+    }
+    // L8000F408
+    switch (arg2) {
+        case 26: phi_v1 = 1; break;
+        case 29: phi_v1 = 2; break;
+        case 32: phi_t1 = 1; break;
+    }
+    // L8000F448
+    if (arg3 == 32) { phi_t1 = 1; }
 
-#ifdef MIPS_TO_C
-#else
-#pragma GLOBAL_ASM("game/nonmatching/system_04/func_8000F720.s")
-#endif
+    if (phi_t0 != 0) { func_80008CC0(arg0, 18, 0); }
+    // L8000F47C
+    if (arg4 & 0x4000) {
+        if (phi_v1 == 1) {
+            func_80008CC0(arg0, 46, 0);
+        } else {
+            func_80008CC0(arg0, 45, 0);
+        }
+    } else if (arg4 & 0x2000) {
+        if (phi_v1 == 1) {
+            func_80008CC0(arg0, 48, 0);
+        } else {
+            func_80008CC0(arg0, 47, 0);
+        }
+    } else if (arg4 & 0x1000) {
+        if (phi_v1 == 1) {
+            func_80008CC0(arg0, 50, 0);
+        } else {
+            func_80008CC0(arg0, 49, 0);
+        }
+    } else if (phi_t1 != 0) {
+        if (phi_v1 == 1) {
+            func_80008CC0(arg0, 44, 0);
+        } else {
+            func_80008CC0(arg0, 43, 0);
+        }
+    } else {
+        if (phi_v1 == 1) {
+            func_80008CC0(arg0, 42, 0);
+        } else {
+            func_80008CC0(arg0, 41, 0);
+        }
+    }
+}
 
-#ifdef MIPS_TO_C
-#else
-#pragma GLOBAL_ASM("game/nonmatching/system_04/func_8000F8F4.s")
-#endif
+void func_8000F590(
+    struct GObjCommon *arg0,
+    struct UnkEC64Arg3 *arg1,
+    struct DObj **arg2,
+    u8 arg3,
+    u8 arg4,
+    u8 arg5) {
+    int i;
+    struct DObj *dobj;
+    s32 trunc;
+    struct DObj *sp54[18];
 
-#ifdef MIPS_TO_C
-#else
-#pragma GLOBAL_ASM("game/nonmatching/system_04/func_8000F988.s")
-#endif
+    // clang-format off
+    for (i = 0; i < ARRAY_COUNT(sp54); i++) {
+        sp54[i] = NULL;
+    }
+    // clang-format on
 
-#ifdef MIPS_TO_C
-#else
-#pragma GLOBAL_ASM("game/nonmatching/system_04/func_8000FA3C.s")
-#endif
+    while (arg1->unk00 != 18) {
+        // L8000F614
+        trunc = arg1->unk00 & 0xFFF;
+        if (trunc) {
+            dobj = sp54[trunc] = func_800093F4(sp54[trunc - 1], arg1->unk04);
+        } else {
+            // L8000F638
+            dobj = sp54[0] = func_800092D0(arg0, arg1->unk04);
+        }
+        // L8000F64C
+        if (arg1->unk00 & 0xF000) {
+            func_8000F364(dobj, arg3, arg4, arg5, arg1->unk00 & 0xF000);
+        } else {
+            // L8000F684
+            func_8000F2FC(dobj, arg3, arg4, arg5);
+        }
+        // L8000F690
+        dobj->unk18.f.v                      = arg1->unk08;
+        *((struct Vec3f *)&dobj->unk28.f[1]) = arg1->unk14;
+        dobj->unk3C.v                        = arg1->unk20;
+
+        if (arg2 != NULL) {
+            *arg2 = dobj;
+            arg2++;
+        }
+        arg1++;
+    }
+}
+
+void func_8000F720(
+    struct GObjCommon *arg0,
+    struct UnkEC64Arg3 *arg1,
+    struct MObjSub ***arg2,
+    struct DObj **arg3,
+    u8 arg4,
+    u8 arg5,
+    u8 arg6) {
+    int i;
+    struct DObj *dobj;
+    s32 trunc;
+    struct DObj *sp5C[18];
+    struct MObjSub **csr;
+    struct MObjSub *msub;
+
+    // clang-format off
+    for (i = 0; i < ARRAY_COUNT(sp5C); i++) {
+        sp5C[i] = NULL;
+    }
+    // clang-format on
+
+    while (arg1->unk00 != 18) {
+        // L8000F7A0
+        trunc = arg1->unk00 & 0xFFF;
+        if (trunc) {
+            dobj = sp5C[trunc] = func_800093F4(sp5C[trunc - 1], arg1->unk04);
+        } else {
+            dobj = sp5C[0] = func_800092D0(arg0, arg1->unk04);
+        }
+        // L8000F7DC
+        if (arg1->unk00 & 0xF000) {
+            func_8000F364(dobj, arg4, arg5, arg6, arg1->unk00 & 0xF000);
+        } else {
+            func_8000F2FC(dobj, arg4, arg5, arg6);
+        }
+        // L8000F820
+        dobj->unk18.f.v                      = arg1->unk08;
+        *((struct Vec3f *)&dobj->unk28.f[1]) = arg1->unk14;
+        dobj->unk3C.v                        = arg1->unk20;
+
+        if (arg2 != NULL) {
+            if (*arg2 != NULL) {
+                csr  = *arg2;
+                msub = *csr;
+                while (msub != NULL) {
+                    func_800090DC(dobj, msub);
+                    csr++;
+                    msub = *csr;
+                }
+            }
+
+            arg2++;
+        }
+        // L8000F8A0
+        if (arg3 != NULL) {
+            *arg3 = dobj;
+            arg3++;
+        }
+        // L8000F8B4
+        arg1++;
+    }
+    // L8000F8C4
+}
+
+void func_8000F8F4(struct GObjCommon *arg0, struct MObjSub ***arg1) {
+    struct DObj *dobj;
+    struct MObjSub **csr;
+    struct MObjSub *msub;
+
+    dobj = arg0->unk74;
+    while (dobj != NULL) {
+        if (arg1 != NULL) {
+            if (*arg1 != NULL) {
+                csr  = *arg1;
+                msub = *csr;
+                while (msub != NULL) {
+                    func_800090DC(dobj, msub);
+                    csr++;
+                    msub = *csr;
+                }
+            }
+            arg1++;
+        }
+        // L8000F95C
+        dobj = func_8000BAA0(dobj);
+    }
+}
+
+void func_8000F988(struct GObjCommon *arg0, struct UnkEC64Arg3 *arg1) {
+    struct DObj *dobj;
+
+    dobj = arg0->unk74;
+    while (dobj != NULL && arg1->unk00 != 18) {
+        dobj->unk18.f.v                      = arg1->unk08;
+        *((struct Vec3f *)&dobj->unk28.f[1]) = arg1->unk14;
+        dobj->unk3C.v                        = arg1->unk20;
+
+        arg1++;
+        dobj = func_8000BAA0(dobj);
+    }
+}
+
+void func_8000FA3C(struct DObj *dobj, union AnimCmd *arg1, f32 arg2) {
+    struct AObj *aobj;
+
+    aobj = dobj->unk6C;
+    while (aobj != NULL) {
+        aobj->unk05 = 0;
+        aobj        = aobj->next;
+    }
+    dobj->unk70 = arg1;
+    dobj->unk74 = LOWER_BOUND;
+    dobj->unk7C = arg2;
+}
 
 #ifdef MIPS_TO_C
 #else
