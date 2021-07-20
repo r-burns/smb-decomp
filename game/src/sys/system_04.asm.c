@@ -1932,53 +1932,625 @@ void func_8000FA3C(struct DObj *dobj, union AnimCmd *arg1, f32 arg2) {
     dobj->unk7C = arg2;
 }
 
-#ifdef MIPS_TO_C
-#else
-#pragma GLOBAL_ASM("game/nonmatching/system_04/func_8000FA74.s")
-#endif
+// maybe this takes an `SObj *`...?
+void func_8000FA74(struct DObj *arg) {
+    struct AObj *sp80[10];
+    struct AObj *aobj;
+    s32 i;
+    u32 cmd;
+    u32 subcmd;
+    f32 payload;
 
-#ifdef MIPS_TO_C
-#else
-#pragma GLOBAL_ASM("game/nonmatching/system_04/func_80010344.s")
-#endif
+    if (arg->unk74 != (f32)FLOAT_NEG_MAX) {
+        if (arg->unk74 == (f32)LOWER_BOUND) {
+            arg->unk74 = -arg->unk7C;
+        } else {
+            arg->unk74 -= arg->unk78;
+            arg->unk7C += arg->unk78;
+            arg->unk4->unk78 = arg->unk7C;
 
-#ifdef MIPS_TO_C
-#else
-#pragma GLOBAL_ASM("game/nonmatching/system_04/func_80010580.s")
-#endif
+            if (arg->unk74 > 0.0f) { return; }
+        }
+        // L8000FB44
+        // clang-format off
+        for (i = 0; i < ARRAY_COUNT(sp80); i++) {
+            sp80[i] = NULL;
+        }
+        // clang-format on
+        aobj = arg->unk6C;
+        while (aobj != NULL) {
+            if (aobj->unk04 >= 25 && aobj->unk04 < 35) { sp80[aobj->unk04 - 25] = aobj; }
+            aobj = aobj->next;
+        }
+        // L8000FBA0
+        do {
+            // L8000FBAC
+            if (arg->unk70 == NULL) {
+                aobj = arg->unk6C;
+                while (aobj != NULL) {
+                    if (aobj->unk05) { aobj->unk0C += arg->unk78 + arg->unk74; }
+                    aobj = aobj->next;
+                }
+                arg->unk7C = arg->unk74;
+                arg->unk74 = PROCESSED_DEFAULT;
+                return;
+            }
+            // L8000FC0C
+            cmd = arg->unk70->w >> 25;
+            switch (cmd) {
+                case 8:
+                case 9:
+                {
+                    payload = (f32)(arg->unk70->w & 0x7FFF);
+                    subcmd  = (arg->unk70++->w << 7) >> 22;
 
-#ifdef MIPS_TO_C
+                    for (i = 0; i < ARRAY_COUNT(sp80); i++) {
+                        if (subcmd == 0) { break; }
+                        if (subcmd & 1) {
+                            if (sp80[i] == NULL) { sp80[i] = func_80009010(arg, i + 25); }
+                            sp80[i]->unk10 = sp80[i]->unk14;
+                            sp80[i]->unk14 = arg->unk70->f;
+                            arg->unk70++;
+                            sp80[i]->unk18 = sp80[i]->unk1C;
+                            sp80[i]->unk1C = 0.0f;
+                            sp80[i]->unk05 = 3;
+
+                            if (payload != 0.0f) { sp80[i]->unk08 = 1.0f / payload; }
+                            sp80[i]->unk0C = -arg->unk74 - arg->unk78;
+                        }
+                        subcmd >>= 1;
+                    }
+                    // L8000FD18
+                    if (cmd == 8) { arg->unk74 += payload; }
+                    break;
+                }
+                case 3:
+                case 4:
+                {
+                    payload = (f32)(arg->unk70->w & 0x7FFF);
+                    subcmd  = (arg->unk70++->w << 7) >> 22;
+
+                    for (i = 0; i < ARRAY_COUNT(sp80); i++) {
+                        if (subcmd == 0) { break; }
+                        if (subcmd & 1) {
+                            if (sp80[i] == NULL) { sp80[i] = func_80009010(arg, i + 25); }
+                            sp80[i]->unk10 = sp80[i]->unk14;
+                            sp80[i]->unk14 = arg->unk70->f;
+                            arg->unk70++;
+                            sp80[i]->unk05 = 2;
+
+                            if (payload != 0.0f) {
+                                sp80[i]->unk18 = (sp80[i]->unk14 - sp80[i]->unk10) / payload;
+                            }
+                            sp80[i]->unk0C = -arg->unk74 - arg->unk78;
+                            sp80[i]->unk1C = 0.0f;
+                        }
+                        subcmd >>= 1;
+                    }
+                    // L8000FE20
+                    if (cmd == 3) { arg->unk74 += payload; }
+                    break;
+                }
+                case 5:
+                case 6:
+                {
+                    payload = (f32)(arg->unk70->w & 0x7FFF);
+                    subcmd  = (arg->unk70++->w << 7) >> 22;
+
+                    for (i = 0; i < ARRAY_COUNT(sp80); i++) {
+                        if (subcmd == 0) { break; }
+                        if (subcmd & 1) {
+                            if (sp80[i] == NULL) { sp80[i] = func_80009010(arg, i + 25); }
+
+                            sp80[i]->unk10 = sp80[i]->unk14;
+                            sp80[i]->unk14 = arg->unk70->f;
+                            arg->unk70++;
+                            sp80[i]->unk18 = sp80[i]->unk1C;
+                            sp80[i]->unk1C = arg->unk70->f;
+                            arg->unk70++;
+                            sp80[i]->unk05 = 3;
+                            if (payload != 0.0f) { sp80[i]->unk08 = 1.0f / payload; }
+                            sp80[i]->unk0C = -arg->unk74 - arg->unk78;
+                        }
+
+                        subcmd >>= 1;
+                    }
+
+                    if (cmd == 5) { arg->unk74 += payload; }
+                    break;
+                }
+                case 7:
+                {
+                    subcmd = (arg->unk70++->w << 7) >> 22;
+                    for (i = 0; i < ARRAY_COUNT(sp80); i++) {
+                        if (subcmd == 0) { break; }
+                        if (subcmd & 1) {
+                            if (sp80[i] == NULL) { sp80[i] = func_80009010(arg, i + 25); }
+
+                            sp80[i]->unk1C = arg->unk70->f;
+                            arg->unk70++;
+                        }
+                        subcmd >>= 1;
+                    }
+                    break;
+                }
+                case 2:
+                {
+                    arg->unk74 += (f32)(arg->unk70++->w & 0x7FFF);
+                    break;
+                }
+                case 10:
+                case 11:
+                {
+                    payload = (f32)(arg->unk70->w & 0x7FFF);
+                    subcmd  = (arg->unk70++->w << 7) >> 22;
+
+                    for (i = 0; i < ARRAY_COUNT(sp80); i++) {
+                        if (subcmd == 0) { break; }
+                        if (subcmd & 1) {
+                            if (sp80[i] == NULL) { sp80[i] = func_80009010(arg, i + 25); }
+
+                            sp80[i]->unk10 = sp80[i]->unk14;
+                            sp80[i]->unk14 = arg->unk70->f;
+                            arg->unk70++;
+                            sp80[i]->unk05 = 1;
+                            sp80[i]->unk08 = payload;
+                            sp80[i]->unk0C = -arg->unk74 - arg->unk78;
+                            sp80[i]->unk1C = 0.0f;
+                        }
+                        subcmd >>= 1;
+                    }
+
+                    if (cmd == 10) { arg->unk74 += payload; }
+
+                    break;
+                }
+                case 14:
+                {
+                    arg->unk70++;
+                    arg->unk70       = arg->unk70->ptr;
+                    arg->unk7C       = -arg->unk74;
+                    arg->unk4->unk78 = -arg->unk74;
+                    break;
+                }
+                case 1:
+                {
+                    arg->unk70++;
+                    arg->unk70 = arg->unk70->ptr;
+                    break;
+                }
+                case 12:
+                {
+                    payload = (f32)(arg->unk70->w & 0x7FFF);
+                    subcmd  = (arg->unk70++->w << 7) >> 22;
+
+                    for (i = 0; i < ARRAY_COUNT(sp80); i++) {
+                        if (subcmd == 0) { break; }
+                        if (subcmd & 1) {
+                            if (sp80[i] == NULL) { sp80[i] = func_80009010(arg, i + 25); }
+
+                            sp80[i]->unk0C += payload;
+                        }
+                        subcmd >>= 1;
+                    }
+                    break;
+                }
+                case 13:
+                {
+                    subcmd = (arg->unk70++->w << 7) >> 22;
+
+                    if (subcmd & 0x08) {
+                        if (sp80[3] == NULL) { sp80[3] = func_80009010(arg, 3 + 25); }
+
+                        sp80[3]->unk20 = arg->unk70->w;
+                        arg->unk70++;
+                    }
+                    if (subcmd & 0x80) {
+                        if (sp80[7] == NULL) { sp80[7] = func_80009010(arg, 7 + 25); }
+
+                        sp80[7]->unk20 = arg->unk70->w;
+                        arg->unk70++;
+                    }
+                    break;
+                }
+                case 0:
+                {
+                    aobj = arg->unk6C;
+                    while (aobj != NULL) {
+                        if (aobj->unk05 != 0) { aobj->unk0C += arg->unk78 + arg->unk74; }
+                        aobj = aobj->next;
+                    }
+                    arg->unk7C = arg->unk74;
+                    arg->unk74 = PROCESSED_DEFAULT;
+                    return; // not break
+                }
+                case 23:
+                {
+                    arg->unk74 += (f32)(arg->unk70++->w & 0x7FFF);
+                    arg->unk70 += 2;
+                    break;
+                }
+                default:
+                {
+                }
+            }
+            // L800102F4
+        } while (arg->unk74 <= 0.0f);
+    }
+    // L80010308
+}
+
+// could take an SObj ...?
+// But it seems that the game only has SObj sized at 0x6C
+struct TempUnkObj {
+    /* 0x00 */ u32 pad00;
+    /* 0x04 */ struct GObjCommon *unk04;
+    /* 0x08 */ u8 pad08[0x20 - 0x08];
+    /* 0x20 */ f32 unk20;
+    /* 0x24 */ u8 pad24[0x3C - 0x24];
+    /* 0x3C */ struct Vec3f unk3C;
+    /* 0x48 */ struct Vec3f unk48;
+    /* 0x54 */ f32 unk54;
+    /* 0x58 */ u8 pad58[0x6c - 0x58];
+    /* 0x6C */ struct AObj *unk6C;
+    /* 0x70 */ u32 pad70;
+    /* 0x74 */ f32 unk74;
+    /* 0x78 */ f32 unk78;
+}; // size >= 0x7C
+
+void func_80010344(struct TempUnkObj *arg) {
+    struct AObj *aobj;
+
+    if (arg->unk74 != (f32)FLOAT_NEG_MAX) {
+        aobj = arg->unk6C;
+        while (aobj != NULL) {
+            if (aobj->unk05 != 0) {
+                if (arg->unk74 != (f32)FLOAT_MAYBE_SCALE_MIN) { aobj->unk0C += arg->unk78; }
+                // L800103D8
+                if (!(arg->unk04->unk7C & 2)) {
+                    switch (aobj->unk04) {
+                        case 25: arg->unk3C.x = func_8000CB94(aobj); break;
+                        case 26: arg->unk3C.y = func_8000CB94(aobj); break;
+                        case 27: arg->unk3C.z = func_8000CB94(aobj); break;
+                        case 28:
+                        {
+                            f32 temp = func_8000CB94(aobj);
+                            if (temp < 0.0f) {
+                                temp = 0.0f;
+                            } else {
+                                if (temp > 1.0f) { temp = 1.0f; }
+                            }
+                            func_8001E530(&arg->unk3C, aobj->unk20, temp);
+                            break;
+                        }
+                        case 29: arg->unk48.x = func_8000CB94(aobj); break;
+                        case 30: arg->unk48.y = func_8000CB94(aobj); break;
+                        case 31: arg->unk48.z = func_8000CB94(aobj); break;
+                        case 32:
+                        {
+                            f32 temp = func_8000CB94(aobj);
+                            if (temp < 0.0f) {
+                                temp = 0.0f;
+                            } else {
+                                if (temp > 1.0f) { temp = 1.0f; }
+                            }
+                            func_8001E530(&arg->unk48, aobj->unk20, temp);
+                            break;
+                        }
+                        case 33: arg->unk54 = func_8000CB94(aobj); break;
+                        case 34: arg->unk20 = func_8000CB94(aobj); break;
+                    }
+                }
+            }
+            // L80010530
+            aobj = aobj->next;
+        }
+        // L8001053C
+        if (arg->unk74 == FLOAT_MAYBE_SCALE_MIN) { arg->unk74 = FLOAT_NEG_MAX; }
+    }
+    // L80010564
+}
+
+void func_80010580(struct GObjCommon *obj) {
+    struct DObj *dobj; // could be SObj?
+    dobj = obj->unk74;
+    func_8000FA74(dobj);
+    func_80010344((void *)dobj);
+}
+
+#ifdef NON_MATCHING
+s32 unref_800105AC(union AnimCmd **arg0) {
+    union AnimCmd *list; // a0
+    u32 subcmd;          // v0
+    s32 v1 = 0;
+    s32 i;   // a2
+    u32 cmd; // a1
+    u32 id;
+
+    while (*arg0 == NULL) { arg0++; }
+
+    list = *arg0;
+    // loop start?
+    while (TRUE) {
+        cmd = list->w;
+        id  = cmd >> 25;
+        switch (id) {
+            case 3:
+            case 8:
+            case 10:
+                v1 += cmd & 0x7FFF;
+                // fall-thru
+            case 4:
+            case 7:
+            case 9:
+            case 11:
+                subcmd = (cmd << 7) >> 22;
+                list++;
+                for (i = 0; i < 10; i++) {
+                    if (subcmd == 0) { break; }
+                    if (subcmd & 1) { list++; }
+
+                    subcmd >>= 1;
+                }
+                break;
+            case 5:
+                v1 += cmd & 0x7FFF;
+                // fall-thru
+            case 6:
+                subcmd = (cmd << 7) >> 22;
+                list++;
+                for (i = 0; i < 10; i++) {
+                    if (subcmd == 0) { break; }
+                    if (subcmd & 1) { list += 2; }
+
+                    subcmd >>= 1;
+                }
+                break;
+            case 2:
+            case 15:
+                v1 += cmd & 0x7FFF;
+                list++;
+                break;
+            case 12: list++; break;
+            case 13: list += 2; break;
+            case 17:
+                v1 += cmd & 0x7FFF;
+                subcmd = (cmd << 7) >> 22;
+                list++;
+                for (i = 4; i < 14; i++) {
+                    if (subcmd == 0) { break; }
+                    if (subcmd & 1) { list++; }
+
+                    subcmd >>= 1;
+                }
+                break;
+            case 0: return v1;
+            case 1:
+            case 14: return -v1;
+            default:
+            {
+            }
+        }
+    }
+}
 #else
 #pragma GLOBAL_ASM("game/nonmatching/system_04/unref_800105AC.s")
 #endif
 
-#ifdef MIPS_TO_C
-#else
-#pragma GLOBAL_ASM("game/nonmatching/system_04/unref_80010710.s")
-#endif
+void unref_80010710(s32 arg0, s32 arg1, s32 arg2, s32 arg3) {
+    D_8003B930 = arg0;
+    D_8003B934 = arg1;
+    D_8003B938 = arg2;
+    D_8003B93C = arg3;
+}
 
-#ifdef MIPS_TO_C
-#else
-#pragma GLOBAL_ASM("game/nonmatching/system_04/func_80010734.s")
-#endif
+// system_05
+extern void *D_800470AC;
 
-#ifdef MIPS_TO_C
-#else
-#pragma GLOBAL_ASM("game/nonmatching/system_04/func_80010748.s")
-#endif
+void func_80010734(void *arg0) {
+    D_800470AC = arg0;
+}
 
-#ifdef MIPS_TO_C
+void unref_80010740(void) {
+    return;
+}
+
+// system_08
+typedef f32 Mtx4f[4][4];
+
+void func_80019EA0(Mtx4f *, void *);
+
+void func_80010748(void *arg0, Mtx4f *arg1, s32 arg2) {
+    Mtx4f sp48;
+    struct Vec3f sp3C;
+
+    struct TempUnkObj *obj;
+    f32 res;
+
+    obj    = D_80046A58->unk74;
+    sp3C.z = (*arg1)[1][3] - obj->unk3C.x;
+    sp3C.y = (*arg1)[2][0] - obj->unk3C.y;
+    sp3C.x = (*arg1)[2][1] - obj->unk3C.z;
+    res    = 1.0f / sqrtf(SQUARE(sp3C.z) + SQUARE(sp3C.y) + SQUARE(sp3C.x));
+    sp3C.z *= res;
+    sp3C.y *= res;
+    sp3C.x *= res;
+
+    res = sqrtf(SQUARE(sp3C.z) + SQUARE(sp3C.y));
+
+    sp48[0][3] = sp48[1][3] = sp48[2][3] = sp48[1][2] = 0.0f;
+    sp48[3][3]                                        = 1.0f;
+
+    if (res != 0.0f) {
+        f32 invrt = (1.0f / res);
+
+        sp48[2][2] = res;
+
+        sp48[0][0] = -sp3C.z;
+
+        sp48[1][0] = sp3C.y * invrt;
+
+        sp48[2][0] = -sp3C.z * sp3C.x * invrt;
+        sp48[0][1] = -sp3C.y;
+
+        sp48[1][1] = -sp3C.z * invrt;
+        sp48[2][1] = -sp3C.y * sp3C.x * invrt;
+
+        sp48[0][2] = -sp3C.x;
+    } else {
+        sp48[1][0] = sp48[2][0] = sp48[0][1] = sp48[2][1] = sp48[0][2] = 0.0f;
+        sp48[0][0] = sp48[1][1] = sp48[2][2] = 1.0f;
+    }
+    // L800108C0
+    if (arg2) {
+        sp48[3][0] = (*arg1)[1][3];
+        sp48[3][1] = (*arg1)[2][0];
+        sp48[3][2] = (*arg1)[2][1];
+    } else {
+        sp48[3][0] = sp48[3][1] = sp48[3][2] = 0.0f;
+    }
+
+    func_80019EA0(&sp48, arg0);
+}
+
+#ifdef NON_MATCHING
+// nonmatching: store reorder in first if block
+void func_80010918(void *arg0, Mtx4f *arg1, s32 arg2) {
+    Mtx4f sp48;
+    struct Vec3f sp3C;
+
+    struct TempUnkObj *obj;
+    f32 res;
+
+    obj    = D_80046A58->unk74;
+    sp3C.z = (*arg1)[1][3] - obj->unk3C.x;
+    sp3C.y = (*arg1)[2][0] - obj->unk3C.y;
+    sp3C.x = (*arg1)[2][1] - obj->unk3C.z;
+    res    = 1.0f / sqrtf(SQUARE(sp3C.z) + SQUARE(sp3C.y) + SQUARE(sp3C.x));
+    sp3C.z *= res;
+    sp3C.y *= res;
+    sp3C.x *= res;
+
+    res = sqrtf(SQUARE(sp3C.z) + SQUARE(sp3C.y));
+
+    sp48[0][3] = sp48[1][3] = sp48[2][3] = sp48[0][1] = 0.0f;
+    sp48[3][3]                                        = 1.0f;
+
+    if (res != 0.0f) {
+        f32 invrt = (1.0f / res); // f16
+
+        sp48[1][1] = res;
+
+        sp48[0][0] = -sp3C.x * invrt;
+        sp48[2][2] = -sp3C.x;
+
+        sp48[2][1] = -sp3C.y;
+        sp48[1][0] = -sp3C.y * sp3C.z * invrt;
+
+        sp48[2][0] = -sp3C.z;
+        sp48[0][2] = sp3C.z * invrt;
+        sp48[1][2] = -sp3C.y * sp3C.x * invrt;
+    } else {
+        sp48[1][0] = sp48[2][0] = sp48[2][1] = sp48[0][2] = sp48[1][2] = 0.0f;
+        sp48[0][0] = sp48[1][1] = sp48[2][2] = 1.0f;
+    }
+    // L800108C0
+    if (arg2) {
+        sp48[3][0] = (*arg1)[1][3];
+        sp48[3][1] = (*arg1)[2][0];
+        sp48[3][2] = (*arg1)[2][1];
+    } else {
+        sp48[3][0] = sp48[3][1] = sp48[3][2] = 0.0f;
+    }
+
+    func_80019EA0(&sp48, arg0);
+}
 #else
 #pragma GLOBAL_ASM("game/nonmatching/system_04/func_80010918.s")
 #endif
 
-#ifdef MIPS_TO_C
-#else
-#pragma GLOBAL_ASM("game/nonmatching/system_04/func_80010AE8.s")
-#endif
+void func_80010AE8(void *arg0, Mtx4f *arg1, s32 arg2) {
+    Mtx4f sp48;
+    f32 sp44;
+    f32 sp40;
 
-#ifdef MIPS_TO_C
-#else
-#pragma GLOBAL_ASM("game/nonmatching/system_04/func_80010C2C.s")
-#endif
-#pragma GCC diagnostic pop
+    struct TempUnkObj *obj;
+    f32 res;
+
+    obj  = D_80046A58->unk74;
+    sp44 = (*arg1)[1][3] - obj->unk3C.x;
+    sp40 = (*arg1)[2][0] - obj->unk3C.y;
+    res  = sqrtf(SQUARE(sp44) + SQUARE(sp40));
+
+    sp48[0][3] = sp48[1][3] = sp48[2][3] = sp48[2][0] = sp48[2][1] = sp48[0][2] = sp48[1][2] = 0.0f;
+    sp48[2][2] = sp48[3][3] = 1.0f;
+
+    if (res != 0.0f) {
+        f32 invrt = 1.0f / res;
+
+        sp44 *= invrt;
+        sp40 *= invrt;
+
+        sp48[0][0] = -sp44;
+        sp48[0][1] = -sp40;
+        sp48[1][0] = sp40;
+        sp48[1][1] = -sp44;
+    } else {
+        sp48[1][0] = sp48[0][1] = 0.0f;
+        sp48[0][0] = sp48[1][1] = 1.0f;
+    }
+
+    if (arg2) {
+        sp48[3][0] = (*arg1)[1][3];
+        sp48[3][1] = (*arg1)[2][0];
+        sp48[3][2] = (*arg1)[2][1];
+    } else {
+        // why does this have to be 0, and not 0.0f...
+        sp48[3][0] = sp48[3][1] = sp48[3][2] = 0;
+    }
+
+    func_80019EA0(&sp48, arg0);
+}
+
+void func_80010C2C(void *arg0, Mtx4f *arg1, s32 arg2) {
+    Mtx4f sp48;
+    f32 sp44;
+    f32 sp40;
+
+    struct TempUnkObj *obj;
+    f32 res;
+
+    obj  = D_80046A58->unk74;
+    sp44 = (*arg1)[1][3] - obj->unk3C.x;
+    sp40 = (*arg1)[2][1] - obj->unk3C.z;
+    res  = sqrtf(SQUARE(sp44) + SQUARE(sp40));
+
+    sp48[0][3] = sp48[1][3] = sp48[2][3] = sp48[1][0] = sp48[0][1] = sp48[1][2] = sp48[2][1] = 0.0f;
+    sp48[1][1] = sp48[3][3] = 1.0f;
+
+    if (res != 0.0f) {
+        f32 invrt = 1.0f / res;
+
+        sp44 *= invrt;
+        sp40 *= invrt;
+
+        sp48[0][2] = sp44;
+        sp48[2][0] = -sp44;
+        sp48[0][0] = -sp40;
+        sp48[2][2] = -sp40;
+    } else {
+        sp48[2][0] = sp48[0][2] = 0.0f;
+        sp48[0][0] = sp48[2][2] = 1.0f;
+    }
+
+    if (arg2) {
+        sp48[3][0] = (*arg1)[1][3];
+        sp48[3][1] = (*arg1)[2][0];
+        sp48[3][2] = (*arg1)[2][1];
+    } else {
+        // why does this have to be 0, and not 0.0f...
+        sp48[3][0] = sp48[3][1] = sp48[3][2] = 0;
+    }
+
+    func_80019EA0(&sp48, arg0);
+}

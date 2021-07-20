@@ -557,11 +557,11 @@ void func_80007E90(struct MObj *arg0, struct AObj *arg1) {
     arg0->unk90 = arg1;
 }
 
-// `arg0` might not be an `OMAnimation`, as this function is an exact
+// `arg0` could be another object type? SObj maybe
 // copy of `append_aobj_to_dobj`
-void func_80007EA0(struct OMAnimation *arg0, struct AObj *arg1) {
-    arg1->next       = arg0->dobj.unk6C;
-    arg0->dobj.unk6C = arg1;
+void func_80007EA0(struct DObj *arg0, struct AObj *arg1) {
+    arg1->next  = arg0->unk6C;
+    arg0->unk6C = arg1;
 }
 
 void free_aobj(struct AObj *a) {
@@ -1183,8 +1183,8 @@ void func_80008FB0(struct MObj *mobj) {
     mobj->unk98 = FLOAT_NEG_MAX;
 }
 
-// could be dobj, but maybe it's another type; probably matches `func_80007EA0`
-struct AObj *func_80009010(struct OMAnimation *anim, u8 index) {
+// might be another type? SObj; matches `func_80007EA0`
+struct AObj *func_80009010(struct DObj *obj, u8 index) {
     struct AObj *aobj = func_80007E04();
 
     aobj->unk04 = index;
@@ -1197,7 +1197,7 @@ struct AObj *func_80009010(struct OMAnimation *anim, u8 index) {
     aobj->unk0C = 0.0;
     aobj->unk08 = 1.0;
 
-    func_80007EA0(anim, aobj);
+    func_80007EA0(obj, aobj);
 
     return aobj;
 }

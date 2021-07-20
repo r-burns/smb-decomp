@@ -196,24 +196,6 @@ struct AObj {
     /* 0x20 */ s32 unk20;
 }; // size == 0x24
 
-// how is this struct related to DObj?
-struct OMAnimation {
-    /* 0x00 */ struct DObj dobj;
-    // does this start with a DObj (to 0x88)?
-    // /* 0x00 */ u8 pad00[0x6C - 0];
-    // /* 0x6C */ struct AObj *unk6C;
-    // /* 0x70 */ u8 pad70[0x74 - 0x70];
-    // /* 0x74 */ f32 unk74; // scale?
-    // /* 0x78 */ u8 pad78[0x90 - 0x78];
-    /* 0x88 */ u8 pad88[8];
-    /* 0x90 */ struct AObj *unk90;
-    // is this another pointer to the animation union?
-    /* 0x94 */ u32 *unk94;
-    /* 0x98 */ f32 unk98;
-    /* 0x9C */ f32 unk9C;
-    /* 0xA0 */ f32 unkA0;
-}; // size >= 0xA4
-
 // texture scroll? (from K64)
 struct MObjSub {
     /* 0x00 */ f32 unk00;
@@ -271,7 +253,7 @@ struct SObj {
     /* 0x0C */ struct SObj *unk0C;
     /* 0x10 */ struct SObjSub10 unk10;
     /* 0x54 */ s32 unk54;
-}; // size >= 0x58
+}; // size >= 0x58 (0x6C?)
 
 struct OMCamera {
     /* 0x00 */ struct OMCamera *next;
@@ -361,7 +343,7 @@ extern struct AObj *create_aobj_for_dobj(struct DObj *dobj, u8 index);
 extern void func_80008EE4(struct DObj *);
 extern struct AObj *create_aobj_for_mobj(struct MObj *mobj, u8 index);
 extern void func_80008FB0(struct MObj *);
-extern struct AObj *func_80009010(struct OMAnimation *anim, u8 index);
+extern struct AObj *func_80009010(struct DObj *obj, u8 index);
 extern struct MObj *func_800090DC(struct DObj *, struct MObjSub *);
 extern void func_800091F4(struct DObj *obj);
 extern struct DObj *func_800092D0(struct GObjCommon *, s32);
