@@ -181,7 +181,7 @@ def task_recompile_ido():
 
             yield {
                 'name': name + '-compile-' + prog,
-                'actions': [CC + build_flags + [libc, prog_c, '-o', prog_exe, '-I', recomp_base]],
+                'actions': [CC + [libc, prog_c, '-o', prog_exe, '-I', recomp_base] + build_flags],
                 'targets': [prog_exe],
                 'file_dep': [libc, prog_c, errstr_dst],
                 'task_dep': [mkdir_task]
