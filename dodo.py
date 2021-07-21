@@ -89,28 +89,28 @@ recomp_libc = recomp_base / 'libc_impl.c'
 recomp_libc_h = recomp_libc.with_suffix('.h')
 recomp_libc_flags = ['-fno-strict-aliasing', '-O2']
 
+recompflags = ['-fno-strict-aliasing', '-fno-pie', '-O2', '-lm']
 # (Prog, Irix Bin/Lib Path, Recomp Flags, Build Flags)
-common_flags = ['-fno-strict-aliasing', '-fno-pie', '-lm']
 ido53_progs = [
-    ('as',   irix_53 / irix_lib / 'as',   [], common_flags + ['-O2']),
-    ('as0',  irix_53 / irix_lib / 'as0',  [], common_flags + ['-O2']),
-    ('as1',  irix_53 / irix_lib / 'as1',  [], common_flags + ['-O2']),
-    ('cc',   irix_53 / irix_bin / 'cc',   [], common_flags + ['-O2']),
-    ('cfe',  irix_53 / irix_lib / 'cfe',  [], common_flags + ['-O2']),
-    ('ugen', irix_53 / irix_lib / 'ugen', ['--conservative'], common_flags + ['-O2']),
-    ('ujoin', irix_53 / irix_lib / 'ujoin', [], common_flags + ['-O2']),
-    ('uld', irix_53 / irix_lib / 'uld', [], common_flags + ['-O2']),
-    ('umerge', irix_53 / irix_lib / 'umerge', [], common_flags + ['-O2']),
-    ('uopt', irix_53 / irix_lib / 'uopt', [], common_flags + ['-O2']),
-    ('usplit', irix_53 / irix_lib / 'usplit', [], common_flags + ['-O2']),
+    #('as',   irix_53 / irix_lib / 'as',   [], recompflags),
+    #('as0',  irix_53 / irix_lib / 'as0',  [], recompflags),
+    ('as1',  irix_53 / irix_lib / 'as1',  [], recompflags),
+    ('cc',   irix_53 / irix_bin / 'cc',   [], recompflags),
+    ('cfe',  irix_53 / irix_lib / 'cfe',  [], recompflags),
+    ('ugen', irix_53 / irix_lib / 'ugen', ['--conservative'], recompflags),
+    ('ujoin', irix_53 / irix_lib / 'ujoin', [], recompflags),
+    ('uld', irix_53 / irix_lib / 'uld', [], recompflags),
+    ('umerge', irix_53 / irix_lib / 'umerge', [], recompflags),
+    ('uopt', irix_53 / irix_lib / 'uopt', [], recompflags),
+    ('usplit', irix_53 / irix_lib / 'usplit', [], recompflags),
 ]
 
 ido71_progs = [
-    ('as1',  irix_71 / irix_lib / 'as1',  [], common_flags + ['-O2']),
-    ('cc',   irix_71 / irix_bin / 'cc',   [], common_flags + ['-O2']),
-    ('cfe',  irix_71 / irix_lib / 'cfe',  [], common_flags + ['-O2']),
-    ('ugen', irix_71 / irix_lib / 'ugen', [], common_flags + ['-O2']),
-    ('uopt', irix_71 / irix_lib / 'uopt', [], common_flags + ['-O2']),
+    ('as1',  irix_71 / irix_lib / 'as1',  [], recompflags),
+    ('cc',   irix_71 / irix_bin / 'cc',   [], recompflags),
+    ('cfe',  irix_71 / irix_lib / 'cfe',  [], recompflags),
+    ('ugen', irix_71 / irix_lib / 'ugen', [], recompflags),
+    ('uopt', irix_71 / irix_lib / 'uopt', [], recompflags),
 ]
 
 # (name, programs, output directory, version defines, error strings)
@@ -126,7 +126,7 @@ ido53_tools = [recomp_53_out / p[0] for p in ido53_progs]
 def task_build_recomp():
     ''' Build the IDO recompiler tool '''
     return {
-        'actions': [tc.system.cxx.CXX + [recomp_src, '-o', recomp, '-O2', '-std=c++11', '-lcapstone']],
+        'actions': [tc.system.cxx.CXX + [recomp_src, '-o', recomp, '-O2', '-std=c++11', '-Wno-switch', '-lcapstone']],
         'file_dep': [recomp_src],
         'targets': [recomp],
     }
@@ -483,24 +483,24 @@ libultra_srcs = [
     (libultra_root/'io', ['-mips2', '-32'], '-O1', '-O1'),
     (libultra_root/'os', ['-mips2', '-32'], '-O1', '-O1'),
 ]
-# (mipsiset, C Opt, ASM Opt))
+# (mipsiset, Opt Difference)
 libultra_exceptions = {
-    libultra_root/'os'/'exceptasm.s': (['-mips3', '-o32'], None, None),
-    libultra_root/'io'/'sirawdma.c': (None, '-O2', None),
-    libultra_root/'io'/'pimgr.c': (None, '-O2', None),
-    libultra_root/'io'/'epirawdma.c': (None, '-O2', None),
-    libultra_root/'io'/'aisetfreq.c': (None, '-O2', None),
-    libultra_root/'io'/'viswapcontext.c': (None, '-O2', None),
-    libultra_root/'io'/'cartrominit.c': (None, '-O2', None),
-    libultra_root/'io'/'pfsselectbank.c': (None, '-O2', None),
-    libultra_root/'io'/'epirawread.c': (None, '-O2', None),
-    libultra_root/'io'/'epirawwrite.c': (None, '-O2', None),
-    libultra_root/'libc'/'bcmp.s': (None, None, '-O2'),
-    libultra_root/'libc'/'bcopy.s': (None, None, '-O2'),
-    libultra_root/'libc'/'bzero.s': (None, None, '-O2'),
-    libultra_root/'libc'/'ll.c': (['-mips3', '-o32'], '-O1', None),
-    libultra_root/'libc'/'llbit.c': (['-mips3', '-o32'], '-O1', None),
-    libultra_root/'libc'/'llcvt.c': (['-mips3', '-o32'], '-O1', None),
+    libultra_root/'os'/'exceptasm.s': (['-mips3', '-o32'], None),
+    libultra_root/'io'/'sirawdma.c': (None, '-O2'),
+    libultra_root/'io'/'pimgr.c': (None, '-O2'),
+    libultra_root/'io'/'epirawdma.c': (None, '-O2'),
+    libultra_root/'io'/'aisetfreq.c': (None, '-O2'),
+    libultra_root/'io'/'viswapcontext.c': (None, '-O2'),
+    libultra_root/'io'/'cartrominit.c': (None, '-O2'),
+    libultra_root/'io'/'pfsselectbank.c': (None, '-O2'),
+    libultra_root/'io'/'epirawread.c': (None, '-O2'),
+    libultra_root/'io'/'epirawwrite.c': (None, '-O2'),
+    libultra_root/'libc'/'bcmp.s': (None, '-O2'),
+    libultra_root/'libc'/'bcopy.s': (None, '-O2'),
+    libultra_root/'libc'/'bzero.s': (None, '-O2'),
+    libultra_root/'libc'/'ll.c': (['-mips3', '-o32'], '-O1'),
+    libultra_root/'libc'/'llbit.c': (['-mips3', '-o32'], '-O1'),
+    libultra_root/'libc'/'llcvt.c': (['-mips3', '-o32'], '-O1'),
 }
 
 def task_compile_libultra():
@@ -509,21 +509,21 @@ def task_compile_libultra():
     tools_dep = get_toolchain_deps(config.libultra)
     # TODO: make tools_dep a global under tools? cc_deps? as_deps? cross_compile_deps?
 
-    for module, mipsiset, c_opt, as_opt in libultra_srcs:
+    for module, mipsiset, copt, aopt in libultra_srcs:
         c_files = module.glob('*.c')
         s_files = module.glob('*.s')
-        check_file = lambda f: check_libultra_exceptions(f, mipsiset, c_opt, as_opt)
+        check_file = lambda f, opt: check_libultra_exceptions(f, mipsiset, opt)
 
         for src in c_files:
             out = config.to_output(src, '.o')
             (d, make_deps) = get_make_dependencies(src, out)
-            src_mi, src_copt, _ = check_file(src)
+            src_mi, src_opt = check_file(src, copt)
 
             # nice global state manipulation
             libultra_objs.append(out)
 
             syntax_check = tc.invoke_cc_check(includes, d, src, out)
-            compile_src = tc.libultra_cc(includes, src, out, src_mi, src_copt)
+            compile_src = tc.libultra_cc(includes, src, out, src_mi, src_opt)
 
             yield {
                 'name': out,
@@ -535,12 +535,12 @@ def task_compile_libultra():
         for src in s_files:
             out = config.to_output(src, '.o')
             # no .d file generation from ido as?
-            src_mi, _, src_asopt = check_file(src)
+            src_mi, src_opt = check_file(src, aopt)
 
             # nice global state manipulation
             libultra_objs.append(out)
 
-            assemble = tc.libultra_as(includes, src, out, src_mi, src_asopt)
+            assemble = tc.libultra_as(includes, src, out, src_mi, src_opt)
 
             yield {
                 'name': out,
@@ -563,17 +563,16 @@ def task_libultra():
         'file_dep': libultra_objs + [patcher],
     }
 
-def check_libultra_exceptions(file, mipsiset, copt, asopt):
+def check_libultra_exceptions(file, mipsiset, opt):
     ''' check for special instruction set or opt flags for file '''
     possible = libultra_exceptions.get(file)
     if possible is None:
-        return (mipsiset, copt, asopt)
+        return (mipsiset, opt)
     else:
-        mb_mi, mb_copt, mb_asopt = possible
+        mb_mi, mb_opt = possible
         return (
             option_or(mb_mi, mipsiset), 
-            option_or(mb_copt, copt),
-            option_or(mb_asopt, asopt),
+            option_or(mb_opt, opt),
         )
 
 def option_or(a, b):
