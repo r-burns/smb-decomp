@@ -13,7 +13,7 @@ IDO_CC_FLAGS = [
 GCC_AS_FLAGS = ['-march=vr4300', '-mabi=32']
 C_SYNTAX_CHECK_FLAGS = [
     '-fsyntax-only', '-fsigned-char', '-fno-builtin',
-    '-std=gnu90', '-m32', 
+    '-std=gnu90',
     '-Wall', '-Wextra', '-Wno-format-security', '-Wno-main', 
     '-D_LANGUAGE_C', '-DNON_MATCHING', '-DAVOID_UB', '-DIGNORE_SYNTAX_CHECK',
     '-D_MIPS_SZINT=32', '-D_MIPS_SZLONG=32', '-DF3DEX_GBI_2',
