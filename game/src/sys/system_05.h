@@ -6,6 +6,9 @@
 #include <PR/mbi.h>
 #include <PR/ultratypes.h>
 
+// should be a concrete pointer type
+extern void *D_800470AC;
+
 extern void func_80016338(Gfx **, void *, s32); // arg1 is a type, not void *
 extern void func_80014430(void);
 extern void func_80017830(s32);

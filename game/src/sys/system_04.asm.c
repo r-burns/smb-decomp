@@ -2,6 +2,9 @@
 
 #include "sys/om.h"
 #include "sys/system_03_1.h"
+#include "sys/system_05.h"
+#include "sys/system_08.h"
+#include "sys/system_09.h"
 
 #include <macros.h>
 
@@ -76,9 +79,6 @@ void unref_8000BCBC(struct GObjCommon *arg0) {
         dobj = func_8000BAA0(dobj);
     }
 }
-
-// Negation of VAX F_Float upper bound??
-#define LOWER_BOUND -1.7014117e38
 
 void func_8000BD1C(struct DObj *arg0, union AnimCmd *arg1, f32 arg2) {
     struct AObj *aobj = arg0->unk6C;
@@ -184,7 +184,6 @@ void func_8000BED8(struct GObjCommon *arg0, union AnimCmd **arg1, union AnimCmd 
     }
 }
 
-#define PROCESSED_DEFAULT -1.1342745e38
 // according to Kirby64, this is the animation processor
 // could be a struct DObj as well (what is the relationship between these two?)
 void func_8000BFE8(struct DObj *dobj) {
@@ -540,11 +539,6 @@ f32 func_8000CC40(struct AObj *aobj) {
 #endif
 }
 
-// system 9
-// first arg could be to either the float or int 3mtx, or maybe a union type pointer?
-extern void func_8001E530(struct Vec3f *, s32, f32);
-
-#define FLOAT_MAYBE_SCALE_MIN -1.1342745e38f
 void func_8000CCBC(struct DObj *dobj) {
     f32 f26; // sp54
     struct AObj *aobj;
@@ -927,7 +921,6 @@ void func_8000CF6C(struct MObj *mobj) {
     }
 }
 
-void func_8000DA40(struct MObj *mobj);
 #ifdef MIPS_TO_C
 void func_8000DA40(struct MObj *mobj) {
     struct AObj *aobj;
@@ -1083,14 +1076,6 @@ f32 func_8000E084(struct DObj *dobj, s32 idx) {
     return 0.0f;
 #endif
 }
-
-struct UnkEC64Arg3 {
-    /* 0x00 */ s32 unk00;
-    /* 0x04 */ s32 unk04;
-    /* 0x08 */ struct Vec3f unk08;
-    /* 0x14 */ struct Vec3f unk14;
-    /* 0x08 */ struct Vec3f unk20;
-}; // size == 0x2C
 
 f32 func_8000E0F4(struct UnkEC64Arg3 *arg0, s32 idx) {
     switch (idx) {
@@ -1461,7 +1446,6 @@ f32 func_8000E8A8(
 #endif
 
 #ifdef NON_MATCHING
-
 f32 unref_8000EC64(
     struct GObjCommon *arg0,
     union AnimCmd **arg1,
@@ -1526,7 +1510,6 @@ f32 unref_8000EC64(
 
     return arg5;
 }
-
 #else
 #pragma GLOBAL_ASM("game/nonmatching/system_04/unref_8000EC64.s")
 #endif
@@ -1635,7 +1618,6 @@ struct DObj *unref_8000F0F0(struct DObj *arg0, s32 arg1) {
     return newDObj;
 }
 
-void func_8000F120(struct GObjCommon *arg0, struct UnkEC64Arg3 *arg1, struct DObj **arg2);
 #ifdef NON_MATCHING
 // nonmatching: regalloc around arg1->unk00 in v0 not v1
 void func_8000F120(struct GObjCommon *arg0, struct UnkEC64Arg3 *arg1, struct DObj **arg2) {
@@ -2344,21 +2326,15 @@ void unref_80010710(s32 arg0, s32 arg1, s32 arg2, s32 arg3) {
     D_8003B93C = arg3;
 }
 
-// system_05
-extern void *D_800470AC;
-
 void func_80010734(void *arg0) {
     D_800470AC = arg0;
 }
 
+// possible start of system 05?
+
 void unref_80010740(void) {
     return;
 }
-
-// system_08
-typedef f32 Mtx4f[4][4];
-
-void func_80019EA0(Mtx4f *, void *);
 
 void func_80010748(void *arg0, Mtx4f *arg1, s32 arg2) {
     Mtx4f sp48;
