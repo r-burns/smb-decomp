@@ -89,7 +89,12 @@ recomp_libc = recomp_base / 'libc_impl.c'
 recomp_libc_h = recomp_libc.with_suffix('.h')
 recomp_libc_flags = ['-fno-strict-aliasing', '-O2']
 
-recompflags = ['-fno-strict-aliasing', '-fno-pie', '-O2', '-lm']
+# use `-fno-pie` on clang and `-no-pie` on gcc
+if config.system_toolchain == 'clang':
+    recompflags = ['-fno-strict-aliasing', '-fno-pie', '-O2', '-lm']
+elif config.system_toolchain == 'gcc':
+    recompflags = ['-fno-strict-aliasing', '-no-pie', '-O2', '-lm']
+
 # (Prog, Irix Bin/Lib Path, Recomp Flags, Build Flags)
 ido53_progs = [
     #('as',   irix_53 / irix_lib / 'as',   [], recompflags),

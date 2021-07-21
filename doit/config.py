@@ -40,6 +40,14 @@ def _target_version(toolchain, libultra, version):
 
     return tv
 
+def _system_default_tc(host):
+    if host == 'darwin':
+        return 'clang'
+    elif host == 'linux':
+        return 'gcc'
+    else:
+        raise f'Unsupported Host OS: {host}'
+
 
 class Config():
     def __init__(self, build_base, game_base, tools_dir):
@@ -50,6 +58,7 @@ class Config():
         self.version = _get_choice('VERSION', 'us', ALL_VERSIONS)
 
         self.host = sys.platform
+        self.system_toolchain = _get_choice('SYSTEM_TC', _system_default_tc(self.host), SYSTEM_TOOLCHAINS)
         self.target = 'n64'
         self.target_version = _target_version(self.toolchain, self.libultra, self.version)
 
