@@ -13,7 +13,7 @@ IDO_CC_FLAGS = [
 GCC_AS_FLAGS = ['-march=vr4300', '-mabi=32']
 C_SYNTAX_CHECK_FLAGS = [
     '-fsyntax-only', '-fsigned-char', '-fno-builtin',
-    '-std=gnu90',
+    '-std=gnu90', '-m32',
     '-Wall', '-Wextra', '-Wno-format-security', '-Wno-main', 
     '-D_LANGUAGE_C', '-DNON_MATCHING', '-DAVOID_UB', '-DIGNORE_SYNTAX_CHECK',
     '-D_MIPS_SZINT=32', '-D_MIPS_SZLONG=32', '-DF3DEX_GBI_2',
@@ -22,9 +22,9 @@ C_SYNTAX_CHECK_FLAGS = [
 # ASM processor for IDO
 # TODO: dynamic under config tools direction?
 IDO_ASMPROC = {
-    'proc': 'utils/asm-processor/asm_processor.py',
-    'cin': 'utils/asm-processor/include-stdin.c',
-    'prelude': 'utils/asm-processor/prelude.s',
+    'proc': 'tools/asm-processor/asm_processor.py',
+    'cin': 'tools/asm-processor/include-stdin.c',
+    'prelude': 'tools/asm-processor/prelude.s',
 }
 
 # Libultra flags
@@ -141,7 +141,7 @@ class ToolChain:
 
         cc = self.invoke_cc(includes, IDO_ASMPROC['cin'], output, opt)
         gas = self.game.assembler.AS + self.game.assembler.ASFLAGS
-        asmproc_flags = ['-'+opt, input, '--input-enc', 'utf-8', '--output-enc', 'utf-8']
+        asmproc_flags = ['-'+opt, input, '--input-enc', 'utf-8', '--output-enc', 'utf-8', '--drop-mdebug-gptab']
         asmproc_invocation = [IDO_ASMPROC['proc']] + asmproc_flags
 
         compile_cmd = map(str, asmproc_invocation + ['|'] + cc)
