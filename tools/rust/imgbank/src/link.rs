@@ -5,7 +5,7 @@ use std::fs;
 use std::path::PathBuf;
 use toml;
 
-const START: &'static str = "TARGET(elf32-bigmips)\n\nSECTIONS {";
+const START: &'static str = "SECTIONS {";
 macro_rules! begin_table {
     () => {
         r#"

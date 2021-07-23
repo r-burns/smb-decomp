@@ -333,17 +333,25 @@ def task_build_rom():
 
     binutils = tc.game.utils
     ssb64_d, linking_deps = get_make_dependencies(ssb_lds, rom_elf)
+
+    if binutils.is_at_least(2, 35):
+        dep_flag = [f'--dependency-file={ssb64_d}']
+        outputs = [rom_elf, rom_map, rom, ssb64_d]
+    else:
+        dep_flag = []
+        outputs = [rom_elf, rom_map, rom]
  
     link_rom = binutils.LD + [
         '--no-check-sections', 
         '-Map', rom_map, 
         '-T', ssb_lds, 
-        '-T' ] + unk_symbols + [
+        '-T' ] + unk_symbols \
+        + [
         '-o', rom_elf, 
         '-L', config.build_dir, 
-        '-lultra'] + libultra_exports + [
-        f'--dependency-file={ssb64_d}'
-    ]
+        '-lultra'
+        ] + libultra_exports \
+        + dep_flag
     
     copy_rom = binutils.OBJCOPY + [
         '--pad-to=0x1000000', 
@@ -363,7 +371,7 @@ def task_build_rom():
             'link_sprite_bank',
             'temp_bin_obj'
         ],
-        'targets': [rom_elf, rom_map, rom, ssb64_d],
+        'targets': outputs,
         'clean': [f'rm -rf {config.all_builds}'],
     }
 
@@ -640,14 +648,19 @@ def task_link_resources():
 
     # other deps? as passed clousure?
     # resource_temp_o = [config.to_output(f, '.o') for f in res_dir.glob('temp/files/*')]
+    binutils = tc.game.utils
 
-    link_all_resources = tc.game.utils.LD + [
+    if binutils.is_at_least(2, 35):
+        dep_flag = [f'--dependency-file={res_d}']
+    else:
+        dep_flag = []
+
+    link_all_resources = binutils.LD + [
         '-T', res_link, 
         '-L', res_bundle_dir,
         '-r', 
         '-o', res_archive, 
-        f'--dependency-file={res_d}',
-    ]
+    ] + dep_flag
 
     return {
         # $(LD) -T %f -r -o %o %<resbins> 
@@ -776,6 +789,8 @@ def task_generate_sprite_bank_link():
 def task_link_sprite_bank():
     ''' Link together all of the sprite entry objects into a bank object '''
 
+    binutils = tc.game.utils
+
     for (lds, o) in zip(imgbank_ldscripts, imgbank_o):
         
         # only link to entry objects for a given bank
@@ -783,18 +798,24 @@ def task_link_sprite_bank():
         obj_dir = sprite_output / bank_name
         d, deps = get_make_dependencies(lds, o)
 
+        if binutils.is_at_least(2, 35):
+            dep_flag = [f'--dependency-file={d}']
+            targets = [o, d]
+        else:
+            dep_flag = []
+            targets = [o]
+
         # no relink (want symbols to be resolved)
-        link_bank = tc.game.utils.LD + [
+        link_bank = binutils.LD + [
             '-T', lds,
             '-L', obj_dir,
             '-o', o,
-            f'--dependency-file={d}',
-        ]
+        ] + dep_flag
 
         yield {
             'name': o,
             'actions': [link_bank],
-            'targets': [o, d],
+            'targets': targets,
             'file_dep': deps,
             'task_dep': ['assemble_sprite_bank_entry']
         }

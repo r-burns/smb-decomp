@@ -1,8 +1,9 @@
 import os
 from dataclasses import dataclass
 from pathlib import Path
-from typing import List, Union, Tuple, Dict
+from typing import List, Union, Tuple, Optional
 from shutil import which
+import subprocess
 
 # Game cross toolchain flags
 IDO_CC_FLAGS = [
@@ -60,6 +61,32 @@ class Binutils:
     LD: List[Union[str, Path]]
     OBJCOPY: List[Union[str, Path]]
     AR: List[Union[str, Path]]
+    version: Optional[Tuple[int, int]]
+
+    def with_prefix(prefix: str):
+        ld = [prefix + 'ld']
+        objcopy = [prefix + 'objcopy']
+        ar = [prefix + 'ar']
+
+        try:
+            out = subprocess.run(ld + ['-V'], capture_output=True)
+            components = map(int, out.stdout.split(b'\n')[0].rsplit(b')')[1].split(b'.'))
+            major = next(components)
+            minor = next(components)
+            version = (major, minor)
+        except:
+            version = None
+        
+        return Binutils(ld, objcopy, ar, version)
+    
+    def is_at_least(self, major: int, minor: int) -> bool:
+        ''' check if the current binutils version is after or at `major.minor` '''
+        
+        if self.version is None: return False
+
+        return self.version[0] > major or \
+            (self.version[0] == major and self.version[1] >= minor)
+
 
 @dataclass
 class SystemTools:
@@ -212,7 +239,7 @@ def _get_game_crosschain(requested_tc, config):
     Get `CrossTools` used for building game code
     '''
     prefix = _which_gnu_prefix()
-    binutils = Binutils([prefix + 'ld'], [prefix + 'objcopy'], [prefix + 'ar'])
+    binutils = Binutils.with_prefix(prefix)
     assembler = Assembler([prefix + 'as'], GCC_AS_FLAGS)
 
     tools = config.tools
@@ -235,7 +262,7 @@ def _get_libultra_crosschain(requested_tc, config):
     Get `CrossTools` used for building libultra code
     '''
     prefix = _which_gnu_prefix()
-    binutils = Binutils([prefix + 'ld'], [prefix + 'objcopy'], [prefix + 'ar'])
+    binutils = Binutils.with_prefix(prefix)
 
     tools = config.tools
 
