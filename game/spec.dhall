@@ -250,9 +250,13 @@ let LoadOvl = Command "scenemgr"
     , Obj "src/scenemgr/scene_manager.o"
     ]
 let Ovl0 = Command "ovl0" 
-    [ CustomObj "asm/ovl0/ovl0.text.o" [ Section.Text ]
-    , CustomObj "asm/ovl0/ovl0.data.o" [ Section.Data ]
-    , CustomObj "asm/ovl0/ovl0.bss.o" [ Section.BSS ]
+    [ Obj "asm/ovl0/ovl0_0.o"
+    , Obj "asm/ovl0/reloc_data_mgr.o"
+    , Obj "asm/ovl0/ovl0_nops.o"
+    , Obj "asm/ovl0/ovl0_1.o"
+    , Obj "asm/ovl0/ovl0_2.o"
+    , Obj "asm/ovl0/ovl0_3.o"
+    , Obj "asm/ovl0/ovl0_4.o"
     ]
 let Ovl1 = Command "ovl1" 
     [ CustomObj "asm/ovl1/ovl1.text.o" [ Section.Text ]
