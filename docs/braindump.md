@@ -12,7 +12,7 @@ Collection of things that should be explained more throughly
 utils/split_asm.py <input.s> game/nonmatching/ game/src/<output directory>
 ```
 5. Delete routines from the split asm from step 2
-6. Add new object file into `spec.dhall` (named as `{filename}.asm.o`). Add it as a new `Obj` before the old asm object.
+6. Add new object file into `spec.dhall` (named as `src/{overlay}/{filename}.asm.o`). Add it as a new `Obj` before the old asm object.
 7. Check that rebuild works.
 8. Move over any `.rodata` (strings and arrays) and `.late_rodata` (jump tables and float constants) from split asm file into that data's nonmatching file. This helps with `mips2c`
   * TODO: update asm-preprocessor to make/edit `.d` for included ASM files

@@ -251,7 +251,7 @@ let LoadOvl = Command "scenemgr"
     ]
 let Ovl0 = Command "ovl0" 
     [ Obj "asm/ovl0/ovl0_0.o"
-    , Obj "asm/ovl0/reloc_data_mgr.o"
+    , Obj "src/ovl0/reloc_data_mgr.asm.o"
     , Obj "asm/ovl0/ovl0_nops.o"
     , Obj "asm/ovl0/ovl0_1.o"
     , Obj "asm/ovl0/ovl0_2.o"
