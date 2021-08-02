@@ -30,7 +30,6 @@ extern void dma_rom_write(void *ramSrc, u32 romDst, u32 nbytes);
 extern OSPiHandle *sram_pi_init(void);
 extern void dma_sram_read(u32 romSrc, void *ramDst, u32 nbytes);
 extern void dma_sram_write(void *ramSrc, u32 romDst, u32 nbytes);
-
-extern void func_80003690(u32 devAddr, u32 arg1); // TODO: rename arg1
+extern void dma_vpk_read(u32 devAddr, void *ramDst);
 
 #endif /* SYSTEM_DMA_H */

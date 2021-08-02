@@ -804,12 +804,12 @@ glabel func_ovl49_8013255C
   /* 17372C 801326CC AFB90050 */        sw $t9, 0x50($sp)
   /* 173730 801326D0 AFA80054 */        sw $t0, 0x54($sp)
   /* 173734 801326D4 AFA90058 */        sw $t1, 0x58($sp)
-  /* 173738 801326D8 0C0337DE */       jal func_ovl0_800CDF78
+  /* 173738 801326D8 0C0337DE */       jal rldm_initialize
   /* 17373C 801326DC 27A4003C */     addiu $a0, $sp, 0x3c
   /* 173740 801326E0 3C108013 */       lui $s0, %hi(D_ovl49_801328D0)
   /* 173744 801326E4 261028D0 */     addiu $s0, $s0, %lo(D_ovl49_801328D0)
   /* 173748 801326E8 02002025 */        or $a0, $s0, $zero
-  /* 17374C 801326EC 0C0337BB */       jal func_ovl0_800CDEEC
+  /* 17374C 801326EC 0C0337BB */       jal rldm_bytes_need_to_load
   /* 173750 801326F0 24050002 */     addiu $a1, $zero, 2
   /* 173754 801326F4 00402025 */        or $a0, $v0, $zero
   /* 173758 801326F8 0C001260 */       jal func_80004980
@@ -818,7 +818,7 @@ glabel func_ovl49_8013255C
   /* 173764 80132704 24C62D70 */     addiu $a2, $a2, %lo(D_ovl49_80132D70)
   /* 173768 80132708 02002025 */        or $a0, $s0, $zero
   /* 17376C 8013270C 24050002 */     addiu $a1, $zero, 2
-  /* 173770 80132710 0C033781 */       jal func_ovl0_800CDE04
+  /* 173770 80132710 0C033781 */       jal rldm_load_files_into
   /* 173774 80132714 00403825 */        or $a3, $v0, $zero
   /* 173778 80132718 3C108000 */       lui $s0, 0x8000
   /* 17377C 8013271C 3C058013 */       lui $a1, %hi(func_ovl49_8013255C)

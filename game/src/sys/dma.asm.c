@@ -14,10 +14,9 @@ OSPiHandle sSramPiHandle; // 80045048
 OSMesg sDmaMesg[1];       // 800450BC
 OSMesgQueue sDmaMesgQ;    // 800450C0
 
-// crc bss?
-void *D_800450D8;
-u32 D_800450DC;
-u32 D_800450E0;
+void *sVpkBufRamAddr;
+u32 sVpkBufSize;
+u32 sVpkBufRomAddr;
 u32 pad800450E8[2];
 
 #pragma GCC diagnostic push
@@ -127,10 +126,12 @@ void dma_sram_write(void *ramSrc, u32 romDst, u32 nbytes) {
     dma_copy(&sSramPiHandle, romDst, (uintptr_t)ramSrc, nbytes, OS_WRITE);
 }
 
-#ifdef NON_MATCHING
+u32 func_80002E18(u16 *arg0, u32 arg1, void (*arg2)(void), void *arg3);
+#ifdef MIPS_TO_C
 // some sort of crc function?
+// vpk0 decompressor?
 // arg0 = array arg1 = nbytes?
-u32 func_80002E18(u16 *arg0, u32 arg1, void (*arg2)(void), u32 arg3) {
+u32 func_80002E18(u16 *arg0, u32 arg1, void (*arg2)(void), void *arg3) {
     s32 s1;
     u16 s2;
 
@@ -189,26 +190,26 @@ u32 func_80002E18(u16 *arg0, u32 arg1, void (*arg2)(void), u32 arg3) {
 #pragma GLOBAL_ASM("game/nonmatching/dma/func_80002E18.s")
 #endif /* NON_MATCHING */
 
-void func_800035E0(u32 devAddr, void *ramAddr, u32 nbytes) {
-    D_800450E0 = devAddr;
-    D_800450D8 = ramAddr;
-    D_800450DC = nbytes;
+void initialize_vpk_dma_stream(u32 devAddr, void *ramAddr, u32 nbytes) {
+    sVpkBufRomAddr = devAddr;
+    sVpkBufRamAddr = ramAddr;
+    sVpkBufSize    = nbytes;
 }
 
-void func_800035FC(void) {
-    dma_rom_read(D_800450E0, D_800450D8, D_800450DC);
-    D_800450E0 += D_800450DC;
+void fill_vpk_dma_buffer(void) {
+    dma_rom_read(sVpkBufRomAddr, sVpkBufRamAddr, sVpkBufSize);
+    sVpkBufRomAddr += sVpkBufSize;
 }
 
-void func_80003648(u32 devAddr, u32 arg1, void *ramAddr, u32 nbytes) {
-    func_800035E0(devAddr, ramAddr, nbytes);
-    func_80002E18(ramAddr, nbytes, func_800035FC, arg1);
+void func_80003648(u32 devAddr, void *ramDst, void *ramAddr, u32 nbytes) {
+    initialize_vpk_dma_stream(devAddr, ramAddr, nbytes);
+    func_80002E18(ramAddr, nbytes, fill_vpk_dma_buffer, ramDst);
 }
 
-void func_80003690(u32 devAddr, u32 arg1) {
+void dma_vpk_read(u32 devAddr, void *ramDst) {
     u8 buffer[0x400];
 
-    func_80003648(devAddr, arg1, &buffer, ARRAY_COUNT(buffer));
+    func_80003648(devAddr, ramDst, &buffer, ARRAY_COUNT(buffer));
 }
 
 #pragma GLOBAL_ASM("game/nonmatching/dma/unref_800036B4.s")

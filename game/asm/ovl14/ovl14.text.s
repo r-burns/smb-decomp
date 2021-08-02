@@ -660,7 +660,7 @@ glabel func_ovl14_8013239C
   /* 11C274 80132404 AFB900B0 */        sw $t9, 0xb0($sp)
   /* 11C278 80132408 AFA800B4 */        sw $t0, 0xb4($sp)
   /* 11C27C 8013240C AFA900B8 */        sw $t1, 0xb8($sp)
-  /* 11C280 80132410 0C0337DE */       jal func_ovl0_800CDF78
+  /* 11C280 80132410 0C0337DE */       jal rldm_initialize
   /* 11C284 80132414 27A4009C */     addiu $a0, $sp, 0x9c
   /* 11C288 80132418 3C108000 */       lui $s0, %hi(D_NF_80000001)
   /* 11C28C 8013241C 3C058013 */       lui $a1, %hi(func_ovl14_80131F3C)

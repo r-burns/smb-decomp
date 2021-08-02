@@ -2467,12 +2467,12 @@ glabel func_ovl33_80133E28
   /* 15FEC0 80133E70 AFB90048 */        sw $t9, 0x48($sp)
   /* 15FEC4 80133E74 AFA8004C */        sw $t0, 0x4c($sp)
   /* 15FEC8 80133E78 AFA90050 */        sw $t1, 0x50($sp)
-  /* 15FECC 80133E7C 0C0337DE */       jal func_ovl0_800CDF78
+  /* 15FECC 80133E7C 0C0337DE */       jal rldm_initialize
   /* 15FED0 80133E80 27A40034 */     addiu $a0, $sp, 0x34
   /* 15FED4 80133E84 3C108013 */       lui $s0, %hi(D_ovl33_80136228)
   /* 15FED8 80133E88 26106228 */     addiu $s0, $s0, %lo(D_ovl33_80136228)
   /* 15FEDC 80133E8C 02002025 */        or $a0, $s0, $zero
-  /* 15FEE0 80133E90 0C0337BB */       jal func_ovl0_800CDEEC
+  /* 15FEE0 80133E90 0C0337BB */       jal rldm_bytes_need_to_load
   /* 15FEE4 80133E94 24050004 */     addiu $a1, $zero, 4
   /* 15FEE8 80133E98 00402025 */        or $a0, $v0, $zero
   /* 15FEEC 80133E9C 0C001260 */       jal func_80004980
@@ -2481,7 +2481,7 @@ glabel func_ovl33_80133E28
   /* 15FEF8 80133EA8 24C66A78 */     addiu $a2, $a2, %lo(D_ovl33_80136A78)
   /* 15FEFC 80133EAC 02002025 */        or $a0, $s0, $zero
   /* 15FF00 80133EB0 24050004 */     addiu $a1, $zero, 4
-  /* 15FF04 80133EB4 0C033781 */       jal func_ovl0_800CDE04
+  /* 15FF04 80133EB4 0C033781 */       jal rldm_load_files_into
   /* 15FF08 80133EB8 00403825 */        or $a3, $v0, $zero
   /* 15FF0C 80133EBC 3C108000 */       lui $s0, %hi(D_NF_80000001)
   /* 15FF10 80133EC0 3C058013 */       lui $a1, %hi(func_ovl33_80133D68)
