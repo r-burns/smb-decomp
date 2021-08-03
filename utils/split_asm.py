@@ -56,6 +56,7 @@ def id_routines(input):
 def write_split_files(nm_dir, c_out, routines):
     # routineName => routineNonMatchingFile
     with open(c_out, "w+") as cf:
+        cf.write("#include <PR/ultratypes.h>\n\n")
         cf.write('#pragma GCC diagnostic push\n')
         cf.write('#pragma GCC diagnostic ignored "-Wunknown-pragmas"\n')
 
