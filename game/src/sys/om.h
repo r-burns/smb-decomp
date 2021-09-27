@@ -1,6 +1,7 @@
 #ifndef SYS_OM_H
 #define SYS_OM_H
 
+#include <macros.h>
 #include <ssb_types.h>
 
 #include <PR/mbi.h>
@@ -87,8 +88,10 @@ struct OMMtx {
     /* 0x00 */ struct OMMtx *next;
     /* 0x04 */ u8 unk04;
     /* 0x05 */ u8 unk05;
-    /* 0x08 */ u32 pad08;
-    /* 0x0C */ u8 pad0C[0x48 - 0xc];
+    /* 0x08 */ Mtx unk08;
+    ///* 0x08 */ f32 unk08[4][4];
+    ///* 0x08 */ f32 (*unk08)[4][4];
+    ///* 0x0C */ u8 pad0C[0x48 - 0xc];
 }; // size == 0x48
 
 // this is a guess, it could be something else
@@ -143,6 +146,7 @@ struct Mtx3x3Float {
 /// Kind 3 - `struct Mtx3Float`
 struct DObjDynamicStore {
     /* 0x00 */ u8 kinds[3];
+    /* 0x03 */ u8 pad;
     /* 0x04 */ u8 data[1];
 }; // size == 4 + VLA
 
@@ -164,7 +168,7 @@ struct DObj {
     /* 0x28 */ struct Mtx4Float unk28;
     /* 0x3C */ struct Mtx3Float unk3C;
     /* 0x4C */ struct DObjDynamicStore *unk4C;
-    // could be DObj *unk50
+    // could be DObj *unk50, or is it a Gfx *?
     /* 0x50 */ s32 unk50;
     // is this a union? WeirdBytewise...?
     /* 0x54 */ u8 unk54;
@@ -198,11 +202,17 @@ struct AObj {
 
 // texture scroll? (from K64)
 struct MObjSub {
-    /* 0x00 */ f32 unk00;
-    /* 0x04 */ f32 unk04;
-    /* 0x08 */ f32 unk08;
-    /* 0x0C */ f32 unk0C;
-    /* 0x10 */ f32 unk10;
+    ///* 0x00 */ f32 unk00;
+    /* 0x00 */ u16 pad00;
+    /* 0x02 */ u8 unk02;  // SetTextureImage format?
+    /* 0x03 */ u8 unk03;  // SetTextureImage size?
+    /* 0x04 */ f32 unk04; // should this be a pointer to an array of images (sprite set)?
+    /* 0x08 */ u16 unk08;
+    /* 0x0A */ u16 unk0A;
+    ///* 0x0C */ f32 unk0C;
+    /* 0x0C */ u16 unk0C;
+    /* 0x0E */ u16 unk0E;
+    /* 0x10 */ s32 unk10; // could be f32??
     /* 0x14 */ f32 unk14;
     // next three part of vec3f?
     /* 0x18 */ f32 unk18;
@@ -210,26 +220,51 @@ struct MObjSub {
     /* 0x20 */ f32 unk20;
     /* 0x24 */ f32 unk24;
     /* 0x28 */ f32 unk28;
-    /* 0x2C */ u8 pad2C[0x3C - 0x2C];
+    /* 0x2C */ void **unk2C; // image pointers?
+    /* 0x30 */ u16 unk30;    // command flags?
+    /* 0x32 */ u8 unk32;     // texture image format?
+    /* 0x33 */ u8 unk33;
+    /* 0x34 */ u16 unk34;
+    /* 0x36 */ u16 unk36;
+    /* 0x38 */ u16 unk38;
+    /* 0x3A */ u16 unk3A;
     /* 0x3C */ f32 unk3C;
     /* 0x40 */ f32 unk40;
-    /* 0x44 */ u8 pad44[0x4C - 0x44];
+    /* 0x44 */ f32 unk44;
+    /* 0x48 */ u8 pad44[0x4C - 0x48];
     /* 0x4C */ u32 unk4C;
-    /* 0x50 */ u8 pad50[0x54 - 0x50];
+    /* 0x50 */ u8 unk50; // primitive color r?
+    /* 0x51 */ u8 unk51; // g?
+    /* 0x51 */ u8 unk52; // b?
+    /* 0x51 */ u8 unk53; // a?
     /* 0x54 */ u8 unk54;
-    /* 0x58 */ u8 pad58[0x68 - 0x58];
+    /* 0x55 */ u8 unk55;
+    /* 0x56 */ u8 pad56;
+    /* 0x57 */ u8 pad57;
+    /* 0x58 */ u8 unk58;  // env color r?
+    /* 0x59 */ u8 unk59;  // g?
+    /* 0x5A */ u8 unk5A;  // b?
+    /* 0x5B */ u8 unk5B;  // a?
+    /* 0x5C */ u8 unk5C;  // blend color r?
+    /* 0x5D */ u8 unk5D;  // g?
+    /* 0x5E */ u8 unk5E;  // b?
+    /* 0x5F */ u8 unk5F;  // a?
+    /* 0x60 */ s32 unk60; // light 1 color?
+    /* 0x64 */ s32 unk64; // light 2 color?
     /* 0x68 */ s32 unk68;
     /* 0x6C */ s32 unk6C;
     /* 0x70 */ s32 unk70;
     /* 0x74 */ s32 unk74;
 }; // size == 0x78
 
+// STATIC_ASSERT(sizeof(struct MObjSub) == 0x78, "MObjSub size is off");
+
 struct MObj {
     /* 0x00 */ struct MObj *next;
     /* 0x04 */ u32 pad04;
     /* 0x08 */ struct MObjSub unk08;
     /* 0x80 */ u16 unk80;
-    /* 0x82 */ u16 unk82;
+    /* 0x82 */ u16 unk82; // frame number?
     /* 0x84 */ f32 unk84;
     /* 0x88 */ f32 unk88;
     /* 0x8C */ u32 pad8C;

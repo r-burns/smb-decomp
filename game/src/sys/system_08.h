@@ -5,6 +5,6 @@
 
 #include <PR/ultratypes.h>
 
-void func_80019EA0(Mtx4f *, void *);
+void func_80019EA0(Mtx4f *, Mtx4f *);
 
 #endif /* SYS_SYSTEM_08_H */

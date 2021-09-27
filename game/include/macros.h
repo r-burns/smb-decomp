@@ -8,6 +8,10 @@
 /// Get the number of elements in a static array
 #define ARRAY_COUNT(arr) (s32)(sizeof(arr) / sizeof(arr[0]))
 
+/// Math Functions
+#define SQUARE(x) ((x) * (x))
+#define CUBE(x)   ((x) * (x) * (x))
+
 /// Avoid compiler warnings for unused variables
 #ifdef __GNUC__
 #define UNUSED __attribute__((unused))

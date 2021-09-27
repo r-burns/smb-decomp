@@ -61,9 +61,9 @@ extern void func_80010580(struct GObjCommon *obj);
 extern void func_80010734(void *);
 
 // possible real start of system_05
-extern void func_80010748(void *, Mtx4f *, s32);
-extern void func_80010918(void *, Mtx4f *, s32);
-extern void func_80010AE8(void *, Mtx4f *, s32);
-extern void func_80010C2C(void *, Mtx4f *, s32);
+extern void func_80010748(Mtx4f *, struct DObj *, s32);
+extern void func_80010918(Mtx4f *, struct DObj *, s32);
+extern void func_80010AE8(Mtx4f *, struct DObj *, s32);
+extern void func_80010C2C(Mtx4f *, struct DObj *, s32);
 
 #endif /* SYS_SYSTEM_04_H */

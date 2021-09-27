@@ -476,9 +476,6 @@ void func_8000BFE8(struct DObj *dobj) {
     }
 }
 
-#define SQUARE(x) ((x) * (x))
-#define CUBE(x)   ((x) * (x) * (x))
-
 f32 func_8000CA28(f32 arg0, f32 arg1, f32 arg2, f32 arg3, f32 arg4, f32 arg5) {
     f32 sp18;
     f32 sp14;
@@ -2336,7 +2333,7 @@ void unref_80010740(void) {
     return;
 }
 
-void func_80010748(void *arg0, Mtx4f *arg1, s32 arg2) {
+void func_80010748(Mtx4f *arg0, struct DObj *arg1, s32 arg2) {
     Mtx4f sp48;
     struct Vec3f sp3C;
 
@@ -2344,9 +2341,9 @@ void func_80010748(void *arg0, Mtx4f *arg1, s32 arg2) {
     f32 res;
 
     obj    = D_80046A58->unk74;
-    sp3C.z = (*arg1)[1][3] - obj->unk3C.x;
-    sp3C.y = (*arg1)[2][0] - obj->unk3C.y;
-    sp3C.x = (*arg1)[2][1] - obj->unk3C.z;
+    sp3C.z = arg1->unk18.f.v.x - obj->unk3C.x;
+    sp3C.y = arg1->unk18.f.v.y - obj->unk3C.y;
+    sp3C.x = arg1->unk18.f.v.z - obj->unk3C.z;
     res    = 1.0f / sqrtf(SQUARE(sp3C.z) + SQUARE(sp3C.y) + SQUARE(sp3C.x));
     sp3C.z *= res;
     sp3C.y *= res;
@@ -2379,9 +2376,9 @@ void func_80010748(void *arg0, Mtx4f *arg1, s32 arg2) {
     }
     // L800108C0
     if (arg2) {
-        sp48[3][0] = (*arg1)[1][3];
-        sp48[3][1] = (*arg1)[2][0];
-        sp48[3][2] = (*arg1)[2][1];
+        sp48[3][0] = arg1->unk18.f.v.x;
+        sp48[3][1] = arg1->unk18.f.v.y;
+        sp48[3][2] = arg1->unk18.f.v.z;
     } else {
         sp48[3][0] = sp48[3][1] = sp48[3][2] = 0.0f;
     }
@@ -2390,8 +2387,8 @@ void func_80010748(void *arg0, Mtx4f *arg1, s32 arg2) {
 }
 
 #ifdef NON_MATCHING
-// nonmatching: store reorder in first if block
-void func_80010918(void *arg0, Mtx4f *arg1, s32 arg2) {
+// nonmatching: store reorder in first if block (res != 0.0f)
+void func_80010918(Mtx4f *arg0, struct DObj *arg1, s32 arg2) {
     Mtx4f sp48;
     struct Vec3f sp3C;
 
@@ -2399,9 +2396,9 @@ void func_80010918(void *arg0, Mtx4f *arg1, s32 arg2) {
     f32 res;
 
     obj    = D_80046A58->unk74;
-    sp3C.z = (*arg1)[1][3] - obj->unk3C.x;
-    sp3C.y = (*arg1)[2][0] - obj->unk3C.y;
-    sp3C.x = (*arg1)[2][1] - obj->unk3C.z;
+    sp3C.z = arg1->unk18.f.v.x - obj->unk3C.x;
+    sp3C.y = arg1->unk18.f.v.y - obj->unk3C.y;
+    sp3C.x = arg1->unk18.f.v.z - obj->unk3C.z;
     res    = 1.0f / sqrtf(SQUARE(sp3C.z) + SQUARE(sp3C.y) + SQUARE(sp3C.x));
     sp3C.z *= res;
     sp3C.y *= res;
@@ -2432,9 +2429,9 @@ void func_80010918(void *arg0, Mtx4f *arg1, s32 arg2) {
     }
     // L800108C0
     if (arg2) {
-        sp48[3][0] = (*arg1)[1][3];
-        sp48[3][1] = (*arg1)[2][0];
-        sp48[3][2] = (*arg1)[2][1];
+        sp48[3][0] = arg1->unk18.f.v.x;
+        sp48[3][1] = arg1->unk18.f.v.y;
+        sp48[3][2] = arg1->unk18.f.v.z;
     } else {
         sp48[3][0] = sp48[3][1] = sp48[3][2] = 0.0f;
     }
@@ -2445,7 +2442,7 @@ void func_80010918(void *arg0, Mtx4f *arg1, s32 arg2) {
 #pragma GLOBAL_ASM("game/nonmatching/system_04/func_80010918.s")
 #endif
 
-void func_80010AE8(void *arg0, Mtx4f *arg1, s32 arg2) {
+void func_80010AE8(Mtx4f *arg0, struct DObj *arg1, s32 arg2) {
     Mtx4f sp48;
     f32 sp44;
     f32 sp40;
@@ -2454,8 +2451,8 @@ void func_80010AE8(void *arg0, Mtx4f *arg1, s32 arg2) {
     f32 res;
 
     obj  = D_80046A58->unk74;
-    sp44 = (*arg1)[1][3] - obj->unk3C.x;
-    sp40 = (*arg1)[2][0] - obj->unk3C.y;
+    sp44 = arg1->unk18.f.v.x - obj->unk3C.x;
+    sp40 = arg1->unk18.f.v.y - obj->unk3C.y;
     res  = sqrtf(SQUARE(sp44) + SQUARE(sp40));
 
     sp48[0][3] = sp48[1][3] = sp48[2][3] = sp48[2][0] = sp48[2][1] = sp48[0][2] = sp48[1][2] = 0.0f;
@@ -2477,9 +2474,9 @@ void func_80010AE8(void *arg0, Mtx4f *arg1, s32 arg2) {
     }
 
     if (arg2) {
-        sp48[3][0] = (*arg1)[1][3];
-        sp48[3][1] = (*arg1)[2][0];
-        sp48[3][2] = (*arg1)[2][1];
+        sp48[3][0] = arg1->unk18.f.v.x;
+        sp48[3][1] = arg1->unk18.f.v.y;
+        sp48[3][2] = arg1->unk18.f.v.z;
     } else {
         // why does this have to be 0, and not 0.0f...
         sp48[3][0] = sp48[3][1] = sp48[3][2] = 0;
@@ -2488,7 +2485,7 @@ void func_80010AE8(void *arg0, Mtx4f *arg1, s32 arg2) {
     func_80019EA0(&sp48, arg0);
 }
 
-void func_80010C2C(void *arg0, Mtx4f *arg1, s32 arg2) {
+void func_80010C2C(Mtx4f *arg0, struct DObj *arg1, s32 arg2) {
     Mtx4f sp48;
     f32 sp44;
     f32 sp40;
@@ -2497,8 +2494,8 @@ void func_80010C2C(void *arg0, Mtx4f *arg1, s32 arg2) {
     f32 res;
 
     obj  = D_80046A58->unk74;
-    sp44 = (*arg1)[1][3] - obj->unk3C.x;
-    sp40 = (*arg1)[2][1] - obj->unk3C.z;
+    sp44 = arg1->unk18.f.v.x - obj->unk3C.x;
+    sp40 = arg1->unk18.f.v.z - obj->unk3C.z;
     res  = sqrtf(SQUARE(sp44) + SQUARE(sp40));
 
     sp48[0][3] = sp48[1][3] = sp48[2][3] = sp48[1][0] = sp48[0][1] = sp48[1][2] = sp48[2][1] = 0.0f;
@@ -2520,9 +2517,9 @@ void func_80010C2C(void *arg0, Mtx4f *arg1, s32 arg2) {
     }
 
     if (arg2) {
-        sp48[3][0] = (*arg1)[1][3];
-        sp48[3][1] = (*arg1)[2][0];
-        sp48[3][2] = (*arg1)[2][1];
+        sp48[3][0] = arg1->unk18.f.v.x;
+        sp48[3][1] = arg1->unk18.f.v.y;
+        sp48[3][2] = arg1->unk18.f.v.z;
     } else {
         // why does this have to be 0, and not 0.0f...
         sp48[3][0] = sp48[3][1] = sp48[3][2] = 0;
