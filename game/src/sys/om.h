@@ -169,6 +169,7 @@ struct DObj {
     /* 0x3C */ struct Mtx3Float unk3C;
     /* 0x4C */ struct DObjDynamicStore *unk4C;
     // could be DObj *unk50, or is it a Gfx *?
+    // might also be a pointer to a {id, Gfx *} struct
     /* 0x50 */ s32 unk50;
     // is this a union? WeirdBytewise...?
     /* 0x54 */ u8 unk54;
