@@ -20,12 +20,13 @@ Mtx4f D_80047028;
 Mtx4f D_80047068;
 u32 D_800470A8;
 struct MtxProcTemp *D_800470AC;
-Gfx **D_800470B0;
+Gfx *D_800470B0;
 
 Gfx *D_800470B8[4];
 // should be a 'Gfx buffer[60];'
 u8 D_800470C8[480];
-u8 D_800472A8[12];
+
+s32 D_800472A8[3];
 u32 D_800472B4;
 u8 extend_D_800472B4[8];
 u8 D_800472C0[16];
@@ -1324,9 +1325,6 @@ void func_800143FC(struct GObjCommon *obj) {
     func_80014068(dobj, (void *)dobj->unk50);
 }
 
-void func_80014430(void);
-#ifdef NON_MATCHING
-// nonmatching: the loop unrolling is slightly off (stores at [1] before [0])
 void func_80014430(void) {
     s32 i;
 
@@ -1334,34 +1332,31 @@ void func_80014430(void) {
 
     for (i = 0; i < ARRAY_COUNT(D_800470B8); i++) { D_800470B8[i] = (void *)D_800470C8; }
 }
-#else
-#pragma GLOBAL_ASM("game/nonmatching/system_05/func_80014430.s")
-#endif
 
 void func_8001445C(struct DObj *arg0);
-#ifdef MIPS_TO_C
+#ifdef NON_MATCHING
 void func_8001445C(struct DObj *arg0) {
-    f32 sp34;
-    s32 i;
-    Gfx *sp40;
-    struct TempDlLink *sp44; // a2
     s32 sp48;                // t3; ret value
-
+    struct TempDlLink *sp44; // a2
+    Gfx *sp40;
+    s32 i;
+    struct DObj *curr;
     void *s4;
+    f32 sp34;
 
     s4 = NULL;
 
-    if ((arg0->unk50 & 2) == 0) {
+    if ((arg0->unk54 & 2) == 0) {
         sp34 = D_80046FA4;
-        sp40 = *D_800470B0;
         sp44 = (void *)arg0->unk50;
-        sp48 = func_80010D70(D_800470B0, arg0);
+        sp40 = D_800470B0;
+        sp48 = func_80010D70(&D_800470B0, arg0);
 
         if (sp44 != NULL && (arg0->unk54 & 1) == 0) {
             while (sp44->listId != 4) {
                 // L800144FC
                 if (sp44->dl != NULL) {
-                    while (*D_800470B0 != D_800470B8[sp44->listId]) {
+                    while (D_800470B0 != D_800470B8[sp44->listId]) {
                         // L8001451C
                         *D_800465B0[sp44->listId] = *D_800470B8[sp44->listId];
                         D_800465B0[sp44->listId]++;
@@ -1388,18 +1383,18 @@ void func_8001445C(struct DObj *arg0) {
         // L80014624
         if (arg0->unk10 != NULL) { func_8001445C(arg0); }
         // L80014644
-        *D_800470B0 = sp40;
+        D_800470B0 = sp40;
         for (i = 0; i < ARRAY_COUNT(D_800470B8); i += 2) {
-            if ((uintptr_t)*D_800470B0 < (uintptr_t)D_800470B8[i]) {
-                D_800470B8[i] = *D_800470B0;
+            if ((uintptr_t)D_800470B0 < (uintptr_t)D_800470B8[i]) {
+                D_800470B8[i] = D_800470B0;
                 if (sp48 != 0 && ((uintptr_t)arg0->unk14 == 1 || arg0->unk8 != NULL)) {
                     // L800146A8
                     gSPPopMatrix(D_800465B0[i]++, G_MTX_MODELVIEW);
                 }
             }
             // L800146C0
-            if ((uintptr_t)*D_800470B0 < (uintptr_t)D_800470B8[i + 1]) {
-                D_800470B8[i + 1] = *D_800470B0;
+            if ((uintptr_t)D_800470B0 < (uintptr_t)D_800470B8[i + 1]) {
+                D_800470B8[i + 1] = D_800470B0;
                 if (sp48 != 0 && ((uintptr_t)arg0->unk14 == 1 || arg0->unk8 != NULL)) {
                     // L800146A8
                     gSPPopMatrix(D_800465B0[i + 1]++, G_MTX_MODELVIEW);
@@ -1412,7 +1407,7 @@ void func_8001445C(struct DObj *arg0) {
     // L8001471C
 
     if (arg0->unkC == NULL) {
-        struct DObj *curr = arg0->unk8;
+        curr = arg0->unk8;
         while (curr != NULL) {
             func_8001445C(curr);
             curr = curr->unk8;
@@ -1475,22 +1470,201 @@ void unref_800147E0(struct GObjCommon *arg0) {
     }
 }
 
-#ifdef MIPS_TO_C
-#else
-#pragma GLOBAL_ASM("game/nonmatching/system_05/func_8001490C.s")
-#endif
+void func_8001490C(struct DObj *dobj) {
+    s32 ret; // sp2C
+    Gfx **dls;
+    struct DObj *curr;
+    f32 sp20;
 
-#ifdef MIPS_TO_C
+    dls = (void *)dobj->unk50;
+
+    if (!(dobj->unk54 & 2)) {
+        sp20 = D_80046FA4;
+        ret  = func_80010D70(D_800465B0, dobj);
+
+        if (dls != NULL && dls[D_800472A8[0]] != NULL) {
+            if (!(dobj->unk54 & 1)) {
+                func_80012D90(dobj, D_800465B0);
+                gSPDisplayList(D_800465B0[0]++, dls[D_800472A8[0]]);
+            }
+        }
+        // L800149D4
+        if (dobj->unk10 != NULL) { func_8001490C(dobj->unk10); }
+        // L800149F4
+        if (ret != 0 && ((uintptr_t)dobj->unk14 == 1 || dobj->unk8 != NULL)) {
+            gSPPopMatrix(D_800465B0[0]++, G_MTX_MODELVIEW);
+        }
+        D_80046FA4 = sp20;
+    }
+    // L80014A44
+    if (dobj->unkC == NULL) {
+        curr = dobj->unk8;
+
+        while (curr != NULL) {
+            func_8001490C(curr);
+            curr = curr->unk8;
+        }
+    }
+}
+
+void unref_80014A84(struct GObjCommon *obj);
+#ifdef NON_MATCHING
+// nonmatching: can't get dobj (sp20) to stay on stack and out of saved register
+void unref_80014A84(struct GObjCommon *obj) {
+    struct Unk50DobjType *sp2C;
+    s32 ret; // sp28
+    f32 f2;
+    struct DObj *dobj; // sp20
+    struct DObj *curr;
+
+    dobj       = obj->unk74;
+    D_80046FA4 = 1.0f;
+
+    if (!(dobj->unk54 & 2)) {
+        sp2C = (void *)dobj->unk50;
+        if (sp2C != NULL) {
+            D_800472A8[0] = 0;
+            f2            = func_80014798(dobj);
+            while (f2 < sp2C->f) {
+                sp2C++;
+                D_800472A8[0]++;
+            }
+            // L80014B20
+            ret = func_80010D70(D_800465B0, dobj);
+
+            if (sp2C->dl != NULL && !(dobj->unk54 & 1)) {
+                func_80012D90(dobj, D_800465B0);
+                gSPDisplayList(D_800465B0[0]++, sp2C->dl);
+            }
+            // L80014B9C
+            if (dobj->unk10 != NULL) { func_8001490C(dobj->unk10); }
+            // L80014BB4
+            if (ret != 0 && ((uintptr_t)dobj->unk14 == 1 || dobj->unk8 != NULL)) {
+                gSPPopMatrix(D_800465B0[0]++, G_MTX_MODELVIEW);
+            }
+            // L80014BFC
+            if (dobj->unkC == NULL) {
+                curr = dobj->unk8;
+                while (curr != NULL) {
+                    func_8001490C(curr);
+                    curr = curr->unk8;
+                }
+            }
+        }
+        // L80014C24
+    }
+    // L80014C28
+}
 #else
 #pragma GLOBAL_ASM("game/nonmatching/system_05/unref_80014A84.s")
 #endif
 
-#ifdef MIPS_TO_C
-#else
-#pragma GLOBAL_ASM("game/nonmatching/system_05/unref_80014C38.s")
-#endif
+struct DObjUnk50DistIdList {
+    /* 0x00 */ f32 f;
+    /* 0x04 */ struct TempDlLink *link;
+};
 
-#ifdef MIPS_TO_C
+void unref_80014C38(struct GObjCommon *obj) {
+    struct DObjUnk50DistIdList *list; // sp24
+    f32 dist;                         // sp20?
+    struct DObj *dobj;                // sp1C
+
+    dobj       = obj->unk74;
+    D_80046FA4 = 1.0f;
+
+    if (dobj->unk54 == 0) {
+        list = (void *)dobj->unk50;
+        if (list != NULL) {
+            dist = func_80014798(dobj);
+
+            while (dist < list->f) { list++; }
+            func_80014068(dobj, list->link);
+        }
+    }
+}
+
+#ifdef NON_MATCHING
+// nonmatching: regalloc; can't get `ret` to use t3. it uses t4 instead
+void func_80014CD0(struct DObj *dobj) {
+    void *s4;
+    s32 ret; // t3 sp48
+    struct TempDlLink **s0;
+    struct TempDlLink *sp40; // a2
+    Gfx *sp3C;
+    struct DObj *curr;
+    s32 i;
+    f32 sp30;
+
+    s4 = NULL;
+    if (!(dobj->unk54 & 2)) {
+        sp30 = D_80046FA4;
+        s0   = (void *)dobj->unk50;
+        if (s0 != NULL) { sp40 = s0[D_800472A8[0]]; }
+        // L80014D40
+        sp3C = D_800470B0;
+        ret  = func_80010D70(&D_800470B0, dobj);
+
+        if (s0 != NULL && sp40 != NULL && !(dobj->unk54 & 1)) {
+            // s0 is sp40->listId (or that x4)
+            // s1 is D_800465B0
+            // s2 is D_800470B0
+            // a3 is D_800470B8
+            while (sp40->listId != 4) {
+                // L80014D90
+                if (sp40->dl != NULL) {
+                    while (D_800470B0 != D_800470B8[sp40->listId]) {
+                        // L80014DB0
+                        *D_800465B0[sp40->listId] = *D_800470B8[sp40->listId];
+                        D_800465B0[sp40->listId]++;
+                        D_800470B8[sp40->listId]++;
+                    }
+                    // L80014E10
+                    if (dobj->unk80 != NULL) {
+                        if (s4 == NULL) {
+                            s4 = D_800465D8.ptr;
+                            func_80012D90(dobj, &D_800465B0[sp40->listId]);
+                        } else {
+                            // L80014E5C
+                            gSPSegment(D_800465B0[sp40->listId]++, 14, s4);
+                        }
+                        // L80014E80
+                    }
+                    // L80014E84
+                    gSPDisplayList(D_800465B0[sp40->listId]++, sp40->dl);
+                }
+                // L80014EA4
+                sp40++;
+            }
+        }
+        // L80014EB8
+        if (dobj->unk10 != NULL) { func_80014CD0(dobj->unk10); }
+        // L80014ED8
+        D_800470B0 = sp3C;
+
+        // t4 is D_800470C8
+        // a2 is D_800470B8
+        // this can really unroll
+        for (i = 0; i < 4; i++) {
+            // L80014F00
+            if (D_800470B0 < D_800470B8[i]) {
+                D_800470B8[i] = D_800470B0;
+                if (ret != 0 && ((uintptr_t)dobj->unk14 == 1 || dobj->unk8 != NULL)) {
+                    gSPPopMatrix(D_800465B0[i]++, G_MTX_MODELVIEW);
+                }
+            }
+        }
+
+        D_80046FA4 = sp30;
+    }
+    // L80014FB0
+    if (dobj->unkC == NULL) {
+        curr = dobj->unk8;
+        while (curr != NULL) {
+            func_80014CD0(curr);
+            curr = curr->unk8;
+        }
+    }
+}
 #else
 #pragma GLOBAL_ASM("game/nonmatching/system_05/func_80014CD0.s")
 #endif
