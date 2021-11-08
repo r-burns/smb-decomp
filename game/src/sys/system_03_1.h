@@ -5,6 +5,7 @@
 
 #include <macros.h>
 
+#include <PR/sp.h>
 #include <PR/ultratypes.h>
 
 extern void func_8000AEF0(s32 idx, void (*cb)(struct GObjCommon *, s32), s32 param);
@@ -44,7 +45,7 @@ extern struct GObjCommon *func_8000B8BC(
     u8 arg5,
     s32 arg6,
     s32 arg7,
-    struct SObjSub10 *arg8,
+    Sprite *arg8,
     u8 arg9,
     void *argA,
     u32 argB);

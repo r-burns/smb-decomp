@@ -12,6 +12,7 @@
 
 #include <PR/mbi.h>
 #include <PR/os.h>
+#include <PR/sp.h>
 #include <PR/ultratypes.h>
 
 // TODOs:
@@ -1434,7 +1435,7 @@ void func_8000948C(struct DObj *arg0) {
     func_80008004(arg0);
 }
 
-struct SObj *func_80009614(struct GObjCommon *arg0, struct SObjSub10 *arg1) {
+struct SObj *func_80009614(struct GObjCommon *arg0, Sprite *sprite) {
     struct SObj *newObj;
 
     if (arg0 == NULL) { arg0 = D_80046A54; }
@@ -1458,7 +1459,7 @@ struct SObj *func_80009614(struct GObjCommon *arg0, struct SObjSub10 *arg1) {
     newObj->unk04 = arg0;
     newObj->unk08 = NULL;
 
-    if (arg1 != NULL) { newObj->unk10 = *arg1; }
+    if (sprite != NULL) { newObj->sp = *sprite; }
     // L800096D4
     newObj->unk54 = 0;
     return newObj;

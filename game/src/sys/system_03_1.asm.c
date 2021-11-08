@@ -8,6 +8,7 @@
 #include <macros.h>
 
 #include <PR/os.h>
+#include <PR/sp.h>
 #include <PR/ultratypes.h>
 
 // `param` is the same type as the second argument to `cb`
@@ -373,7 +374,7 @@ struct GObjCommon *func_8000B8BC(
     u8 arg5,
     s32 arg6,
     s32 arg7,
-    struct SObjSub10 *arg8,
+    Sprite *arg8,
     u8 arg9,
     void *argA,
     u32 argB) {

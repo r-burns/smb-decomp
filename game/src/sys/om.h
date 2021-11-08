@@ -6,6 +6,7 @@
 
 #include <PR/mbi.h>
 #include <PR/os.h>
+#include <PR/sp.h>
 #include <PR/ultratypes.h>
 
 // Object Manager (OM) Objects
@@ -277,17 +278,12 @@ struct MObj {
     /* 0xA4 */ u32 padA4;
 }; // size = 0xA8
 
-struct SObjSub10 {
-    /* 0x00 */ u32 pad00;
-    /* 0x04 */ u8 pad04[0x44 - 0x04];
-}; // size == 0x44
-
 struct SObj {
     /* 0x00 */ struct SObj *next;
     /* 0x04 */ struct GObjCommon *unk04;
     /* 0x08 */ struct SObj *unk08;
     /* 0x0C */ struct SObj *unk0C;
-    /* 0x10 */ struct SObjSub10 unk10;
+    /* 0x10 */ Sprite sp;
     /* 0x54 */ s32 unk54;
 }; // size >= 0x58 (0x6C?)
 
@@ -386,7 +382,7 @@ extern struct DObj *func_800092D0(struct GObjCommon *, s32);
 extern struct DObj *func_80009380(struct DObj *, s32);
 extern struct DObj *func_800093F4(struct DObj *, s32);
 extern void func_8000948C(struct DObj *);
-extern struct SObj *func_80009614(struct GObjCommon *, struct SObjSub10 *);
+extern struct SObj *func_80009614(struct GObjCommon *, Sprite *);
 extern void func_800096EC(struct SObj *);
 extern struct OMCamera *func_80009760(struct GObjCommon *);
 extern struct GObjCommon *func_80009968(u32 id, void (*arg1)(void), u8 link, u32 arg3);
