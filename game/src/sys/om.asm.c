@@ -1,9 +1,9 @@
 #include "sys/om.h"
 
 #include "sys/gtl.h"
+#include "sys/obj_renderer.h"
 #include "sys/rdp_reset.h"
 #include "sys/system_03_1.h"
-#include "sys/obj_renderer.h"
 #include "sys/system_11.h"
 
 #include <macros.h>
@@ -96,32 +96,26 @@ u8 D_80046F88[24];
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wunknown-pragmas"
 
-struct GObjThread *get_obj_thread(void);
-#ifdef NON_MATCHING
 struct GObjThread *get_obj_thread(void) {
-    // nonmatching: regalloc off by one register in final block
-    struct GObjThread *ret = sObjThreadHead;
+    struct GObjThread *ret;
 
-    if (ret == NULL) {
-        sObjThreadHead       = func_80004980(sizeof(struct GObjThread), 8);
+    if (sObjThreadHead == NULL) {
+        sObjThreadHead = func_80004980(sizeof(struct GObjThread), 8);
+
         sObjThreadHead->next = NULL;
-
-        ret = sObjThreadHead;
     }
 
-    if (ret == NULL) {
-        fatal_printf("om : couldn\'t get GObjThread\n");
+    if (sObjThreadHead == NULL) {
+        fatal_printf("om : couldn't get GObjThread\n");
         while (TRUE) { }
     }
 
-    sObjThreadHead = ret->next;
+    ret            = sObjThreadHead;
+    sObjThreadHead = sObjThreadHead->next;
     sObjThreadsActive++;
 
     return ret;
 }
-#else
-#pragma GLOBAL_ASM("game/nonmatching/om/get_obj_thread.s")
-#endif
 
 void return_obj_thread(struct GObjThread *t) {
     t->next        = sObjThreadHead;
@@ -194,32 +188,26 @@ void free_stack_node(struct ThreadStackNode *node) {
     sThreadStacksActive--;
 }
 
-struct GObjProcess *func_80007604(void);
-#ifdef NON_MATCHING
-struct GObjProcess *func_80007604(void) {
-    // nonmatching: regalloc off by one in final block (for sObjProcessesActive)
-    struct GObjProcess *v1;
+struct GObjProcess *get_obj_process(void) {
+    struct GObjProcess *ret;
 
-    v1 = sObjProcessHead;
-    if (v1 == NULL) {
-        sObjProcessHead        = func_80004980(sizeof(struct GObjProcess), 4);
+    if (sObjProcessHead == NULL) {
+        sObjProcessHead = func_80004980(sizeof(struct GObjProcess), 4);
+
         sObjProcessHead->unk00 = NULL;
-        v1                     = sObjProcessHead;
     }
-    // L8000763C
-    if (v1 == NULL) {
-        fatal_printf("om : couldn\'t get GObjProcess\n");
+
+    if (sObjProcessHead == NULL) {
+        fatal_printf("om : couldn't get GObjProcess\n");
         while (TRUE) { }
     }
-    // L80007658
-    sObjProcessHead = v1->unk00;
+
+    ret             = sObjProcessHead;
+    sObjProcessHead = sObjProcessHead->unk00;
     sObjProcessesActive++;
 
-    return v1;
+    return ret;
 }
-#else
-#pragma GLOBAL_ASM("game/nonmatching/om/func_80007604.s")
-#endif
 
 void func_80007680(struct GObjProcess *arg0);
 #ifdef NON_MATCHING
@@ -491,31 +479,25 @@ void func_80007CF4(struct GObjCommon *arg0) {
     }
 }
 
-struct OMMtx *func_80007D5C(void);
-#ifdef NON_MATCHING
-struct OMMtx *func_80007D5C(void) {
-    struct OMMtx *v1;
+struct OMMtx *get_om_mtx(void) {
+    struct OMMtx *ret;
 
-    v1 = sMtxHead;
-    if (v1 == NULL) {
-        sMtxHead       = func_80004980(sizeof(struct OMMtx), 8);
+    if (sMtxHead == NULL) {
+        sMtxHead = func_80004980(sizeof(struct OMMtx), 8);
+
         sMtxHead->next = NULL;
     }
 
-    v1 = sMtxHead;
-    if (v1 == NULL) {
-        fatal_printf("om : couldn\'t get OMMtx\n");
+    if (sMtxHead == NULL) {
+        fatal_printf("om : couldn't get OMMtx\n");
         while (TRUE) { }
     }
 
-    // nonmatching: regalloc off for sMatricesActive increment
-    sMtxHead = v1->next;
+    ret      = sMtxHead;
+    sMtxHead = sMtxHead->next;
     sMatricesActive++;
-    return v1;
+    return ret;
 }
-#else
-#pragma GLOBAL_ASM("game/nonmatching/om/func_80007D5C.s")
-#endif
 
 void func_80007DD8(struct OMMtx *mtx) {
     mtx->next = sMtxHead;
@@ -523,31 +505,26 @@ void func_80007DD8(struct OMMtx *mtx) {
     sMatricesActive--;
 }
 
-struct AObj *func_80007E04(void);
-#ifdef NON_MATCHING
-struct AObj *func_80007E04(void) {
-    struct AObj *v1;
+struct AObj *get_aobj(void) {
+    struct AObj *ret;
 
-    v1 = sAObjHead;
-    if (v1 == NULL) {
-        sAObjHead       = func_80004980(sizeof(struct AObj), 4);
+    if (sAObjHead == NULL) {
+        sAObjHead = func_80004980(sizeof(struct AObj), 4);
+
         sAObjHead->next = NULL;
     }
 
-    v1 = sAObjHead;
-    if (v1 == NULL) {
-        fatal_printf("om : couldn\'t get AObj\n");
+    if (sAObjHead == NULL) {
+        fatal_printf("om : couldn't get AObj\n");
         while (TRUE) { }
     }
 
     // nonmatching: regalloc off for sAObjsActive increment
-    sAObjHead = v1->next;
+    ret       = sAObjHead;
+    sAObjHead = sAObjHead->next;
     sAObjsActive++;
-    return v1;
+    return ret;
 }
-#else
-#pragma GLOBAL_ASM("game/nonmatching/om/func_80007E04.s")
-#endif
 
 void append_aobj_to_dobj(struct DObj *dobj, struct AObj *aobj) {
     aobj->next  = dobj->unk6C;
@@ -572,29 +549,26 @@ void free_aobj(struct AObj *a) {
     sAObjHead = a;
 }
 
-struct MObj *func_80007EDC(void);
-#ifdef NON_MATCHING
-struct MObj *func_80007EDC(void) {
-    struct MObj *v1;
+struct MObj *get_mobj(void) {
+    struct MObj *ret;
 
-    if ((v1 = sMObjHead) == NULL) {
-        sMObjHead       = func_80004980(sizeof(struct MObj), 4);
+    if (sMObjHead == NULL) {
+        sMObjHead = func_80004980(sizeof(struct MObj), 4);
+
         sMObjHead->next = NULL;
     }
 
-    if ((v1 = sMObjHead) == NULL) {
-        fatal_printf("om : couldn\'t get MObj\n");
+    if (sMObjHead == NULL) {
+        fatal_printf("om : couldn't get MObj\n");
         while (TRUE) { }
     }
 
-    // nonmatching: same regalloc issues as other `get_object_***` functions
-    sMObjHead = v1->next;
+    ret       = sMObjHead;
+    sMObjHead = sMObjHead->next;
     sMObjsActive++;
-    return v1;
+
+    return ret;
 }
-#else
-#pragma GLOBAL_ASM("game/nonmatching/om/func_80007EDC.s")
-#endif
 
 void free_mobj(struct MObj *obj) {
     obj->next = sMObjHead;
@@ -602,91 +576,81 @@ void free_mobj(struct MObj *obj) {
     sMObjHead = obj;
 }
 
-struct DObj *func_80007F84(void);
-#ifdef NON_MATCHING
-struct DObj *func_80007F84(void) {
-    struct DObj *v1;
+struct DObj *get_dobj(void) {
+    struct DObj *ret;
 
-    if ((v1 = sDObjHead) == NULL) {
-        sDObjHead       = func_80004980(sDObjSize, 8);
+    if (sDObjHead == NULL) {
+        sDObjHead = func_80004980(sDObjSize, 8);
+
         sDObjHead->unk0 = NULL;
     }
 
-    if ((v1 = sDObjHead) == NULL) {
-        fatal_printf("om : couldn\'t get DObj\n");
+    if (sDObjHead == NULL) {
+        fatal_printf("om : couldn't get DObj\n");
         while (TRUE) { }
     }
 
-    // nonmatching: same regalloc issues as other `get_object_***` functions
-    sDObjHead = v1->unk0;
+    ret       = sDObjHead;
+    sDObjHead = sDObjHead->unk0;
     sDObjsActive++;
-    return v1;
-}
-#else
-#pragma GLOBAL_ASM("game/nonmatching/om/func_80007F84.s")
-#endif
 
-void func_80008004(struct DObj *obj) {
+    return ret;
+}
+
+void free_dobj(struct DObj *obj) {
     obj->unk0 = sDObjHead;
     sDObjsActive--;
     sDObjHead = obj;
 }
 
-struct SObj *func_80008030(void);
-#ifdef NON_MATCHING
-struct SObj *func_80008030(void) {
-    struct SObj *v1;
+struct SObj *get_sobj(void) {
+    struct SObj *ret;
 
-    if ((v1 = sSObjHead) == NULL) {
-        sSObjHead       = func_80004980(sSObjSize, 8);
+    if (sSObjHead == NULL) {
+        sSObjHead = func_80004980(sSObjSize, 8);
+
         sSObjHead->next = NULL;
     }
 
-    if ((v1 = sSObjHead) == NULL) {
-        fatal_printf("om : couldn\'t get SObj\n");
+    if (sSObjHead == NULL) {
+        fatal_printf("om : couldn't get SObj\n");
         while (TRUE) { }
     }
 
-    // nonmatching: same regalloc issues as other `get_object_***` functions
-    sSObjHead = v1->next;
+    ret       = sSObjHead;
+    sSObjHead = sSObjHead->next;
     sSObjsActive++;
-    return v1;
-}
-#else
-#pragma GLOBAL_ASM("game/nonmatching/om/func_80008030.s")
-#endif
 
-void func_800080B0(struct SObj *obj) {
+    return ret;
+}
+
+void free_sobj(struct SObj *obj) {
     obj->next = sSObjHead;
     sSObjsActive--;
     sSObjHead = obj;
 }
 
-struct OMCamera *func_800080DC(void);
-#ifdef NON_MATCHING
-struct OMCamera *func_800080DC(void) {
-    struct OMCamera *v1;
+struct OMCamera *get_om_camera(void) {
+    struct OMCamera *ret;
 
-    if ((v1 = sCameraHead) == NULL) {
+    if (sCameraHead == NULL) {
         sCameraHead       = func_80004980(sCameraSize, 8);
         sCameraHead->next = NULL;
     }
 
-    if ((v1 = sCameraHead) == NULL) {
-        fatal_printf("om : couldn\'t get Camera\n");
+    if (sCameraHead == NULL) {
+        fatal_printf("om : couldn't get Camera\n");
         while (TRUE) { }
     }
 
-    // nonmatching: same regalloc issues as other `get_object_***` functions
-    sCameraHead = v1->next;
+    ret         = sCameraHead;
+    sCameraHead = sCameraHead->next;
     sCamerasActive++;
-    return v1;
-}
-#else
-#pragma GLOBAL_ASM("game/nonmatching/om/func_800080DC.s")
-#endif
 
-void func_8000815C(struct OMCamera *obj) {
+    return ret;
+}
+
+void free_om_camera(struct OMCamera *obj) {
     obj->next = sCameraHead;
     sCamerasActive--;
     sCameraHead = obj;
@@ -699,9 +663,9 @@ struct GObjProcess *func_80008188(struct GObjCommon *com, void *ptr, u8 kind, u3
 
     if (com == NULL) { com = D_80046A54; }
 
-    process = func_80007604();
+    process = get_obj_process();
     if (pri >= 6) {
-        fatal_printf("om : GObjProcess\'s priority is bad value\n");
+        fatal_printf("om : GObjProcess's priority is bad value\n");
         while (TRUE) { }
     }
     process->unk10 = pri;
@@ -738,7 +702,7 @@ struct GObjProcess *func_80008188(struct GObjCommon *com, void *ptr, u8 kind, u3
         }
         default:
         {
-            fatal_printf("om : GObjProcess\'s kind is bad value\n");
+            fatal_printf("om : GObjProcess's kind is bad value\n");
             while (TRUE) { }
         }
     }
@@ -760,10 +724,10 @@ struct GObjProcess *unref_80008304(
 
     if (ctx == NULL) { ctx = D_80046A54; }
 
-    process = func_80007604();
+    process = get_obj_process();
 
     if (pri >= 6) {
-        fatal_printf("om : GObjProcess\'s priority is bad value\n");
+        fatal_printf("om : GObjProcess's priority is bad value\n");
         while (TRUE) { }
     }
 
@@ -869,7 +833,7 @@ struct OMMtx *func_8000855C(struct DObj *arg0, u8 arg1, u8 arg2, s32 arg3) {
     // L8000866C
     arg0->unk56 += 1;
 
-    mtx = func_80007D5C();
+    mtx = get_om_mtx();
 
     arg0->unk58[arg3] = mtx;
     mtx->unk04        = arg1;
@@ -1066,11 +1030,12 @@ struct OMMtx *func_80008CF0(struct OMCamera *arg0, u8 arg1, u8 arg2) {
     struct OMMtx *mtx; // v0
 
     if (arg0->unk60 == 2) {
-        fatal_printf("om : couldn\'t add OMMtx for Camera\n");
+        fatal_printf("om : couldn't add OMMtx for Camera\n");
         while (TRUE) { }
     }
     // L80008D2C
-    mtx                      = func_80007D5C();
+    mtx = get_om_mtx();
+
     arg0->unk64[arg0->unk60] = mtx;
     arg0->unk60++;
     mtx->unk04 = arg1;
@@ -1121,7 +1086,7 @@ struct OMMtx *func_80008CF0(struct OMCamera *arg0, u8 arg1, u8 arg2) {
 }
 
 struct AObj *create_aobj_for_dobj(struct DObj *dobj, u8 index) {
-    struct AObj *aobj = func_80007E04();
+    struct AObj *aobj = get_aobj();
 
     aobj->unk04 = index;
     aobj->unk05 = 0;
@@ -1153,7 +1118,7 @@ void func_80008EE4(struct DObj *arg0) {
 }
 
 struct AObj *create_aobj_for_mobj(struct MObj *mobj, u8 index) {
-    struct AObj *aobj = func_80007E04();
+    struct AObj *aobj = get_aobj();
 
     aobj->unk04 = index;
     aobj->unk05 = 0;
@@ -1187,7 +1152,7 @@ void func_80008FB0(struct MObj *mobj) {
 
 // might be another type? SObj; matches `func_80007EA0`
 struct AObj *func_80009010(struct DObj *obj, u8 index) {
-    struct AObj *aobj = func_80007E04();
+    struct AObj *aobj = get_aobj();
 
     aobj->unk04 = index;
     aobj->unk05 = 0;
@@ -1224,7 +1189,7 @@ void unref_8000907C(struct DObj *dobj) {
 struct MObj *func_800090DC(struct DObj *arg0, struct MObjSub *arg1) {
     struct MObj *mobj; // a1, v0?
 
-    mobj = func_80007EDC();
+    mobj = get_mobj();
 
     if (arg0->unk80 != NULL) {
         struct MObj *curr  = arg0->unk80->next;
@@ -1312,7 +1277,7 @@ struct DObj *func_800092D0(struct GObjCommon *arg0, void *arg1) {
 
     if (arg0 == NULL) { arg0 = D_80046A54; }
 
-    newObj = func_80007F84();
+    newObj = get_dobj();
     if (arg0->unk74 != NULL) {
         curr = arg0->unk74;
 
@@ -1340,7 +1305,7 @@ struct DObj *func_800092D0(struct GObjCommon *arg0, void *arg1) {
 struct DObj *func_80009380(struct DObj *arg0, void *arg1) {
     struct DObj *newObj;
 
-    newObj = func_80007F84();
+    newObj = get_dobj();
     if (arg0->unk8 != NULL) { arg0->unk8->unkC = newObj; }
     newObj->unkC  = arg0;
     newObj->unk8  = arg0->unk8;
@@ -1359,7 +1324,7 @@ struct DObj *func_800093F4(struct DObj *arg0, void *arg1) {
     struct DObj *newObj;
     struct DObj *curr;
 
-    newObj = func_80007F84();
+    newObj = get_dobj();
     if (arg0->unk10 != NULL) {
         curr = arg0->unk10;
 
@@ -1433,7 +1398,7 @@ void func_8000948C(struct DObj *arg0) {
         currM = nextM;
     }
 
-    func_80008004(arg0);
+    free_dobj(arg0);
 }
 
 struct SObj *func_80009614(struct GObjCommon *arg0, Sprite *sprite) {
@@ -1441,7 +1406,7 @@ struct SObj *func_80009614(struct GObjCommon *arg0, Sprite *sprite) {
 
     if (arg0 == NULL) { arg0 = D_80046A54; }
 
-    newObj = func_80008030();
+    newObj = get_sobj();
 
     if (arg0->unk74 != NULL) {
         struct SObj *tail = arg0->unk74;
@@ -1476,7 +1441,7 @@ void func_800096EC(struct SObj *obj) {
 
     if (obj->unk08 != NULL) { obj->unk08->unk0C = obj->unk0C; }
 
-    func_800080B0(obj);
+    free_sobj(obj);
 }
 
 struct OMCamera *func_80009760(struct GObjCommon *arg0) {
@@ -1486,7 +1451,7 @@ struct OMCamera *func_80009760(struct GObjCommon *arg0) {
     if (arg0 == NULL) { arg0 = D_80046A54; }
     arg0->unk0F = 3;
 
-    newCam        = func_800080DC();
+    newCam        = get_om_camera();
     arg0->unk74   = newCam;
     newCam->unk04 = arg0;
     setup_viewport(&newCam->unk08);
@@ -1532,7 +1497,7 @@ void func_80009810(struct OMCamera *cam) {
         curr = next;
     }
 
-    func_8000815C(cam);
+    free_om_camera(cam);
 }
 
 struct GObjCommon *om_g_add_common(u32 id, void (*arg1)(void), u8 link, u32 arg3) {
@@ -1686,7 +1651,7 @@ void unref_80009D3C(struct GObjCommon *arg0, struct GObjCommon *arg1) {
     om_g_move_common(3, arg0, arg1->unk0C, arg1->unk10, arg1);
 }
 
-void func_80009D78(
+void om_g_link_obj_dl_common(
     struct GObjCommon *arg0,
     void (*arg1)(struct GObjCommon *),
     u8 dlLink,
@@ -1714,7 +1679,7 @@ void func_80009DF4(
     s32 arg3,
     s32 arg4) {
     if (arg0 == NULL) { arg0 = D_80046A54; }
-    func_80009D78(arg0, arg1, dlLink, arg3, arg4);
+    om_g_link_obj_dl_common(arg0, arg1, dlLink, arg3, arg4);
     func_80007C00(arg0);
 }
 
@@ -1725,7 +1690,7 @@ void unref_80009E38(
     s32 arg3,
     s32 arg4) {
     if (arg0 == NULL) { arg0 = D_80046A54; }
-    func_80009D78(arg0, arg1, dlLink, arg3, arg4);
+    om_g_link_obj_dl_common(arg0, arg1, dlLink, arg3, arg4);
     func_80007C6C(arg0);
 }
 
@@ -1735,7 +1700,7 @@ void unref_80009E7C(
     s32 arg2,
     struct GObjCommon *arg3) {
     if (arg0 == NULL) { arg0 = D_80046A54; }
-    func_80009D78(arg0, arg1, arg3->unk0D, arg3->unk28, arg2);
+    om_g_link_obj_dl_common(arg0, arg1, arg3->unk0D, arg3->unk28, arg2);
     func_80007B98(arg0, arg3);
 }
 
@@ -1745,7 +1710,7 @@ void unref_80009ED0(
     s32 arg2,
     struct GObjCommon *arg3) {
     if (arg0 == NULL) { arg0 = D_80046A54; }
-    func_80009D78(arg0, arg1, arg3->unk0D, arg3->unk28, arg2);
+    om_g_link_obj_dl_common(arg0, arg1, arg3->unk0D, arg3->unk28, arg2);
     func_80007B98(arg0, arg3->unk08);
 }
 

@@ -93,6 +93,7 @@ u32 D_800465D0;
 s32 D_800465D4;
 // matrix allocation region?
 struct BumpAllocRegion D_800465D8;
+// object allocation region?
 struct BumpAllocRegion D_800465E8;
 struct FnBundle D_800465F8;
 u32 D_8004660C;

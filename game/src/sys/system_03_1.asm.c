@@ -1,8 +1,8 @@
 #include "sys/system_03_1.h"
 
+#include "sys/obj_renderer.h"
 #include "sys/om.h"
 #include "sys/system_03.h"
-#include "sys/obj_renderer.h"
 #include "sys/system_11.h"
 
 #include <macros.h>
