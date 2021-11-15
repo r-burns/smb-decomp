@@ -157,6 +157,29 @@ union AnimCmd {
     void *ptr;
 };
 
+// Possible unk50 field pointers
+struct Unk50DlLink {
+    /* 0x00 */ s32 listId;
+    /* 0x04 */ Gfx *dl;
+};
+
+// maybe this is something for z sorting..?
+struct Unk50Float {
+    /* 0x00 */ f32 f;
+    /* 0x04 */ Gfx *dl;
+};
+
+struct Unk50FloatLink {
+    /* 0x00 */ f32 f;
+    /* 0x04 */ struct Unk50DlLink *link;
+};
+
+struct Unk50MultiDl {
+    /* 0x00 */ s32 id;
+    /* 0x04 */ Gfx *dl1;
+    /* 0x08 */ Gfx *dl2;
+};
+
 struct DObj {
     /* 0x00 */ struct DObj *unk0;
     /* 0x04 */ struct GObjCommon *unk4;
@@ -169,9 +192,8 @@ struct DObj {
     /* 0x28 */ struct Mtx4Float unk28;
     /* 0x3C */ struct Mtx3Float unk3C;
     /* 0x4C */ struct DObjDynamicStore *unk4C;
-    // could be DObj *unk50, or is it a Gfx *?
-    // might also be a pointer to a {id, Gfx *} struct
-    /* 0x50 */ s32 unk50;
+    // can be any of: DObj *, Gfx *, or the struct Unk50... above
+    /* 0x50 */ void *unk50;
     // is this a union? WeirdBytewise...?
     /* 0x54 */ u8 unk54;
     /* 0x55 */ u8 unk55;
@@ -383,9 +405,9 @@ extern void func_80008FB0(struct MObj *);
 extern struct AObj *func_80009010(struct DObj *obj, u8 index);
 extern struct MObj *func_800090DC(struct DObj *, struct MObjSub *);
 extern void func_800091F4(struct DObj *obj);
-extern struct DObj *func_800092D0(struct GObjCommon *, s32);
-extern struct DObj *func_80009380(struct DObj *, s32);
-extern struct DObj *func_800093F4(struct DObj *, s32);
+extern struct DObj *func_800092D0(struct GObjCommon *, void *);
+extern struct DObj *func_80009380(struct DObj *, void *);
+extern struct DObj *func_800093F4(struct DObj *, void *);
 extern void func_8000948C(struct DObj *);
 extern struct SObj *func_80009614(struct GObjCommon *, Sprite *);
 extern void func_800096EC(struct SObj *);

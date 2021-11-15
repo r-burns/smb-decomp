@@ -31,7 +31,7 @@ extern struct GObjCommon *func_8000B824(
     u8 arg5,
     s32 arg6,
     s32 arg7,
-    s32 arg8,
+    void *arg8,
     s32 arg9,
     u8 argA,
     void *argB,

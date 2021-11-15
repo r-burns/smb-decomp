@@ -3,7 +3,7 @@
 #include "sys/gtl.h"
 #include "sys/rdp_reset.h"
 #include "sys/system_03_1.h"
-#include "sys/system_05.h"
+#include "sys/obj_renderer.h"
 #include "sys/system_11.h"
 
 #include <macros.h>
@@ -1306,7 +1306,7 @@ void func_8000926C(struct DObj *arg0) {
 #pragma GLOBAL_ASM("game/nonmatching/om/func_8000926C.s")
 #endif
 
-struct DObj *func_800092D0(struct GObjCommon *arg0, s32 arg1) {
+struct DObj *func_800092D0(struct GObjCommon *arg0, void *arg1) {
     struct DObj *newObj;
     struct DObj *curr;
 
@@ -1337,7 +1337,7 @@ struct DObj *func_800092D0(struct GObjCommon *arg0, s32 arg1) {
     return newObj;
 }
 
-struct DObj *func_80009380(struct DObj *arg0, s32 arg1) {
+struct DObj *func_80009380(struct DObj *arg0, void *arg1) {
     struct DObj *newObj;
 
     newObj = func_80007F84();
@@ -1355,7 +1355,7 @@ struct DObj *func_80009380(struct DObj *arg0, s32 arg1) {
     return newObj;
 }
 
-struct DObj *func_800093F4(struct DObj *arg0, s32 arg1) {
+struct DObj *func_800093F4(struct DObj *arg0, void *arg1) {
     struct DObj *newObj;
     struct DObj *curr;
 

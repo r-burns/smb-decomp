@@ -2,7 +2,7 @@
 
 #include "sys/om.h"
 #include "sys/system_03.h"
-#include "sys/system_05.h"
+#include "sys/obj_renderer.h"
 #include "sys/system_11.h"
 
 #include <macros.h>
@@ -220,7 +220,7 @@ void unref_8000B4B4(struct GObjCommon *obj) {
     }
 }
 
-struct DObj *func_8000B4F8(struct GObjCommon *obj, s32 arg1) {
+struct DObj *func_8000B4F8(struct GObjCommon *obj, void *arg1) {
     struct DObj *ret;
 
     ret = func_800092D0(obj, arg1);
@@ -229,7 +229,7 @@ struct DObj *func_8000B4F8(struct GObjCommon *obj, s32 arg1) {
     return ret;
 }
 
-struct DObj *unref_8000B528(struct DObj *dobj, s32 arg1) {
+struct DObj *unref_8000B528(struct DObj *dobj, void *arg1) {
     struct DObj *ret;
 
     ret = func_80009380(dobj, arg1);
@@ -238,7 +238,7 @@ struct DObj *unref_8000B528(struct DObj *dobj, s32 arg1) {
     return ret;
 }
 
-struct DObj *func_8000B558(struct DObj *dobj, s32 arg1) {
+struct DObj *func_8000B558(struct DObj *dobj, void *arg1) {
     struct DObj *ret;
 
     ret = func_800093F4(dobj, arg1);
@@ -247,7 +247,7 @@ struct DObj *func_8000B558(struct DObj *dobj, s32 arg1) {
     return ret;
 }
 
-struct DObj *unref_8000B588(struct GObjCommon *obj, s32 arg1) {
+struct DObj *unref_8000B588(struct GObjCommon *obj, void *arg1) {
     struct DObj *ret;
 
     ret = func_800092D0(obj, arg1);
@@ -256,7 +256,7 @@ struct DObj *unref_8000B588(struct GObjCommon *obj, s32 arg1) {
     return ret;
 }
 
-struct DObj *unref_8000B5B8(struct DObj *dobj, s32 arg1) {
+struct DObj *unref_8000B5B8(struct DObj *dobj, void *arg1) {
     struct DObj *ret;
 
     ret = func_80009380(dobj, arg1);
@@ -265,7 +265,7 @@ struct DObj *unref_8000B5B8(struct DObj *dobj, s32 arg1) {
     return ret;
 }
 
-struct DObj *unref_8000B5E8(struct DObj *dobj, s32 arg1) {
+struct DObj *unref_8000B5E8(struct DObj *dobj, void *arg1) {
     struct DObj *ret;
 
     ret = func_800093F4(dobj, arg1);
@@ -276,7 +276,7 @@ struct DObj *unref_8000B5E8(struct DObj *dobj, s32 arg1) {
 
 struct MaybeDObjChain {
     s32 unk00;
-    s32 unk04;
+    void *unk04; // some DObj field 0x50 pointer
     struct Vec3i v;
 }; // size == 0x14
 
@@ -345,7 +345,7 @@ struct GObjCommon *func_8000B824(
     u8 arg5,
     s32 arg6,
     s32 arg7,
-    s32 arg8,
+    void *arg8,
     s32 arg9,
     u8 argA,
     void *argB,

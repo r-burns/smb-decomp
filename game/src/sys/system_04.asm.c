@@ -2,7 +2,7 @@
 
 #include "sys/om.h"
 #include "sys/system_03_1.h"
-#include "sys/system_05.h"
+#include "sys/obj_renderer.h"
 #include "sys/system_08.h"
 #include "sys/system_09.h"
 
@@ -1588,7 +1588,7 @@ void func_8000F058(struct DObj *dobj) {
     func_80008CC0(dobj, 32, 0);
 }
 
-struct DObj *unref_8000F090(struct GObjCommon *arg0, s32 arg1) {
+struct DObj *unref_8000F090(struct GObjCommon *arg0, void *arg1) {
     struct DObj *dobj;
 
     dobj = func_800092D0(arg0, arg1);
@@ -1597,7 +1597,7 @@ struct DObj *unref_8000F090(struct GObjCommon *arg0, s32 arg1) {
     return dobj;
 }
 
-struct DObj *unref_8000F0C0(struct DObj *arg0, s32 arg1) {
+struct DObj *unref_8000F0C0(struct DObj *arg0, void *arg1) {
     struct DObj *newDObj;
 
     newDObj = func_80009380(arg0, arg1);
@@ -1606,7 +1606,7 @@ struct DObj *unref_8000F0C0(struct DObj *arg0, s32 arg1) {
     return newDObj;
 }
 
-struct DObj *unref_8000F0F0(struct DObj *arg0, s32 arg1) {
+struct DObj *unref_8000F0F0(struct DObj *arg0, void *arg1) {
     struct DObj *newDObj;
 
     newDObj = func_800093F4(arg0, arg1);

@@ -1,4 +1,4 @@
-#include "sys/system_05.h"
+#include "sys/obj_renderer.h"
 
 #include "sys/gtl.h"
 #include "sys/om.h"
@@ -14,7 +14,7 @@
 #include <PR/sp.h>
 #include <PR/ultratypes.h>
 
-// gbi Mtx * ?
+// gbi Mtx * ? pointer to some sort of matrix
 u32 *D_80046FA0;
 f32 D_80046FA4;
 Mtx4f D_80046FA8;
@@ -26,14 +26,11 @@ struct MtxProcTemp *D_800470AC;
 Gfx *D_800470B0;
 
 Gfx *D_800470B8[4];
-// should be a 'Gfx buffer[60];'?
-u8 D_800470C8[480];
+Gfx D_800470C8[60];
 
-s32 D_800472A8[2];
-// u32 D_800472B4;
-// u8 extend_D_800472B4[8];
-Gfx *D_800472B0[4]; // really at D_800472B0
-// u8 D_800472C0[16];
+s32 D_800472A8;
+// the first pointer in the set of four doesn't seem to be used too much
+Gfx *D_800472B0[4];
 Gfx *D_800472C0;
 
 #define ABS(x)  ((x) < 0 ? -(x) : (x))
@@ -1241,19 +1238,14 @@ void func_80014038(struct GObjCommon *gobj) {
     func_80013EF8(gobj->unk74);
 }
 
-struct TempDlLink {
-    /* 0x00 */ s32 listId;
-    /* 0x04 */ Gfx *dl;
-};
-void func_80014068(struct DObj *dobj, struct TempDlLink *arg1);
-
+void func_80014068(struct DObj *dobj, struct Unk50DlLink *arg1);
 #ifdef MIPS_TO_C
-void func_80014068(struct DObj *dobj, struct TempDlLink *arg1) {
+void func_80014068(struct DObj *dobj, struct Unk50DlLink *arg1) {
     s32 sp34;
     s32 sp30;
     Gfx *sp2C; // start (t1)
     Gfx *sp28; // end
-    struct TempDlLink *curr;
+    struct Unk50DlLink *curr;
     void *sp20;
 
     sp30 = -1;
@@ -1333,16 +1325,16 @@ void func_800143FC(struct GObjCommon *obj) {
 void func_80014430(void) {
     s32 i;
 
-    D_800470B0 = (void *)D_800470C8;
+    D_800470B0 = D_800470C8;
 
-    for (i = 0; i < ARRAY_COUNT(D_800470B8); i++) { D_800470B8[i] = (void *)D_800470C8; }
+    for (i = 0; i < ARRAY_COUNT(D_800470B8); i++) { D_800470B8[i] = D_800470C8; }
 }
 
 void func_8001445C(struct DObj *arg0);
 #ifdef NON_MATCHING
 void func_8001445C(struct DObj *arg0) {
-    s32 sp48;                // t3; ret value
-    struct TempDlLink *sp44; // a2
+    s32 sp48;                 // t3; ret value
+    struct Unk50DlLink *sp44; // a2
     Gfx *sp40;
     s32 i;
     struct DObj *curr;
@@ -1443,12 +1435,6 @@ f32 func_80014798(struct DObj *arg) {
     return (x * x) + (y * y) + (z * z);
 }
 
-// maybe this is something for z sorting..?
-struct Unk50Float {
-    /* 0x00 */ f32 f;
-    /* 0x04 */ Gfx *dl;
-};
-
 void unref_800147E0(struct GObjCommon *arg0) {
     struct Unk50Float *sp24; // v1
     s32 ret;                 // sp20
@@ -1487,10 +1473,10 @@ void func_8001490C(struct DObj *dobj) {
         sp20 = D_80046FA4;
         ret  = func_80010D70(D_800465B0, dobj);
 
-        if (dls != NULL && dls[D_800472A8[0]] != NULL) {
+        if (dls != NULL && dls[D_800472A8] != NULL) {
             if (!(dobj->unk54 & 1)) {
                 func_80012D90(dobj, D_800465B0);
-                gSPDisplayList(D_800465B0[0]++, dls[D_800472A8[0]]);
+                gSPDisplayList(D_800465B0[0]++, dls[D_800472A8]);
             }
         }
         // L800149D4
@@ -1528,11 +1514,11 @@ void unref_80014A84(struct GObjCommon *obj) {
     if (!(dobj->unk54 & 2)) {
         sp2C = (void *)dobj->unk50;
         if (sp2C != NULL) {
-            D_800472A8[0] = 0;
-            f2            = func_80014798(dobj);
+            D_800472A8 = 0;
+            f2         = func_80014798(dobj);
             while (f2 < sp2C->f) {
                 sp2C++;
-                D_800472A8[0]++;
+                D_800472A8++;
             }
             // L80014B20
             ret = func_80010D70(D_800465B0, dobj);
@@ -1564,11 +1550,6 @@ void unref_80014A84(struct GObjCommon *obj) {
 #pragma GLOBAL_ASM("game/nonmatching/system_05/unref_80014A84.s")
 #endif
 
-struct Unk50FloatLink {
-    /* 0x00 */ f32 f;
-    /* 0x04 */ struct TempDlLink *link;
-};
-
 void unref_80014C38(struct GObjCommon *obj) {
     struct Unk50FloatLink *list; // sp24
     f32 dist;                    // sp20?
@@ -1594,8 +1575,8 @@ void func_80014CD0(struct DObj *dobj);
 void func_80014CD0(struct DObj *dobj) {
     void *s4;
     s32 ret; // t3 sp48
-    struct TempDlLink **s0;
-    struct TempDlLink *sp40; // a2
+    struct Unk50DlLink **s0;
+    struct Unk50DlLink *sp40; // a2
     Gfx *sp3C;
     struct DObj *curr;
     s32 i;
@@ -1605,7 +1586,7 @@ void func_80014CD0(struct DObj *dobj) {
     if (!(dobj->unk54 & 2)) {
         sp30 = D_80046FA4;
         s0   = (void *)dobj->unk50;
-        if (s0 != NULL) { sp40 = s0[D_800472A8[0]]; }
+        if (s0 != NULL) { sp40 = s0[D_800472A8]; }
         // L80014D40
         sp3C = D_800470B0;
         ret  = func_80010D70(&D_800470B0, dobj);
@@ -1685,7 +1666,7 @@ void unref_80014FFC(struct GObjCommon *obj) {
     void *segaddr;                  // s4
     f32 dist;                       // f0
     s32 i;
-    struct TempDlLink *sp34; // a2
+    struct Unk50DlLink *sp34; // a2
     Gfx *sp30;
     struct DObj *curr;
 
@@ -1697,10 +1678,10 @@ void unref_80014FFC(struct GObjCommon *obj) {
         // s1 is D_800472A8
         // s2 is D_800470B0
         if (curlink != NULL) {
-            D_800472A8[0] = 0;
-            dist          = func_80014798(dobj);
+            D_800472A8 = 0;
+            dist       = func_80014798(dobj);
             while (dist < curlink->f) {
-                D_800472A8[0]++;
+                D_800472A8++;
                 curlink++;
             }
             // L800150A4
@@ -1813,12 +1794,6 @@ void unref_800154F0(struct GObjCommon *obj) {
     func_80015358(obj->unk74);
 }
 
-struct Unk50MultiDl {
-    /* 0x00 */ s32 id;
-    /* 0x04 */ Gfx *dl1;
-    /* 0x08 */ Gfx *dl2;
-};
-
 void func_80015520(struct DObj *dobj);
 #ifdef NON_MATCHING
 // nonmatching: seems to be slightly different than the related functions.
@@ -1915,7 +1890,7 @@ void func_80015890(struct DObj *dobj) {
     s0 = (void *)dobj->unk50;
     if (!(dobj->unk54 & 2)) {
         sp24 = D_80046FA4;
-        if (s0 != NULL) { sp20 = s0[D_800472A8[0]]; }
+        if (s0 != NULL) { sp20 = s0[D_800472A8]; }
         // L800158DC
         if (s0 != NULL && sp20[0] != NULL && !(dobj->unk54 & 1)) {
             gSPDisplayList(D_800465B0[0]++, sp20[0]);
@@ -1959,12 +1934,12 @@ void unref_80015A58(struct GObjCommon *obj) {
     if (!(dobj->unk54 & 2)) {
         sp2C = (void *)dobj->unk50;
         if (sp2C != NULL) {
-            D_80046FA4    = 1.0f;
-            D_800472A8[0] = 0;
+            D_80046FA4 = 1.0f;
+            D_800472A8 = 0;
 
             dist = func_80014798(dobj);
             while (dist < sp2C->f) {
-                D_800472A8[0]++;
+                D_800472A8++;
                 sp2C++;
             }
             // L80015AF4
@@ -2012,7 +1987,7 @@ void func_80015C0C(struct DObj *dobj) {
         sp30 = D_80046FA4;
         // s2 is D_800470B0
         s0 = (void *)dobj->unk50;
-        if (s0 != NULL) { sp40 = s0[D_800472A8[0]]; }
+        if (s0 != NULL) { sp40 = s0[D_800472A8]; }
         // L80015C7C
         sp3C = D_800470B0;
         ret  = func_80010D70(&D_800470B0, dobj);
@@ -2084,7 +2059,7 @@ void unref_80015F6C(struct GObjCommon *obj) {
     struct DObj *dobj;            // s3
     void *segaddr;                // s4
     struct Unk50FloatLink *wlink; // s0
-    struct TempDlLink *link;      // sp34; a2
+    struct Unk50DlLink *link;     // sp34; a2
     Gfx *preserve;                // sp30
     struct DObj *curr;
 
@@ -2096,13 +2071,13 @@ void unref_80015F6C(struct GObjCommon *obj) {
         // s1 is D_800472A8
 
         if (wlink != NULL) {
-            D_80046FA4    = 1.0f;
-            D_800472A8[0] = 0;
-            dist          = func_80014798(dobj);
+            D_80046FA4 = 1.0f;
+            D_800472A8 = 0;
+            dist       = func_80014798(dobj);
             // s2 is D_800470B0
             while (dist < wlink->f) {
                 wlink++;
-                D_800472A8[0]++;
+                D_800472A8++;
             }
             // L80016014
             link     = wlink->link;
@@ -2283,7 +2258,6 @@ void func_8001663C(Gfx **dlist, struct OMCamera *cam, s32 arg2) {
 #pragma GLOBAL_ASM("game/nonmatching/system_05/unref_80016AE4.s")
 #endif
 
-void func_80016EDC(Gfx **, struct OMCamera *);
 #ifdef MIPS_TO_C
 #else
 #pragma GLOBAL_ASM("game/nonmatching/system_05/func_80016EDC.s")
@@ -2444,7 +2418,6 @@ void unref_80017E5C(void) {
     func_8001783C(cam, 0);
 }
 
-void func_80017EC0(struct GObjCommon *obj);
 #ifdef NON_MATCHING
 // nonmatching: minor instruction reordering + regalloc
 void func_80017EC0(struct GObjCommon *obj) {
@@ -2547,7 +2520,6 @@ void unref_8001810C(void) {
 #pragma GLOBAL_ASM("game/nonmatching/system_05/unref_8001810C.s")
 #endif
 
-void func_80018300(struct GObjCommon *obj);
 #ifdef NON_MATCHING
 // nonmatching: regalloc
 void func_80018300(struct GObjCommon *obj) {
