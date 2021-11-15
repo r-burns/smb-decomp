@@ -49,10 +49,10 @@ struct GObjCommon {
     /* 0x24 */ struct GObjCommon *unk24;
     /* 0x28 */ u32 unk28;
     /* 0x2C */ void (*unk2C)(struct GObjCommon *);
-    /* 0x30 */ s64 unk30;
+    /* 0x30 */ u64 unk30;
     /* 0x38 */ s32 unk38;
     /* 0x3C */ u8 pad3C[4];
-    /* 0x40 */ s64 unk40;
+    /* 0x40 */ u64 unk40;
     /* 0x48 */ struct MaybeCommonLink unk48[5];
     // active/len of unk48
     /* 0x70 */ s32 unk70;
@@ -303,9 +303,9 @@ struct OMCamera {
     /* 0x74 */ f32 unk74;
     /* 0x78 */ f32 unk78;
     /* 0x7C */ f32 unk7C;
-    /* 0x80 */ s32 unk80;
-    /* 0x84 */ s32 unk84;
-    /* 0x88 */ s32 unk88;
+    /* 0x80 */ s32 unk80; // attr flags?
+    /* 0x84 */ s32 unk84; // color?
+    /* 0x88 */ void (*unk88)(struct OMCamera *, s32);
     /* 0x8C */ s32 unk8C;
 }; // size >= 0x90
 
@@ -341,6 +341,11 @@ struct OMSetup {
     /* 0x68 */ s32 cameraSize;
 }; // size == 0x6C
 
+struct Unk80046A88 {
+    /* 0x00 */ u8 unk00;
+    /* 0x04 */ Gfx *unk04[4];
+}; // sizeof == 0x14
+
 // globals
 
 /// Something to do with GObjCommon handling
@@ -362,7 +367,7 @@ extern struct GObjCommon *D_80046A58;
 extern struct GObjCommon *D_80046A5C;
 extern struct GObjProcess *D_80046A60;
 extern OSMesgQueue gOMMq;
-extern u8 D_80046A88[1280];
+extern struct Unk80046A88 D_80046A88[64];
 
 // functions
 

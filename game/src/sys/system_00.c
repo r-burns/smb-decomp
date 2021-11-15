@@ -7,7 +7,7 @@
 #include <PR/ultratypes.h>
 
 u16 *gZBuffer;
-u32 D_80046674;
+u32 gPixelComponentSize;
 s32 gCurrScreenWidth;
 s32 gCurrScreenHeight;
 u32 D_80046680;
@@ -25,7 +25,7 @@ s16 D_8004669A;
  * Convert an RBGA32 color value into a packed set of RBGA5551
  * that can be used with gDPSetFillColor
  *
- * Depends on the state of `D_80046674`
+ * Depends on the state of `gPixelComponentSize`
  * @param color RRGGBBAA
  */
 u32 rgba32_to_fill_color(u32 color) {
@@ -34,7 +34,7 @@ u32 rgba32_to_fill_color(u32 color) {
     u32 packed = ((color >> 16) & 0xF800) | ((color >> 13) & 0x07C0) | ((color >> 10) & 0x003E)
                | ((color >> 7) & 1);
 
-    return D_80046674 == 3 ? color : (packed << 16) | packed;
+    return gPixelComponentSize == G_IM_SIZ_32b ? color : (packed << 16) | packed;
 }
 
 void update_framebuffers(void *fb1, void *fb2, void *fb3) {
@@ -52,8 +52,8 @@ void update_framebuffers(void *fb1, void *fb2, void *fb3) {
 void func_80006E18(s32 arg0) {
     D_80046680 |= arg0;
 
-    if ((arg0 & 0x20)) { D_80046674 = 3; }
-    if ((arg0 & 0x10)) { D_80046674 = 2; }
+    if ((arg0 & 0x20)) { gPixelComponentSize = G_IM_SIZ_32b; }
+    if ((arg0 & 0x10)) { gPixelComponentSize = G_IM_SIZ_16b; }
     D_80046684 = TRUE;
 }
 
@@ -107,8 +107,8 @@ void func_80006F5C(struct SCTaskType4 *task) {
 void func_80006FB8(s32 width, s32 height, u32 arg2) {
     struct SCTaskType4 task;
 
-    D_80046680 = 0;
-    D_80046674 = 2;
+    D_80046680          = 0;
+    gPixelComponentSize = G_IM_SIZ_16b;
     func_80006E18(arg2);
     set_screen_width(width);
     set_screen_height(height);

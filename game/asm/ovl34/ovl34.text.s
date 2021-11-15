@@ -2250,7 +2250,7 @@ glabel func_ovl34_80133B58
   /* 164798 80133C58 AC4D0000 */        sw $t5, ($v0)
   /* 16479C 80133C5C 8C620000 */        lw $v0, ($v1) # D_800465B0 + 0
   /* 1647A0 80133C60 35EF0A01 */       ori $t7, $t7, (0xE3000A01 & 0xFFFF) # 3808430593
-  /* 1647A4 80133C64 3C198004 */       lui $t9, %hi(D_80046674)
+  /* 1647A4 80133C64 3C198004 */       lui $t9, %hi(gPixelComponentSize)
   /* 1647A8 80133C68 244E0008 */     addiu $t6, $v0, 8
   /* 1647AC 80133C6C AC6E0000 */        sw $t6, ($v1) # D_800465B0 + 0
   /* 1647B0 80133C70 AC400004 */        sw $zero, 4($v0)
@@ -2260,7 +2260,7 @@ glabel func_ovl34_80133B58
   /* 1647C0 80133C80 3C01FF00 */       lui $at, 0xff00
   /* 1647C4 80133C84 24580008 */     addiu $t8, $v0, 8
   /* 1647C8 80133C88 AC780000 */        sw $t8, ($v1) # D_800465B0 + 0
-  /* 1647CC 80133C8C 8F396674 */        lw $t9, %lo(D_80046674)($t9)
+  /* 1647CC 80133C8C 8F396674 */        lw $t9, %lo(gPixelComponentSize)($t9)
   /* 1647D0 80133C90 8DCE6678 */        lw $t6, %lo(gCurrScreenWidth)($t6)
   /* 1647D4 80133C94 332B0003 */      andi $t3, $t9, 3
   /* 1647D8 80133C98 000B64C0 */       sll $t4, $t3, 0x13
@@ -2351,7 +2351,7 @@ glabel func_ovl34_80133CEC
   /* 164924 80133DE4 AC4E0000 */        sw $t6, ($v0)
   /* 164928 80133DE8 8C620000 */        lw $v0, ($v1) # D_800465B0 + 0
   /* 16492C 80133DEC 3C18E700 */       lui $t8, 0xe700
-  /* 164930 80133DF0 3C0E8004 */       lui $t6, %hi(D_80046674)
+  /* 164930 80133DF0 3C0E8004 */       lui $t6, %hi(gPixelComponentSize)
   /* 164934 80133DF4 244F0008 */     addiu $t7, $v0, 8
   /* 164938 80133DF8 AC6F0000 */        sw $t7, ($v1) # D_800465B0 + 0
   /* 16493C 80133DFC AC400004 */        sw $zero, 4($v0)
@@ -2359,7 +2359,7 @@ glabel func_ovl34_80133CEC
   /* 164944 80133E04 8C620000 */        lw $v0, ($v1) # D_800465B0 + 0
   /* 164948 80133E08 24590008 */     addiu $t9, $v0, 8
   /* 16494C 80133E0C AC790000 */        sw $t9, ($v1) # D_800465B0 + 0
-  /* 164950 80133E10 8DCE6674 */        lw $t6, %lo(D_80046674)($t6)
+  /* 164950 80133E10 8DCE6674 */        lw $t6, %lo(gPixelComponentSize)($t6)
   /* 164954 80133E14 31CF0003 */      andi $t7, $t6, 3
   /* 164958 80133E18 3C0E8004 */       lui $t6, %hi(gCurrScreenWidth)
   /* 16495C 80133E1C 8DCE6678 */        lw $t6, %lo(gCurrScreenWidth)($t6)

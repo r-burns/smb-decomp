@@ -102,7 +102,7 @@ void *D_80046618; // u64 *?
 u32 D_8004661C;   // size of D_80046618
 u32 D_80046620;
 u16 D_80046624;
-u16 D_80046626;
+u16 D_80046626; // ucode idx?
 u16 D_80046628;
 Gfx *D_8004662C;
 // offset into D_80046648 and D_80046548; has to be unsigned

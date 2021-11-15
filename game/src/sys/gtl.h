@@ -61,8 +61,11 @@ union WeirdBytewise {
 
 extern union WeirdBytewise D_8003B6E8;
 extern Gfx *D_800465B0[4];
+extern Gfx *D_800465C0[4];
 extern struct BumpAllocRegion D_800465D8;
 extern struct BumpAllocRegion D_800465E8;
+extern u16 D_80046626;
+extern u16 D_80046628;
 extern u32 D_80046630;
 
 extern void func_800048D0(SCTaskGfxCallback arg0);

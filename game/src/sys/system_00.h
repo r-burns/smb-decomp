@@ -19,7 +19,8 @@ struct ScreenSettings {
 };                        // size >= 0x18
 
 extern u16 *gZBuffer;
-extern u32 D_80046674;
+// zbuffer pixel size?
+extern u32 gPixelComponentSize;
 extern s32 gCurrScreenWidth;
 extern s32 gCurrScreenHeight;
 extern s16 D_80046694;

@@ -2,8 +2,10 @@
 
 #include "sys/gtl.h"
 #include "sys/om.h"
+#include "sys/system_00.h"
 #include "sys/system_04.h"
 
+#include <config.h>
 #include <macros.h>
 #include <ssb_types.h>
 
@@ -19,18 +21,20 @@ Mtx4f D_80046FA8;
 Mtx4f D_80046FE8;
 Mtx4f D_80047028;
 Mtx4f D_80047068;
-u32 D_800470A8;
+s32 D_800470A8;
 struct MtxProcTemp *D_800470AC;
 Gfx *D_800470B0;
 
 Gfx *D_800470B8[4];
-// should be a 'Gfx buffer[60];'
+// should be a 'Gfx buffer[60];'?
 u8 D_800470C8[480];
 
-s32 D_800472A8[3];
-u32 D_800472B4;
-u8 extend_D_800472B4[8];
-u8 D_800472C0[16];
+s32 D_800472A8[2];
+// u32 D_800472B4;
+// u8 extend_D_800472B4[8];
+Gfx *D_800472B0[4]; // really at D_800472B0
+// u8 D_800472C0[16];
+Gfx *D_800472C0;
 
 #define ABS(x)  ((x) < 0 ? -(x) : (x))
 #define ABSF(x) ((x) < 0.0f ? -(x) : (x))
@@ -2172,7 +2176,7 @@ void unref_800162C8(struct GObjCommon *obj) {
         if (!(sobj->sp.attr & SP_HIDDEN)) {
             sobj->sp.rsp_dl_next = D_800465B0[0];
             spDraw(&sobj->sp);
-            // spDraw adds a gSPEndDispalyList
+            // spDraw adds a gSPEndDisplayList
             // so move the cursor back one Gfx, I guess?
             D_800465B0[0] = sobj->sp.rsp_dl_next - 1;
         }
@@ -2180,12 +2184,96 @@ void unref_800162C8(struct GObjCommon *obj) {
     }
 }
 
-#ifdef MIPS_TO_C
+#ifdef NON_MATCHING
+// nonmatching: this looks right, but there is a not necessary divide by zero that is not being
+// elimated
+void func_80016338(Gfx **dlist, struct OMCamera *cam, s32 arg2) {
+    if ((arg2 == 0 || arg2 == 1) && !(cam->unk80 & 0x20)) {
+        append_ucode_load(dlist, D_80046626);
+        D_80046628 = 1;
+    }
+    // L8001639C
+    gSPViewport(dlist[0]++, &cam->unk08);
+    gDPSetScissor(
+        dlist[0]++,
+        G_SC_NON_INTERLACE,
+        MIN(cam->unk08.vp.vtrans[0] / 4 - cam->unk08.vp.vscale[0] / 4,
+            (gCurrScreenWidth / SCREEN_WIDTH) * D_8003B938),
+        MIN(cam->unk08.vp.vtrans[1] / 4 - cam->unk08.vp.vscale[1] / 4,
+            (gCurrScreenHeight / SCREEN_HEIGHT) * D_8003B930),
+        MIN(gCurrScreenWidth - ((gCurrScreenWidth / SCREEN_WIDTH) * D_8003B93C),
+            cam->unk08.vp.vtrans[0] / 4 + cam->unk08.vp.vscale[0] / 4),
+        MIN(gCurrScreenHeight - ((gCurrScreenHeight / SCREEN_HEIGHT) * D_8003B934),
+            cam->unk08.vp.vtrans[1] / 4 + cam->unk08.vp.vscale[1] / 4));
+    gDPPipeSync(dlist[0]++);
+    gDPSetColorImage(
+        dlist[0]++, G_IM_FMT_RGBA, gPixelComponentSize, gCurrScreenWidth, (void *)0x0F000000);
+    gDPSetCycleType(dlist[0]++, G_CYC_1CYCLE);
+    if (arg2 == 0 || arg2 == 2) {
+        gDPSetRenderMode(dlist[0]++, G_RM_AA_ZB_OPA_SURF, G_RM_AA_ZB_OPA_SURF2);
+    } else {
+        gDPSetRenderMode(dlist[0]++, G_RM_AA_ZB_XLU_SURF, G_RM_AA_ZB_XLU_SURF2);
+    }
+}
 #else
 #pragma GLOBAL_ASM("game/nonmatching/system_05/func_80016338.s")
 #endif
 
-#ifdef MIPS_TO_C
+void func_8001663C(Gfx **dlist, struct OMCamera *cam, s32 arg2);
+#ifdef NON_MATCHING
+// nonmatching: this looks like its close, but needs some playing around
+void func_8001663C(Gfx **dlist, struct OMCamera *cam, s32 arg2) {
+    s32 ulx, uly, lrx, lry;
+    Gfx *csr = dlist[0];
+
+    if ((arg2 == 0 || arg2 == 1) && !(cam->unk80 & 0x20)) {
+        append_ucode_load(dlist, D_80046626);
+        D_80046628 = 1;
+    }
+    // L800166A0
+    gSPViewport(csr++, &cam->unk08);
+    ulx =
+        MIN(cam->unk08.vp.vtrans[0] / 4 - cam->unk08.vp.vscale[0] / 4,
+            gCurrScreenWidth / SCREEN_WIDTH * D_8003B938);
+    uly =
+        MIN(cam->unk08.vp.vtrans[1] / 4 - cam->unk08.vp.vscale[1] / 4,
+            gCurrScreenHeight / SCREEN_HEIGHT * D_8003B930);
+    lrx =
+        MAX(cam->unk08.vp.vtrans[0] / 4 + cam->unk08.vp.vscale[0] / 4,
+            gCurrScreenWidth - (gCurrScreenWidth / SCREEN_WIDTH * D_8003B93C));
+    lry =
+        MAX(cam->unk08.vp.vtrans[1] / 4 + cam->unk08.vp.vscale[1] / 4,
+            gCurrScreenHeight - (gCurrScreenHeight / SCREEN_HEIGHT * D_8003B934));
+
+    gDPSetScissor(csr++, G_SC_NON_INTERLACE, ulx, uly, lrx, lry);
+    if (!(cam->unk80 & 1)) {
+        gDPPipeSync(csr++);
+        gDPSetCycleType(csr++, G_CYC_1CYCLE);
+        gDPSetRenderMode(csr++, G_RM_NOOP, G_RM_NOOP2);
+        gDPSetColorImage(csr++, G_IM_FMT_RGBA, G_IM_SIZ_16b, gCurrScreenWidth, gZBuffer);
+        gDPSetFillColor(csr++, GPACK_ZDZ(G_MAXFBZ, 0) << 16 | GPACK_ZDZ(G_MAXFBZ, 0));
+        gDPFillRectangle(csr++, ulx - 1, uly - 1, lrx, lry);
+    }
+    // L80016950
+    gDPPipeSync(csr++);
+    gDPSetColorImage(
+        csr++, G_IM_FMT_RGBA, gPixelComponentSize, gCurrScreenWidth, (void *)0x0F000000);
+    if (!(cam->unk80 & 2)) {
+        gDPSetCycleType(csr++, G_CYC_FILL);
+        gDPSetRenderMode(csr++, G_RM_NOOP, G_RM_NOOP2);
+        gDPSetFillColor(csr++, rgba32_to_fill_color(cam->unk84));
+        gDPFillRectangle(csr++, ulx - 1, uly - 1, lrx, lry);
+    }
+    // L80016A5C
+    gDPPipeSync(csr++);
+    gDPSetCycleType(csr++, G_CYC_1CYCLE);
+    if (arg2 == 0 || arg2 == 2) {
+        gDPSetRenderMode(csr++, G_RM_AA_ZB_OPA_SURF, G_RM_AA_ZB_OPA_SURF2);
+    } else {
+        gDPSetRenderMode(csr++, G_RM_AA_ZB_XLU_SURF, G_RM_AA_ZB_XLU_SURF2);
+    }
+    dlist[0] = csr;
+}
 #else
 #pragma GLOBAL_ASM("game/nonmatching/system_05/func_8001663C.s")
 #endif
@@ -2195,92 +2283,298 @@ void unref_800162C8(struct GObjCommon *obj) {
 #pragma GLOBAL_ASM("game/nonmatching/system_05/unref_80016AE4.s")
 #endif
 
+void func_80016EDC(Gfx **, struct OMCamera *);
 #ifdef MIPS_TO_C
 #else
 #pragma GLOBAL_ASM("game/nonmatching/system_05/func_80016EDC.s")
 #endif
 
-#ifdef MIPS_TO_C
-#else
-#pragma GLOBAL_ASM("game/nonmatching/system_05/func_80017830.s")
-#endif
+void func_80017830(s32 val) {
+    D_800470A8 = val;
+}
 
-#ifdef MIPS_TO_C
-#else
-#pragma GLOBAL_ASM("game/nonmatching/system_05/func_8001783C.s")
-#endif
+// the second arg may just be unused
+void func_8001783C(struct OMCamera *cam, s32 cbarg) {
+    if (cam->unk88 != NULL) { cam->unk88(cam, cbarg); }
+}
 
-#ifdef MIPS_TO_C
-#else
-#pragma GLOBAL_ASM("game/nonmatching/system_05/func_80017868.s")
-#endif
+void func_80017868(struct GObjCommon *obj, s32 idx, s32 arg2) {
+    struct GObjCommon *curr;
 
+    curr = gOMObjCommonDLLinks[idx];
+    while (curr != NULL) {
+        if (!(curr->unk7C & 1)
+            && ((arg2 == 0 && (obj->unk38 & curr->unk38))
+                || (arg2 == 1 && obj->unk38 == curr->unk38))) {
+            D_8003B874 = 4;
+            D_80046A5C = curr;
+            curr->unk2C(curr);
+            D_8003B874  = 3;
+            curr->unk0E = D_8003B6E8.word;
+        }
+        curr = curr->unk20;
+    }
+}
+
+void func_80017978(struct GObjCommon *obj, s32 idx, s32 arg2);
 #ifdef MIPS_TO_C
+// nonmatching: regalloc only
+void func_80017978(struct GObjCommon *obj, s32 idx, s32 arg2) {
+    Gfx *sp38[4];
+    s32 i;
+
+    for (i = 0; i < ARRAY_COUNT(D_800465B0); i++) {
+        // L8001799C
+        sp38[i] = D_800465B0[i];
+        D_800465B0[i] += 2;
+    }
+
+    func_80017868(obj, idx, arg2);
+
+    for (i = 0; i < ARRAY_COUNT(D_800465B0); i++) {
+        // L80017A04
+        if (D_800465B0[i] == sp38[i] + 2) {
+            D_800465B0[i] -= 2;
+            D_80046A88[idx].unk04[i] = NULL;
+        } else {
+            // L80017A28
+            gSPEndDisplayList(D_800465B0[i]++);
+
+            gSPDisplayList(sp38[i], sp38[i] + 2);
+            sp38[i]++;
+            gSPBranchList(sp38[i]++, sp38[i]);
+            D_80046A88[idx].unk04[i] = sp38[i];
+        }
+        // L80017A70
+    }
+
+    D_80046A88[idx].unk00 = D_8003B6E8.word;
+}
 #else
 #pragma GLOBAL_ASM("game/nonmatching/system_05/func_80017978.s")
 #endif
 
-#ifdef MIPS_TO_C
-#else
-#pragma GLOBAL_ASM("game/nonmatching/system_05/func_80017AAC.s")
-#endif
+void func_80017AAC(s32 idx) {
+    s32 i;
 
-#ifdef MIPS_TO_C
-#else
-#pragma GLOBAL_ASM("game/nonmatching/system_05/func_80017B80.s")
-#endif
+    for (i = 0; i < ARRAY_COUNT(D_800465B0); i++) {
+        if (D_80046A88[idx].unk04[i] != NULL) {
+            gSPDisplayList(D_800465B0[i]++, D_80046A88[idx].unk04[i]);
+        }
+    }
+}
 
-#ifdef MIPS_TO_C
-#else
-#pragma GLOBAL_ASM("game/nonmatching/system_05/func_80017CC8.s")
-#endif
+void func_80017B80(struct GObjCommon *obj, s32 arg1) {
+    s32 idx;
+    u64 sp38; // t6+t7
+    u64 sp30;
 
-#ifdef MIPS_TO_C
-#else
-#pragma GLOBAL_ASM("game/nonmatching/system_05/func_80017D3C.s")
-#endif
+    sp38 = obj->unk30;
+    sp30 = obj->unk40;
 
-#ifdef MIPS_TO_C
-#else
-#pragma GLOBAL_ASM("game/nonmatching/system_05/func_80017DBC.s")
-#endif
+    idx = 0;
+    while (sp38) {
+        if (sp38 & 1) {
+            if (sp30 & 1) {
+                if (D_8003B6E8.parts[3] == D_80046A88[idx].unk00) {
+                    func_80017AAC(idx);
+                } else {
+                    func_80017978(obj, idx, arg1);
+                }
+            } else {
+                // L80017C48
+                func_80017868(obj, idx, arg1);
+            }
+            // L80017C58
+        }
+        // L80017C54
+        sp38 >>= 1;
+        sp30 >>= 1;
+        idx++;
+    }
+    // L80017CA4
+}
 
-#ifdef MIPS_TO_C
-#else
-#pragma GLOBAL_ASM("game/nonmatching/system_05/unref_80017DE4.s")
-#endif
+void func_80017CC8(struct OMCamera *cam) {
+    if (cam->unk80 & 0x04) { func_800057C8(); }
 
-#ifdef MIPS_TO_C
-#else
-#pragma GLOBAL_ASM("game/nonmatching/system_05/unref_80017E0C.s")
-#endif
+    if (cam->unk80 & 0x10) {
+        func_800053CC();
+        func_80004F78();
+    }
 
-#ifdef MIPS_TO_C
-#else
-#pragma GLOBAL_ASM("game/nonmatching/system_05/unref_80017E34.s")
-#endif
+    if (cam->unk80 & 0x40) { func_800053CC(); }
+}
 
-#ifdef MIPS_TO_C
-#else
-#pragma GLOBAL_ASM("game/nonmatching/system_05/unref_80017E5C.s")
-#endif
+void func_80017D3C(struct GObjCommon *obj, Gfx **dlists, s32 dlIdx) {
+    struct OMCamera *cam;
 
-#ifdef MIPS_TO_C
+    cam = obj->unk74;
+    func_8001663C(dlists, cam, dlIdx);
+    func_80016EDC(dlists, cam);
+    func_8001783C(cam, dlIdx);
+    func_80017B80(obj, cam->unk80 & 8 ? TRUE : FALSE);
+    func_80017CC8(cam);
+}
+
+void func_80017DBC(struct GObjCommon *obj) {
+    func_80017D3C(obj, &D_800465B0[0], 0);
+}
+
+void unref_80017DE4(struct GObjCommon *obj) {
+    func_80017D3C(obj, &D_800465B0[1], 1);
+}
+
+void unref_80017E0C(struct GObjCommon *obj) {
+    func_80017D3C(obj, &D_800465B0[2], 2);
+}
+
+void unref_80017E34(struct GObjCommon *obj) {
+    func_80017D3C(obj, &D_800465B0[3], 3);
+}
+
+void unref_80017E5C(void) {
+    struct OMCamera *cam;
+
+    cam = D_80046A58->unk74;
+    func_800053CC();
+    func_80004F78();
+    func_8001663C(D_800465B0, cam, 0);
+    func_80016EDC(D_800465B0, cam);
+    func_8001783C(cam, 0);
+}
+
+void func_80017EC0(struct GObjCommon *obj);
+#ifdef NON_MATCHING
+// nonmatching: minor instruction reordering + regalloc
+void func_80017EC0(struct GObjCommon *obj) {
+    struct OMCamera *cam; // s5
+    s32 i;
+
+    cam = obj->unk74;
+    // s0 is D_800465B0
+    func_8001663C(D_800465B0, cam, 0);
+    D_800472C0 = D_800465B0[0] + 1;
+    gSPDisplayList(D_800465B0[0], D_800465B0[0] + 2);
+    D_800465B0[0] += 2;
+
+    func_80016EDC(D_800465B0, cam);
+    gSPEndDisplayList(D_800465B0[0]++);
+    gSPBranchList(D_800472C0, D_800465B0[0]);
+
+    func_8001783C(cam, 0);
+    if (cam->unk80 & 0x20) { func_80016338(&D_800465B0[1], cam, 1); }
+    // L80017FA4
+    for (i = 1; i < ARRAY_COUNT(D_800465B0); i++) {
+        // L80017FBC
+        D_800465B0[i] = D_800472B0[i] = D_800465B0[i] + 1;
+    }
+
+    func_80017B80(obj, cam->unk80 & 8 ? TRUE : FALSE);
+
+    for (i = 1; i < 4; i++) {
+        // L8001801C
+        Gfx *start = D_800465B0[i]; // s0 into s4
+
+        // s1 is D_800465B0[i]
+        // s2 is D_800472B0[i]
+        // s3 is i
+        if (D_800472B0[i] == start) {
+            D_800465B0[i] = start - 1;
+        } else {
+            // L8001803C
+            D_800465B0[i] = start + 1;
+            gSPDisplayList(D_800472B0[i] - 1, D_800465B0[i]);
+            if (i != 1 || !(cam->unk80 & 0x20)) { func_80016338(&D_800465B0[i], cam, i); }
+            // L80018070
+            gSPDisplayList(D_800465B0[i]++, (D_800472C0 + 1));
+            func_8001783C(cam, i);
+            gSPEndDisplayList(D_800465B0[i]++);
+            gSPBranchList(start, D_800465B0[i]);
+        }
+        // L800180C4
+    }
+    func_80017CC8(cam);
+}
 #else
 #pragma GLOBAL_ASM("game/nonmatching/system_05/func_80017EC0.s")
 #endif
 
-#ifdef MIPS_TO_C
-#else
-#pragma GLOBAL_ASM("game/nonmatching/system_05/func_80018000.s")
-#endif
+void unref_8001810C(void);
+#ifdef NON_MATCHING
+void unref_8001810C(void) {
+    struct OMCamera *cam; // s5
+    s32 i;
 
-#ifdef MIPS_TO_C
+    cam = D_80046A58->unk74;
+
+    for (i = 1; i < 4; i++) {
+        Gfx *start; // s1 into s4
+        // s0 is &D_800465B0[i]
+        // s4 is &D_800472B0[i]
+        // s7 is &D_800472C0
+
+        start = D_800465B0[i];
+
+        if (D_800472B0[i] == start) {
+            D_800465B0[i] = start - 1;
+        } else {
+            // L8001818C
+            D_800465B0[i] = start + 1;
+            gSPDisplayList(D_800472B0[i] - 1, D_800465B0[i]);
+            func_80016338(&D_800465B0[i], cam, i);
+            gSPDisplayList(D_800465B0[i]++, D_800472C0 + 1);
+            func_8001783C(cam, i);
+            gSPEndDisplayList(D_800465B0[i]++);
+            gSPBranchList(start, D_800465B0[i]);
+        }
+        // L800181F8
+    }
+    func_800053CC();
+    func_80004F78();
+    func_8001663C(&D_800465B0[0], cam, 0);
+    D_800472C0 = D_800465B0[0] + 1;
+    gSPDisplayList(D_800465B0[0], D_800465B0[0] + 2);
+    D_800465B0[0] += 2;
+    func_80016EDC(D_800465B0, cam);
+    gSPEndDisplayList(D_800465B0[0]++);
+    gSPBranchList(D_800472C0, D_800465B0[0]);
+    func_8001783C(cam, 0);
+
+    for (i = 1; i < ARRAY_COUNT(D_800465B0); i++) { D_800472B0[i] = ++D_800465B0[i]; }
+}
 #else
 #pragma GLOBAL_ASM("game/nonmatching/system_05/unref_8001810C.s")
 #endif
 
-#ifdef MIPS_TO_C
+void func_80018300(struct GObjCommon *obj);
+#ifdef NON_MATCHING
+// nonmatching: regalloc
+void func_80018300(struct GObjCommon *obj) {
+    struct OMCamera *cam;
+    UNUSED u32 pad;
+    s32 xmin, ymin, xmax, ymax;
+
+    cam = obj->unk74;
+
+    xmin = cam->unk08.vp.vtrans[0] / 4 - cam->unk08.vp.vscale[0] / 4;
+    ymin = cam->unk08.vp.vtrans[1] / 4 - cam->unk08.vp.vscale[1] / 4;
+    xmax = cam->unk08.vp.vtrans[0] / 4 + cam->unk08.vp.vscale[0] / 4;
+    ymax = cam->unk08.vp.vtrans[1] / 4 + cam->unk08.vp.vscale[1] / 4;
+
+    xmin = MAX(gCurrScreenWidth / SCREEN_WIDTH * D_8003B938, xmin);
+    ymin = MAX(gCurrScreenHeight / SCREEN_HEIGHT * D_8003B930, ymin);
+    xmax = MIN(gCurrScreenWidth - (gCurrScreenWidth / SCREEN_WIDTH * D_8003B93C), xmax);
+    ymax = MIN(gCurrScreenHeight - (gCurrScreenHeight / SCREEN_HEIGHT * D_8003B934), ymax);
+
+    func_8001663C(&D_800465B0[0], cam, 0);
+    spInit(D_800465B0);
+    spScissor(xmin, xmax, ymin, ymax);
+    func_80017B80(obj, cam->unk80 & 8 ? TRUE : FALSE);
+    spFinish(D_800465B0);
+    D_800465B0[0]--;
+    gDPSetTexturePersp(D_800465B0[0]++, G_TP_PERSP);
+}
 #else
 #pragma GLOBAL_ASM("game/nonmatching/system_05/func_80018300.s")
 #endif

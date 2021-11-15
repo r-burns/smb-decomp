@@ -89,7 +89,8 @@ struct GObjProcess *D_80046A60;
 u32 D_80046A64;
 OSMesg sOMMsg[1];
 OSMesgQueue gOMMq;
-u8 D_80046A88[1280];
+// u8 D_80046A88[1280];
+struct Unk80046A88 D_80046A88[64];
 u8 D_80046F88[24];
 
 #pragma GCC diagnostic push
@@ -1498,7 +1499,7 @@ struct OMCamera *func_80009760(struct GObjCommon *arg0) {
     // clang-format on
     newCam->unk80 = 0;
     newCam->unk84 = 0;
-    newCam->unk88 = 0;
+    newCam->unk88 = NULL;
     newCam->unk8C = 0;
     newCam->unk6C = NULL;
     newCam->unk70 = 0;
@@ -1889,8 +1890,8 @@ void func_8000A340(void) {
     D_80046A5C = NULL;
 
     // clang-format off
-    for (i = 0, v1 = D_8003B6E8.word - 1; i < ARRAY_COUNT(D_80046A88); i += 20) { 
-        D_80046A88[i] = v1; 
+    for (i = 0, v1 = D_8003B6E8.word - 1; i < ARRAY_COUNT(D_80046A88); i++) { 
+        D_80046A88[i].unk00 = v1; 
     }
     // clang-format on
 

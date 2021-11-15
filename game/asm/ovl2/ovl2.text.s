@@ -65850,8 +65850,8 @@ glabel func_ovl2_801107F0
   /* 08C3F0 80110BF0 3C19E700 */       lui $t9, 0xe700
   /* 08C3F4 80110BF4 AC990000 */        sw $t9, ($a0)
   /* 08C3F8 80110BF8 AC800004 */        sw $zero, 4($a0)
-  /* 08C3FC 80110BFC 3C188004 */       lui $t8, %hi(D_80046674)
-  /* 08C400 80110C00 8F186674 */        lw $t8, %lo(D_80046674)($t8)
+  /* 08C3FC 80110BFC 3C188004 */       lui $t8, %hi(gPixelComponentSize)
+  /* 08C400 80110C00 8F186674 */        lw $t8, %lo(gPixelComponentSize)($t8)
   /* 08C404 80110C04 44CEF800 */      ctc1 $t6, $31
   /* 08C408 80110C08 3C01FF00 */       lui $at, 0xff00
   /* 08C40C 80110C0C 330E0003 */      andi $t6, $t8, 3

@@ -1183,12 +1183,12 @@ glabel D_ovl8_80389580
 
 glabel D_ovl8_80389598
   .incbin "ovl8.raw.bin", 0x18138, 0x4
-  /* 1813C 1A5DEC 8038959C */  .4byte func_80018000
+  /* 1813C 1A5DEC 8038959C */  .4byte 0x80018000 # .4byte func_80018000
   .incbin "ovl8.raw.bin", 0x18140, 0x4
   /* 18144 1A5DF4 803895A4 */  .4byte 0x80008001 # Warning: missing label
   /* 18148 1A5DF8 803895A8 */  .4byte 0x80008001 # Warning: missing label
   .incbin "ovl8.raw.bin", 0x1814C, 0x4
-  /* 18150 1A5E00 803895B0 */  .4byte func_80018000
+  /* 18150 1A5E00 803895B0 */  .4byte 0x80018000 # .4byte func_80018000
   /* 18154 1A5E04 803895B4 */  .4byte 0x80008000
   .incbin "ovl8.raw.bin", 0x18158, 0x4
   /* 1815C 1A5E0C 803895BC */  .4byte 0x80008000
