@@ -99,7 +99,7 @@ glabel func_ovl0_800D4130
   /* 04FBE4 800D4204 3C014334 */       lui $at, (0x43340000 >> 16) # 180.0
   /* 04FBE8 800D4208 44812000 */      mtc1 $at, $f4 # 180.0 to cop1
   /* 04FBEC 800D420C 46105482 */     mul.s $f18, $f10, $f16
-  /* 04FBF0 800D4210 0C006138 */       jal func_800184E0
+  /* 04FBF0 800D4210 0C006138 */       jal tanf
   /* 04FBF4 800D4214 46049303 */     div.s $f12, $f18, $f4
   /* 04FBF8 800D4218 3C01800D */       lui $at, %hi(D_ovl0_800D62A8)
   /* 04FBFC 800D421C C42662A8 */      lwc1 $f6, %lo(D_ovl0_800D62A8)($at)

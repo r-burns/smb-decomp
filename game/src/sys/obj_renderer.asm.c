@@ -34,9 +34,6 @@ s32 D_800472A8;
 Gfx *D_800472B0[4];
 Gfx *D_800472C0;
 
-#define ABS(x)  ((x) < 0 ? -(x) : (x))
-#define ABSF(x) ((x) < 0.0f ? -(x) : (x))
-
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wunknown-pragmas"
 
