@@ -39,7 +39,7 @@ macro_rules! entry {
 
 macro_rules! align_section {
     () => {
-        "        . = ALIGN({align});";
+        "        . = ALIGN({align});"
     };
 }
 
