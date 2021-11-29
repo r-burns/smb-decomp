@@ -1431,7 +1431,7 @@ glabel func_ovl63_8018E51C
   /* 18BB78 8018E568 27BDFFE8 */     addiu $sp, $sp, -0x18
   /* 18BB7C 8018E56C AFBF0014 */        sw $ra, 0x14($sp)
   /* 18BB80 8018E570 3C048019 */       lui $a0, %hi(D_ovl63_8018E724)
-  /* 18BB84 8018E574 0C00623A */       jal func_800188E8
+  /* 18BB84 8018E574 0C00623A */       jal set_lcg_seed_ptr
   /* 18BB88 8018E578 2484E724 */     addiu $a0, $a0, %lo(D_ovl63_8018E724)
   /* 18BB8C 8018E57C 0C002979 */       jal func_8000A5E4
   /* 18BB90 8018E580 00000000 */       nop 
@@ -1444,7 +1444,7 @@ glabel func_ovl63_8018E51C
   /* 18BBA4 8018E594 27BDFFE8 */     addiu $sp, $sp, -0x18
   /* 18BBA8 8018E598 AFBF0014 */        sw $ra, 0x14($sp)
   /* 18BBAC 8018E59C 3C048019 */       lui $a0, %hi(D_ovl63_8018E728)
-  /* 18BBB0 8018E5A0 0C00623A */       jal func_800188E8
+  /* 18BBB0 8018E5A0 0C00623A */       jal set_lcg_seed_ptr
   /* 18BBB4 8018E5A4 2484E728 */     addiu $a0, $a0, %lo(D_ovl63_8018E728)
   /* 18BBB8 8018E5A8 0C0289AE */       jal func_800A26B8
   /* 18BBBC 8018E5AC 00000000 */       nop 
@@ -1464,7 +1464,7 @@ glabel how_to_play_entry
   /* 18BBEC 8018E5DC 0C001C09 */       jal func_80007024
   /* 18BBF0 8018E5E0 AC8F000C */        sw $t7, 0xc($a0) # D_ovl63_8018E72C + 12
   /* 18BBF4 8018E5E4 3C048019 */       lui $a0, %hi(D_ovl63_8018E724)
-  /* 18BBF8 8018E5E8 0C00623A */       jal func_800188E8
+  /* 18BBF8 8018E5E8 0C00623A */       jal set_lcg_seed_ptr
   /* 18BBFC 8018E5EC 2484E724 */     addiu $a0, $a0, %lo(D_ovl63_8018E724)
   /* 18BC00 8018E5F0 3C188039 */       lui $t8, %hi(D_NF_80392A00)
   /* 18BC04 8018E5F4 3C198019 */       lui $t9, %hi(D_NF_8018EC00)
@@ -1480,7 +1480,7 @@ glabel how_to_play_entry
   /* 18BC2C 8018E61C AC890088 */        sw $t1, 0x88($a0) # D_ovl63_8018E748 + 136
   /* 18BC30 8018E620 0C0455FB */       jal func_ovl2_801157EC
   /* 18BC34 8018E624 00000000 */       nop 
-  /* 18BC38 8018E628 0C00623A */       jal func_800188E8
+  /* 18BC38 8018E628 0C00623A */       jal set_lcg_seed_ptr
   /* 18BC3C 8018E62C 00002025 */        or $a0, $zero, $zero
   /* 18BC40 8018E630 8FBF0014 */        lw $ra, 0x14($sp)
   /* 18BC44 8018E634 27BD0018 */     addiu $sp, $sp, 0x18

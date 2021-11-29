@@ -6185,6 +6185,7 @@ glabel func_ovl0_800CCF74
   /* 0489B4 800CCFD4 03E00008 */        jr $ra
   /* 0489B8 800CCFD8 27BD0020 */     addiu $sp, $sp, 0x20
 
+# draw 2d data image?
 glabel func_ovl0_800CCFDC
   /* 0489BC 800CCFDC 27BDFFE8 */     addiu $sp, $sp, -0x18
   /* 0489C0 800CCFE0 AFBF0014 */        sw $ra, 0x14($sp)

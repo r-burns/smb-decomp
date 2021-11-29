@@ -14,6 +14,10 @@
 #define ABS(x)  ((x) < 0 ? -(x) : (x))
 #define ABSF(x) ((x) < 0.0f ? -(x) : (x))
 
+// Helpful to have some defines that are explicitly float-sized
+#define M_PI_F      ((f32)M_PI)
+#define M_DTOR_F(x) ((x) * (f32)M_DTOR)
+
 /// Avoid compiler warnings for unused variables
 #ifdef __GNUC__
 #define UNUSED __attribute__((unused))
