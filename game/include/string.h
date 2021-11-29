@@ -3,7 +3,9 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+#ifdef __sgi
 #ident "$Revision: 1.23 $"
+#endif /* __sgi */
 /*
 *
 * Copyright 1992, Silicon Graphics, Inc.

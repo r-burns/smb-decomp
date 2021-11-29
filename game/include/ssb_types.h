@@ -3,7 +3,7 @@
 
 #include <PR/ultratypes.h>
 
-// When not building with IDO, define some stdint types
+// When building with IDO, define some stdint types
 #ifdef __sgi
 typedef u32 uintptr_t;
 typedef s32 intptr_t;

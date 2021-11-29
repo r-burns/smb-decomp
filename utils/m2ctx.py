@@ -36,6 +36,9 @@ def run_cpp(file):
         '-D__sgi',
         '-D_LANGUAGE_C',
         '-DNON_MATCHING',
+        '-D_MIPS_SZINT=32',
+        '-D_MIPS_SZLONG=32',
+        '-DF3DEX_GBI_2',
         file,
     ]
 
