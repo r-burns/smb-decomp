@@ -1,4 +1,4 @@
-#include "sys/system_06.h"
+#include "sys/trig_rand.h"
 
 #include <macros.h>
 #include <string.h>
@@ -7,11 +7,9 @@
 #include <PR/os.h>
 #include <PR/ultratypes.h>
 
-// data
-
 // Linear Congruential Generator based on values from Microsoft Visual/Quick C/C++
 s32 sLcgSeed     = 1;
-s32 *sLcgSeedPtr = &sLcgSeed; // D_8003B944
+s32 *sLcgSeedPtr = &sLcgSeed;
 
 s32 D_8003B948                = 0;
 s32 (*D_8003B94C)(u8 *, u8 *) = NULL;
@@ -112,11 +110,11 @@ s32 get_lcg_seed(void) {
 }
 
 /// An arg of NULL returns the seed ptr to the default seed
-void set_lcg_seed_ptr(s32 *storePtr) {
-    if (storePtr == NULL) {
+void set_lcg_seed_ptr(s32 *seedptr) {
+    if (seedptr == NULL) {
         sLcgSeedPtr = &sLcgSeed;
     } else {
-        sLcgSeedPtr = storePtr;
+        sLcgSeedPtr = seedptr;
     }
 }
 
