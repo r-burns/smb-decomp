@@ -95,15 +95,6 @@ struct OMMtx {
     ///* 0x0C */ u8 pad0C[0x48 - 0xc];
 }; // size == 0x48
 
-// this is a guess, it could be something else
-struct Vec3i {
-    s32 x, y, z;
-};
-
-struct Vec3f {
-    f32 x, y, z;
-};
-
 struct Mtx3Float {
     /* 0x00 */ struct OMMtx *mtx;
     /* 0x04 */ struct Vec3f v;

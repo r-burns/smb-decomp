@@ -7,6 +7,7 @@
 #include "sys/system_09.h"
 
 #include <macros.h>
+#include <ssb_types.h>
 
 #include <PR/gu.h>
 #include <PR/ultratypes.h>

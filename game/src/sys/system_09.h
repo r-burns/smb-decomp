@@ -1,7 +1,7 @@
 #ifndef SYS_SYSTEM_09_H
 #define SYS_SYSTEM_09_H
 
-#include "sys/om.h"
+#include <ssb_types.h>
 
 #include <PR/ultratypes.h>
 
