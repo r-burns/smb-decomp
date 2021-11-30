@@ -1,5 +1,5 @@
-#ifndef SYS_SYSTEM_07_H
-#define SYS_SYSTEM_07_H
+#ifndef SYS_VEC_H
+#define SYS_VEC_H
 
 #include <ssb_types.h>
 
@@ -41,4 +41,4 @@ extern f32 vec3f_diff_mag(struct Vec3f *v0, struct Vec3f *v1);
 extern f32
 unref_80019B00(struct Vec3f *arg0, struct Vec3f *arg1, struct Vec3f *arg2, struct Vec3f *arg3);
 
-#endif /* SYS_SYSTEM_07_H */
+#endif /* SYS_VEC_H */
