@@ -444,14 +444,10 @@ struct DObj *func_8000BAA0(struct DObj *arg0) {
     if (arg0->unk10) { return arg0->unk10; }
 
     if (arg0->unk8) { return arg0->unk8; }
-    
+
     while (TRUE) {
-        if ((uintptr_t)arg0->unk14 == 1) {
-            return NULL;
-        }
-        if (((struct DObj *)arg0->unk14)->unk8) { 
-            return ((struct DObj *)arg0->unk14)->unk8; 
-        }
+        if ((uintptr_t)arg0->unk14 == 1) { return NULL; }
+        if (((struct DObj *)arg0->unk14)->unk8) { return ((struct DObj *)arg0->unk14)->unk8; }
 
         arg0 = arg0->unk14;
     };
