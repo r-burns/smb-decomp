@@ -441,22 +441,20 @@ struct GObjCommon *func_8000B9FC(s32 link, u32 arg1, s32 arg2, s32 arg3, s32 arg
 // nonmatching: regalloc (can't get the immediate v0 return)
 //              and cannot get the final return statement to not be removed
 struct DObj *func_8000BAA0(struct DObj *arg0) {
-    if (arg0->unk10 != NULL) { return arg0->unk10; }
+    if (arg0->unk10) { return arg0->unk10; }
 
-    if (arg0->unk8 != NULL) { return arg0->unk8; }
-
-    do {
-        struct DObj *csr;
-        csr = arg0->unk14;
-
-        switch ((uintptr_t)arg0->unk14) {
-            case 1: return NULL;
+    if (arg0->unk8) { return arg0->unk8; }
+    
+    while (TRUE) {
+        if ((uintptr_t)arg0->unk14 == 1) {
+            return NULL;
+        }
+        if (((struct DObj *)arg0->unk14)->unk8) { 
+            return ((struct DObj *)arg0->unk14)->unk8; 
         }
 
-        if (csr->unk8 != NULL) { return csr->unk8; }
-
-        arg0 = csr;
-    } while (TRUE);
+        arg0 = arg0->unk14;
+    };
 
     return arg0;
 }
