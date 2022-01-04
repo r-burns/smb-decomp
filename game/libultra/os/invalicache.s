@@ -1,16 +1,16 @@
 #include "asm_helper.h"
-#.set noreorder
+/* .set noreorder */
 .text
 LEAF(osInvalICache)
 	blez a1, inval_icache_2
-	nop
+	/* nop */
 	li t3, ICACHE_SIZE
 	bgeu a1, t3, inval_icache_3
-	nop
+	/* nop */
 	move t0, a0
 	addu t1, a0, a1
 	bgeu t0, t1, inval_icache_2
-	nop
+	/* nop */
 	andi t2, t0, ICACHE_LINEMASK
 	addiu t1, t1, -ICACHE_LINESIZE
 	subu t0, t0, t2
@@ -22,7 +22,7 @@ GLABEL(inval_icache_1)
     .set reorder
 GLABEL(inval_icache_2)
 	jr ra
-	#nop
+	/* nop */
 GLABEL(inval_icache_3)
 	li t0, KUSIZE
 	addu t1, t0, t3
@@ -35,5 +35,5 @@ GLABEL(inval_icache_4)
     .set reorder
 
 	jr ra
-	#nop
+	/* nop */
 END(osInvalICache)

@@ -61,6 +61,7 @@ let ZeroSegment =
         { load = LoadKind.Absolute 0
         , special = None SpecialSegment
         }
+let SpriteBank = ZeroSegment
 
 
 let Boot = Command "boot" 
@@ -587,46 +588,36 @@ let Ovl65 = Command "ovl65"
 let Resources = Command "resources"
     [ CustomObj "resources/resources.o" [ Section.Filetable, Section.Data ]
     ]
-let SprBank1 = Command "sprbank1"
-    [ CustomObj "sprites/bank1-info.o" [ Section.Data ] 
-    , CustomObj "sprites/bank1.o" [ Section.Header, Section.Rodata ]
-    ]
-let SprBank1 = Command "sprbank1"
-    [ CustomObj "sprites/bank1-info.o" [ Section.Data ] 
-    , CustomObj "sprites/bank1.o" [ Section.Header, Section.Rodata ]
-    ]
-let SprBank2 = Command "sprbank2"
-    [ CustomObj "sprites/bank2-info.o" [ Section.Data ] 
-    , CustomObj "sprites/bank2.o" [ Section.Header, Section.Rodata ]
-    ]
-let SprBank3 = Command "sprbank3"
-    [ CustomObj "sprites/bank3-info.o" [ Section.Data ] 
-    , CustomObj "sprites/bank3.o" [ Section.Header, Section.Rodata ]
-    ]
-let SprBank4 = Command "sprbank4"
-    [ CustomObj "sprites/bank4-info.o" [ Section.Data ] 
-    , CustomObj "sprites/bank4.o" [ Section.Header, Section.Rodata ]
-    ]
-let SprBank5 = Command "sprbank5"
-    [ CustomObj "sprites/bank5-info.o" [ Section.Data ] 
-    , CustomObj "sprites/bank5.o" [ Section.Header, Section.Rodata ]
-    ]
-let SprBank6 = Command "sprbank6"
-    [ CustomObj "sprites/bank6-info.o" [ Section.Data ] 
-    , CustomObj "sprites/bank6.o" [ Section.Header, Section.Rodata ]
-    ]
-let SprBank7 = Command "sprbank7"
-    [ CustomObj "sprites/bank7-info.o" [ Section.Data ] 
-    , CustomObj "sprites/bank7.o" [ Section.Header, Section.Rodata ]
-    ]
-let SprBank8 = Command "sprbank8"
-    [ CustomObj "sprites/bank8-info.o" [ Section.Data ] 
-    , CustomObj "sprites/bank8.o" [ Section.Header, Section.Rodata ]
-    ]
-let SprBank9 = Command "sprbank9"
-    [ CustomObj "sprites/bank9-info.o" [ Section.Data ] 
-    , CustomObj "sprites/bank9.o" [ Section.Header, Section.Rodata ]
-    ]
+
+let SprInfo = \(n: Text) -> \(f: Text) -> Command n [ CustomObj f [Section.Data] ]
+let SprImg  = \(n: Text) -> \(f: Text) -> Command n [ CustomObj f [Section.Header, Section.Rodata] ]
+
+let SprBank1Info = SprInfo "bank1info" "sprites/bank1-info.o"
+let SprBank1Img  = SprImg "bank1img" "sprites/bank1.o"
+
+let SprBank2Info = SprInfo "bank2info" "sprites/bank2-info.o"
+let SprBank2Img  = SprImg "bank2img" "sprites/bank2.o"
+
+let SprBank3Info = SprInfo "bank3info" "sprites/bank3-info.o"
+let SprBank3Img  = SprImg "bank3img" "sprites/bank3.o"
+
+let SprBank4Info = SprInfo "bank4info" "sprites/bank4-info.o"
+let SprBank4Img  = SprImg "bank4img" "sprites/bank4.o"
+
+let SprBank5Info = SprInfo "bank5info" "sprites/bank5-info.o"
+let SprBank5Img  = SprImg "bank5img" "sprites/bank5.o"
+
+let SprBank6Info = SprInfo "bank6info" "sprites/bank6-info.o"
+let SprBank6Img  = SprImg "bank6img" "sprites/bank6.o"
+
+let SprBank7Info = SprInfo "bank7info" "sprites/bank7-info.o"
+let SprBank7Img  = SprImg "bank7img" "sprites/bank7.o"
+
+let SprBank8Info = SprInfo "bank8info" "sprites/bank8-info.o"
+let SprBank8Img  = SprImg "bank8img" "sprites/bank8.o"
+
+let SprBank9Info = SprInfo "bank9info" "sprites/bank9-info.o"
+let SprBank9Img  = SprImg "bank9img" "sprites/bank9.o"
 
 let AudioSeg = Command "audio"
     [ CustomObj "audio/S1_music.sbk.o" [ Section.Data ]
@@ -714,15 +705,24 @@ in
 , OverlayAfter Ovl9 Ovl8
 , DynamicSegment Ovl9 0x80369240
 , ZeroSegment Resources
-, ZeroSegment SprBank1
-, ZeroSegment SprBank2
-, ZeroSegment SprBank3
-, ZeroSegment SprBank4
-, ZeroSegment SprBank5
-, ZeroSegment SprBank6
-, ZeroSegment SprBank7
-, ZeroSegment SprBank8
-, ZeroSegment SprBank9
+, ZeroSegment SprBank1Info
+, ZeroSegment SprBank1Img
+, ZeroSegment SprBank2Info
+, ZeroSegment SprBank2Img
+, ZeroSegment SprBank3Info
+, ZeroSegment SprBank3Img
+, ZeroSegment SprBank4Info
+, ZeroSegment SprBank4Img
+, ZeroSegment SprBank5Info
+, ZeroSegment SprBank5Img
+, ZeroSegment SprBank6Info
+, ZeroSegment SprBank6Img
+, ZeroSegment SprBank7Info
+, ZeroSegment SprBank7Img
+, ZeroSegment SprBank8Info
+, ZeroSegment SprBank8Img
+, ZeroSegment SprBank9Info
+, ZeroSegment SprBank9Img
 , ZeroSegment AudioSeg
 , ZeroSegment UnknownDataSeg
 ]

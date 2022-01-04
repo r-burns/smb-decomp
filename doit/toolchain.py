@@ -35,7 +35,7 @@ IDO_ULTRA_CFLAGS = [
     '-D_LANGUAGE_C', '-D_FINALROM', '-DF3DEX_GBI_2', '-DNDEBUG',
 ]
 IDO_ULTRA_ASFLAGS = [
-    '-Wab,-r4300_mul', '-non_shared', '-G', '0', '-nostdinc',
+    '-Wab,-r4300_mul', '-acpp', '-non_shared', '-G', '0', '-nostdinc',
     '-D_FINALROM', '-DF3DEX_GBI_2', '-DNDEBUG',
 ]
 
@@ -271,8 +271,8 @@ def _get_libultra_crosschain(requested_tc, config):
         assembler = Assembler([prefix + 'as'], GCC_AS_FLAGS)
     elif requested_tc == 'ido5.3':
         compiler = _get_recomp_ido('5.3', tools, IDO_ULTRA_CFLAGS)
-        #assembler = _get_recomp_as('5.3', tools, IDO_ULTRA_ASFLAGS)
-        assembler = _get_qemu_as('5.3', config, IDO_ULTRA_ASFLAGS)
+        assembler = _get_recomp_as('5.3', tools, IDO_ULTRA_ASFLAGS)
+        #assembler = _get_qemu_as('5.3', config, IDO_ULTRA_ASFLAGS)
     else:
         raise Exception("Unsupported toolchain: " + requested_tc)
 
@@ -320,9 +320,10 @@ def _get_qemu_as(version, config, asflags):
     return Assembler(invocation, asflags)
 
 def _get_recomp_as(version, tools, asflags):
-    asm = tools / ('ido' + version) / 'as'
+    # Use recomp cc to drive assembly as it seems to be the same as the usr/bin/as
+    asm = tools / ('ido' + version) / 'cc'
 
-    return Assembler([asm], asflags)
+    return Assembler([asm, '-c'], asflags)
 
 class MissingGNUToolchain(Exception):
     def __init__(self):

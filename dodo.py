@@ -2,7 +2,7 @@ from doit import get_var, create_after
 from pathlib import Path
 import subprocess
 import sys
-import shutil
+import platform
 
 sys.path.append('doit')
 from parsemk import parse_mk_dependencies
@@ -87,18 +87,21 @@ recomp_71_out = config.tools / 'ido7.1'
 # Irix libc wrapper library
 recomp_libc = recomp_base / 'libc_impl.c'
 recomp_libc_h = recomp_libc.with_suffix('.h')
-recomp_libc_flags = ['-fno-strict-aliasing', '-O2']
+recomp_libc_flags = ['-O2', '-fno-strict-aliasing', '-Wno-deprecated-declarations']
 
 # use `-fno-pie` on clang and `-no-pie` on gcc
-if config.system_toolchain == 'clang':
-    recompflags = ['-fno-strict-aliasing', '-fno-pie', '-O2', '-lm']
-elif config.system_toolchain == 'gcc':
-    recompflags = ['-fno-strict-aliasing', '-no-pie', '-O2', '-lm']
+recompflags = ['-O2', '-fno-strict-aliasing', '-Wno-tautological-compare', '-lm']
+if 'arm' not in platform.processor():
+    if config.system_toolchain == 'clang':
+        recompflags.append('-fno-pie')
+    elif config.system_toolchain == 'gcc':
+        recompflags.append('-no-pie')
 
 # (Prog, Irix Bin/Lib Path, Recomp Flags, Build Flags)
 ido53_progs = [
+    ('acpp',  irix_53 / irix_lib / 'acpp',  [], recompflags),
     #('as',   irix_53 / irix_lib / 'as',   [], recompflags),
-    #('as0',  irix_53 / irix_lib / 'as0',  [], recompflags),
+    ('as0',  irix_53 / irix_lib / 'as0',  [], recompflags),
     ('as1',  irix_53 / irix_lib / 'as1',  [], recompflags),
     ('cc',   irix_53 / irix_bin / 'cc',   [], recompflags),
     ('cfe',  irix_53 / irix_lib / 'cfe',  [], recompflags),
@@ -130,8 +133,13 @@ ido53_tools = [recomp_53_out / p[0] for p in ido53_progs]
 
 def task_build_recomp():
     ''' Build the IDO recompiler tool '''
+    capstone_flags = str(subprocess.run(
+        "pkg-config --cflags --libs capstone", 
+        shell=True, check=True, capture_output=True
+        ).stdout, 'utf-8').strip().split(' ')
+    
     return {
-        'actions': [tc.system.cxx.CXX + [recomp_src, '-o', recomp, '-O2', '-std=c++11', '-Wno-switch', '-lcapstone']],
+        'actions': [tc.system.cxx.CXX + [recomp_src, '-o', recomp, '-O2', '-std=c++11', '-Wno-switch'] + capstone_flags],
         'file_dep': [recomp_src],
         'targets': [recomp],
     }
@@ -805,8 +813,8 @@ def task_link_sprite_bank():
             dep_flag = []
             targets = [o]
 
-        # no relink (want symbols to be resolved)
         link_bank = binutils.LD + [
+            '-r',
             '-T', lds,
             '-L', obj_dir,
             '-o', o,

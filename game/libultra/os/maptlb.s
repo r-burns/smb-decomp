@@ -25,27 +25,27 @@ LEAF(osMapTLB)
 8:
 	STAY2(mtc0 vaddr, C0_ENTRYHI)
 	beq evenpaddr, -1, 9f
-	#nop
+	/* nop */
 	srl t3, evenpaddr, TLBLO_PFNSHIFT
 	or t3, t3, t2
 	STAY2(mtc0 t3, C0_ENTRYLO0)
 	b 10f
-	#nop
+	/* nop */
 9:
 	STAY2(mtc0 t4, C0_ENTRYLO0)
 10:
 	lw t3, oddpaddr
 	beq t3, -1, 11f
-	#nop
+	/* nop */
 	srl t3, t3, TLBLO_PFNSHIFT
 	or t3, t3, t2
 	STAY2(mtc0 t3, C0_ENTRYLO1)
 	b 12f
-	#nop
+	/* nop */
 11:
 	STAY2(mtc0 t4, C0_ENTRYLO1)
 	bne evenpaddr, -1, 12f
-	#nop
+	/* nop */
 	li t3, K0BASE
 	STAY2(mtc0 t3, C0_ENTRYHI)
 12f:
@@ -58,5 +58,5 @@ LEAF(osMapTLB)
     nop
 	STAY2(mtc0 t0, C0_ENTRYHI)
 	jr ra
-	#nop
+	/* nop */
 END(osMapTLB)
