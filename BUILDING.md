@@ -7,7 +7,7 @@
 
 Then, use Homebrew to install the folllowing dependencies:
 
-    brew install python3 capstone tehzz/n64-dev/mips64-elf-binutils tehzz/n64-dev/qemu-irix
+    brew install python3 capstone tehzz/n64-dev/mips64-elf-binutils
 
 Finally, install [doit](https://pydoit.org/) via Homebrew `pip3`
 
@@ -22,7 +22,12 @@ Use `doit` to build your desired version of SSB64:
 
     doit -n4 VERSION=us       # Build the NTSC-U version with 4 concurrent jobs
 
+## Linux
+```
+sudo apt install git build-essential binutils-mips-linux-gnu libcapstone3 python3 python3-doit
+```
 
+what to do about arm linux multilib? 
 
 # Build Options
 ## General `doit` Options
@@ -79,7 +84,7 @@ Override the default system or environment qemu-irix
 * Rust
   - language for tooling
 * Python3
-  - build system
+  - build system (doit)
   - inline-asm for `ido` compiler
   - helper scripts to aid decompilation (see [`utils`](.\utils))
 * capstone
@@ -88,5 +93,4 @@ Override the default system or environment qemu-irix
   - provides assembler for game asm
   - provides linker and archiver for final rom
 * qemu-irix
-  - used to run IDO 5.3 `as` (until that binary can be statically recompiled)
   - can be used to run all IDO binaries (see `TOOLCHAIN` and `LIBULTRA_TC` build options)
