@@ -603,8 +603,8 @@ glabel func_ovl0_800C7DB4
   /* 0437B4 800C7DD4 44856000 */      mtc1 $a1, $f12
   /* 0437B8 800C7DD8 46005402 */     mul.s $f16, $f10, $f0
   /* 0437BC 800C7DDC C7AA008C */      lwc1 $f10, 0x8c($sp)
-  /* 0437C0 800C7DE0 3C0B8004 */       lui $t3, %hi(D_8003B950)
-  /* 0437C4 800C7DE4 256BB950 */     addiu $t3, $t3, %lo(D_8003B950)
+  /* 0437C0 800C7DE0 3C0B8004 */       lui $t3, %hi(gSinTable)
+  /* 0437C4 800C7DE4 256BB950 */     addiu $t3, $t3, %lo(gSinTable)
   /* 0437C8 800C7DE8 AFB00004 */        sw $s0, 4($sp)
   /* 0437CC 800C7DEC 44867000 */      mtc1 $a2, $f14
   /* 0437D0 800C7DF0 4600320D */ trunc.w.s $f8, $f6
@@ -928,10 +928,10 @@ glabel func_ovl0_800C82AC
   /* 043CA8 800C82C8 C7B00054 */      lwc1 $f16, 0x54($sp)
   /* 043CAC 800C82CC 46007202 */     mul.s $f8, $f14, $f0
   /* 043CB0 800C82D0 3C014380 */       lui $at, (0x43800000 >> 16) # 256.0
-  /* 043CB4 800C82D4 3C0C8004 */       lui $t4, %hi(D_8003B950)
+  /* 043CB4 800C82D4 3C0C8004 */       lui $t4, %hi(gSinTable)
   /* 043CB8 800C82D8 46008482 */     mul.s $f18, $f16, $f0
   /* 043CBC 800C82DC 44810000 */      mtc1 $at, $f0 # 256.0 to cop1
-  /* 043CC0 800C82E0 258CB950 */     addiu $t4, $t4, %lo(D_8003B950)
+  /* 043CC0 800C82E0 258CB950 */     addiu $t4, $t4, %lo(gSinTable)
   /* 043CC4 800C82E4 4600218D */ trunc.w.s $f6, $f4
   /* 043CC8 800C82E8 4600428D */ trunc.w.s $f10, $f8
   /* 043CCC 800C82EC 44033000 */      mfc1 $v1, $f6

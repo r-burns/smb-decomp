@@ -2334,7 +2334,7 @@ void unref_80010740(void) {
     return;
 }
 
-void func_80010748(Mtx4f *arg0, struct DObj *arg1, s32 arg2) {
+void func_80010748(Mtx *arg0, struct DObj *arg1, s32 arg2) {
     Mtx4f sp48;
     struct Vec3f sp3C;
 
@@ -2389,7 +2389,7 @@ void func_80010748(Mtx4f *arg0, struct DObj *arg1, s32 arg2) {
 
 #ifdef NON_MATCHING
 // nonmatching: store reorder in first if block (res != 0.0f)
-void func_80010918(Mtx4f *arg0, struct DObj *arg1, s32 arg2) {
+void func_80010918(Mtx *arg0, struct DObj *arg1, s32 arg2) {
     Mtx4f sp48;
     struct Vec3f sp3C;
 
@@ -2443,7 +2443,7 @@ void func_80010918(Mtx4f *arg0, struct DObj *arg1, s32 arg2) {
 #pragma GLOBAL_ASM("game/nonmatching/system_04/func_80010918.s")
 #endif
 
-void func_80010AE8(Mtx4f *arg0, struct DObj *arg1, s32 arg2) {
+void func_80010AE8(Mtx *arg0, struct DObj *arg1, s32 arg2) {
     Mtx4f sp48;
     f32 sp44;
     f32 sp40;
@@ -2486,7 +2486,7 @@ void func_80010AE8(Mtx4f *arg0, struct DObj *arg1, s32 arg2) {
     func_80019EA0(&sp48, arg0);
 }
 
-void func_80010C2C(Mtx4f *arg0, struct DObj *arg1, s32 arg2) {
+void func_80010C2C(Mtx *arg0, struct DObj *arg1, s32 arg2) {
     Mtx4f sp48;
     f32 sp44;
     f32 sp40;

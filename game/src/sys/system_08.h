@@ -4,11 +4,12 @@
 #include <ssb_types.h>
 
 #include <PR/ultratypes.h>
+#include <PR/mbi.h>
 
 // might take another pointer type for a1 (to convert to RSP matrix?)
 // convert from mtx4f to gbi Mtx
-void func_80019C70(Mtx4f *src, Mtx *dst);
-void func_80019EA0(Mtx4f *, Mtx4f *);
+void mtx4f_to_Mtx(Mtx4f *src, Mtx *dst);
+void func_80019EA0(Mtx4f *src, Mtx *dst);
 void func_8001B780(Mtx *, f32, f32, f32);
 void func_8001B9C4(Mtx *, f32, f32, f32);
 void func_8001BBF8(Mtx *, f32, f32, f32, f32);

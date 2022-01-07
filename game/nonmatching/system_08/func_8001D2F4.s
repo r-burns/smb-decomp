@@ -1,4 +1,4 @@
-.section .rodata
+.section .late_rodata
 
 glabel D_8003E3C8
   /* 3DFC8 03EFC8 8003E3C8 */

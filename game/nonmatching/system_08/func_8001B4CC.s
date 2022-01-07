@@ -1,4 +1,4 @@
-.section .rodata
+.section .late_rodata
 
 glabel D_8003E3B4
   /* 3DFB4 03EFB4 8003E3B4 */
@@ -142,7 +142,7 @@ glabel func_8001B4CC
   /* 01C2C8 8001B6C8 0C006D33 */       jal func_8001B4CC
   /* 01C2CC 8001B6CC E7A80018 */      swc1 $f8, 0x18($sp)
   /* 01C2D0 8001B6D0 27A40028 */     addiu $a0, $sp, 0x28
-  /* 01C2D4 8001B6D4 0C00671C */       jal func_80019C70
+  /* 01C2D4 8001B6D4 0C00671C */       jal mtx4f_to_Mtx
   /* 01C2D8 8001B6D8 8FA50068 */        lw $a1, 0x68($sp)
   /* 01C2DC 8001B6DC 8FBF0024 */        lw $ra, 0x24($sp)
   /* 01C2E0 8001B6E0 27BD0068 */     addiu $sp, $sp, 0x68

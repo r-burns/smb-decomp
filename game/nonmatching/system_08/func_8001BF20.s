@@ -1,4 +1,4 @@
-.section .rodata
+.section .late_rodata
 
 glabel D_8003E3B8
   /* 3DFB8 03EFB8 8003E3B8 */
@@ -15,8 +15,8 @@ glabel func_8001BF20
   /* 01CB38 8001BF38 AFA70044 */        sw $a3, 0x44($sp)
   /* 01CB3C 8001BF3C C7B00044 */      lwc1 $f16, 0x44($sp)
   /* 01CB40 8001BF40 46007202 */     mul.s $f8, $f14, $f0
-  /* 01CB44 8001BF44 3C0C8004 */       lui $t4, %hi(D_8003B950)
-  /* 01CB48 8001BF48 258CB950 */     addiu $t4, $t4, %lo(D_8003B950)
+  /* 01CB44 8001BF44 3C0C8004 */       lui $t4, %hi(gSinTable)
+  /* 01CB48 8001BF48 258CB950 */     addiu $t4, $t4, %lo(gSinTable)
   /* 01CB4C 8001BF4C 46008482 */     mul.s $f18, $f16, $f0
   /* 01CB50 8001BF50 AFB00004 */        sw $s0, 4($sp)
   /* 01CB54 8001BF54 4600218D */ trunc.w.s $f6, $f4

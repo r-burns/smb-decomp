@@ -26,7 +26,7 @@ glabel func_8001AFD0
   /* 01BC2C 8001B02C 0C006AE9 */       jal func_8001ABA4
   /* 01BC30 8001B030 E7B20024 */      swc1 $f18, 0x24($sp)
   /* 01BC34 8001B034 27A40038 */     addiu $a0, $sp, 0x38
-  /* 01BC38 8001B038 0C00671C */       jal func_80019C70
+  /* 01BC38 8001B038 0C00671C */       jal mtx4f_to_Mtx
   /* 01BC3C 8001B03C 8FA50078 */        lw $a1, 0x78($sp)
   /* 01BC40 8001B040 8FBF0034 */        lw $ra, 0x34($sp)
   /* 01BC44 8001B044 27BD0078 */     addiu $sp, $sp, 0x78

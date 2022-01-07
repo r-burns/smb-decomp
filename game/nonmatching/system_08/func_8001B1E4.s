@@ -19,7 +19,7 @@ glabel func_8001B1E4
   /* 01BE24 8001B224 0C006C14 */       jal func_8001B050
   /* 01BE28 8001B228 E7AA001C */      swc1 $f10, 0x1c($sp)
   /* 01BE2C 8001B22C 27A40028 */     addiu $a0, $sp, 0x28
-  /* 01BE30 8001B230 0C00671C */       jal func_80019C70
+  /* 01BE30 8001B230 0C00671C */       jal mtx4f_to_Mtx
   /* 01BE34 8001B234 8FA50068 */        lw $a1, 0x68($sp)
   /* 01BE38 8001B238 8FBF0024 */        lw $ra, 0x24($sp)
   /* 01BE3C 8001B23C 27BD0068 */     addiu $sp, $sp, 0x68

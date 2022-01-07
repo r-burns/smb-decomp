@@ -1,4 +1,4 @@
-.section .rodata
+.section .late_rodata
 
 glabel D_8003E3AC
   /* 3DFAC 03EFAC 8003E3AC */
@@ -18,8 +18,8 @@ glabel func_8001B248
   /* 01BE5C 8001B25C 46046302 */     mul.s $f12, $f12, $f4
   /* 01BE60 8001B260 27BDFFD8 */     addiu $sp, $sp, -0x28
   /* 01BE64 8001B264 AFA70034 */        sw $a3, 0x34($sp)
-  /* 01BE68 8001B268 3C078004 */       lui $a3, %hi(D_8003B950)
-  /* 01BE6C 8001B26C 24E7B950 */     addiu $a3, $a3, %lo(D_8003B950)
+  /* 01BE68 8001B268 3C078004 */       lui $a3, %hi(gSinTable)
+  /* 01BE6C 8001B26C 24E7B950 */     addiu $a3, $a3, %lo(gSinTable)
   /* 01BE70 8001B270 3C014F80 */       lui $at, (0x4F800000 >> 16) # 4294967300.0
   /* 01BE74 8001B274 46066202 */     mul.s $f8, $f12, $f6
   /* 01BE78 8001B278 4600428D */ trunc.w.s $f10, $f8
@@ -175,7 +175,7 @@ glabel func_8001B248
   /* 01C0A8 8001B4A8 0C006C92 */       jal func_8001B248
   /* 01C0AC 8001B4AC E7A80018 */      swc1 $f8, 0x18($sp)
   /* 01C0B0 8001B4B0 27A40028 */     addiu $a0, $sp, 0x28
-  /* 01C0B4 8001B4B4 0C00671C */       jal func_80019C70
+  /* 01C0B4 8001B4B4 0C00671C */       jal mtx4f_to_Mtx
   /* 01C0B8 8001B4B8 8FA50068 */        lw $a1, 0x68($sp)
   /* 01C0BC 8001B4BC 8FBF0024 */        lw $ra, 0x24($sp)
   /* 01C0C0 8001B4C0 27BD0068 */     addiu $sp, $sp, 0x68

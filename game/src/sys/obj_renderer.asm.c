@@ -443,7 +443,7 @@ s32 func_80010D70(Gfx **arg0, struct DObj *arg1) {
                         D_80046FE8[2][0] = 0.0f;
                         D_80046FE8[2][1] = 0.0f;
 
-                        func_80019C70(&D_80046FE8, mtxStore.gbi);
+                        mtx4f_to_Mtx(&D_80046FE8, mtxStore.gbi);
 
                         gSPMvpRecalc(sp2D4++);
                         gMoveWd(sp2D4++, G_MW_MATRIX, G_MWO_MATRIX_YX_YY_I, mtxStore.gbi->m[0][0]);
@@ -482,7 +482,7 @@ s32 func_80010D70(Gfx **arg0, struct DObj *arg1) {
                         D_80046FE8[2][0] = 0.0f;
                         D_80046FE8[2][1] = 0.0f;
 
-                        func_80019C70(&D_80046FE8, mtxStore.gbi);
+                        mtx4f_to_Mtx(&D_80046FE8, mtxStore.gbi);
 
                         gSPMvpRecalc(sp2D4++);
                         gMoveWd(sp2D4++, G_MW_MATRIX, G_MWO_MATRIX_XX_XY_I, mtxStore.gbi->m[0][0]);
@@ -525,7 +525,7 @@ s32 func_80010D70(Gfx **arg0, struct DObj *arg1) {
                         D_80046FE8[2][2] = D_80046FA8[2][2] * D_80046FA4;
                         D_80046FE8[2][3] = D_80046FA8[2][3] * D_80046FA4;
 
-                        func_80019C70(&D_80046FE8, mtxStore.gbi);
+                        mtx4f_to_Mtx(&D_80046FE8, mtxStore.gbi);
 
                         gSPMvpRecalc(sp2D4++);
                         gMoveWd(sp2D4++, G_MW_MATRIX, G_MWO_MATRIX_XX_XY_I, mtxStore.gbi->m[0][0]);
@@ -566,7 +566,7 @@ s32 func_80010D70(Gfx **arg0, struct DObj *arg1) {
                         D_80046FE8[2][2] = D_80046FA8[2][2] * D_80046FA4;
                         D_80046FE8[2][3] = D_80046FA8[2][3] * D_80046FA4;
 
-                        func_80019C70(&D_80046FE8, mtxStore.gbi);
+                        mtx4f_to_Mtx(&D_80046FE8, mtxStore.gbi);
 
                         gSPMvpRecalc(sp2D4++);
                         gMoveWd(sp2D4++, G_MW_MATRIX, G_MWO_MATRIX_XX_XY_I, mtxStore.gbi->m[0][0]);
@@ -604,7 +604,7 @@ s32 func_80010D70(Gfx **arg0, struct DObj *arg1) {
                         D_80046FE8[2][2] = D_80047028[2][2] * D_80046FA4;
                         D_80046FE8[2][3] = D_80047028[2][3] * D_80046FA4;
 
-                        func_80019C70(&D_80046FE8, mtxStore.gbi);
+                        mtx4f_to_Mtx(&D_80046FE8, mtxStore.gbi);
 
                         gSPMvpRecalc(sp2D4++);
                         gMoveWd(sp2D4++, G_MW_MATRIX, G_MWO_MATRIX_YX_YY_I, mtxStore.gbi->m[0][0]);
@@ -642,7 +642,7 @@ s32 func_80010D70(Gfx **arg0, struct DObj *arg1) {
                         D_80046FE8[2][2] = D_80047028[2][2] * D_80046FA4;
                         D_80046FE8[2][3] = D_80047028[2][3] * D_80046FA4;
 
-                        func_80019C70(&D_80046FE8, mtxStore.gbi);
+                        mtx4f_to_Mtx(&D_80046FE8, mtxStore.gbi);
 
                         gSPMvpRecalc(sp2D4++);
                         gMoveWd(sp2D4++, G_MW_MATRIX, G_MWO_MATRIX_XX_XY_I, mtxStore.gbi->m[0][0]);
@@ -680,7 +680,7 @@ s32 func_80010D70(Gfx **arg0, struct DObj *arg1) {
                         D_80046FE8[2][2] = D_80047068[2][2] * D_80046FA4;
                         D_80046FE8[2][3] = D_80047068[2][3] * D_80046FA4;
 
-                        func_80019C70(&D_80046FE8, mtxStore.gbi);
+                        mtx4f_to_Mtx(&D_80046FE8, mtxStore.gbi);
 
                         gSPMvpRecalc(sp2D4++);
                         gMoveWd(sp2D4++, G_MW_MATRIX, G_MWO_MATRIX_YX_YY_I, mtxStore.gbi->m[0][0]);
@@ -718,7 +718,7 @@ s32 func_80010D70(Gfx **arg0, struct DObj *arg1) {
                         D_80046FE8[2][2] = D_80047068[2][2] * D_80046FA4;
                         D_80046FE8[2][3] = D_80047068[2][3] * D_80046FA4;
 
-                        func_80019C70(&D_80046FE8, mtxStore.gbi);
+                        mtx4f_to_Mtx(&D_80046FE8, mtxStore.gbi);
 
                         gSPMvpRecalc(sp2D4++);
                         gMoveWd(sp2D4++, G_MW_MATRIX, G_MWO_MATRIX_XX_XY_I, mtxStore.gbi->m[0][0]);

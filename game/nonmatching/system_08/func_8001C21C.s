@@ -1,4 +1,4 @@
-.section .rodata
+.section .late_rodata
 
 glabel D_8003E3BC
   /* 3DFBC 03EFBC 8003E3BC */
@@ -14,9 +14,9 @@ glabel func_8001C21C
   /* 01CE30 8001C230 44866000 */      mtc1 $a2, $f12
   /* 01CE34 8001C234 46002182 */     mul.s $f6, $f4, $f0
   /* 01CE38 8001C238 C7A40050 */      lwc1 $f4, 0x50($sp)
-  /* 01CE3C 8001C23C 3C0C8004 */       lui $t4, %hi(D_8003B950)
+  /* 01CE3C 8001C23C 3C0C8004 */       lui $t4, %hi(gSinTable)
   /* 01CE40 8001C240 46005402 */     mul.s $f16, $f10, $f0
-  /* 01CE44 8001C244 258CB950 */     addiu $t4, $t4, %lo(D_8003B950)
+  /* 01CE44 8001C244 258CB950 */     addiu $t4, $t4, %lo(gSinTable)
   /* 01CE48 8001C248 AFA70044 */        sw $a3, 0x44($sp)
   /* 01CE4C 8001C24C 44857000 */      mtc1 $a1, $f14
   /* 01CE50 8001C250 AFB00004 */        sw $s0, 4($sp)
