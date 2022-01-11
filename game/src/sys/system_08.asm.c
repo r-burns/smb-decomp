@@ -271,35 +271,246 @@ void hal_mod_look_at(Mtx *m,
 	mtx4f_to_Mtx(&mf, m);
 }
 
-#ifdef MIPS_TO_C
-#else
-#pragma GLOBAL_ASM("game/nonmatching/system_08/func_8001A744.s")
-#endif
+// modified like hal's version of guLookAtF
+void hal_look_at_reflect_f(Mtx4f *mf, LookAt *l, 
+    f32 xEye, f32 yEye, f32 zEye,
+    f32 xAt,  f32 yAt,  f32 zAt,
+    f32 xUp,  f32 yUp,  f32 zUp
+) {
+    f32 len, xLook, yLook, zLook, xRight, yRight, zRight;
 
-#ifdef MIPS_TO_C
-#else
-#pragma GLOBAL_ASM("game/nonmatching/system_08/func_8001AB2C.s")
-#endif
+    xLook = xAt - xEye;
+    yLook = yAt - yEye;
+    zLook = zAt - zEye;
 
-#ifdef MIPS_TO_C
-#else
-#pragma GLOBAL_ASM("game/nonmatching/system_08/func_8001ABA4.s")
-#endif
+    /* Negate because positive Z is behind us: */
+    len = -1.0f / sqrtf (xLook*xLook + yLook*yLook + zLook*zLook);
+    xLook *= len;
+    yLook *= len;
+    zLook *= len;
 
-#ifdef MIPS_TO_C
-#else
-#pragma GLOBAL_ASM("game/nonmatching/system_08/func_8001AFD0.s")
-#endif
+    /* Right = Up x Look */
 
-#ifdef MIPS_TO_C
-#else
-#pragma GLOBAL_ASM("game/nonmatching/system_08/func_8001B050.s")
-#endif
+    xRight = yUp * zLook - zUp * yLook;
+    yRight = zUp * xLook - xUp * zLook;
+    zRight = xUp * yLook - yUp * xLook;
+    len = 1.0f / sqrtf (xRight*xRight + yRight*yRight + zRight*zRight);
+    xRight *= len;
+    yRight *= len;
+    zRight *= len;
 
-#ifdef MIPS_TO_C
-#else
-#pragma GLOBAL_ASM("game/nonmatching/system_08/func_8001B1E4.s")
-#endif
+    /* Up = Look x Right */
+
+    xUp = yLook * zRight - zLook * yRight;
+    yUp = zLook * xRight - xLook * zRight;
+    zUp = xLook * yRight - yLook * xRight;
+    len = 1.0f / sqrtf (xUp*xUp + yUp*yUp + zUp*zUp);
+    xUp *= len;
+    yUp *= len;
+    zUp *= len;
+
+    /* reflectance vectors = Up and Right */
+
+    l->l[0].l.dir[0] = FTOFRAC8(xRight);
+    l->l[0].l.dir[1] = FTOFRAC8(yRight);
+    l->l[0].l.dir[2] = FTOFRAC8(zRight);
+    l->l[1].l.dir[0] = FTOFRAC8(xUp);
+    l->l[1].l.dir[1] = FTOFRAC8(yUp);
+    l->l[1].l.dir[2] = FTOFRAC8(zUp);
+    l->l[0].l.col[0] = 0x00;
+    l->l[0].l.col[1] = 0x00;
+    l->l[0].l.col[2] = 0x00;
+    l->l[0].l.pad1 = 0x00;
+    l->l[0].l.colc[0] = 0x00;
+    l->l[0].l.colc[1] = 0x00;
+    l->l[0].l.colc[2] = 0x00;
+    l->l[0].l.pad2 = 0x00;
+    l->l[1].l.col[0] = 0x00;
+    l->l[1].l.col[1] = 0x80;
+    l->l[1].l.col[2] = 0x00;
+    l->l[1].l.pad1 = 0x00;
+    l->l[1].l.colc[0] = 0x00;
+    l->l[1].l.colc[1] = 0x80;
+    l->l[1].l.colc[2] = 0x00;
+    l->l[1].l.pad2 = 0x00;
+
+    (*mf)[0][0] = xRight;
+    (*mf)[1][0] = yRight;
+    (*mf)[2][0] = zRight;
+    (*mf)[3][0] = -(xEye * xRight + yEye * yRight + zEye * zRight);
+
+    (*mf)[0][1] = xUp;
+    (*mf)[1][1] = yUp;
+    (*mf)[2][1] = zUp;
+    (*mf)[3][1] = -(xEye * xUp + yEye * yUp + zEye * zUp);
+
+    (*mf)[0][2] = xLook;
+    (*mf)[1][2] = yLook;
+    (*mf)[2][2] = zLook;
+    (*mf)[3][2] = -(xEye * xLook + yEye * yLook + zEye * zLook);
+
+    (*mf)[0][3] = 0;
+    (*mf)[1][3] = 0;
+    (*mf)[2][3] = 0;
+    (*mf)[3][3] = 1;
+}
+
+void hal_look_at_reflect(Mtx *m, LookAt *l,
+    f32 xEye, f32 yEye, f32 zEye,
+    f32 xAt,  f32 yAt,  f32 zAt,
+    f32 xUp,  f32 yUp,  f32 zUp
+) {
+	Mtx4f mf;
+
+	hal_look_at_reflect_f(&mf, l, xEye, yEye, zEye, xAt, yAt, zAt, xUp, yUp, zUp);
+
+	mtx4f_to_Mtx(&mf, m);
+}
+
+void hal_mod_look_at_reflect_f(Mtx4f *mf, LookAt *l, 
+    f32 xEye, f32 yEye, f32 zEye, 
+    f32 xAt,  f32 yAt,  f32 zAt, 
+    f32 arg8, 
+    f32 xUp,  f32 yUp,  f32 zUp
+) {
+    f32 len;
+    struct Vec3f look;
+    struct Vec3f right;
+
+    look.x = xAt - xEye;
+    look.y = yAt - yEye;
+    look.z = zAt - zEye;
+
+    /* Negate because positive Z is behind us: */
+    len = -1.0f / sqrtf (look.x*look.x + look.y*look.y + look.z*look.z);
+    look.x *= len;
+    look.y *= len;
+    look.z *= len;
+
+    /* Right = Up x Look */
+
+    right.x = yUp * look.z - zUp * look.y;
+    right.y = zUp * look.x - xUp * look.z;
+    right.z = xUp * look.y - yUp * look.x;
+    len = 1.0f / sqrtf (right.x*right.x + right.y*right.y + right.z*right.z);
+    right.x *= len;
+    right.y *= len;
+    right.z *= len;
+
+    /* Up = Look x Right */
+
+    func_80019438(&right, &look, arg8);
+    xUp = look.y * right.z - look.z * right.y;
+    yUp = look.z * right.x - look.x * right.z;
+    zUp = look.x * right.y - look.y * right.x;
+    len = 1.0f / sqrtf (xUp*xUp + yUp*yUp + zUp*zUp);
+    xUp *= len;
+    yUp *= len;
+    zUp *= len;
+
+    /* reflectance vectors = Up and Right */
+
+    l->l[0].l.dir[0] = FTOFRAC8(right.x);
+    l->l[0].l.dir[1] = FTOFRAC8(right.y);
+    l->l[0].l.dir[2] = FTOFRAC8(right.z);
+    l->l[1].l.dir[0] = FTOFRAC8(xUp);
+    l->l[1].l.dir[1] = FTOFRAC8(yUp);
+    l->l[1].l.dir[2] = FTOFRAC8(zUp);
+    l->l[0].l.col[0] = 0x00;
+    l->l[0].l.col[1] = 0x00;
+    l->l[0].l.col[2] = 0x00;
+    l->l[0].l.pad1 = 0x00;
+    l->l[0].l.colc[0] = 0x00;
+    l->l[0].l.colc[1] = 0x00;
+    l->l[0].l.colc[2] = 0x00;
+    l->l[0].l.pad2 = 0x00;
+    l->l[1].l.col[0] = 0x00;
+    l->l[1].l.col[1] = 0x80;
+    l->l[1].l.col[2] = 0x00;
+    l->l[1].l.pad1 = 0x00;
+    l->l[1].l.colc[0] = 0x00;
+    l->l[1].l.colc[1] = 0x80;
+    l->l[1].l.colc[2] = 0x00;
+    l->l[1].l.pad2 = 0x00;
+
+    (*mf)[0][0] = right.x;
+    (*mf)[1][0] = right.y;
+    (*mf)[2][0] = right.z;
+    (*mf)[3][0] = -(xEye * right.x + yEye * right.y + zEye * right.z);
+
+    (*mf)[0][1] = xUp;
+    (*mf)[1][1] = yUp;
+    (*mf)[2][1] = zUp;
+    (*mf)[3][1] = -(xEye * xUp + yEye * yUp + zEye * zUp);
+
+    (*mf)[0][2] = look.x;
+    (*mf)[1][2] = look.y;
+    (*mf)[2][2] = look.z;
+    (*mf)[3][2] = -(xEye * look.x + yEye * look.y + zEye * look.z);
+
+    (*mf)[0][3] = 0;
+    (*mf)[1][3] = 0;
+    (*mf)[2][3] = 0;
+    (*mf)[3][3] = 1;
+}
+
+void hal_mod_look_at_reflect(Mtx *m, LookAt *l,
+    f32 xEye, f32 yEye, f32 zEye,
+    f32 xAt,  f32 yAt,  f32 zAt,
+    f32 arg8,
+    f32 xUp,  f32 yUp,  f32 zUp
+) {
+	Mtx4f mf;
+
+	hal_mod_look_at_reflect_f(&mf, l, xEye, yEye, zEye, xAt, yAt, zAt, arg8, xUp, yUp, zUp);
+
+	mtx4f_to_Mtx(&mf, m);
+}
+
+void hal_ortho_f(Mtx4f *mf, 
+    f32 l, f32 r, 
+    f32 b, f32 t,
+    f32 n, f32 f, 
+    f32 scale
+) {
+    s32 i, j;
+
+    (*mf)[0][0] = 2/(r-l);
+    (*mf)[1][1] = 2/(t-b);
+    (*mf)[2][2] = -2/(f-n);
+    (*mf)[3][0] = -(r+l)/(r-l);
+    (*mf)[3][1] = -(t+b)/(t-b);
+    (*mf)[3][2] = -(f+n)/(f-n);
+    (*mf)[3][3] = 1;
+
+    for (i=0; i<3; i++) {
+        if (i != 0)
+            (*mf)[i][0] = 0;
+        if (i != 1)
+            (*mf)[i][1] = 0;
+        if (i != 2)
+            (*mf)[i][2] = 0;
+        if (i != 3)
+            (*mf)[i][3] = 0;
+    }
+
+    for (i=0; i<4; i++)
+        for (j=0; j<4; j++)
+            (*mf)[i][j] *= scale;
+}
+
+void hal_ortho(Mtx *m, 
+    f32 l, f32 r,
+    f32 b, f32 t,
+    f32 n, f32 f, 
+    f32 scale
+) {
+    Mtx4f mf;
+
+    hal_ortho_f(&mf, l, r, b, t, n, f, scale);
+
+    mtx4f_to_Mtx(&mf, m);
+}
 
 #ifdef MIPS_TO_C
 #else
