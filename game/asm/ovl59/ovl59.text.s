@@ -133,7 +133,7 @@ glabel func_ovl59_80131C88
   /* 17F3B0 80131CB0 27A40038 */     addiu $a0, $sp, 0x38
   /* 17F3B4 80131CB4 E7A60014 */      swc1 $f6, 0x14($sp)
   /* 17F3B8 80131CB8 C6080030 */      lwc1 $f8, 0x30($s0)
-  /* 17F3BC 80131CBC 0C006C92 */       jal func_8001B248
+  /* 17F3BC 80131CBC 0C006C92 */       jal hal_perspective_fast_f
   /* 17F3C0 80131CC0 E7A80018 */      swc1 $f8, 0x18($sp)
   /* 17F3C4 80131CC4 C60A0048 */      lwc1 $f10, 0x48($s0)
   /* 17F3C8 80131CC8 8E05003C */        lw $a1, 0x3c($s0)

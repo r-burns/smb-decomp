@@ -68,7 +68,7 @@ void mtx4f_to_Mtx(Mtx4f *src, Mtx *dst) {
 }
 
 // Same as above, but assumes column 3 is (0, 0, 0, 1)
-void func_80019EA0(Mtx4f *src, Mtx *dst) {
+void mtx4f_to_Mtx_fixed_w(Mtx4f *src, Mtx *dst) {
     u32 e1, e2;
 
     e1           = FTOFIX32((*src)[0][0]);
@@ -119,7 +119,7 @@ s32 fast_cosf(f32 x) {
     s32 idx;
     u16 cosX;
 
-    idx  = (s32)((x + 1.5707964f) * 651.8986f); //  + pi/2 
+    idx  = (s32)((x + 1.5707964f) * 651.8986f); //  (x + pi/2) * (count(gSinTable) / M_PI)
     cosX = gSinTable[idx & (ARRAY_COUNT(gSinTable) - 1)];
     if ((idx & 0x800) != 0) { return -cosX; }
     return cosX;
@@ -513,38 +513,276 @@ void hal_ortho(Mtx *m,
 }
 
 #ifdef MIPS_TO_C
+// this function seems to have larger changes than the prior `gu` functions
+void hal_perspective_fast_f(Mtx4f *mf, u16 *perspNorm, f32 fovy, f32 aspect, f32 near, f32 far, f32 scale)
+{
+    f32 cot;
+    u16 sinAngle, cosAngle;
+    f32 sinX, cosX;
+
+    //fovy *= 3.1415926 / 180.0;
+    // M_PI / 180.0f) / 2.0f = 0.008726646f
+    fovy *= 0.008726646f;
+    sinAngle = (s32)(fovy * 651.8986f) & 0xFFF;
+    // is this being inlined?
+    sinX = (f32) gSinTable[sinAngle & (ARRAY_COUNT(gSinTable) - 1)];
+    if (sinAngle & 0x800) { sinX = -sinX; }
+
+    cosAngle = (s32)sinAngle + 0x400;
+    cosX = (f32) gSinTable[cosAngle & (ARRAY_COUNT(gSinTable) - 1)];
+    if (cosAngle & 0x800) { cosX = -cosX; }
+
+    //cot = cosf (fovy/2) / sinf (fovy/2);
+    cot = cosX / sinX;
+
+
+    /*
+    mf[0][0] = cot / aspect;
+    mf[1][1] = cot;
+    mf[2][2] = (near + far) / (near - far);
+    mf[2][3] = -1;
+    mf[3][2] = (2 * near * far) / (near - far);
+    mf[3][3] = 0;
+
+    for (i=0; i<4; i++)
+        for (j=0; j<4; j++)
+        mf[i][j] *= scale;
+    */
+
+    (*mf)[0][0] = (cot / aspect) * scale;
+    (*mf)[0][1] = 0.0f;
+    (*mf)[0][2] = 0.0f;
+    (*mf)[0][3] = 0.0f;
+    (*mf)[1][0] = 0.0f;
+    (*mf)[1][1] = cot * scale;
+    (*mf)[1][2] = 0.0f;
+    (*mf)[1][3] = 0.0f;
+    (*mf)[2][0] = 0.0f;
+    (*mf)[2][1] = 0.0f;
+    (*mf)[2][2] = ((near + far) * scale) / (near - far);
+    (*mf)[2][3] = -scale;
+    (*mf)[3][0] = 0.0f;
+    (*mf)[3][1] = 0.0f;
+    (*mf)[3][2] = (2.0f * near * far * scale) / (near - far);
+    (*mf)[3][3] = 0.0f;
+
+    if (perspNorm != NULL) {
+        if (near + far <= 2.0f) {
+            *perspNorm = (u16)0xFFFF;
+        } else  {
+            *perspNorm = (u16) ((2.0f * 65536.0f) / (near + far));
+            if (*perspNorm <= 0) {
+                *perspNorm = (u16) 0x0001;
+            }
+        }
+    }
+}
 #else
-#pragma GLOBAL_ASM("game/nonmatching/system_08/func_8001B248.s")
+#pragma GLOBAL_ASM("game/nonmatching/system_08/hal_perspective_fast_f.s")
 #endif
 
-#ifdef MIPS_TO_C
-#else
-#pragma GLOBAL_ASM("game/nonmatching/system_08/func_8001B4CC.s")
-#endif
+void hal_perspective_fast(Mtx *m, u16 *perspNorm, f32 fovy, f32 aspect, f32 near, f32 far, f32 scale) {
+    Mtx4f mf;
+
+    hal_perspective_fast_f(&mf, perspNorm, fovy, aspect, near, far, scale);
+
+    mtx4f_to_Mtx(&mf, m);
+}
 
 #ifdef MIPS_TO_C
+// so close
+void hal_perspective_f(Mtx4f *mf, u16 *perspNorm, f32 fovy, f32 aspect, f32 near, f32 far, f32 scale) {
+    f32 cot;
+    UNUSED s32 i, j;
+
+    fovy *= 3.1415926f / 180.0f;
+    cot = cosf (fovy/2) / sinf (fovy/2);
+
+    /*
+    (*mf)[0][0] = cot / aspect;
+    (*mf)[1][1] = cot;
+    (*mf)[2][2] = (near + far) / (near - far);
+    (*mf)[2][3] = -1.0f;
+    (*mf)[3][2] = (2.0f * near * far) / (near - far);
+    (*mf)[3][3] = 0.0;
+
+    for (i=0; i<4; i++)
+        for (j=0; j<4; j++)
+        (*mf)[i][j] *= scale;
+    */
+    (*mf)[0][0] = (cot / aspect) * scale;
+    (*mf)[1][1] = cot * scale;
+    (*mf)[2][2] = ((near + far) * scale) / (near - far);
+    (*mf)[2][3] = -scale;
+    (*mf)[3][2] = (2.0f * near * far * scale) / (near - far);
+    (*mf)[3][3] = 0.0f;
+
+    (*mf)[0][1] = 0;
+    (*mf)[0][2] = 0;
+    (*mf)[0][3] = 0;
+
+    (*mf)[1][0] = 0;
+    (*mf)[1][2] = 0;
+    (*mf)[1][3] = 0;
+
+    (*mf)[2][0] = 0;
+    (*mf)[2][1] = 0;
+
+    (*mf)[3][0] = 0;
+    (*mf)[3][1] = 0;
+
+    if (perspNorm != NULL) {
+        if (near+far <= 2.0f) {
+            *perspNorm = (u16) 0xFFFF;
+        } else  {
+            *perspNorm = (u16) ((2.0f*65536.0f)/(near+far));
+            if (*perspNorm <= 0) {
+                *perspNorm = (u16) 0x0001;
+            }
+        }
+    }
+}
 #else
-#pragma GLOBAL_ASM("game/nonmatching/system_08/func_8001B6EC.s")
+#pragma GLOBAL_ASM("game/nonmatching/system_08/hal_perspective_f.s")
 #endif
 
-#ifdef MIPS_TO_C
-#else
-#pragma GLOBAL_ASM("game/nonmatching/system_08/func_8001B780.s")
-#endif
+void hal_perspective(Mtx *m, u16 *perspNorm, f32 fovy, f32 aspect, f32 near, f32 far, f32 scale) {
+    Mtx4f mf;
 
-#ifdef MIPS_TO_C
-#else
-#pragma GLOBAL_ASM("game/nonmatching/system_08/func_8001B824.s")
-#endif
+    hal_perspective_f(&mf, perspNorm, fovy, aspect, near, far, scale);
 
-#ifdef MIPS_TO_C
-#else
-#pragma GLOBAL_ASM("game/nonmatching/system_08/func_8001B924.s")
-#endif
+    mtx4f_to_Mtx(&mf, m);
+}
 
-#ifdef MIPS_TO_C
+void hal_scale_f(Mtx4f *mf, f32 x, f32 y, f32 z) {
+    s32 i, j;
+
+    (*mf)[0][0] = x;
+    (*mf)[1][1] = y;
+    (*mf)[2][2] = z;
+    (*mf)[3][3] = 1.0f;
+
+    for (i = 0; i < 4; i++) {
+        for (j = 0; j < 4; j++) {
+            if (i != j) {
+                (*mf)[i][j] = 0;
+            }
+        }
+    }
+}
+
+void hal_scale(Mtx *m, f32 x, f32 y, f32 z) {
+    m->m[0][1] = 0;
+    m->m[2][1] = 0;
+    m->m[0][3] = 0;
+    m->m[2][3] = 0;
+    m->m[1][0] = 0;
+    m->m[3][0] = 0;
+
+    m->m[0][0] = FTOFIX32(x) & 0xFFFF0000;
+    m->m[2][0] = FTOFIX32(x) << 0x10;
+    
+    m->m[0][2] = FTOFIX32(y) >> 0x10;
+    m->m[2][2] = FTOFIX32(y) & 0xFFFF;
+    
+    m->m[1][1] = FTOFIX32(z) & 0xFFFF0000;
+    m->m[3][1] = FTOFIX32(z) << 0x10;
+    
+    m->m[1][2] = 0;
+    m->m[3][2] = 0;
+
+    m->m[1][3] = 1;
+    m->m[3][3] = 0;
+}
+
+void hal_row_multiplication_f(Mtx4f *mf, f32 x, f32 y, f32 z) {
+    s32 j;
+
+    for (j = 0; j < 4; j++) {
+        if ((*mf)[0][j] != 0.0f) {
+            (*mf)[0][j] *= x;
+        }
+    }
+
+    for (j = 0; j < 4; j++) {
+        if ((*mf)[1][j] != 0.0f) {
+            (*mf)[1][j] *= y;
+        }
+    }
+
+    for (j = 0; j < 4; j++) {
+        if ((*mf)[2][j] != 0.0f) {
+            (*mf)[2][j] *= z;
+        }
+    }
+}
+
+void hal_translate_f(Mtx4f *mf, f32 x, f32 y, f32 z) {
+    int i, j;
+
+    (*mf)[3][0] = x;
+    (*mf)[3][1] = y;
+    (*mf)[3][2] = z;
+
+    for (i = 0; i < 3; i++) {
+        for (j = 0; j < 4; j++) {
+            if (i == j) {
+                (*mf)[i][j] = 1.0f;
+            } else {
+                (*mf)[i][j] = 0.0f;
+            }
+        }
+    }
+    (*mf)[3][3] = 1.0f;
+}
+
+#ifdef NON_MATCHING
+void hal_translate(Mtx *m, f32 x, f32 y, f32 z) {
+    u32 e1, e2;
+
+    e1 = FTOFIX32(1);
+    e2 = FTOFIX32(0);
+    m->m[0][0] = COMBINE_INTEGRAL(e1, e2);
+    m->m[2][0] = COMBINE_FRACTIONAL(e1, e2);
+
+    e1 = FTOFIX32(0); // 0 2
+    e2 = FTOFIX32(0);
+    m->m[0][1] = COMBINE_INTEGRAL(e1, e2);
+    m->m[2][1] = COMBINE_FRACTIONAL(e1, e2);
+
+    e1 = FTOFIX32(0); // 1 0 
+    e2 = FTOFIX32(1);
+    m->m[0][2] = COMBINE_INTEGRAL(e1, e2);
+    m->m[2][2] = COMBINE_FRACTIONAL(e1, e2);
+
+    e1 = FTOFIX32(0); // 1 2
+    e2 = FTOFIX32(0);
+    m->m[0][3] = COMBINE_INTEGRAL(e1, e2);
+    m->m[2][3] = COMBINE_FRACTIONAL(e1, e2);
+
+    e1 = FTOFIX32(0); // 2 0
+    e2 = FTOFIX32(0);
+    m->m[1][0] = COMBINE_INTEGRAL(e1, e2);
+    m->m[3][0] = COMBINE_FRACTIONAL(e1, e2);
+
+    e1 = FTOFIX32(1); // 2 2
+    e2 = FTOFIX32(0);
+    m->m[1][1] = COMBINE_INTEGRAL(e1, e2);
+    m->m[3][1] = COMBINE_FRACTIONAL(e1, e2);
+
+    e1 = FTOFIX32(x); // 3 0
+    e2 = FTOFIX32(y);
+    m->m[1][2] = COMBINE_INTEGRAL(e1, e2);
+    m->m[3][2] = COMBINE_FRACTIONAL(e1, e2);
+
+    e1 = FTOFIX32(z); // 3 2
+    e2 = FTOFIX32(1);
+    m->m[1][3] = COMBINE_INTEGRAL(e1, e2);
+    m->m[3][3] = COMBINE_FRACTIONAL(e1, e2);
+}
+
 #else
-#pragma GLOBAL_ASM("game/nonmatching/system_08/func_8001B9C4.s")
+#pragma GLOBAL_ASM("game/nonmatching/system_08/hal_translate.s")
 #endif
 
 #ifdef MIPS_TO_C

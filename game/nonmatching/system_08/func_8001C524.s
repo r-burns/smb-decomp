@@ -19,7 +19,7 @@ glabel func_8001C524
   /* 01D164 8001C564 E4880038 */      swc1 $f8, 0x38($a0)
   /* 01D168 8001C568 8FA7003C */        lw $a3, 0x3c($sp)
   /* 01D16C 8001C56C 8FA60038 */        lw $a2, 0x38($sp)
-  /* 01D170 8001C570 0C006E09 */       jal func_8001B824
+  /* 01D170 8001C570 0C006E09 */       jal hal_row_multiplication_f
   /* 01D174 8001C574 8FA50034 */        lw $a1, 0x34($sp)
   /* 01D178 8001C578 8FBF0014 */        lw $ra, 0x14($sp)
   /* 01D17C 8001C57C 27BD0018 */     addiu $sp, $sp, 0x18

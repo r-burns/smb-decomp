@@ -185,7 +185,7 @@ s32 func_80010D70(Gfx **arg0, struct DObj *arg1) {
                     case 1: break;
                     case 2: break;
                     case 18:
-                        func_8001B9C4(
+                        hal_translate(
                             mtxStore.gbi, arg1->unk18.f.v.x, arg1->unk18.f.v.y, arg1->unk18.f.v.z);
                         break;
                     case 19:
@@ -312,7 +312,7 @@ s32 func_80010D70(Gfx **arg0, struct DObj *arg1) {
                         D_80046FA4 *= arg1->unk3C.v.x;
                         break;
                     case 32:
-                        func_8001B780(
+                        hal_scale(
                             mtxStore.gbi, arg1->unk3C.v.x, arg1->unk3C.v.y, arg1->unk3C.v.z);
                         D_80046FA4 *= arg1->unk3C.v.x;
                         break;
@@ -325,7 +325,7 @@ s32 func_80010D70(Gfx **arg0, struct DObj *arg1) {
                     case 39: func_80010918(mtxStore.f, arg1, FALSE); break;
                     case 40: func_80010918(mtxStore.f, arg1, TRUE); break;
                     case 56:
-                        func_8001B9C4(mtxStore.gbi, sp2C0->f.v.x, sp2C0->f.v.y, sp2C0->f.v.z);
+                        hal_translate(mtxStore.gbi, sp2C0->f.v.x, sp2C0->f.v.y, sp2C0->f.v.z);
                         break;
                     case 57:
                         func_8001BBF8(
@@ -335,7 +335,7 @@ s32 func_80010D70(Gfx **arg0, struct DObj *arg1) {
                         func_8001BF20(mtxStore.gbi, sp2BC->f[1], sp2BC->f[2], sp2BC->f[3]);
                         break;
                     case 59:
-                        func_8001B780(mtxStore.gbi, sp2B8->v.x, sp2B8->v.y, sp2B8->v.z);
+                        hal_scale(mtxStore.gbi, sp2B8->v.x, sp2B8->v.y, sp2B8->v.z);
                         D_80046FA4 *= sp2B8->v.x;
                         break;
                     case 60:

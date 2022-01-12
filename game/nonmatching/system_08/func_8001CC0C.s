@@ -23,7 +23,7 @@ glabel func_8001CC0C
   /* 01D85C 8001CC5C 0C0072EA */       jal func_8001CBA8
   /* 01D860 8001CC60 E7B20024 */      swc1 $f18, 0x24($sp)
   /* 01D864 8001CC64 27A40030 */     addiu $a0, $sp, 0x30
-  /* 01D868 8001CC68 0C0067A8 */       jal func_80019EA0
+  /* 01D868 8001CC68 0C0067A8 */       jal mtx4f_to_Mtx_fixed_w
   /* 01D86C 8001CC6C 8FA50070 */        lw $a1, 0x70($sp)
   /* 01D870 8001CC70 8FBF002C */        lw $ra, 0x2c($sp)
   /* 01D874 8001CC74 27BD0070 */     addiu $sp, $sp, 0x70
