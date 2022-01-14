@@ -1,10 +1,10 @@
 #include "sys/obj_renderer.h"
 
 #include "sys/gtl.h"
+#include "sys/hal_gu.h"
 #include "sys/om.h"
 #include "sys/system_00.h"
 #include "sys/system_04.h"
-#include "sys/hal_gu.h"
 
 #include <config.h>
 #include <macros.h>

@@ -1,9 +1,9 @@
 #include "sys/system_04.h"
 
+#include "sys/hal_gu.h"
 #include "sys/obj_renderer.h"
 #include "sys/om.h"
 #include "sys/system_03_1.h"
-#include "sys/hal_gu.h"
 #include "sys/system_09.h"
 
 #include <macros.h>
