@@ -8,8 +8,8 @@
 
 // might take another pointer type for a1 (to convert to RSP matrix?)
 // convert from mtx4f to gbi Mtx
-extern void mtx4f_to_Mtx(Mtx4f *src, Mtx *dst);
-extern void mtx4f_to_Mtx_fixed_w(Mtx4f *src, Mtx *dst);
+extern void hal_mtx_f2l(Mtx4f *src, Mtx *dst);
+extern void hal_mtx_f2l_fixed_w(Mtx4f *src, Mtx *dst);
 extern void hal_look_at_f(
     Mtx4f *mf,
     f32 xEye,

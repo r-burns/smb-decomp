@@ -3,7 +3,7 @@
 #include "sys/obj_renderer.h"
 #include "sys/om.h"
 #include "sys/system_03_1.h"
-#include "sys/system_08.h"
+#include "sys/hal_gu.h"
 #include "sys/system_09.h"
 
 #include <macros.h>
@@ -2384,7 +2384,7 @@ void func_80010748(Mtx *arg0, struct DObj *arg1, s32 arg2) {
         sp48[3][0] = sp48[3][1] = sp48[3][2] = 0.0f;
     }
 
-    mtx4f_to_Mtx_fixed_w(&sp48, arg0);
+    hal_mtx_f2l_fixed_w(&sp48, arg0);
 }
 
 #ifdef NON_MATCHING
@@ -2437,7 +2437,7 @@ void func_80010918(Mtx *arg0, struct DObj *arg1, s32 arg2) {
         sp48[3][0] = sp48[3][1] = sp48[3][2] = 0.0f;
     }
 
-    mtx4f_to_Mtx_fixed_w(&sp48, arg0);
+    hal_mtx_f2l_fixed_w(&sp48, arg0);
 }
 #else
 #pragma GLOBAL_ASM("game/nonmatching/system_04/func_80010918.s")
@@ -2483,7 +2483,7 @@ void func_80010AE8(Mtx *arg0, struct DObj *arg1, s32 arg2) {
         sp48[3][0] = sp48[3][1] = sp48[3][2] = 0;
     }
 
-    mtx4f_to_Mtx_fixed_w(&sp48, arg0);
+    hal_mtx_f2l_fixed_w(&sp48, arg0);
 }
 
 void func_80010C2C(Mtx *arg0, struct DObj *arg1, s32 arg2) {
@@ -2526,5 +2526,5 @@ void func_80010C2C(Mtx *arg0, struct DObj *arg1, s32 arg2) {
         sp48[3][0] = sp48[3][1] = sp48[3][2] = 0;
     }
 
-    mtx4f_to_Mtx_fixed_w(&sp48, arg0);
+    hal_mtx_f2l_fixed_w(&sp48, arg0);
 }
