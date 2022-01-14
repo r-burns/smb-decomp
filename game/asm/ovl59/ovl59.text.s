@@ -186,7 +186,7 @@ glabel func_ovl59_80131D30
   /* 17F47C 80131D7C C6100044 */      lwc1 $f16, 0x44($s0)
   /* 17F480 80131D80 E7B00020 */      swc1 $f16, 0x20($sp)
   /* 17F484 80131D84 C6120048 */      lwc1 $f18, 0x48($s0)
-  /* 17F488 80131D88 0C007149 */       jal func_8001C524
+  /* 17F488 80131D88 0C007149 */       jal hal_rotate_rpy_translate_scale_f
   /* 17F48C 80131D8C E7B20024 */      swc1 $f18, 0x24($sp)
   /* 17F490 80131D90 27B00038 */     addiu $s0, $sp, 0x38
   /* 17F494 80131D94 3C058014 */       lui $a1, %hi(D_ovl59_8013AA18)

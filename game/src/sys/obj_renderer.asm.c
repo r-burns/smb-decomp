@@ -189,7 +189,7 @@ s32 func_80010D70(Gfx **arg0, struct DObj *arg1) {
                             mtxStore.gbi, arg1->unk18.f.v.x, arg1->unk18.f.v.y, arg1->unk18.f.v.z);
                         break;
                     case 19:
-                        func_8001D2F4(
+                        hal_rotate_degrees(
                             mtxStore.gbi,
                             arg1->unk28.f[0],
                             arg1->unk28.f[1],
@@ -197,7 +197,7 @@ s32 func_80010D70(Gfx **arg0, struct DObj *arg1) {
                             arg1->unk28.f[3]);
                         break;
                     case 20:
-                        func_8001D3C4(
+                        hal_rotate_translate_degrees(
                             mtxStore.gbi,
                             arg1->unk18.f.v.x,
                             arg1->unk18.f.v.y,
@@ -208,11 +208,11 @@ s32 func_80010D70(Gfx **arg0, struct DObj *arg1) {
                             arg1->unk28.f[3]);
                         break;
                     case 21:
-                        func_8001D4A4(
+                        hal_rotate_rpy_degrees(
                             mtxStore.gbi, arg1->unk28.f[1], arg1->unk28.f[2], arg1->unk28.f[3]);
                         break;
                     case 22:
-                        func_8001D58C(
+                        hal_rotate_rpy_translate_degrees(
                             mtxStore.gbi,
                             arg1->unk18.f.v.x,
                             arg1->unk18.f.v.y,
@@ -222,7 +222,7 @@ s32 func_80010D70(Gfx **arg0, struct DObj *arg1) {
                             arg1->unk28.f[3]);
                         break;
                     case 23:
-                        func_8001BBF8(
+                        hal_rotate(
                             mtxStore.gbi,
                             arg1->unk28.f[0],
                             arg1->unk28.f[1],
@@ -230,7 +230,7 @@ s32 func_80010D70(Gfx **arg0, struct DObj *arg1) {
                             arg1->unk28.f[3]);
                         break;
                     case 24:
-                        func_8001BCA0(
+                        hal_rotate_translate(
                             mtxStore.gbi,
                             arg1->unk18.f.v.x,
                             arg1->unk18.f.v.y,
@@ -241,7 +241,7 @@ s32 func_80010D70(Gfx **arg0, struct DObj *arg1) {
                             arg1->unk28.f[3]);
                         break;
                     case 25:
-                        func_8001BD70(
+                        hal_rotate_translate_rowscale(
                             mtxStore.gbi,
                             arg1->unk18.f.v.x,
                             arg1->unk18.f.v.y,
@@ -256,11 +256,11 @@ s32 func_80010D70(Gfx **arg0, struct DObj *arg1) {
                         D_80046FA4 *= arg1->unk3C.v.x;
                         break;
                     case 26:
-                        func_8001BF20(
+                        hal_rotate_rpy(
                             mtxStore.gbi, arg1->unk28.f[1], arg1->unk28.f[2], arg1->unk28.f[3]);
                         break;
                     case 27:
-                        func_8001C21C(
+                        hal_rotate_rpy_translate(
                             mtxStore.gbi,
                             arg1->unk18.f.v.x,
                             arg1->unk18.f.v.y,
@@ -270,7 +270,7 @@ s32 func_80010D70(Gfx **arg0, struct DObj *arg1) {
                             arg1->unk28.f[3]);
                         break;
                     case 28:
-                        func_8001C588(
+                        hal_rotate_rpy_translate_scale(
                             mtxStore.gbi,
                             arg1->unk18.f.v.x,
                             arg1->unk18.f.v.y,
@@ -284,11 +284,11 @@ s32 func_80010D70(Gfx **arg0, struct DObj *arg1) {
                         D_80046FA4 *= arg1->unk3C.v.x;
                         break;
                     case 29:
-                        func_8001CAB4(
+                        hal_rotate_pyr(
                             mtxStore.gbi, arg1->unk28.f[1], arg1->unk28.f[2], arg1->unk28.f[3]);
                         break;
                     case 30:
-                        func_8001CB4C(
+                        hal_rotate_pyr_translate(
                             mtxStore.gbi,
                             arg1->unk18.f.v.x,
                             arg1->unk18.f.v.y,
@@ -298,7 +298,7 @@ s32 func_80010D70(Gfx **arg0, struct DObj *arg1) {
                             arg1->unk28.f[3]);
                         break;
                     case 31:
-                        func_8001CC0C(
+                        hal_rotate_pyr_translate_scale(
                             mtxStore.gbi,
                             arg1->unk18.f.v.x,
                             arg1->unk18.f.v.y,
@@ -312,8 +312,7 @@ s32 func_80010D70(Gfx **arg0, struct DObj *arg1) {
                         D_80046FA4 *= arg1->unk3C.v.x;
                         break;
                     case 32:
-                        hal_scale(
-                            mtxStore.gbi, arg1->unk3C.v.x, arg1->unk3C.v.y, arg1->unk3C.v.z);
+                        hal_scale(mtxStore.gbi, arg1->unk3C.v.x, arg1->unk3C.v.y, arg1->unk3C.v.z);
                         D_80046FA4 *= arg1->unk3C.v.x;
                         break;
                     case 33: func_80010AE8(mtxStore.f, arg1, FALSE); break;
@@ -328,18 +327,18 @@ s32 func_80010D70(Gfx **arg0, struct DObj *arg1) {
                         hal_translate(mtxStore.gbi, sp2C0->f.v.x, sp2C0->f.v.y, sp2C0->f.v.z);
                         break;
                     case 57:
-                        func_8001BBF8(
+                        hal_rotate(
                             mtxStore.gbi, sp2BC->f[0], sp2BC->f[1], sp2BC->f[2], sp2BC->f[3]);
                         break;
                     case 58:
-                        func_8001BF20(mtxStore.gbi, sp2BC->f[1], sp2BC->f[2], sp2BC->f[3]);
+                        hal_rotate_rpy(mtxStore.gbi, sp2BC->f[1], sp2BC->f[2], sp2BC->f[3]);
                         break;
                     case 59:
                         hal_scale(mtxStore.gbi, sp2B8->v.x, sp2B8->v.y, sp2B8->v.z);
                         D_80046FA4 *= sp2B8->v.x;
                         break;
                     case 60:
-                        func_8001BCA0(
+                        hal_rotate_translate(
                             mtxStore.gbi,
                             sp2C0->f.v.x,
                             sp2C0->f.v.y,
@@ -350,7 +349,7 @@ s32 func_80010D70(Gfx **arg0, struct DObj *arg1) {
                             sp2BC->f[3]);
                         break;
                     case 61:
-                        func_8001BD70(
+                        hal_rotate_translate_rowscale(
                             mtxStore.gbi,
                             sp2C0->f.v.x,
                             sp2C0->f.v.y,
@@ -365,7 +364,7 @@ s32 func_80010D70(Gfx **arg0, struct DObj *arg1) {
                         D_80046FA4 *= sp2B8->v.x;
                         break;
                     case 62:
-                        func_8001C21C(
+                        hal_rotate_rpy_translate(
                             mtxStore.gbi,
                             sp2C0->f.v.x,
                             sp2C0->f.v.y,
@@ -375,7 +374,7 @@ s32 func_80010D70(Gfx **arg0, struct DObj *arg1) {
                             sp2BC->f[3]);
                         break;
                     case 63:
-                        func_8001C588(
+                        hal_rotate_rpy_translate_scale(
                             mtxStore.gbi,
                             sp2C0->f.v.x,
                             sp2C0->f.v.y,

@@ -5,7 +5,7 @@ glabel D_8003E3B8
   .word 0x4422f983 # .float 651.8986
 
 .section .text
-glabel func_8001BF20
+glabel hal_rotate_rpy
   /* 01CB20 8001BF20 3C018004 */       lui $at, %hi(D_8003E3B8)
   /* 01CB24 8001BF24 C420E3B8 */      lwc1 $f0, %lo(D_8003E3B8)($at)
   /* 01CB28 8001BF28 44856000 */      mtc1 $a1, $f12
