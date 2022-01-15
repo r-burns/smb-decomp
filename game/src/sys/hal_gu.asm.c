@@ -714,6 +714,8 @@ void hal_scale_f(Mtx4f *mf, f32 x, f32 y, f32 z) {
 }
 
 void hal_scale(Mtx *m, f32 x, f32 y, f32 z) {
+    s32 e1, e2;
+
     m->m[0][1] = 0;
     m->m[2][1] = 0;
     m->m[0][3] = 0;
@@ -721,14 +723,20 @@ void hal_scale(Mtx *m, f32 x, f32 y, f32 z) {
     m->m[1][0] = 0;
     m->m[3][0] = 0;
 
-    m->m[0][0] = FTOFIX32(x) & 0xFFFF0000;
-    m->m[2][0] = FTOFIX32(x) << 0x10;
+    e1         = FTOFIX32(x);
+    e2         = FTOFIX32(0);
+    m->m[0][0] = COMBINE_INTEGRAL(e1, e2);
+    m->m[2][0] = COMBINE_FRACTIONAL(e1, e2);
 
-    m->m[0][2] = FTOFIX32(y) >> 0x10;
-    m->m[2][2] = FTOFIX32(y) & 0xFFFF;
+    e1         = FTOFIX32(0);
+    e2         = FTOFIX32(y);
+    m->m[0][2] = COMBINE_INTEGRAL(e1, e2);
+    m->m[2][2] = COMBINE_FRACTIONAL(e1, e2);
 
-    m->m[1][1] = FTOFIX32(z) & 0xFFFF0000;
-    m->m[3][1] = FTOFIX32(z) << 0x10;
+    e1         = FTOFIX32(z);
+    e2         = FTOFIX32(0);
+    m->m[1][1] = COMBINE_INTEGRAL(e1, e2);
+    m->m[3][1] = COMBINE_FRACTIONAL(e1, e2);
 
     m->m[1][2] = 0;
     m->m[3][2] = 0;
@@ -776,18 +784,18 @@ void hal_translate_f(Mtx4f *mf, f32 x, f32 y, f32 z) {
 void hal_translate(Mtx *m, f32 x, f32 y, f32 z) {
     u32 e1, e2;
 
-    e1         = FTOFIX32(1);
-    e2         = FTOFIX32(0);
+    e1         = FTOFIX32(1); // 0, 0
+    e2         = FTOFIX32(0); // 0, 1
     m->m[0][0] = COMBINE_INTEGRAL(e1, e2);
     m->m[2][0] = COMBINE_FRACTIONAL(e1, e2);
 
-    e1         = FTOFIX32(0); // 0 2
-    e2         = FTOFIX32(0);
+    e1         = FTOFIX32(0); // 0, 2
+    e2         = FTOFIX32(0); // 0, 3
     m->m[0][1] = COMBINE_INTEGRAL(e1, e2);
     m->m[2][1] = COMBINE_FRACTIONAL(e1, e2);
 
     e1         = FTOFIX32(0); // 1 0
-    e2         = FTOFIX32(1);
+    e2         = FTOFIX32(1); // 1 1
     m->m[0][2] = COMBINE_INTEGRAL(e1, e2);
     m->m[2][2] = COMBINE_FRACTIONAL(e1, e2);
 
@@ -807,12 +815,12 @@ void hal_translate(Mtx *m, f32 x, f32 y, f32 z) {
     m->m[3][1] = COMBINE_FRACTIONAL(e1, e2);
 
     e1         = FTOFIX32(x); // 3 0
-    e2         = FTOFIX32(y);
+    e2         = FTOFIX32(y); // 3 1
     m->m[1][2] = COMBINE_INTEGRAL(e1, e2);
     m->m[3][2] = COMBINE_FRACTIONAL(e1, e2);
 
     e1         = FTOFIX32(z); // 3 2
-    e2         = FTOFIX32(1);
+    e2         = FTOFIX32(1); // 3 3
     m->m[1][3] = COMBINE_INTEGRAL(e1, e2);
     m->m[3][3] = COMBINE_FRACTIONAL(e1, e2);
 }
