@@ -285,7 +285,6 @@ dependencies = [
  "libgfx",
  "libsprite",
  "pico-args",
- "resources",
  "serde",
  "serde_json",
  "serde_yaml",
@@ -775,17 +774,6 @@ dependencies = [
  "crossbeam-utils",
  "lazy_static",
  "num_cpus",
-]
-
-[[package]]
-name = "resources"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "indoc",
- "pico-args",
- "serde",
- "serde_json",
 ]
 
 [[package]]

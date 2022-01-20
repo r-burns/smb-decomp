@@ -1,5 +1,5 @@
 let P = < O : Text | A : { lib : Text, objs : List Text } >
-let Section = < Text | Data | Rodata | BSS | Filetable | Header >
+let Section = < Text | Data | Rodata | BSS | Filetable | Files | Header >
 let File = { source : P , sections : List Section }
 -- create a file using `sections` from `source` object
 let NewFile = \(sections: List Section) -> \(source: P) -> {source, sections}
@@ -586,7 +586,7 @@ let Ovl65 = Command "ovl65"
     ]
 
 let Resources = Command "resources"
-    [ CustomObj "resources/resources.o" [ Section.Filetable, Section.Data ]
+    [ CustomObj "resources/rld.o" [ Section.Filetable, Section.Files ]
     ]
 
 let SprInfo = \(n: Text) -> \(f: Text) -> Command n [ CustomObj f [Section.Data] ]

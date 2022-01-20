@@ -1,7 +1,7 @@
 use crate::config::{ResTable, Resources};
 use crate::extract::{ExtractContext, ExtractTask, ToExtract};
 use anyhow::{anyhow, Context, Result};
-use std::{io::Cursor, path::{PathBuf, Path}, borrow::Cow, convert::TryInto, fs, iter, ops::Range};
+use std::{io::Cursor, path::Path, borrow::Cow, convert::TryInto, fs, iter, ops::Range};
 use halld::{InputFile, VpkSettings};
 
 pub(super) fn todo<'a>(
@@ -141,8 +141,10 @@ fn write_resource_table_json(out: &Path, entries: TableEntries) -> Result<()> {
 /// Convert from an enumerated `ResTableEntry` into the file struct for `halld` config
 fn entry_to_config_file((i, entry): (usize, ResTableEntry), tbl: &ResTable) -> Result<InputFile> {
     let name = named_file_or_default(i, tbl.entries.as_deref()).into_owned();
+    // this needs to be its own function to get the directory correct...
+    // maybe as part of named_file_or_default?
     let file = {
-        let mut p = PathBuf::from(name);
+        let mut p = Path::new("raw").join(name);
         p.set_extension("bin");
         p
     };

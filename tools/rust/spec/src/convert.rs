@@ -44,6 +44,7 @@ enum Section {
     Rodata,
     BSS,
     Filetable,
+    Files,
     Header,
 }
 
@@ -57,6 +58,7 @@ impl Section {
             Self::Rodata => ".rodata",
             Self::BSS => ".bss",
             Self::Filetable => ".filetable",
+            Self::Files => ".files",
             Self::Header => ".header",
         }
     }

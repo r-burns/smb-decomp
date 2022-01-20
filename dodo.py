@@ -39,10 +39,10 @@ rust_manifest = rust_dir / 'Cargo.toml'
 rust_output_dir = rust_dir / 'target' / 'release'
 n64gfx = rust_output_dir / 'n64gfx'
 imgbank = rust_output_dir / 'imgbank'
-restool = rust_output_dir / 'resources'
 extract = rust_output_dir / 'extract'
 spec = rust_output_dir / 'spec'
-rust_tools = [n64gfx, imgbank, restool, extract, spec]
+halld = rust_output_dir / 'halld'
+rust_tools = [n64gfx, imgbank, extract, spec, halld]
 
 def task_rust_tools():
     ''' Use cargo to check and rebuild rust based tools '''
@@ -228,7 +228,7 @@ def task_print_config():
 
 ########## Asset Extraction ##########################
 asset_cache = Path('.localassets')
-assets = Path('assets.toml')
+assets = Path('assets.yaml')
 extracted_assets = config.build_dir / 'extracted-assets.txt'
 baserom = Path(f'baserom.{config.version}.z64')
 
@@ -267,7 +267,7 @@ def task_extract_assets():
     except FileNotFoundError:
         # doit will only create this task after making the list if 
         # there is an active run. For other commands (list, info, etc.),
-        # it create this task as normal
+        # it will create this task as normal
         pass
     
     return {
@@ -293,8 +293,10 @@ def ensure_asset_extraction():
     return [] if assets_are_extracted else ['extract_assets']
 
 ########## Generated Headers #########################
-generated_incs = config.make_output_dir('include')
-linker_segs = generated_incs / 'linkersegs.h'
+geninc_dir = config.make_output_dir('include')
+linkersegs = geninc_dir / 'linkersegs.h'
+rld_fids_h  = geninc_dir / 'rld_fids.h'
+generated_incs = [linkersegs, rld_fids_h]
 
 ########## ROM Linking and Creation ##################
 # ROM and Build Artifacts
@@ -375,7 +377,7 @@ def task_build_rom():
             'assemble',
             'cc', 
             'libultra',
-            'link_resources',
+            'link_rld',
             'link_sprite_bank',
             'temp_bin_obj'
         ],
@@ -389,12 +391,12 @@ def task_convert_specfile():
         spec, 
         '--input', specfile, 
         '--ld', ssb_lds, 
-        '--header', linker_segs,
+        '--header', linkersegs,
     ]
     return {
         'actions': [convert_spec],
         'file_dep': [spec, specfile],
-        'targets': [ssb_lds, linker_segs],
+        'targets': [ssb_lds, linkersegs],
     }
 
 ########## Game Assembling ###########################
@@ -428,12 +430,12 @@ c_files = c_dir.rglob('*.c')
 def task_cc():
     ''' Compile .c files into .o '''
 
-    includes = [inc_dir, c_dir, generated_incs]
+    includes = [inc_dir, c_dir, geninc_dir]
     tools_dep = get_toolchain_deps(config.toolchain)
 
     for f in c_files:
         o = config.to_output(f, '.o')
-        d, deps = get_make_dependencies(f, o)
+        d, deps = get_make_dependencies(f, o, generated_incs)
         
         syntax_check = tc.invoke_cc_check(includes, d, f, o)
         # if the input needs to have asm processed
@@ -461,7 +463,7 @@ def task_fmt():
         '-Wno-format-security', '-Wno-main', 
         f'-I{inc_dir}',
         f'-I{c_dir}',
-        f'-I{generated_incs}',
+        f'-I{geninc_dir}',
         '-D_LANGUAGE_C','-D_MIPS_SZINT=32', '-D_MIPS_SZLONG=32', '-DF3DEX_GBI_2'
     ]
 
@@ -602,12 +604,12 @@ def option_or(a, b):
     else:
         return a
 
-def get_make_dependencies(src_file, obj_file):
+def get_make_dependencies(src_file, obj_file, default_deps = []):
     ''' (Path to .d file, List[Make Dependancies]) '''
     d = obj_file.with_suffix('.d')
     found_deps = parse_mk_dependencies(d)
     if found_deps is None:
-        deps = [src_file, linker_segs]
+        deps = [src_file] + default_deps
     else:
         deps = found_deps[obj_file]
 
@@ -617,67 +619,30 @@ def get_make_dependencies(src_file, obj_file):
 res_dir = config.game_dir / 'resources'
 res_list = res_dir / 'resources.json'
 
-res_link  = config.to_output(res_dir / 'resources.ld', '.ld')
-res_archive = res_link.with_suffix('.o')
-res_bundle_dir = config.create_output_dir(res_dir / 'bundles')
+res_out_dir = config.create_output_dir(res_dir)
+rld_obj = res_out_dir / 'rld.o'
 
-@create_after(executed='extract_assets', target_regex=res_link)
-def task_generate_resources_linkerscript():
-    ''' Generate the linkerscript for building the resource files together '''
-    return {
-        'actions': [
-            [restool, 'table', '-i', res_list, '-o', res_link]
-        ],
-        'file_dep': [restool, res_list],
-        'targets': [res_link],
-    }
+@create_after(executed='extract_assets', target_regex=rld_obj)
+def task_link_rld():
+    '''Link together HAL relocatable data (rld)'''
+    (rld_d, deps) = get_make_dependencies(res_list, rld_obj)
 
-@create_after(executed='extract_assets', target_regex='*.o')
-def task_bundle_resources():
-    res_tempbins = res_dir.glob('files/raw/*')
-    invoke_ld = tc.game.utils.LD + ['-r', '-b', 'binary']
-
-    for f in res_tempbins:
-        o = (res_bundle_dir / f.name).with_suffix('.o')
-        yield {
-            'name': o,
-            'actions': [
-                invoke_ld + ['-o', o, f],
-            ],
-            'file_dep': [f],
-            'targets': [o],
-        }
-
-
-@create_after(executed='bundle_resources', target_regex=res_archive)
-def task_link_resources():
-    ''' Link resource files into a relocatable binary for linking '''
-    (res_d, deps) = get_make_dependencies(res_link, res_archive)
-
-    # other deps? as passed clousure?
-    # resource_temp_o = [config.to_output(f, '.o') for f in res_dir.glob('temp/files/*')]
-    binutils = tc.game.utils
-
-    if binutils.is_at_least(2, 35):
-        dep_flag = [f'--dependency-file={res_d}']
-    else:
-        dep_flag = []
-
-    link_all_resources = binutils.LD + [
-        '-T', res_link, 
-        '-L', res_bundle_dir,
-        '-r', 
-        '-o', res_archive, 
-    ] + dep_flag
+    link = [
+        halld,
+        '-L', res_dir,
+        '-L', res_out_dir,
+        '-c', rld_fids_h,
+        '-d', rld_d,
+        '-o', rld_obj,
+        res_list
+    ]
 
     return {
-        # $(LD) -T %f -r -o %o %<resbins> 
-        'actions': [link_all_resources],
+        'actions': [link],
         'file_dep': deps,
-        'task_dep': ['generate_resources_linkerscript'],
-        'targets': [res_archive],
+        #'task_dep': ['compile_rld'],
+        'targets': [rld_obj, rld_d, rld_fids_h]
     }
-
 
 ########## Sprites ###################################
 def gfx_encode_cmd(f, o):

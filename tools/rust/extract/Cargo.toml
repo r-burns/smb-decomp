@@ -15,7 +15,6 @@ serde_json = "1.0"
 pico-args = "0.4.0"
 indoc = "1.0"
 vpk0 = "0.8"
-resources = {path = "../resources"}
 libsprite = {path = "../libsprite"}
 libgfx = {path = "../libgfx", features = ["png"]}
 halld = {path = "../halld"}
