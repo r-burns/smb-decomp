@@ -220,7 +220,11 @@ impl ResTable {
         let entries = raw.entries;
         let excess_bytes = raw.excess_bytes;
 
-        Self { offset, entries, excess_bytes }
+        Self {
+            offset,
+            entries,
+            excess_bytes,
+        }
     }
 }
 
@@ -253,7 +257,8 @@ impl Assets {
     pub fn from_path(p: &Path) -> Result<Self, Error> {
         let f = fs::File::open(p).context("reading asset yaml file")?;
         let rdr = BufReader::new(f);
-        serde_yaml::from_reader(rdr).map(Self::from_raw).map_err(Into::into)
-
+        serde_yaml::from_reader(rdr)
+            .map(Self::from_raw)
+            .map_err(Into::into)
     }
 }

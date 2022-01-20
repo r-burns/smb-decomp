@@ -238,10 +238,12 @@ impl<'a> fmt::Display for ToExtract<'a> {
             ),
             SpriteInfo { .. } => write!(f, "Sprite Info: {}", out.display()),
             ResourceTable(..) => write!(f, "Resource Table: {}", out.display()),
-            ResourceRaw (r) => write!(f, "Resource Raw: {} [{} bytes{}]", 
-                out.display(), 
+            ResourceRaw(r) => write!(
+                f,
+                "Resource Raw: {} [{} bytes{}]",
+                out.display(),
                 r.raw_file.len(),
-                if r.compressed { " compressed"} else {""}
+                if r.compressed { " compressed" } else { "" }
             ),
         }
     }

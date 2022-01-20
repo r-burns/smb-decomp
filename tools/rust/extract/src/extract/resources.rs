@@ -1,8 +1,8 @@
 use crate::config::{ResTable, Resources};
 use crate::extract::{ExtractContext, ExtractTask, ToExtract};
 use anyhow::{anyhow, Context, Result};
-use std::{io::Cursor, path::Path, borrow::Cow, convert::TryInto, fs, iter, ops::Range};
 use halld::{InputFile, VpkSettings};
+use std::{borrow::Cow, convert::TryInto, fs, io::Cursor, iter, ops::Range, path::Path};
 
 pub(super) fn todo<'a>(
     res: &'a Resources,
@@ -24,11 +24,12 @@ pub(super) fn extract(out: &Path, task: ExtractTask) -> Result<()> {
         ResourceTable(entries) => write_resource_table_json(out, entries),
         ResourceRaw(file) => write_raw_rld_file(out, file),
         _ => Err(anyhow!("Not a resource extraction: {:?}", task)),
-    }.with_context(|| format!("extracting <{}>", out.display()))
+    }
+    .with_context(|| format!("extracting <{}>", out.display()))
 }
 
 // Get the file name for a resource; right now mainly just for raw
-// once the resources have a bit more structure, probably have 
+// once the resources have a bit more structure, probably have
 // something to get the name from a config file?
 fn named_file_or_default(idx: usize, names: Option<&[String]>) -> Cow<str> {
     names
@@ -44,7 +45,7 @@ fn default_resfile_name(n: usize) -> String {
 pub(super) struct RldRawFile<'a> {
     // raw file data; could be compressed
     pub raw_file: &'a [u8],
-    pub compressed: bool
+    pub compressed: bool,
 }
 
 // Generate Todo items for extracting the files from the resource table
@@ -73,9 +74,9 @@ fn gen_extract_files<'a>(
                 compressed: entry.is_compressed,
             };
 
-            ToExtract{
+            ToExtract {
                 out: filename.into(),
-                info: ExtractTask::ResourceRaw(file)
+                info: ExtractTask::ResourceRaw(file),
             }
         })
 }
@@ -90,7 +91,7 @@ fn write_raw_rld_file(out: &Path, file: RldRawFile) -> Result<()> {
     if file.compressed {
         let decompressed = vpk0::decode_bytes(file.raw_file)
             .with_context(|| format!("decompressing <{}>", out.display()))?;
-        
+
         fs::write(out, &decompressed)?;
     } else {
         fs::write(out, file.raw_file)?;
@@ -98,7 +99,6 @@ fn write_raw_rld_file(out: &Path, file: RldRawFile) -> Result<()> {
 
     Ok(())
 }
-
 
 // Create an Iterator that can provide the info for recreating the resource table
 // right now, each entry needs all of the describing info,
@@ -154,14 +154,16 @@ fn entry_to_config_file((i, entry): (usize, ResTableEntry), tbl: &ResTable) -> R
         let (hdr, trees) = vpk0::vpk_info(Cursor::new(entry.data))
             .with_context(|| format!("reading vpk info for rld file <{}>", i))?;
 
-        let excess = tbl.excess_bytes.as_ref()
+        let excess = tbl
+            .excess_bytes
+            .as_ref()
             .and_then(|dict| dict.get(&(i as u16)))
             .cloned();
-        
+
         Some(VpkSettings {
-            method : Some(hdr.method as u8),
-            offsets : Some(trees.offsets),
-            lengths : Some(trees.lengths),
+            method: Some(hdr.method as u8),
+            offsets: Some(trees.offsets),
+            lengths: Some(trees.lengths),
             excess,
         })
     } else {
@@ -228,14 +230,16 @@ impl<'a> Iterator for ResTableIter<'a> {
             return None;
         }
 
-        let cur = &self.table[self.offset..self.offset+ENTRY_SIZE];
+        let cur = &self.table[self.offset..self.offset + ENTRY_SIZE];
         // check for terminator entry
         if cur[4..12] == [0u8; 8] {
             self.finished = true;
             return None;
         }
-        
-        let next = self.table.get(self.offset+ENTRY_SIZE..self.offset+2*ENTRY_SIZE);
+
+        let next = self
+            .table
+            .get(self.offset + ENTRY_SIZE..self.offset + 2 * ENTRY_SIZE);
         let (offset, is_compressed) = {
             let o = read_be_u32(cur, 0..4);
             (o & !0x8000_0000, o & 0x8000_0000 != 0)
@@ -252,11 +256,15 @@ impl<'a> Iterator for ResTableIter<'a> {
 
         // check for any extern file ids
         let externs = next.and_then(|next| {
-            let next_file_start = (read_be_u32(next, 0..4) & !0x8000_0000)  as usize;
+            let next_file_start = (read_be_u32(next, 0..4) & !0x8000_0000) as usize;
 
             let ex_size = next_file_start - fend;
             if ex_size != 0 {
-                assert!(ex_size % 2 == 0, "extern file id size not u16 sized ({:#x})", ex_size);
+                assert!(
+                    ex_size % 2 == 0,
+                    "extern file id size not u16 sized ({:#x})",
+                    ex_size
+                );
                 Some(&self.files[fend..next_file_start])
             } else {
                 None
@@ -267,7 +275,14 @@ impl<'a> Iterator for ResTableIter<'a> {
         self.offset += ENTRY_SIZE;
 
         Some(Self::Item {
-            offset, size, rom_size, is_compressed, inreloc, exreloc, externs, data
+            offset,
+            size,
+            rom_size,
+            is_compressed,
+            inreloc,
+            exreloc,
+            externs,
+            data,
         })
     }
 }
