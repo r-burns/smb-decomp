@@ -78,7 +78,7 @@ pub(crate) fn extract_assets(info: crate::Extract) -> Result<(), Error> {
             SpriteBank { .. } | SpriteImgEntry(..) | SpriteImg(..) | SpriteInfo(..) => {
                 sprites::extract(&out, &info)
             }
-            ResourceTable(..) | Resource(..) | ResourceReq(..) => resources::extract(&out, info),
+            ResourceTable(..) | ResourceRaw(..) => resources::extract(&out, info),
         }
         .with_context(|| format!("extracting file {}", &new_file))?;
 
@@ -161,12 +161,10 @@ enum ExtractTask<'a> {
     SpriteImg(SpriteImg<'a>),
     // right now, don't parse the data...
     SpriteInfo(&'a [u8]),
-    // parse later
+    // json script for `halld`
     ResourceTable(resources::TableEntries<'a>),
-    // parse later...? Probably need different variants
-    Resource(&'a [u8]),
-    // parse later..? should be part of the compiling of the resource file
-    ResourceReq(&'a [u8]),
+    // only decompress data; no other processing
+    ResourceRaw(resources::RldRawFile<'a>),
 }
 
 impl<'a> ExtractTask<'a> {
@@ -178,8 +176,7 @@ impl<'a> ExtractTask<'a> {
             ExtractTask::SpriteImg(_) => "Sprite",
             ExtractTask::SpriteInfo(_) => "Sprite Set Info",
             ExtractTask::ResourceTable(_) => "Resource Table",
-            ExtractTask::Resource(_) => "Resource File",
-            ExtractTask::ResourceReq(_) => "Resource Req'd List",
+            ExtractTask::ResourceRaw(_) => "Resource Untouched File",
         }
     }
 }
@@ -241,8 +238,11 @@ impl<'a> fmt::Display for ToExtract<'a> {
             ),
             SpriteInfo { .. } => write!(f, "Sprite Info: {}", out.display()),
             ResourceTable(..) => write!(f, "Resource Table: {}", out.display()),
-            Resource { .. } => write!(f, "Resource: {}", out.display()),
-            ResourceReq { .. } => write!(f, "Resource Req: {}", out.display()),
+            ResourceRaw (r) => write!(f, "Resource Raw: {} [{} bytes{}]", 
+                out.display(), 
+                r.raw_file.len(),
+                if r.compressed { " compressed"} else {""}
+            ),
         }
     }
 }
@@ -258,8 +258,7 @@ impl<'a> ToExtract<'a> {
             ExtractTask::SpriteImg { .. } => false,
             ExtractTask::SpriteInfo { .. } => false,
             ExtractTask::ResourceTable(..) => false,
-            ExtractTask::Resource { .. } => false,
-            ExtractTask::ResourceReq { .. } => false,
+            ExtractTask::ResourceRaw { .. } => false,
         }
     }
     /// get solely the filename for this task

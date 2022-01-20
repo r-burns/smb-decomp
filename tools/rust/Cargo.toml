@@ -7,4 +7,8 @@ members = [
     "extract",
     "resources",
     "spec",
+    "halld",
 ]
+
+[profile.dev.package.vpk0]
+opt-level = 3
