@@ -622,7 +622,7 @@ res_list = res_dir / 'resources.json'
 res_out_dir = config.create_output_dir(res_dir)
 rld_obj = res_out_dir / 'rld.o'
 
-@create_after(executed='extract_assets', target_regex=rld_obj)
+# @create_after(executed='extract_assets', target_regex=f'({rld_obj}|{rld_fids_h})')
 def task_link_rld():
     '''Link together HAL relocatable data (rld)'''
     (rld_d, deps) = get_make_dependencies(res_list, rld_obj)
@@ -640,7 +640,7 @@ def task_link_rld():
     return {
         'actions': [link],
         'file_dep': deps,
-        #'task_dep': ['compile_rld'],
+        'task_dep': ensure_asset_extraction(),
         'targets': [rld_obj, rld_d, rld_fids_h]
     }
 
