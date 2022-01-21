@@ -34,12 +34,12 @@ glabel func_ovl30_80131B00
   /* 14D6B0 80131B40 1612FFF9 */       bne $s0, $s2, .L80131B28
   /* 14D6B4 80131B44 00000000 */       nop 
   /* 14D6B8 80131B48 02202025 */        or $a0, $s1, $zero
-  /* 14D6BC 80131B4C 0C001260 */       jal func_80004980
+  /* 14D6BC 80131B4C 0C001260 */       jal hal_alloc
   /* 14D6C0 80131B50 24050010 */     addiu $a1, $zero, 0x10
   /* 14D6C4 80131B54 3C018013 */       lui $at, %hi(D_ovl30_80134E24)
   /* 14D6C8 80131B58 AC224E24 */        sw $v0, %lo(D_ovl30_80134E24)($at)
   /* 14D6CC 80131B5C 02202025 */        or $a0, $s1, $zero
-  /* 14D6D0 80131B60 0C001260 */       jal func_80004980
+  /* 14D6D0 80131B60 0C001260 */       jal hal_alloc
   /* 14D6D4 80131B64 24050010 */     addiu $a1, $zero, 0x10
   /* 14D6D8 80131B68 8FBF0024 */        lw $ra, 0x24($sp)
   /* 14D6DC 80131B6C 3C018013 */       lui $at, %hi(D_ovl30_80134E28)
@@ -2867,7 +2867,7 @@ glabel func_ovl30_80134304
   /* 14FED4 80134364 0C0337BB */       jal rldm_bytes_need_to_load
   /* 14FED8 80134368 24050005 */     addiu $a1, $zero, 5
   /* 14FEDC 8013436C 00402025 */        or $a0, $v0, $zero
-  /* 14FEE0 80134370 0C001260 */       jal func_80004980
+  /* 14FEE0 80134370 0C001260 */       jal hal_alloc
   /* 14FEE4 80134374 24050010 */     addiu $a1, $zero, 0x10
   /* 14FEE8 80134378 3C048013 */       lui $a0, %hi(D_ovl30_801344D0)
   /* 14FEEC 8013437C 3C068013 */       lui $a2, %hi(D_ovl30_80134E10)

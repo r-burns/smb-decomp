@@ -198,7 +198,7 @@ glabel func_ovl6_8018D330
   /* 111A80 8018D340 0C0336F4 */       jal rldm_bytes_needed_to_load
   /* 111A84 8018D344 AFA4001C */        sw $a0, 0x1c($sp)
   /* 111A88 8018D348 00402025 */        or $a0, $v0, $zero
-  /* 111A8C 8018D34C 0C001260 */       jal func_80004980
+  /* 111A8C 8018D34C 0C001260 */       jal hal_alloc
   /* 111A90 8018D350 24050010 */     addiu $a1, $zero, 0x10
   /* 111A94 8018D354 8FA4001C */        lw $a0, 0x1c($sp)
   /* 111A98 8018D358 0C033722 */       jal rldm_get_file_with_external_heap
@@ -391,7 +391,7 @@ glabel func_ovl6_8018D5E8
   /* 111D38 8018D5F8 0C0336F4 */       jal rldm_bytes_needed_to_load
   /* 111D3C 8018D5FC AFA4001C */        sw $a0, 0x1c($sp)
   /* 111D40 8018D600 00402025 */        or $a0, $v0, $zero
-  /* 111D44 8018D604 0C001260 */       jal func_80004980
+  /* 111D44 8018D604 0C001260 */       jal hal_alloc
   /* 111D48 8018D608 24050010 */     addiu $a1, $zero, 0x10
   /* 111D4C 8018D60C 8FA4001C */        lw $a0, 0x1c($sp)
   /* 111D50 8018D610 0C033722 */       jal rldm_get_file_with_external_heap
@@ -954,7 +954,7 @@ glabel func_ovl6_8018DDE0
   /* 112548 8018DE08 0C0336F4 */       jal rldm_bytes_needed_to_load
   /* 11254C 8018DE0C 02002025 */        or $a0, $s0, $zero
   /* 112550 8018DE10 00402025 */        or $a0, $v0, $zero
-  /* 112554 8018DE14 0C001260 */       jal func_80004980
+  /* 112554 8018DE14 0C001260 */       jal hal_alloc
   /* 112558 8018DE18 24050010 */     addiu $a1, $zero, 0x10
   /* 11255C 8018DE1C 02002025 */        or $a0, $s0, $zero
   /* 112560 8018DE20 0C033722 */       jal rldm_get_file_with_external_heap
@@ -1047,7 +1047,7 @@ glabel func_ovl6_8018DF3C
   /* 1126A4 8018DF64 0C0336F4 */       jal rldm_bytes_needed_to_load
   /* 1126A8 8018DF68 02002025 */        or $a0, $s0, $zero
   /* 1126AC 8018DF6C 00402025 */        or $a0, $v0, $zero
-  /* 1126B0 8018DF70 0C001260 */       jal func_80004980
+  /* 1126B0 8018DF70 0C001260 */       jal hal_alloc
   /* 1126B4 8018DF74 24050010 */     addiu $a1, $zero, 0x10
   /* 1126B8 8018DF78 02002025 */        or $a0, $s0, $zero
   /* 1126BC 8018DF7C 0C033722 */       jal rldm_get_file_with_external_heap
@@ -2043,7 +2043,7 @@ glabel func_ovl6_8018ED70
   /* 113510 8018EDD0 0C0337BB */       jal rldm_bytes_need_to_load
   /* 113514 8018EDD4 24050008 */     addiu $a1, $zero, 8
   /* 113518 8018EDD8 00402025 */        or $a0, $v0, $zero
-  /* 11351C 8018EDDC 0C001260 */       jal func_80004980
+  /* 11351C 8018EDDC 0C001260 */       jal hal_alloc
   /* 113520 8018EDE0 24050010 */     addiu $a1, $zero, 0x10
   /* 113524 8018EDE4 3C048011 */       lui $a0, %hi(D_ovl2_80116BD0)
   /* 113528 8018EDE8 3C068013 */       lui $a2, %hi(D_ovl2_80130D40)

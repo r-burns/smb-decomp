@@ -312,7 +312,7 @@ glabel func_ovl0_800CE040
   /* 049A50 800CE070 00008025 */        or $s0, $zero, $zero
   .L800CE074:
   /* 049A54 800CE074 02402025 */        or $a0, $s2, $zero
-  /* 049A58 800CE078 0C001260 */       jal func_80004980
+  /* 049A58 800CE078 0C001260 */       jal hal_alloc
   /* 049A5C 800CE07C 24050004 */     addiu $a1, $zero, 4
   /* 049A60 800CE080 54400004 */      bnel $v0, $zero, .L800CE094
   /* 049A64 800CE084 8E6E0000 */        lw $t6, ($s3) # D_ovl0_800D6454 + 0
@@ -592,7 +592,7 @@ glabel func_ovl0_800CE418
   /* 049E38 800CE458 0600000D */      bltz $s0, .L800CE490
   .L800CE45C:
   /* 049E3C 800CE45C 24040060 */     addiu $a0, $zero, 0x60
-  /* 049E40 800CE460 0C001260 */       jal func_80004980
+  /* 049E40 800CE460 0C001260 */       jal hal_alloc
   /* 049E44 800CE464 24050004 */     addiu $a1, $zero, 4
   /* 049E48 800CE468 54400004 */      bnel $v0, $zero, .L800CE47C
   /* 049E4C 800CE46C 8E2E0000 */        lw $t6, ($s1) # D_ovl0_800D6350 + 0
@@ -5265,7 +5265,7 @@ glabel func_ovl0_800D2758
   /* 04E164 800D2784 AC600000 */        sw $zero, ($v1) # D_ovl0_800D639C + 0
   .L800D2788:
   /* 04E168 800D2788 2404005C */     addiu $a0, $zero, 0x5c
-  /* 04E16C 800D278C 0C001260 */       jal func_80004980
+  /* 04E16C 800D278C 0C001260 */       jal hal_alloc
   /* 04E170 800D2790 24050004 */     addiu $a1, $zero, 4
   /* 04E174 800D2794 54400004 */      bnel $v0, $zero, .L800D27A8
   /* 04E178 800D2798 8E2F0000 */        lw $t7, ($s1) # D_ovl0_800D6398 + 0

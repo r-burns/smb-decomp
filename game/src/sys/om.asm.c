@@ -100,7 +100,7 @@ struct GObjThread *get_obj_thread(void) {
     struct GObjThread *ret;
 
     if (sObjThreadHead == NULL) {
-        sObjThreadHead = func_80004980(sizeof(struct GObjThread), 8);
+        sObjThreadHead = hal_alloc(sizeof(struct GObjThread), 8);
 
         sObjThreadHead->next = NULL;
     }
@@ -137,7 +137,7 @@ struct ThreadStackNode *get_stack_of_size(u32 size) {
     }
 
     if (curr == NULL) {
-        curr        = func_80004980(sizeof(struct ThreadStackList), 4);
+        curr        = hal_alloc(sizeof(struct ThreadStackList), 4);
         curr->next  = NULL;
         curr->stack = NULL;
         curr->size  = size;
@@ -154,7 +154,7 @@ struct ThreadStackNode *get_stack_of_size(u32 size) {
 
         curr->stack = curr->stack->next;
     } else {
-        ret = func_80004980(size + offsetof(struct ThreadStackNode, stack), 8);
+        ret = hal_alloc(size + offsetof(struct ThreadStackNode, stack), 8);
 
         ret->stackSize = size;
     }
@@ -192,7 +192,7 @@ struct GObjProcess *get_obj_process(void) {
     struct GObjProcess *ret;
 
     if (sObjProcessHead == NULL) {
-        sObjProcessHead = func_80004980(sizeof(struct GObjProcess), 4);
+        sObjProcessHead = hal_alloc(sizeof(struct GObjProcess), 4);
 
         sObjProcessHead->unk00 = NULL;
     }
@@ -345,7 +345,7 @@ struct GObjCommon *func_800078FC(void) {
     if (sMaxNumObjCommon == -1 || sObjCommonsActive < sMaxNumObjCommon) {
         v1 = sObjCommonHead;
         if (v1 == NULL) {
-            sObjCommonHead        = func_80004980(sObjCommonSize, 8);
+            sObjCommonHead        = hal_alloc(sObjCommonSize, 8);
             sObjCommonHead->unk04 = NULL;
             v1                    = sObjCommonHead;
         }
@@ -483,7 +483,7 @@ struct OMMtx *get_om_mtx(void) {
     struct OMMtx *ret;
 
     if (sMtxHead == NULL) {
-        sMtxHead = func_80004980(sizeof(struct OMMtx), 8);
+        sMtxHead = hal_alloc(sizeof(struct OMMtx), 8);
 
         sMtxHead->next = NULL;
     }
@@ -509,7 +509,7 @@ struct AObj *get_aobj(void) {
     struct AObj *ret;
 
     if (sAObjHead == NULL) {
-        sAObjHead = func_80004980(sizeof(struct AObj), 4);
+        sAObjHead = hal_alloc(sizeof(struct AObj), 4);
 
         sAObjHead->next = NULL;
     }
@@ -553,7 +553,7 @@ struct MObj *get_mobj(void) {
     struct MObj *ret;
 
     if (sMObjHead == NULL) {
-        sMObjHead = func_80004980(sizeof(struct MObj), 4);
+        sMObjHead = hal_alloc(sizeof(struct MObj), 4);
 
         sMObjHead->next = NULL;
     }
@@ -580,7 +580,7 @@ struct DObj *get_dobj(void) {
     struct DObj *ret;
 
     if (sDObjHead == NULL) {
-        sDObjHead = func_80004980(sDObjSize, 8);
+        sDObjHead = hal_alloc(sDObjSize, 8);
 
         sDObjHead->unk0 = NULL;
     }
@@ -607,7 +607,7 @@ struct SObj *get_sobj(void) {
     struct SObj *ret;
 
     if (sSObjHead == NULL) {
-        sSObjHead = func_80004980(sSObjSize, 8);
+        sSObjHead = hal_alloc(sSObjSize, 8);
 
         sSObjHead->next = NULL;
     }
@@ -634,7 +634,7 @@ struct OMCamera *get_om_camera(void) {
     struct OMCamera *ret;
 
     if (sCameraHead == NULL) {
-        sCameraHead       = func_80004980(sCameraSize, 8);
+        sCameraHead       = hal_alloc(sCameraSize, 8);
         sCameraHead->next = NULL;
     }
 
@@ -1999,7 +1999,7 @@ void set_up_object_manager(struct OMSetup *setup) {
     if (setup->numStacks != 0 && setup->threadStackSize != NULL) {
         struct ThreadStackNode *csr;
 
-        sThreadStackHead        = func_80004980(sizeof(struct ThreadStackList), 4);
+        sThreadStackHead        = hal_alloc(sizeof(struct ThreadStackList), 4);
         sThreadStackHead->next  = NULL;
         sThreadStackHead->size  = sThreadStackSize;
         sThreadStackHead->stack = csr = setup->stacks;

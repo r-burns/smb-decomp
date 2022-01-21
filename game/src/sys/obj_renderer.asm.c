@@ -93,9 +93,9 @@ s32 func_80010D70(Gfx **arg0, struct DObj *arg1) {
                 if (mtx->unk05 == 4) {
                     if (D_8003B6E8.parts[3] != arg1->unk4->unk0E) {
                         // this is weird...
-                        *(void **)&mtx->unk08 = D_800465D8.ptr;
-                        mtxStore.f            = D_800465D8.ptr;
-                        D_800465D8.ptr        = (u8 *)D_800465D8.ptr + sizeof(Mtx4f);
+                        *(void **)&mtx->unk08 = gMatrixHeap.ptr;
+                        mtxStore.f            = gMatrixHeap.ptr;
+                        gMatrixHeap.ptr       = (u8 *)gMatrixHeap.ptr + sizeof(Mtx4f);
                     } else {
                         // L80010EDC
                         switch (mtx->unk04) {
@@ -117,14 +117,14 @@ s32 func_80010D70(Gfx **arg0, struct DObj *arg1) {
                             case 48:
                             case 49:
                             case 50:
-                                mtxStore.f     = D_800465D8.ptr;
-                                D_800465D8.ptr = (u8 *)D_800465D8.ptr + sizeof(Mtx4f);
+                                mtxStore.f      = gMatrixHeap.ptr;
+                                gMatrixHeap.ptr = (u8 *)gMatrixHeap.ptr + sizeof(Mtx4f);
                                 break;
                             default:
                                 // L80010F18
                                 if (mtx->unk04 > 66) {
-                                    mtxStore.f     = D_800465D8.ptr;
-                                    D_800465D8.ptr = (u8 *)D_800465D8.ptr + sizeof(Mtx4f);
+                                    mtxStore.f      = gMatrixHeap.ptr;
+                                    gMatrixHeap.ptr = (u8 *)gMatrixHeap.ptr + sizeof(Mtx4f);
                                 } else {
                                     // L80010F38
                                     // what is it loading here?
@@ -133,10 +133,10 @@ s32 func_80010D70(Gfx **arg0, struct DObj *arg1) {
                                 }
                         }
                     }
-                } else if (D_80046630 > 0) {
+                } else if (gGtlTaskId > 0) {
                     // L80010F40
-                    mtxStore.f     = D_800465D8.ptr;
-                    D_800465D8.ptr = (u8 *)D_800465D8.ptr + sizeof(Mtx4f);
+                    mtxStore.f      = gMatrixHeap.ptr;
+                    gMatrixHeap.ptr = (u8 *)gMatrixHeap.ptr + sizeof(Mtx4f);
                 } else {
                     // L80010F68
                     if (D_8003B6E8.parts[3] == arg1->unk4->unk0E) {
@@ -159,20 +159,20 @@ s32 func_80010D70(Gfx **arg0, struct DObj *arg1) {
                             case 48:
                             case 49:
                             case 50:
-                                mtxStore.f     = D_800465D8.ptr;
-                                D_800465D8.ptr = (u8 *)D_800465D8.ptr + sizeof(Mtx4f);
+                                mtxStore.f      = gMatrixHeap.ptr;
+                                gMatrixHeap.ptr = (u8 *)gMatrixHeap.ptr + sizeof(Mtx4f);
                                 break;
                             default:
                             {
                                 if (mtx->unk04 > 66) {
-                                    mtxStore.f     = D_800465D8.ptr;
-                                    D_800465D8.ptr = (u8 *)D_800465D8.ptr + sizeof(Mtx4f);
+                                    mtxStore.f      = gMatrixHeap.ptr;
+                                    gMatrixHeap.ptr = (u8 *)gMatrixHeap.ptr + sizeof(Mtx4f);
                                 } else {
                                     // L80010FDC
                                     if (mtx->unk05 != 3) { continue; }
 
-                                    mtxStore.f     = D_800465D8.ptr;
-                                    D_800465D8.ptr = (u8 *)D_800465D8.ptr + sizeof(Mtx4f);
+                                    mtxStore.f      = gMatrixHeap.ptr;
+                                    gMatrixHeap.ptr = (u8 *)gMatrixHeap.ptr + sizeof(Mtx4f);
                                 }
                             }
                         }
@@ -801,7 +801,7 @@ void func_80012D90(struct DObj *arg0, Gfx **arg1) {
 
     if (arg0->unk80 == NULL) { return; }
 
-    gSPSegment((*arg1)++, 14, D_800465D8.ptr);
+    gSPSegment((*arg1)++, 14, gMatrixHeap.ptr);
 
     count = 0;
     mobj  = arg0->unk80;
@@ -811,7 +811,7 @@ void func_80012D90(struct DObj *arg0, Gfx **arg1) {
     }
 
     mobj     = arg0->unk80; // a1 for `mobj`
-    newDl    = D_800465D8.ptr;
+    newDl    = gMatrixHeap.ptr;
     branchDl = newDl + count;
     for (sp14 = 0; sp14 < count * 8; sp14 += 8) {
         // L80012E30
@@ -1135,7 +1135,7 @@ void func_80012D90(struct DObj *arg0, Gfx **arg1) {
         gSPEndDisplayList(branchDl++);
     }
     // L80013D80
-    D_800465D8.ptr = (u8 *)D_800465D8.ptr + (count * 8); // sizeof(Gfx)..?
+    gMatrixHeap.ptr = (u8 *)gMatrixHeap.ptr + (count * 8); // sizeof(Gfx)..?
 }
 #else
 #pragma GLOBAL_ASM("game/nonmatching/system_05/func_80012D90.s")
@@ -1232,7 +1232,7 @@ void func_80014068(struct DObj *dobj, struct Unk50DlLink *arg1) {
         sp28 = D_800465B0[arg1->listId];
 
         if (arg1->dl != NULL) {
-            sp20 = D_800465D8.ptr;
+            sp20 = gMatrixHeap.ptr;
             func_80012D90(dobj, &D_800465B0[arg1->listId]);
             gSPDisplayList((D_800465B0[0])++, arg1->dl);
 
@@ -1339,7 +1339,7 @@ void func_8001445C(struct DObj *arg0) {
                     // L8001457C
                     if (arg0->unk80 != NULL) {
                         if (s4 == NULL) {
-                            s4 = D_800465D8.ptr;
+                            s4 = gMatrixHeap.ptr;
                             func_80012D90(arg0, &D_800465B0[sp44->listId]);
                         } else {
                             // L800145C8
@@ -1585,7 +1585,7 @@ void func_80014CD0(struct DObj *dobj) {
                     // L80014E10
                     if (dobj->unk80 != NULL) {
                         if (s4 == NULL) {
-                            s4 = D_800465D8.ptr;
+                            s4 = gMatrixHeap.ptr;
                             func_80012D90(dobj, &D_800465B0[sp40->listId]);
                         } else {
                             // L80014E5C
@@ -1681,7 +1681,7 @@ void unref_80014FFC(struct GObjCommon *obj) {
 
                         if (dobj->unk80 != NULL) {
                             if (segaddr == NULL) {
-                                segaddr = D_800465D8.ptr;
+                                segaddr = gMatrixHeap.ptr;
                                 func_80012D90(dobj, &D_800465B0[sp34->listId]);
                             } else {
                                 // L800151C4
@@ -1808,7 +1808,7 @@ void func_80015520(struct DObj *dobj) {
                     // L80015674
                     if (dobj->unk80 != NULL) {
                         if (segaddr == NULL) {
-                            segaddr = D_800465D8.ptr;
+                            segaddr = gMatrixHeap.ptr;
                             func_80012D90(dobj, &D_800465B0[sp44->id]);
                         } else {
                             gSPSegment(D_800465B0[sp44->id]++, 14, segaddr);
@@ -1985,7 +1985,7 @@ void func_80015C0C(struct DObj *dobj) {
                     // L80015D80
                     if (dobj->unk80 != NULL) {
                         if (segaddr == NULL) {
-                            segaddr = D_800465D8.ptr;
+                            segaddr = gMatrixHeap.ptr;
                             func_80012D90(dobj, &D_800465B0[sp40->id]);
                         } else {
                             // L80015DD0
@@ -2075,7 +2075,7 @@ void unref_80015F6C(struct GObjCommon *obj) {
                         // L800160E8
                         if (dobj->unk80 != NULL) {
                             if (segaddr == NULL) {
-                                segaddr = D_800465D8.ptr;
+                                segaddr = gMatrixHeap.ptr;
                                 func_80012D90(dobj, &D_800465B0[link->listId]);
                             } else {
                                 gSPSegment(D_800465B0[link->listId]++, 14, segaddr);

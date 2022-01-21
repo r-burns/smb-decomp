@@ -79,7 +79,7 @@ OSMesgQueue D_80045520;
 u64 D_80045538[SP_DRAM_STACK_SIZE64 + 1];
 u64 D_80045940[OS_YIELD_DATA_SIZE / sizeof(u64) + 1];
 
-struct DObj *D_80046548[2];
+struct DObj *sDObjTasks[2];
 struct DObj *D_80046550[2];
 struct DObj *D_80046558[2];
 struct SCTaskGfxEnd *D_80046560[2];
@@ -91,10 +91,8 @@ Gfx *D_800465C0[4];
 
 u32 D_800465D0;
 s32 D_800465D4;
-// matrix allocation region?
-struct BumpAllocRegion D_800465D8;
-// object allocation region? general allocation region
-struct BumpAllocRegion D_800465E8;
+struct BumpAllocRegion gMatrixHeap;  // D_800465D8
+struct BumpAllocRegion gGeneralHeap; // D_800465E8
 struct FnBundle D_800465F8;
 u32 D_8004660C;
 u32 D_80046610;
@@ -106,12 +104,12 @@ u16 D_80046624;
 u16 D_80046626; // ucode idx?
 u16 D_80046628;
 Gfx *D_8004662C;
-// offset into D_80046648 and D_80046548; has to be unsigned
-u32 D_80046630;
+// offset into sMtxTaskHeaps and sDObjTasks; has to be unsigned
+u32 gGtlTaskId;
 s32 D_80046634;
 s32 D_80046638[2];
 s32 D_80046640;
-struct BumpAllocRegion D_80046648[2];
+struct BumpAllocRegion sMtxTaskHeaps[2];
 void (*D_80046668)(void *); // takes function bundle struct?
 SCTaskCallback D_8004666C;  // function pointer?
 
@@ -137,24 +135,23 @@ void unref_80004934(u16 arg0, u16 arg1) {
     D_80046626 = arg1;
 }
 
-// alloc_region?
-void func_80004950(void *start, u32 size) {
-    init_bump_alloc(&D_800465E8, 0x10000, start, size);
+void init_general_heap(void *start, u32 size) {
+    init_bump_alloc(&gGeneralHeap, 0x10000, start, size);
 }
 
 // alloc_with_alignment
-void *func_80004980(u32 size, u32 alignment) {
-    return bump_alloc(&D_800465E8, size, alignment);
+void *hal_alloc(u32 size, u32 alignment) {
+    return bump_alloc(&gGeneralHeap, size, alignment);
 }
 
-// reset D_800465D8 allocator
+// reset gMatrixHeap allocator
 void func_800049B0(void) {
-    D_800465D8.id    = D_80046648[D_80046630].id;
-    D_800465D8.start = D_80046648[D_80046630].start;
-    D_800465D8.end   = D_80046648[D_80046630].end;
-    D_800465D8.ptr   = D_80046648[D_80046630].ptr;
+    gMatrixHeap.id    = sMtxTaskHeaps[gGtlTaskId].id;
+    gMatrixHeap.start = sMtxTaskHeaps[gGtlTaskId].start;
+    gMatrixHeap.end   = sMtxTaskHeaps[gGtlTaskId].end;
+    gMatrixHeap.ptr   = sMtxTaskHeaps[gGtlTaskId].ptr;
 
-    reset_bump_alloc(&D_800465D8);
+    reset_bump_alloc(&gMatrixHeap);
 }
 
 void func_80004A0C(struct DLBuffer (*src)[4]) {
@@ -171,10 +168,10 @@ void func_80004A0C(struct DLBuffer (*src)[4]) {
 void func_80004AB0(void) {
     s32 i;
 
-    for (i = 0; i < 4; i++) { D_800465B0[i] = D_800465C0[i] = D_80046570[D_80046630][i].start; }
+    for (i = 0; i < 4; i++) { D_800465B0[i] = D_800465C0[i] = D_80046570[gGtlTaskId][i].start; }
 
     for (i = 0; i < 4; i++) {
-        if (D_80046570[D_80046630][i].length != 0) {
+        if (D_80046570[gGtlTaskId][i].length != 0) {
             D_8004662C = D_800465B0[i];
             reset_rdp_settings(&D_800465B0[i]);
             gSPEndDisplayList(D_800465B0[i]++);
@@ -190,20 +187,20 @@ void check_buffer_lengths(void) {
     s32 i;
 
     for (i = 0; i < 4; i++) {
-        if (D_80046570[D_80046630][i].length + (uintptr_t)D_80046570[D_80046630][i].start
+        if (D_80046570[gGtlTaskId][i].length + (uintptr_t)D_80046570[gGtlTaskId][i].start
             < (uintptr_t)D_800465B0[i]) {
             fatal_printf(
                 "gtl : DLBuffer over flow !  kind = %d  vol = %d byte\n",
                 i,
-                (uintptr_t)D_800465B0[i] - (uintptr_t)D_80046570[D_80046630][i].start);
+                (uintptr_t)D_800465B0[i] - (uintptr_t)D_80046570[gGtlTaskId][i].start);
             while (TRUE) { }
         }
     }
 
-    if ((uintptr_t)D_800465D8.end < (uintptr_t)D_800465D8.ptr) {
+    if ((uintptr_t)gMatrixHeap.end < (uintptr_t)gMatrixHeap.ptr) {
         fatal_printf(
             "gtl : DynamicBuffer over flow !  %d byte\n",
-            (uintptr_t)D_800465D8.ptr - (uintptr_t)D_800465D8.start);
+            (uintptr_t)gMatrixHeap.ptr - (uintptr_t)gMatrixHeap.start);
         while (TRUE) { }
     }
 }
@@ -241,17 +238,17 @@ void func_80004CB4(s32 arg0, void *arg1, u32 bufSize) {
 struct DObj *func_80004D2C(void) {
     struct DObj *temp;
 
-    if (D_80046548[D_80046630] == NULL) {
+    if (sDObjTasks[gGtlTaskId] == NULL) {
         fatal_printf("gtl : not defined SCTaskGfx\n");
         while (TRUE) { ; }
     }
 
-    if (D_80046550[D_80046630] == D_80046558[D_80046630]) {
+    if (D_80046550[gGtlTaskId] == D_80046558[gGtlTaskId]) {
         fatal_printf("gtl : couldn\'t get SCTaskGfx\n");
         while (TRUE) { ; }
     }
 
-    temp = D_80046550[D_80046630]++;
+    temp = D_80046550[gGtlTaskId]++;
 
     return temp;
 }
@@ -267,7 +264,7 @@ void func_80004DB4(
     s32 i;
 
     for (i = 0; i < D_80046640; i++) {
-        D_80046548[i] = &arg0[arg1 * i];
+        sDObjTasks[i] = &arg0[arg1 * i];
         D_80046550[i] = &arg0[arg1 * i];
         D_80046558[i] = &arg0[arg1 * (i + 1)];
         D_80046560[i] = &arg2[i];
@@ -288,35 +285,35 @@ void schedule_gfx_end(struct SCTaskGfxEnd *mesg, void *arg1, s32 arg2, OSMesgQue
     mesg->info.unk20 = mq;
     mesg->info.unk1C = arg2;
     mesg->unk24      = arg1;
-    mesg->unk28      = D_80046630;
+    mesg->unk28      = gGtlTaskId;
 
     osSendMesg(&gScheduleTaskQueue, (OSMesg)mesg, OS_MESG_NOBLOCK);
 }
 
 void func_80004EFC(void) {
-    struct SCTaskGfxEnd *mesg = D_80046560[D_80046630];
+    struct SCTaskGfxEnd *mesg = D_80046560[gGtlTaskId];
 
     if (mesg == NULL) {
         fatal_printf("gtl : not defined SCTaskGfxEnd\n");
         while (TRUE) { ; }
     }
 
-    schedule_gfx_end(mesg, (void *)-1, D_80046630, &D_80045500);
-    D_80046550[D_80046630] = D_80046548[D_80046630];
+    schedule_gfx_end(mesg, (void *)-1, gGtlTaskId, &D_80045500);
+    D_80046550[gGtlTaskId] = sDObjTasks[gGtlTaskId];
 }
 
 void func_80004F78(void) {
     OSMesg recv;
-    struct SCTaskGfxEnd *mesg = D_80046560[D_80046630];
+    struct SCTaskGfxEnd *mesg = D_80046560[gGtlTaskId];
 
     if (mesg == NULL) {
         fatal_printf("gtl : not defined SCTaskGfxEnd\n");
         while (TRUE) { ; }
     }
 
-    schedule_gfx_end(mesg, NULL, D_80046630, &D_80045520);
+    schedule_gfx_end(mesg, NULL, gGtlTaskId, &D_80045520);
     osRecvMesg(&D_80045520, &recv, OS_MESG_BLOCK);
-    D_80046550[D_80046630] = D_80046548[D_80046630];
+    D_80046550[gGtlTaskId] = sDObjTasks[gGtlTaskId];
     func_800049B0();
     func_80004AB0();
 }
@@ -352,7 +349,7 @@ void func_80005018(
         t->info.unk20 = NULL;
     }
     t->info.unk18 = two;
-    t->unk80      = D_80046630;
+    t->unk80      = gGtlTaskId;
     t->unk7C      = 0;
 
     t->task.t.type            = M_GFXTASK;
@@ -436,14 +433,14 @@ void func_80005240(s32 arg0, u64 *arg1) {
         case 3:
         case 5:
         case 7:
-        case 9: func_80005018((void *)func_80004D2C(), 0, uidx, D_80046630, arg1, NULL, 0); break;
+        case 9: func_80005018((void *)func_80004D2C(), 0, uidx, gGtlTaskId, arg1, NULL, 0); break;
         case 0:
         case 2:
         case 4:
         case 6:
         case 8:
             func_80005018(
-                (void *)func_80004D2C(), 0, uidx, D_80046630, arg1, D_80046618, D_8004661C);
+                (void *)func_80004D2C(), 0, uidx, gGtlTaskId, arg1, D_80046618, D_8004661C);
             break;
     }
 }
@@ -650,7 +647,7 @@ u32 func_80005AE4(s32 arg0) {
     do {
         for (i = 0; i < D_80046640; i++) {
             if (D_80046638[i] == 0) {
-                D_80046630    = i;
+                gGtlTaskId    = i;
                 D_80046638[i] = 1;
                 return 1;
             }
@@ -728,7 +725,7 @@ void func_80005DA0(struct FnBundle *arg0) {
     // L80005E78
     D_800465D0 = 0;
     D_800465D4 = -1;
-    D_80046630 = 1;
+    gGtlTaskId = 1;
     D_80044FA4 = 0;
 
     for (i = 0; i < ARRAY_COUNT(D_80046638); i++) { D_80046638[i] = 0; }
@@ -812,7 +809,7 @@ void func_800062EC(struct FnBundle *self) {
     func_80004AB0();
     self->fn0C();
     func_800053CC();
-    func_80006F5C(D_80046568[D_80046630]);
+    func_80006F5C(D_80046568[gGtlTaskId]);
     func_80004EFC();
 }
 
@@ -827,7 +824,7 @@ void func_800063A0(struct FnBundle *self) {
     func_80004AB0();
     self->fn0C();
     func_800053CC();
-    func_80006F5C(D_80046568[D_80046630]);
+    func_80006F5C(D_80046568[gGtlTaskId]);
     func_80004EFC();
     if (func_80005C9C()) { func_8000B7B4(); }
 }
@@ -846,17 +843,17 @@ void unref_8000641C(struct Temp8000641C *arg0) {
     func_80004AB0();
     arg0->fn2C(arg0);
     func_800053CC();
-    task = D_80046560[D_80046630];
+    task = D_80046560[gGtlTaskId];
     if (task == NULL) {
         fatal_printf("gtl : not defined SCTaskGfxEnd\n");
         while (TRUE) { ; }
     }
-    schedule_gfx_end(task, NULL, D_80046630, &D_80045500);
-    D_80046550[D_80046630] = D_80046548[D_80046630];
+    schedule_gfx_end(task, NULL, gGtlTaskId, &D_80045500);
+    D_80046550[gGtlTaskId] = sDObjTasks[gGtlTaskId];
     do {
         osRecvMesg(&D_80045500, (OSMesg *)&idx, OS_MESG_BLOCK);
         D_80046638[idx] = 0;
-    } while (D_80046638[D_80046630] != 0);
+    } while (D_80046638[gGtlTaskId] != 0);
 
     D_8003B6E8.word += 1;
 }
@@ -871,37 +868,37 @@ void func_80006548(struct BufferSetup *arg0, void (*arg1)(void)) {
     D_800465F8.fn0C  = arg0->fn08;
 
     func_80004DB4(
-        func_80004980(arg0->unk14 * sizeof(struct DObj) * D_80046640, 8),
+        hal_alloc(arg0->unk14 * sizeof(struct DObj) * D_80046640, 8),
         arg0->unk14,
-        func_80004980(sizeof(struct SCTaskGfxEnd) * D_80046640, 8),
-        func_80004980(sizeof(struct SCTaskType4) * D_80046640, 8));
+        hal_alloc(sizeof(struct SCTaskGfxEnd) * D_80046640, 8),
+        hal_alloc(sizeof(struct SCTaskType4) * D_80046640, 8));
     // 80006620
     for (i = 0; i < D_80046640; i++) {
         // L80006630
-        sp44[i][0].start  = func_80004980(arg0->unk1C, 8);
+        sp44[i][0].start  = hal_alloc(arg0->unk1C, 8);
         sp44[i][0].length = arg0->unk1C;
-        sp44[i][1].start  = func_80004980(arg0->unk20, 8);
+        sp44[i][1].start  = hal_alloc(arg0->unk20, 8);
         sp44[i][1].length = arg0->unk20;
-        sp44[i][2].start  = func_80004980(arg0->unk24, 8);
+        sp44[i][2].start  = hal_alloc(arg0->unk24, 8);
         sp44[i][2].length = arg0->unk24;
-        sp44[i][3].start  = func_80004980(arg0->unk28, 8);
+        sp44[i][3].start  = hal_alloc(arg0->unk28, 8);
         sp44[i][3].length = arg0->unk28;
     }
     // L800066A8
     func_80004A0C(sp44);
     for (i = 0; i < D_80046640; i++) {
         // L800066D0
-        init_bump_alloc(&D_800465D8, 0x10002, func_80004980(arg0->unk2C, 8), arg0->unk2C);
-        D_80046648[i].id    = D_800465D8.id;
-        D_80046648[i].start = D_800465D8.start;
-        D_80046648[i].end   = D_800465D8.end;
-        D_80046648[i].ptr   = D_800465D8.ptr;
+        init_bump_alloc(&gMatrixHeap, 0x10002, hal_alloc(arg0->unk2C, 8), arg0->unk2C);
+        sMtxTaskHeaps[i].id    = gMatrixHeap.id;
+        sMtxTaskHeaps[i].start = gMatrixHeap.start;
+        sMtxTaskHeaps[i].end   = gMatrixHeap.end;
+        sMtxTaskHeaps[i].ptr   = gMatrixHeap.ptr;
     }
     // L80006724
     arg0->unk30 = 2;
     if (arg0->unk34 == 0) { arg0->unk34 = 0x1000; }
     // L80006740
-    func_80004CB4(arg0->unk30, func_80004980(arg0->unk34, 16), arg0->unk34);
+    func_80004CB4(arg0->unk30, hal_alloc(arg0->unk34, 16), arg0->unk34);
     set_scissor_callback(arg0->fn38);
     D_80046668 = arg0->fn3C;
     enable_auto_contread((uintptr_t)schedule_contread != (uintptr_t)D_80046668 ? 1 : 0);
@@ -913,7 +910,7 @@ void func_80006548(struct BufferSetup *arg0, void (*arg1)(void)) {
 }
 
 void unref_800067E4(struct BufferSetup *arg) {
-    func_80004950(arg->unk0C, arg->unk10);
+    init_general_heap(arg->unk0C, arg->unk10);
     D_800465F8.fn08 = func_800062B4;
     D_800465F8.fn10 = func_800062EC;
     func_80006548(arg, NULL);
@@ -922,13 +919,13 @@ void unref_800067E4(struct BufferSetup *arg) {
 void func_8000683C(struct Wrapper683C *arg) {
     struct OMSetup omSetup;
 
-    func_80004950(arg->setup.unk0C, arg->setup.unk10);
+    init_general_heap(arg->setup.unk0C, arg->setup.unk10);
 
-    omSetup.threads         = func_80004980(sizeof(struct GObjThread) * arg->numOMThreads, 8);
+    omSetup.threads         = hal_alloc(sizeof(struct GObjThread) * arg->numOMThreads, 8);
     omSetup.numThreads      = arg->numOMThreads;
     omSetup.threadStackSize = arg->omThreadStackSize;
     if (arg->omThreadStackSize != 0) {
-        omSetup.stacks = func_80004980(
+        omSetup.stacks = hal_alloc(
             (arg->omThreadStackSize + offsetof(struct ThreadStackNode, stack)) * arg->numOMStacks,
             8);
     } else {
@@ -938,34 +935,34 @@ void func_8000683C(struct Wrapper683C *arg) {
     omSetup.numStacks = arg->numOMStacks;
     omSetup.unk14     = arg->unk4C;
 
-    omSetup.processes    = func_80004980(sizeof(struct GObjProcess) * arg->numOMProcesses, 4);
+    omSetup.processes    = hal_alloc(sizeof(struct GObjProcess) * arg->numOMProcesses, 4);
     omSetup.numProcesses = arg->numOMProcesses;
 
-    omSetup.commons    = func_80004980(arg->omCommonSize * arg->numOMCommons, 8);
+    omSetup.commons    = hal_alloc(arg->omCommonSize * arg->numOMCommons, 8);
     omSetup.numCommons = arg->numOMCommons;
     omSetup.commonSize = arg->omCommonSize;
 
-    omSetup.matrices    = func_80004980(sizeof(struct OMMtx) * arg->numOMMtx, 8);
+    omSetup.matrices    = hal_alloc(sizeof(struct OMMtx) * arg->numOMMtx, 8);
     omSetup.numMatrices = arg->numOMMtx;
 
     func_80010734(arg->unk60);
     omSetup.cleanupFn = arg->unk64;
 
-    omSetup.aobjs    = func_80004980(sizeof(struct AObj) * arg->numOMAobjs, 4);
+    omSetup.aobjs    = hal_alloc(sizeof(struct AObj) * arg->numOMAobjs, 4);
     omSetup.numAObjs = arg->numOMAobjs;
 
-    omSetup.mobjs    = func_80004980(sizeof(struct MObj) * arg->numOMMobjs, 4);
+    omSetup.mobjs    = hal_alloc(sizeof(struct MObj) * arg->numOMMobjs, 4);
     omSetup.numMObjs = arg->numOMMobjs;
 
-    omSetup.dobjs    = func_80004980(arg->omDobjSize * arg->numOMDobjs, 8);
+    omSetup.dobjs    = hal_alloc(arg->omDobjSize * arg->numOMDobjs, 8);
     omSetup.numDObjs = arg->numOMDobjs;
     omSetup.dobjSize = arg->omDobjSize;
 
-    omSetup.sobjs    = func_80004980(arg->omSobjSize * arg->numOMSobjs, 8);
+    omSetup.sobjs    = hal_alloc(arg->omSobjSize * arg->numOMSobjs, 8);
     omSetup.numSObjs = arg->numOMSobjs;
     omSetup.sobjSize = arg->omSobjSize;
 
-    omSetup.cameras    = func_80004980(arg->omCameraSize * arg->numOMCameras, 8);
+    omSetup.cameras    = hal_alloc(arg->omCameraSize * arg->numOMCameras, 8);
     omSetup.numCameras = arg->numOMCameras;
     omSetup.cameraSize = arg->omCameraSize;
 
@@ -1013,7 +1010,7 @@ void func_80006B80(void) {
     for (i = 0; i < 2; i++) {
         D_80046558[i] = NULL;
         D_80046550[i] = NULL;
-        D_80046548[i] = NULL;
+        sDObjTasks[i] = NULL;
         D_80046560[i] = NULL;
     }
     // 80006BD8

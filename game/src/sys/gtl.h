@@ -62,15 +62,15 @@ union WeirdBytewise {
 extern union WeirdBytewise D_8003B6E8;
 extern Gfx *D_800465B0[4];
 extern Gfx *D_800465C0[4];
-extern struct BumpAllocRegion D_800465D8;
-extern struct BumpAllocRegion D_800465E8;
+extern struct BumpAllocRegion gMatrixHeap;
+extern struct BumpAllocRegion gGeneralHeap;
 extern u16 D_80046626;
 extern u16 D_80046628;
-extern u32 D_80046630;
+extern u32 gGtlTaskId;
 
 extern void func_800048D0(SCTaskGfxCallback arg0);
 extern void func_800048F8(Gfx **dl);
-extern void *func_80004980(u32 size, u32 alignment);
+extern void *hal_alloc(u32 size, u32 alignment);
 extern void func_80004F78(void);
 extern void append_ucode_load(Gfx **dlist, u32 ucodeIdx);
 extern void func_800053CC(void);

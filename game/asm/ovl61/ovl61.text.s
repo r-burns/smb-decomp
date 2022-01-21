@@ -1292,7 +1292,7 @@ glabel func_ovl61_80132D64
   /* 122208 80132DB8 0C0337BB */       jal rldm_bytes_need_to_load
   /* 12220C 80132DBC 24050002 */     addiu $a1, $zero, 2
   /* 122210 80132DC0 00402025 */        or $a0, $v0, $zero
-  /* 122214 80132DC4 0C001260 */       jal func_80004980
+  /* 122214 80132DC4 0C001260 */       jal hal_alloc
   /* 122218 80132DC8 24050010 */     addiu $a1, $zero, 0x10
   /* 12221C 80132DCC 3C048013 */       lui $a0, %hi(D_ovl61_80132F20)
   /* 122220 80132DD0 3C068013 */       lui $a2, %hi(D_ovl61_80133160)

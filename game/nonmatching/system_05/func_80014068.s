@@ -32,8 +32,8 @@ glabel func_80014068
   /* 014CDC 800140DC 00406025 */        or $t4, $v0, $zero
   /* 014CE0 800140E0 11E00032 */      beqz $t7, .L800141AC
   /* 014CE4 800140E4 8CC80000 */        lw $t0, ($a2)
-  /* 014CE8 800140E8 3C188004 */       lui $t8, %hi(D_800465D8 + 12)
-  /* 014CEC 800140EC 8F1865E4 */        lw $t8, %lo(D_800465D8 + 12)($t8)
+  /* 014CE8 800140E8 3C188004 */       lui $t8, %hi(gMatrixHeap + 12)
+  /* 014CEC 800140EC 8F1865E4 */        lw $t8, %lo(gMatrixHeap + 12)($t8)
   /* 014CF0 800140F0 02002025 */        or $a0, $s0, $zero
   /* 014CF4 800140F4 00C02825 */        or $a1, $a2, $zero
   /* 014CF8 800140F8 AFA7003C */        sw $a3, 0x3c($sp)

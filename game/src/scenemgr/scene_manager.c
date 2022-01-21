@@ -447,7 +447,7 @@ void func_800A26D8(struct GObjCommon *arg0) {
     // could explain the double sync
     {
         uintptr_t freeSpace; // sp38
-        freeSpace = (uintptr_t)D_800465E8.end - (uintptr_t)D_800465E8.ptr;
+        freeSpace = (uintptr_t)gGeneralHeap.end - (uintptr_t)gGeneralHeap.ptr;
 
         gDPSetFillColor((*D_800465B0)++, rgba32_to_fill_color(0xFFFFFFFF));
         func_800218E0(0x14, 0x14, freeSpace, 7, 1);

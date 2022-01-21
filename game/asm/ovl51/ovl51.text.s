@@ -40,7 +40,7 @@ glabel func_ovl51_8018D0C0
   /* 1749A0 8018D120 0C0337BB */       jal rldm_bytes_need_to_load
   /* 1749A4 8018D124 24050002 */     addiu $a1, $zero, 2
   /* 1749A8 8018D128 00402025 */        or $a0, $v0, $zero
-  /* 1749AC 8018D12C 0C001260 */       jal func_80004980
+  /* 1749AC 8018D12C 0C001260 */       jal hal_alloc
   /* 1749B0 8018D130 24050010 */     addiu $a1, $zero, 0x10
   /* 1749B4 8018D134 3C048019 */       lui $a0, %hi(D_ovl51_8018D934)
   /* 1749B8 8018D138 3C068019 */       lui $a2, %hi(D_ovl51_8018DC60)
