@@ -89,9 +89,10 @@ let System = Command "system"
     , Obj "src/sys/interpolation.asm.o"
     , Obj "asm/system/system_10.o"
     , Obj "asm/system/system_11.o"
-    , Obj "src/sys/system_12.o"
     , Libultra 
-        [ "setattribute.o"
+        [ "color.o"
+        , "setattribute.o"
+        --, "sprite.o" Minor reordering to fix
         ]
     , Obj "asm/system/sprite.o"
     , Libultra 

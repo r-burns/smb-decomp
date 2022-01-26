@@ -332,11 +332,6 @@ def task_compare():
         'verbosity': 2,
     }
 
-libultra_exports = [
-    '-u', 'spHide',
-    '-u', 'spShow',
-    '-u', 'spScale',
-]
 
 def task_build_rom():
     """ Build the ROM """
@@ -350,6 +345,13 @@ def task_build_rom():
     else:
         dep_flag = []
         outputs = [rom_elf, rom_map, rom]
+
+    libultra_exports = [
+        '-u', 'spColor',
+        '-u', 'spHide',
+        '-u', 'spShow',
+        '-u', 'spScale',
+    ]
  
     link_rom = binutils.LD + [
         '--no-check-sections', 
@@ -546,7 +548,12 @@ def task_compile_libultra():
             libultra_objs.append(out)
 
             syntax_check = tc.invoke_cc_check(includes, d, src, out)
-            compile_src = tc.libultra_cc(includes, src, out, src_mi, src_opt)
+            if 'sp' in str(module):
+                # compile sp in libultra with ido7.1 at -O2 ...uh oh
+                # probably should make this more official
+                compile_src = tc.invoke_cc(includes, src, out, defs=['-DNDEBUG', '-D_FINALROM'])
+            else:
+                compile_src = tc.libultra_cc(includes, src, out, src_mi, src_opt)
 
             yield {
                 'name': out,

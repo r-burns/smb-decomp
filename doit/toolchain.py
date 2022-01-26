@@ -137,11 +137,11 @@ class ToolChain:
 
         return tc.AS + tc.ASFLAGS + incs + files
     
-    def invoke_cc(self, includes, input, output, opt = 'O2'):
+    def invoke_cc(self, includes, input, output, opt = 'O2', defs = []):
         ''' create a list for calling the current game cross-compiler '''
         incs = list(_prefix_it(includes, '-I'))
         # TODO: do this once when creating user_defines?
-        defines = ['-D'+d for d in self.user_defines]
+        defines = ['-D'+d for d in self.user_defines] + defs
         opt = ['-'+opt]
         files = ['-o', output, input]
         tc = self.game.c
@@ -268,11 +268,11 @@ def _get_libultra_crosschain(requested_tc, config):
 
     if requested_tc == 'qemu-ido5.3':
         compiler = _get_qemu_ido('5.3', config, IDO_ULTRA_CFLAGS)
-        assembler = Assembler([prefix + 'as'], GCC_AS_FLAGS)
+        #assembler = Assembler([prefix + 'as'], GCC_AS_FLAGS)
+        assembler = _get_qemu_as('5.3', config, IDO_ULTRA_ASFLAGS)
     elif requested_tc == 'ido5.3':
         compiler = _get_recomp_ido('5.3', tools, IDO_ULTRA_CFLAGS)
         assembler = _get_recomp_as('5.3', tools, IDO_ULTRA_ASFLAGS)
-        #assembler = _get_qemu_as('5.3', config, IDO_ULTRA_ASFLAGS)
     else:
         raise Exception("Unsupported toolchain: " + requested_tc)
 
