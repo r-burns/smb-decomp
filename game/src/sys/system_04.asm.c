@@ -1,10 +1,10 @@
 #include "sys/system_04.h"
 
 #include "sys/hal_gu.h"
+#include "sys/interpolation.h"
 #include "sys/obj_renderer.h"
 #include "sys/om.h"
 #include "sys/system_03_1.h"
-#include "sys/interpolation.h"
 
 #include <macros.h>
 #include <ssb_types.h>

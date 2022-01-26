@@ -8,8 +8,8 @@
 struct HalInterpolationParam {
     /* 0x00 */ u8 kind;
     /* 0x01 align pad */
-    /* 0x02 */ s16 unk02; // total frames?
-    /* 0x04 */ f32 unk04; // CR scale? count?
+    /* 0x02 */ s16 unk02;           // total frames?
+    /* 0x04 */ f32 unk04;           // CR scale? count?
     /* 0x08 */ struct Vec3f *unk08; // control points?
     /* 0x0C */ f32 unk0C;
     /* 0x10 */ f32 *unk10; // maybe keyframes as fraction t?
