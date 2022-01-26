@@ -646,7 +646,7 @@ def task_link_rld():
 
     return {
         'actions': [link],
-        'file_dep': deps,
+        'file_dep': [halld] + deps,
         'task_dep': ensure_asset_extraction(),
         'targets': [rld_obj, rld_d, rld_fids_h]
     }
