@@ -4,7 +4,7 @@
 #include "sys/obj_renderer.h"
 #include "sys/om.h"
 #include "sys/system_03_1.h"
-#include "sys/system_09.h"
+#include "sys/interpolation.h"
 
 #include <macros.h>
 #include <ssb_types.h>
@@ -411,7 +411,7 @@ void func_8000BFE8(struct DObj *dobj) {
                 {
                     dobj->unk70++;
                     if (sp80[3] == NULL) { sp80[3] = create_aobj_for_dobj(dobj, 3 + 1); }
-                    sp80[3]->unk20 = dobj->unk70->w;
+                    sp80[3]->unk20 = dobj->unk70->ptr;
                     dobj->unk70++;
                     break;
                 }
@@ -585,7 +585,7 @@ void func_8000CCBC(struct DObj *dobj) {
                             } else {
                                 if (f26 > 1.0f) { f26 = 1.0f; }
                             }
-                            func_8001E530(&dobj->unk18.f.v, aobj->unk20, f26);
+                            hal_interpolation_cubic(&dobj->unk18.f.v, aobj->unk20, f26);
                             break;
                         case 5: dobj->unk18.f.v.x = f26; break;
                         case 6: dobj->unk18.f.v.y = f26; break;
@@ -1138,7 +1138,7 @@ s32 func_8000E164(
                         *arg2 = 1.0f;
                     }
                     // L8000E330
-                    func_8001E530(arg8, aobj->unk20, *arg2);
+                    hal_interpolation_cubic(arg8, aobj->unk20, *arg2);
                     switch (arg6) {
                         case 5: *arg2 = arg8->x; break;
                         case 6: *arg2 = arg8->y; break;
@@ -2122,13 +2122,13 @@ void func_8000FA74(struct DObj *arg) {
                     if (subcmd & 0x08) {
                         if (sp80[3] == NULL) { sp80[3] = func_80009010(arg, 3 + 25); }
 
-                        sp80[3]->unk20 = arg->unk70->w;
+                        sp80[3]->unk20 = arg->unk70->ptr;
                         arg->unk70++;
                     }
                     if (subcmd & 0x80) {
                         if (sp80[7] == NULL) { sp80[7] = func_80009010(arg, 7 + 25); }
 
-                        sp80[7]->unk20 = arg->unk70->w;
+                        sp80[7]->unk20 = arg->unk70->ptr;
                         arg->unk70++;
                     }
                     break;
@@ -2200,7 +2200,7 @@ void func_80010344(struct TempUnkObj *arg) {
                             } else {
                                 if (temp > 1.0f) { temp = 1.0f; }
                             }
-                            func_8001E530(&arg->unk3C, aobj->unk20, temp);
+                            hal_interpolation_cubic(&arg->unk3C, aobj->unk20, temp);
                             break;
                         }
                         case 29: arg->unk48.x = func_8000CB94(aobj); break;
@@ -2214,7 +2214,7 @@ void func_80010344(struct TempUnkObj *arg) {
                             } else {
                                 if (temp > 1.0f) { temp = 1.0f; }
                             }
-                            func_8001E530(&arg->unk48, aobj->unk20, temp);
+                            hal_interpolation_cubic(&arg->unk48, aobj->unk20, temp);
                             break;
                         }
                         case 33: arg->unk54 = func_8000CB94(aobj); break;

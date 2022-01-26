@@ -2280,7 +2280,7 @@ glabel func_ovl0_800C9488
   .L800C95CC:
   /* 044FAC 800C95CC 44061000 */      mfc1 $a2, $f2
   .L800C95D0:
-  /* 044FB0 800C95D0 0C00794C */       jal func_8001E530
+  /* 044FB0 800C95D0 0C00794C */       jal hal_interpolation_cubic
   /* 044FB4 800C95D4 8E050020 */        lw $a1, 0x20($s0)
   /* 044FB8 800C95D8 C632001C */      lwc1 $f18, 0x1c($s1)
   /* 044FBC 800C95DC C6640000 */      lwc1 $f4, ($s3)

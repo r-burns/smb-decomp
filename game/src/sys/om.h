@@ -211,8 +211,8 @@ struct AObj {
     /* 0x14 */ f32 unk14;
     /* 0x18 */ f32 unk18;
     /* 0x1C */ f32 unk1C;
-    // s16 *? struct *?
-    /* 0x20 */ s32 unk20;
+    // interpolation control struct?
+    /* 0x20 */ void *unk20;
 }; // size == 0x24
 
 // texture scroll? (from K64)

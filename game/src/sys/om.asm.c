@@ -1090,7 +1090,7 @@ struct AObj *create_aobj_for_dobj(struct DObj *dobj, u8 index) {
 
     aobj->unk04 = index;
     aobj->unk05 = 0;
-    aobj->unk20 = 0;
+    aobj->unk20 = NULL;
     aobj->unk1C = 0.0;
     aobj->unk18 = 0.0;
     aobj->unk14 = 0.0;
@@ -1122,7 +1122,7 @@ struct AObj *create_aobj_for_mobj(struct MObj *mobj, u8 index) {
 
     aobj->unk04 = index;
     aobj->unk05 = 0;
-    aobj->unk20 = 0;
+    aobj->unk20 = NULL;
     aobj->unk1C = 0.0;
     aobj->unk18 = 0.0;
     aobj->unk14 = 0.0;
@@ -1156,7 +1156,7 @@ struct AObj *func_80009010(struct DObj *obj, u8 index) {
 
     aobj->unk04 = index;
     aobj->unk05 = 0;
-    aobj->unk20 = 0;
+    aobj->unk20 = NULL;
     aobj->unk1C = 0.0;
     aobj->unk18 = 0.0;
     aobj->unk14 = 0.0;
