@@ -640,6 +640,7 @@ def task_link_rld():
         '-L', res_out_dir,
         '-c', rld_fids_h,
         '-d', rld_d,
+        '-k', config.rld_cache_dir(),
         '-o', rld_obj,
         res_list
     ]

@@ -33,6 +33,7 @@ pub(crate) fn run(opts: crate::RunOpt) -> Result<()> {
         output,
         header,
         mdep,
+        cache,
     } = opts;
 
     let rdr = BufReader::new(
@@ -47,11 +48,14 @@ pub(crate) fn run(opts: crate::RunOpt) -> Result<()> {
     } = config;
 
     let config_output = settings.as_mut().and_then(|s| s.output.take());
+    let config_cache = settings.as_mut().and_then(|s| s.cache.take());
     let config_search = settings.and_then(|s| s.search_dirs);
 
     let output = output
         .or(config_output)
         .ok_or_else(|| anyhow!("no output location from JSON or from CLI"))?;
+
+    let cache = cache.or(config_cache);
 
     let search_dirs = match (search, config_search) {
         (Some(s), None) | (None, Some(s)) => Some(s),
@@ -63,7 +67,7 @@ pub(crate) fn run(opts: crate::RunOpt) -> Result<()> {
     };
 
     let p1 = pass1::Pass1::run(script, search_dirs).context("linker pass 1")?;
-    let p2 = pass2::Pass2::run(p1)?;
+    let p2 = pass2::Pass2::run(p1, cache)?;
 
     if let Some(file) = header {
         let mut wtr = BufWriter::new(File::create(file).context("creating c header file")?);
@@ -132,13 +136,25 @@ fn create_symbol(sec: SectionId, (name, sym): (String, Sym)) -> write::Symbol {
     }
 }
 
-fn fmt_filename(p: &Path) -> String {
+fn fmt_as_cident(p: &Path) -> String {
+    fn valid_c_ident(s: &str) -> String {
+        s.chars()
+            .map(|c| {
+                if c.is_ascii_alphanumeric() {
+                    c.to_ascii_uppercase()
+                } else {
+                    '_'
+                }
+            })
+            .collect()
+    }
+
     let mut s = "RLD_FID".to_string();
     if let Some(parent) = p.parent() {
         for cmpt in parent.components() {
             s += "_";
             match cmpt {
-                Component::Normal(p) => s += &p.to_ascii_uppercase().to_string_lossy(),
+                Component::Normal(p) => s += &valid_c_ident(&*p.to_string_lossy()),
                 Component::Prefix(_)
                 | Component::RootDir
                 | Component::CurDir
@@ -149,7 +165,7 @@ fn fmt_filename(p: &Path) -> String {
 
     if let Some(stem) = p.file_stem() {
         s += "_";
-        s += &stem.to_ascii_uppercase().to_string_lossy();
+        s += &valid_c_ident(&*stem.to_string_lossy());
     }
 
     s

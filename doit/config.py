@@ -105,6 +105,13 @@ class Config():
         o.mkdir(parents=True, exist_ok=True)
 
         return o
+
+    def rld_cache_dir(self):
+        ''' Get the cache for RLD compressed data files '''
+        o = self.all_builds / '.rldcache'
+        o.mkdir(parents=True, exist_ok=True)
+
+        return o
     
     def __str__(self):
         common = (
