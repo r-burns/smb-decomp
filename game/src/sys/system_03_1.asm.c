@@ -455,7 +455,7 @@ struct DObj *func_8000BAA0(struct DObj *arg0) {
     return arg0;
 }
 #else
-#pragma GLOBAL_ASM("game/nonmatching/system_03_1/func_8000BAA0.s")
+#pragma GLOBAL_ASM("game/nonmatching/sys/system_03_1/func_8000BAA0.s")
 #endif
 
 #pragma GCC diagnostic pop

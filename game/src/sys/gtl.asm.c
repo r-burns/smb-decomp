@@ -273,7 +273,7 @@ void func_80004DB4(
 }
 #else
 s32 func_80004DB4(struct DObj *arg0, s32 arg1, struct SCTaskGfxEnd *arg2, struct SCTaskType4 *arg3);
-#pragma GLOBAL_ASM("game/nonmatching/gtl/func_80004DB4.s")
+#pragma GLOBAL_ASM("game/nonmatching/sys/gtl/func_80004DB4.s")
 #endif
 #pragma GCC diagnostic pop
 

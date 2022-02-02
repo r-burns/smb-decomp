@@ -51,7 +51,7 @@ void func_8001D610(struct Vec3f *out, struct Vec3f *ctrl, f32 s, f32 t) {
 #undef BASIS4
 
 #else
-#pragma GLOBAL_ASM("game/nonmatching/system_09/func_8001D610.s")
+#pragma GLOBAL_ASM("game/nonmatching/sys/system_09/func_8001D610.s")
 #endif
 
 // quadratic spline?
@@ -88,7 +88,7 @@ void func_8001D754(struct Vec3f *out, struct Vec3f *ctrl, f32 s, f32 t) {
 #undef BASIS3
 #undef BASIS4
 #else
-#pragma GLOBAL_ASM("game/nonmatching/system_09/func_8001D754.s")
+#pragma GLOBAL_ASM("game/nonmatching/sys/system_09/func_8001D754.s")
 #endif
 
 // some sort of bezier interpolation
@@ -117,7 +117,7 @@ void func_8001D8E0(struct Vec3f *out, struct Vec3f *ctrl, f32 t) {
 #undef BASIS3
 #undef BASIS4
 #else
-#pragma GLOBAL_ASM("game/nonmatching/system_09/func_8001D8E0.s")
+#pragma GLOBAL_ASM("game/nonmatching/sys/system_09/func_8001D8E0.s")
 #endif
 
 // quadratic bezier with four control points (not three?)
@@ -143,7 +143,7 @@ void func_8001DA40(struct Vec3f *out, struct Vec3f *ctrl, f32 t) {
     out->z = (ctrl[3].z * b4) + ((ctrl[0].z * b1) + (ctrl[1].z * b2) + (ctrl[2].z * b3));
 }
 #else
-#pragma GLOBAL_ASM("game/nonmatching/system_09/func_8001DA40.s")
+#pragma GLOBAL_ASM("game/nonmatching/sys/system_09/func_8001DA40.s")
 #endif
 
 // cubic bezier with scale factor of 3?
@@ -170,7 +170,7 @@ void func_8001DB74(struct Vec3f *out, struct Vec3f *ctrl, f32 t) {
     out->z = (ctrl[3].z * b4) + ((ctrl[0].z * b1) + (ctrl[1].z * b2) + (ctrl[2].z * b3));
 }
 #else
-#pragma GLOBAL_ASM("game/nonmatching/system_09/func_8001DB74.s")
+#pragma GLOBAL_ASM("game/nonmatching/sys/system_09/func_8001DB74.s")
 #endif
 
 // four point quadratic bezier with scale of 3?
@@ -196,7 +196,7 @@ void func_8001DC88(struct Vec3f *out, struct Vec3f *ctrl, f32 t) {
 }
 
 #else
-#pragma GLOBAL_ASM("game/nonmatching/system_09/func_8001DC88.s")
+#pragma GLOBAL_ASM("game/nonmatching/sys/system_09/func_8001DC88.s")
 #endif
 
 // arg1->unk02 is total frames? elapsed frames?

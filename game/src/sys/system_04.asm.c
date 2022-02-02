@@ -992,7 +992,7 @@ void func_8000DA40(struct MObj *mobj) {
     // L8000DF20
 }
 #else
-#pragma GLOBAL_ASM("game/nonmatching/system_04/func_8000DA40.s")
+#pragma GLOBAL_ASM("game/nonmatching/sys/system_04/func_8000DA40.s")
 #endif
 
 void func_8000DF34(struct GObjCommon *arg0) {
@@ -1276,7 +1276,7 @@ void func_8000E428(s32 arg0, f32 arg1, f32 arg2, f32 arg3, f32 *arg4, struct AOb
     // L8000E89C return
 }
 #else
-#pragma GLOBAL_ASM("game/nonmatching/system_04/func_8000E428.s")
+#pragma GLOBAL_ASM("game/nonmatching/sys/system_04/func_8000E428.s")
 #endif
 
 f32 func_8000E8A8(
@@ -1440,7 +1440,7 @@ f32 func_8000E8A8(
     return spA4;
 }
 #else
-#pragma GLOBAL_ASM("game/nonmatching/system_04/func_8000E8A8.s")
+#pragma GLOBAL_ASM("game/nonmatching/sys/system_04/func_8000E8A8.s")
 #endif
 
 #ifdef NON_MATCHING
@@ -1509,7 +1509,7 @@ f32 unref_8000EC64(
     return arg5;
 }
 #else
-#pragma GLOBAL_ASM("game/nonmatching/system_04/unref_8000EC64.s")
+#pragma GLOBAL_ASM("game/nonmatching/sys/system_04/unref_8000EC64.s")
 #endif
 
 void unref_8000EE40(
@@ -1581,7 +1581,7 @@ void unref_8000EE40(
     // L8000F020
 }
 #else
-#pragma GLOBAL_ASM("game/nonmatching/system_04/unref_8000EE40.s")
+#pragma GLOBAL_ASM("game/nonmatching/sys/system_04/unref_8000EE40.s")
 #endif
 
 void func_8000F058(struct DObj *dobj) {
@@ -1668,7 +1668,7 @@ void func_8000F120(struct GObjCommon *arg0, struct UnkEC64Arg3 *arg1, struct DOb
     // L8000F2D4
 }
 #else
-#pragma GLOBAL_ASM("game/nonmatching/system_04/func_8000F120.s")
+#pragma GLOBAL_ASM("game/nonmatching/sys/system_04/func_8000F120.s")
 #endif
 
 void func_8000F2FC(struct DObj *arg0, u8 arg1, u8 arg2, u8 arg3) {
@@ -2314,7 +2314,7 @@ s32 unref_800105AC(union AnimCmd **arg0) {
     }
 }
 #else
-#pragma GLOBAL_ASM("game/nonmatching/system_04/unref_800105AC.s")
+#pragma GLOBAL_ASM("game/nonmatching/sys/system_04/unref_800105AC.s")
 #endif
 
 void unref_80010710(s32 arg0, s32 arg1, s32 arg2, s32 arg3) {
@@ -2440,7 +2440,7 @@ void func_80010918(Mtx *arg0, struct DObj *arg1, s32 arg2) {
     hal_mtx_f2l_fixed_w(&sp48, arg0);
 }
 #else
-#pragma GLOBAL_ASM("game/nonmatching/system_04/func_80010918.s")
+#pragma GLOBAL_ASM("game/nonmatching/sys/system_04/func_80010918.s")
 #endif
 
 void func_80010AE8(Mtx *arg0, struct DObj *arg1, s32 arg2) {

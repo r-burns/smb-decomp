@@ -265,7 +265,7 @@ nested_loop_end:
     v0->unk1C   = arg0;
 }
 #else
-#pragma GLOBAL_ASM("game/nonmatching/om/func_80007680.s")
+#pragma GLOBAL_ASM("game/nonmatching/sys/om/func_80007680.s")
 #endif
 
 void func_80007758(struct GObjProcess *op) {
@@ -1019,7 +1019,7 @@ struct OMMtx *func_8000855C(struct DObj *arg0, u8 arg1, u8 arg2, s32 arg3) {
     return mtx;
 }
 #else
-#pragma GLOBAL_ASM("game/nonmatching/om/func_8000855C.s")
+#pragma GLOBAL_ASM("game/nonmatching/sys/om/func_8000855C.s")
 #endif
 
 void func_80008CC0(struct DObj *arg0, u8 arg1, u8 arg2) {
@@ -1222,7 +1222,7 @@ struct MObj *func_800090DC(struct DObj *arg0, struct MObjSub *arg1) {
     return mobj;
 }
 #else
-#pragma GLOBAL_ASM("game/nonmatching/om/func_800090DC.s")
+#pragma GLOBAL_ASM("game/nonmatching/sys/om/func_800090DC.s")
 #endif
 
 void func_800091F4(struct DObj *obj) {
@@ -1268,7 +1268,7 @@ void func_8000926C(struct DObj *arg0) {
     arg0->unk84 = 0;
 }
 #else
-#pragma GLOBAL_ASM("game/nonmatching/om/func_8000926C.s")
+#pragma GLOBAL_ASM("game/nonmatching/sys/om/func_8000926C.s")
 #endif
 
 struct DObj *func_800092D0(struct GObjCommon *arg0, void *arg1) {

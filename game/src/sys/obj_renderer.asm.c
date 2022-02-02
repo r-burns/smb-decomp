@@ -787,7 +787,7 @@ s32 func_80010D70(Gfx **arg0, struct DObj *arg1) {
     return sp2CC;
 }
 #else
-#pragma GLOBAL_ASM("game/nonmatching/system_05/func_80010D70.s")
+#pragma GLOBAL_ASM("game/nonmatching/sys/system_05/func_80010D70.s")
 #endif
 
 #ifdef MIPS_TO_C
@@ -1138,7 +1138,7 @@ void func_80012D90(struct DObj *arg0, Gfx **arg1) {
     gMatrixHeap.ptr = (u8 *)gMatrixHeap.ptr + (count * 8); // sizeof(Gfx)..?
 }
 #else
-#pragma GLOBAL_ASM("game/nonmatching/system_05/func_80012D90.s")
+#pragma GLOBAL_ASM("game/nonmatching/sys/system_05/func_80012D90.s")
 #endif
 
 void func_80013D90(struct GObjCommon *gobj, Gfx **dlHead) {
@@ -1288,7 +1288,7 @@ void func_80014068(struct DObj *dobj, struct Unk50DlLink *arg1) {
     // L800143EC
 }
 #else
-#pragma GLOBAL_ASM("game/nonmatching/system_05/func_80014068.s")
+#pragma GLOBAL_ASM("game/nonmatching/sys/system_05/func_80014068.s")
 #endif
 
 void func_800143FC(struct GObjCommon *obj) {
@@ -1390,7 +1390,7 @@ void func_8001445C(struct DObj *arg0) {
     // L8001474C
 }
 #else
-#pragma GLOBAL_ASM("game/nonmatching/system_05/func_8001445C.s")
+#pragma GLOBAL_ASM("game/nonmatching/sys/system_05/func_8001445C.s")
 #endif
 
 void func_80014768(struct GObjCommon *obj) {
@@ -1524,7 +1524,7 @@ void unref_80014A84(struct GObjCommon *obj) {
     // L80014C28
 }
 #else
-#pragma GLOBAL_ASM("game/nonmatching/system_05/unref_80014A84.s")
+#pragma GLOBAL_ASM("game/nonmatching/sys/system_05/unref_80014A84.s")
 #endif
 
 void unref_80014C38(struct GObjCommon *obj) {
@@ -1630,7 +1630,7 @@ void func_80014CD0(struct DObj *dobj) {
     }
 }
 #else
-#pragma GLOBAL_ASM("game/nonmatching/system_05/func_80014CD0.s")
+#pragma GLOBAL_ASM("game/nonmatching/sys/system_05/func_80014CD0.s")
 #endif
 
 void unref_80014FFC(struct GObjCommon *obj);
@@ -1724,7 +1724,7 @@ void unref_80014FFC(struct GObjCommon *obj) {
     // L8001533C
 }
 #else
-#pragma GLOBAL_ASM("game/nonmatching/system_05/unref_80014FFC.s")
+#pragma GLOBAL_ASM("game/nonmatching/sys/system_05/unref_80014FFC.s")
 #endif
 
 void func_80015358(struct DObj *dobj) {
@@ -1849,7 +1849,7 @@ void func_80015520(struct DObj *dobj) {
     // L80015814
 }
 #else
-#pragma GLOBAL_ASM("game/nonmatching/system_05/func_80015520.s")
+#pragma GLOBAL_ASM("game/nonmatching/sys/system_05/func_80015520.s")
 #endif
 
 void unref_80015860(struct GObjCommon *obj) {
@@ -1946,7 +1946,7 @@ void unref_80015A58(struct GObjCommon *obj) {
     // L80015BFC
 }
 #else
-#pragma GLOBAL_ASM("game/nonmatching/system_05/unref_80015A58.s")
+#pragma GLOBAL_ASM("game/nonmatching/sys/system_05/unref_80015A58.s")
 #endif
 
 void func_80015C0C(struct DObj *dobj) {
@@ -2117,7 +2117,7 @@ void unref_80015F6C(struct GObjCommon *obj) {
     // L800162AC
 }
 #else
-#pragma GLOBAL_ASM("game/nonmatching/system_05/unref_80015F6C.s")
+#pragma GLOBAL_ASM("game/nonmatching/sys/system_05/unref_80015F6C.s")
 #endif
 
 void unref_800162C8(struct GObjCommon *obj) {
@@ -2168,7 +2168,7 @@ void func_80016338(Gfx **dlist, struct OMCamera *cam, s32 arg2) {
     }
 }
 #else
-#pragma GLOBAL_ASM("game/nonmatching/system_05/func_80016338.s")
+#pragma GLOBAL_ASM("game/nonmatching/sys/system_05/func_80016338.s")
 #endif
 
 void func_8001663C(Gfx **dlist, struct OMCamera *cam, s32 arg2);
@@ -2227,17 +2227,17 @@ void func_8001663C(Gfx **dlist, struct OMCamera *cam, s32 arg2) {
     dlist[0] = csr;
 }
 #else
-#pragma GLOBAL_ASM("game/nonmatching/system_05/func_8001663C.s")
+#pragma GLOBAL_ASM("game/nonmatching/sys/system_05/func_8001663C.s")
 #endif
 
 #ifdef MIPS_TO_C
 #else
-#pragma GLOBAL_ASM("game/nonmatching/system_05/unref_80016AE4.s")
+#pragma GLOBAL_ASM("game/nonmatching/sys/system_05/unref_80016AE4.s")
 #endif
 
 #ifdef MIPS_TO_C
 #else
-#pragma GLOBAL_ASM("game/nonmatching/system_05/func_80016EDC.s")
+#pragma GLOBAL_ASM("game/nonmatching/sys/system_05/func_80016EDC.s")
 #endif
 
 void func_80017830(s32 val) {
@@ -2302,7 +2302,7 @@ void func_80017978(struct GObjCommon *obj, s32 idx, s32 arg2) {
     D_80046A88[idx].unk00 = D_8003B6E8.word;
 }
 #else
-#pragma GLOBAL_ASM("game/nonmatching/system_05/func_80017978.s")
+#pragma GLOBAL_ASM("game/nonmatching/sys/system_05/func_80017978.s")
 #endif
 
 void func_80017AAC(s32 idx) {
@@ -2447,7 +2447,7 @@ void func_80017EC0(struct GObjCommon *obj) {
     func_80017CC8(cam);
 }
 #else
-#pragma GLOBAL_ASM("game/nonmatching/system_05/func_80017EC0.s")
+#pragma GLOBAL_ASM("game/nonmatching/sys/system_05/func_80017EC0.s")
 #endif
 
 void unref_8001810C(void);
@@ -2494,7 +2494,7 @@ void unref_8001810C(void) {
     for (i = 1; i < ARRAY_COUNT(D_800465B0); i++) { D_800472B0[i] = ++D_800465B0[i]; }
 }
 #else
-#pragma GLOBAL_ASM("game/nonmatching/system_05/unref_8001810C.s")
+#pragma GLOBAL_ASM("game/nonmatching/sys/system_05/unref_8001810C.s")
 #endif
 
 #ifdef NON_MATCHING
@@ -2525,6 +2525,6 @@ void func_80018300(struct GObjCommon *obj) {
     gDPSetTexturePersp(D_800465B0[0]++, G_TP_PERSP);
 }
 #else
-#pragma GLOBAL_ASM("game/nonmatching/system_05/func_80018300.s")
+#pragma GLOBAL_ASM("game/nonmatching/sys/system_05/func_80018300.s")
 #endif
 #pragma GCC diagnostic pop

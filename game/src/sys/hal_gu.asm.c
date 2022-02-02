@@ -610,7 +610,7 @@ void hal_perspective_fast_f(
     }
 }
 #else
-#pragma GLOBAL_ASM("game/nonmatching/hal_gu/hal_perspective_fast_f.s")
+#pragma GLOBAL_ASM("game/nonmatching/sys/hal_gu/hal_perspective_fast_f.s")
 #endif
 
 void hal_perspective_fast(
@@ -687,7 +687,7 @@ void hal_perspective_f(
     }
 }
 #else
-#pragma GLOBAL_ASM("game/nonmatching/hal_gu/hal_perspective_f.s")
+#pragma GLOBAL_ASM("game/nonmatching/sys/hal_gu/hal_perspective_f.s")
 #endif
 
 void hal_perspective(Mtx *m, u16 *perspNorm, f32 fovy, f32 aspect, f32 near, f32 far, f32 scale) {
@@ -826,7 +826,7 @@ void hal_translate(Mtx *m, f32 x, f32 y, f32 z) {
 }
 
 #else
-#pragma GLOBAL_ASM("game/nonmatching/hal_gu/hal_translate.s")
+#pragma GLOBAL_ASM("game/nonmatching/sys/hal_gu/hal_translate.s")
 #endif
 
 // takes radians instead of degrees
@@ -1028,7 +1028,7 @@ void hal_rotate_rpy(Mtx *m, f32 r, f32 p, f32 h) {
     m->m[3][3] = COMBINE_FRACTIONAL(0, FTOFIX32(1.0f));
 }
 #else
-#pragma GLOBAL_ASM("game/nonmatching/hal_gu/hal_rotate_rpy.s")
+#pragma GLOBAL_ASM("game/nonmatching/sys/hal_gu/hal_rotate_rpy.s")
 #endif
 
 void hal_rotate_rpy_translate_f(Mtx4f *mf, f32 dx, f32 dy, f32 dz, f32 r, f32 p, f32 h) {
@@ -1109,7 +1109,7 @@ void hal_rotate_rpy_translate(Mtx *m, f32 dx, f32 dy, f32 dz, f32 r, f32 p, f32 
     m->m[3][3] = COMBINE_FRACTIONAL(e1, e2);
 }
 #else
-#pragma GLOBAL_ASM("game/nonmatching/hal_gu/hal_rotate_rpy_translate.s")
+#pragma GLOBAL_ASM("game/nonmatching/sys/hal_gu/hal_rotate_rpy_translate.s")
 #endif
 
 void hal_rotate_rpy_translate_scale_f(
@@ -1213,7 +1213,7 @@ void hal_rotate_rpy_translate_scale(
     m->m[3][3] = COMBINE_FRACTIONAL(e1, e2);
 }
 #else
-#pragma GLOBAL_ASM("game/nonmatching/hal_gu/hal_rotate_rpy_translate_scale.s")
+#pragma GLOBAL_ASM("game/nonmatching/sys/hal_gu/hal_rotate_rpy_translate_scale.s")
 #endif
 
 // pitch yaw roll; i think...

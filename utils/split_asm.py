@@ -74,11 +74,11 @@ def write_split_files(nm_dir, c_out, routines):
 
 def main():
     s_in = Path(sys.argv[1])
-    s_out = Path(sys.argv[2])
+    s_out_base = Path(sys.argv[2])
     c_out_dir = Path(sys.argv[3])
     
     input_filename = s_in.stem
-    s_out_dir = s_out / input_filename
+    s_out_dir = s_out_base / (c_out_dir.stem) / input_filename
     c_out_file = c_out_dir / s_in.with_suffix('.asm.c').name
 
     s_out_dir.mkdir(parents=True, exist_ok=True)

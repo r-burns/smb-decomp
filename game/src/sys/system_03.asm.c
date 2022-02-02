@@ -66,6 +66,6 @@ s32 func_8000ADB0(void (*defaultHandler)(struct MaybeCommonLink)) {
     return 0;
 }
 #else
-#pragma GLOBAL_ASM("game/nonmatching/system_03/func_8000ADB0.s")
+#pragma GLOBAL_ASM("game/nonmatching/sys/system_03/func_8000ADB0.s")
 #endif
 #pragma GCC diagnostic pop

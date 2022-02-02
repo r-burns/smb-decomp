@@ -202,7 +202,7 @@ struct Vec3f *func_80019438(struct Vec3f *arg0, struct Vec3f *arg1, f32 arg2) {
 }
 
 #else
-#pragma GLOBAL_ASM("game/nonmatching/sys_vec/func_80019438.s")
+#pragma GLOBAL_ASM("game/nonmatching/sys/sys_vec/func_80019438.s")
 #endif
 
 struct Vec3f *vec3_negate_by_axis(struct Vec3f *v, enum VectorAxisFlags flag) {
