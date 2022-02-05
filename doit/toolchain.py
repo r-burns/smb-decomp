@@ -118,6 +118,7 @@ class ToolChain:
             sys_cc = Compiler(['gcc'], ['-O2'])
             sys_cxx = CXX(['g++'], ['-O2'])
             system = SystemTools(sys_cc, sys_cxx, ['cpp'])
+            # todo: support arm64 debian linux by switch to arm-linux-gnueabihf with no -m32 flag
         else:
             raise Exception(f'Unsupported Host OS: {config.host}')
         # Configure cross toolchain for game
@@ -348,11 +349,7 @@ class MissingQemuIrix(Exception):
         super().__init__(self.message)
 
 def _which_gnu_prefix():
-    if which('mips-linux-gnu-ld') is not None:
-        return "mips-linux-gnu-"
-    elif which('mips64-linux-gnu-ld') is not None:
-        return "mips64-linux-gnu-"
-    elif which('mips64-elf-ld') is not None:
+    if which('mips64-elf-ld') is not None:
         return "mips64-elf-"
     else:
         raise MissingGNUToolchain()

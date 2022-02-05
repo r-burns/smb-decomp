@@ -1,6 +1,8 @@
 # Installation and Building
-## macOS
-### Step 1: Install Dependencies
+## Step 1: Install Dependencies
+### macOS
+The repo should be compatible with both `x84_64` and `arm64` macOS.
+
 [Install Rust (via rustup)](https://rustup.rs)
 
 [Install Homebrew](https://brew.sh)
@@ -13,72 +15,53 @@ Finally, install [doit](https://pydoit.org/) via Homebrew `pip3`
 
     pip3 install doit
 
-### Step 2: Copy Baserom(s) into Repo
+### Linux (Debian)
+[Install Rust (via rustup)](https://rustup.rs) - This repo will need the most recent stable version of Rust, so do not use the system `rustc` or `cargo`. (At least for now)
+
+Then install the universal debian dependencies:
+
+    sudo apt update
+    sudo apt install git build-essential libcapstone3 python3 python3-doit
+
+For `x86_64`, install gcc multilib. This allows for the system gcc to check the syntax of the 32bit game code
+
+    sudo apt install gcc-multilib
+
+For `arm64`, the system `gcc` does not support 32bit builds, so it cannot be used to check the syntax of the game code. Instead, install a 32bit compatible ARM toolchain
+
+    sudo apt install gcc-arm-linux-gnueabihf
+
+Finally, you need to build a copy of the `mips64-elf` GNU binutils. Right now, there is no `.deb` for this. There is a script in `utils` for "easy" building:
+
+    utils/build-posix64-toolchain.sh binutils output/location
+
+## Step 2: Copy Baserom(s) into Repo
 For each version of SSB64 you want to build, put that version's big-endian z64 ROM at `./baserom.{version}.z64`.
 The baserom is used for asset extraction.
 
-### Step 3: Build the ROM
+## Step 3: Build the ROM
 Use `doit` to build your desired version of SSB64:
 
     doit -n4 VERSION=us       # Build the NTSC-U version with 4 concurrent jobs
 
-## Linux
-```
-sudo apt install git build-essential binutils-mips-linux-gnu libcapstone3 python3 python3-doit
-```
-
-what to do about arm linux multilib? 
-
 # Build Options
 ## General `doit` Options
-### Concurrent Builds
-`-n {number of subprocesses}` 
+| flag       | description |
+|------------|-------------|
+| `-n {int}` | number of subprocesses | 
+| `help`     | print `doit`'s help |
 
-## CLI Config Options
+## CLI Config Defines
 These configuration options must go after any `doit` options and after any `doit` tasks
 
-### `VERSION`
-#### Options:
-* **us**
-
-Select the version of SSB64 to build. Currently, only the NSTC-U version is supported.
-
-#### Examples
-    doit -n8 VERSION=us
-
-### `NON_MATCHING`
-#### Options
-Enable this flag by setting it to `1`. 
-
-Sometimes, it is too hard or too annoying to exactly match the generated machine code from C. 
-In those cases, the original machine is used. When this flag is set, however, an equivalent (hopefully) C function is used.
-
-#### Examples
-    doit NON_MATCHING=1
-
-### `AVOID_UB`
-#### Options
-Enable this flag by setting it to `1`. 
-
-Some matching C code may contain the dreaded "undefined behavior" (aka UB). 
-By settings this flag, any known instances of UB code will be corrected or replaced with non-UB code. As the new, correctly-defined code will no longer be matching, enabling this flag will also enable `NON_MATCHING`.
-
-#### Examples
-    doit AVOID_UB=1
-
-### `TOOLCHAIN` and `LIBULTRA_TC`
-#### Options
-* **ido7.1** (default for `TOOLCHAIN`)
-* **ido5.3** (default for `LIBULTRA_TC`)
-* qemu-ido7.1
-* qemu-ido5.3
-
-### `QEMU_IRIX`
-Override the default system or environment qemu-irix
-
-#### Examples
-    doit QEMU_IRIX=/usr/opt/qemu/qemu-irix
-
+| define       | values | description |
+|--------------|--------|-------------|
+|`VERSION`     | us     | SSB64 version to build |
+|`NON_MATCHING`| 0, 1   | Use (hopefully) equivalent C code for unmatched functions |
+|`AVOID_UB`    | 0, 1   | Avoid any UB present in matched code; enables `NON_MATCHING` as well |
+|`TOOLCHAIN`   | ido7.1, ido5.3, qemu-ido7.1, qemu-ido5.3 | Set the MIPS cross compiler for game code |
+|`LIBULTRA_TC` | ido7.1, ido5.3, qemu-ido7.1, qemu-ido5.3 | Set the MIPS cross compiler for libultra code |
+|`QEMU_IRIX`   | path   | Use `path` as qemu-irix instead of binary in `PATH` |
 
 # Dependency Info
 * Rust
