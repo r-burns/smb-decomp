@@ -3,7 +3,7 @@
 #include "sys/obj_renderer.h"
 #include "sys/om.h"
 #include "sys/system_03.h"
-#include "sys/system_11.h"
+#include "sys/crash.h"
 
 #include <macros.h>
 

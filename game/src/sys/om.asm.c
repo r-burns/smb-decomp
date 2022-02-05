@@ -4,7 +4,7 @@
 #include "sys/obj_renderer.h"
 #include "sys/rdp_reset.h"
 #include "sys/system_03_1.h"
-#include "sys/system_11.h"
+#include "sys/crash.h"
 
 #include <macros.h>
 #include <ssb_types.h>

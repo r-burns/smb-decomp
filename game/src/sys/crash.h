@@ -1,5 +1,5 @@
-#ifndef SYS_SYSTEM_11_H
-#define SYS_SYSTEM_11_H
+#ifndef SYS_CRASH_H
+#define SYS_CRASH_H
 
 #include <PR/ultratypes.h>
 
@@ -12,4 +12,4 @@ struct GObjCommon *func_80022368(s32 link, u32 arg1, s32 arg2);
 void crash_printf(const char *fmt, ...);
 void func_80023778(void (*)(void));
 
-#endif /* SYS_SYSTEM_11_H */
+#endif /* SYS_CRASH_H */

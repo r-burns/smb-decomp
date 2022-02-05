@@ -2,7 +2,7 @@
 
 #include "scenemgr/scene_manager.h"
 #include "sys/dma.h"
-#include "sys/system_11.h"
+#include "sys/crash.h"
 
 #include <macros.h>
 #include <ssb_types.h>

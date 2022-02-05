@@ -11,7 +11,7 @@
 #include "sys/system_03_1.h"
 #include "sys/system_04.h"
 #include "sys/system_10.h"
-#include "sys/system_11.h"
+#include "sys/crash.h"
 #include "sys/thread6.h"
 
 #include <linkersegs.h>
