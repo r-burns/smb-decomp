@@ -15,8 +15,9 @@ struct ScreenSettings {
     /* 0x0C */ u16 *zBuffer;
     /* 0x10 */ u32 screenWidth;
     /* 0x14 */ u32 screenHeight;
-    /* 0x18 */ u32 unk18; // cycle mode info?
-};                        // size >= 0x18
+    // cycle mode info?
+    /* 0x18 */ u32 unk18;
+}; // size >= 0x18
 
 extern u16 *gZBuffer;
 // zbuffer pixel size?

@@ -88,7 +88,7 @@ let System = Command "system"
     , Obj "src/sys/hal_gu.asm.o"
     , Obj "src/sys/interpolation.asm.o"
     , Obj "asm/system/system_10.o"
-    , Obj "asm/system/crash.o"
+    , Obj "src/sys/crash.asm.o"
     , Libultra 
         [ "color.o"
         , "setattribute.o"
