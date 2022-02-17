@@ -1,8 +1,8 @@
 #include "ovl0/reloc_data_mgr.h"
 
 #include "scenemgr/scene_manager.h"
-#include "sys/dma.h"
 #include "sys/crash.h"
+#include "sys/dma.h"
 
 #include <macros.h>
 #include <ssb_types.h>
@@ -93,7 +93,7 @@ void add_to_status_buffer(RldmFileId id, void *startAddr) {
     if (idx >= (u32)sInternalBuf.statusBufCapacity) {
         while (TRUE) {
             fatal_printf("Relocatable Data Manager: Status Buffer is full !!\n");
-            func_800A3040();
+            scnmgr_crash_print_gobj_state();
         }
     }
 
@@ -109,7 +109,7 @@ void add_to_force_status_buffer(RldmFileId id, void *startAddr) {
     if (idx >= (u32)sInternalBuf.forceBufCapacity) {
         while (TRUE) {
             fatal_printf("Relocatable Data Manager: Force Status Buffer is full !!\n");
-            func_800A3040();
+            scnmgr_crash_print_gobj_state();
         }
     }
 
@@ -216,7 +216,7 @@ u32 external_bytes_needed_to_load(RldmFileId fileId) {
         while (TRUE) {
             fatal_printf(
                 "Relocatable Data Manager: External Data is over %d!!\n", sExternalFileIdCapacity);
-            func_800A3040();
+            scnmgr_crash_print_gobj_state();
         }
     }
     // L800CDADC
@@ -295,7 +295,7 @@ void *get_file_internal_buffer(RldmFileId fileId) {
     if (sInternalBuf.dataHeapEnd < endAllocFile) {
         while (TRUE) {
             fatal_printf("Relocatable Data Manager: Buffer is full !!\n");
-            func_800A3040();
+            scnmgr_crash_print_gobj_state();
         }
     }
     load_and_reloc_file(fileId, allocFile, fileSize, RLDM_LOCATION_STANDARD);

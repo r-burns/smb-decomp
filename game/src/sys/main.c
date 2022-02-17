@@ -1,10 +1,10 @@
 #include "sys/main.h"
 
 #include "scenemgr/scene_manager.h"
+#include "sys/crash.h"
 #include "sys/dma.h"
 #include "sys/gtl.h"
 #include "sys/system_10.h"
-#include "sys/crash.h"
 #include "sys/thread3.h"
 #include "sys/thread6.h"
 
@@ -60,7 +60,7 @@ u64 sThread3Stack[THREAD3_STACK_SIZE];
 OSThread sThread4;
 u8 sUnref800406E0[56];
 u64 sThread4Stack[THREAD4_STACK_SIZE];
-OSThread sThread5;
+OSThread gThread5;
 u8 sUkn80040E90[56];
 u64 sThread5Stack[THREAD5_STACK_SIZE];
 OSThread sThread6;
@@ -154,11 +154,11 @@ void thread5_main(UNUSED void *arg) {
 }
 
 void thread1_idle(void *arg) {
-    start_thread8();
+    start_thread8_rmon();
     osCreateThread(
-        &sThread5, 5, thread5_main, arg, sThread5Stack + THREAD5_STACK_SIZE, THREAD5_PRI);
+        &gThread5, 5, thread5_main, arg, sThread5Stack + THREAD5_STACK_SIZE, THREAD5_PRI);
     sThread5Stack[0] = STACK_PROBE_MAGIC;
-    if (!sNoThread5) { osStartThread(&sThread5); }
+    if (!sNoThread5) { osStartThread(&gThread5); }
     osSetThreadPri(NULL, OS_PRIORITY_IDLE);
 
     while (TRUE) { }

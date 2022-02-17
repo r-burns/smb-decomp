@@ -1,10 +1,10 @@
 #include "sys/om.h"
 
+#include "sys/crash.h"
 #include "sys/gtl.h"
 #include "sys/obj_renderer.h"
 #include "sys/rdp_reset.h"
 #include "sys/system_03_1.h"
-#include "sys/crash.h"
 
 #include <macros.h>
 #include <ssb_types.h>

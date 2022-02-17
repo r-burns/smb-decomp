@@ -59,11 +59,16 @@ union WeirdBytewise {
     u8 parts[4];
 };
 
+extern u32 D_8003B6E4;
 extern union WeirdBytewise D_8003B6E8;
 extern Gfx *D_800465B0[4];
 extern Gfx *D_800465C0[4];
 extern struct BumpAllocRegion gMatrixHeap;
 extern struct BumpAllocRegion gGeneralHeap;
+// Gfx *? Gfx
+extern u32 D_80046610;
+// Gfx *? Gfx
+extern u32 D_80046614;
 extern u16 D_80046626;
 extern u16 D_80046628;
 extern u32 gGtlTaskId;

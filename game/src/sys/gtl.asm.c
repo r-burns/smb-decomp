@@ -1,5 +1,6 @@
 #include "sys/gtl.h"
 
+#include "sys/crash.h"
 #include "sys/main.h"
 #include "sys/ml.h"
 #include "sys/om.h"
@@ -7,7 +8,6 @@
 #include "sys/system_00.h"
 #include "sys/system_03_1.h"
 #include "sys/system_04.h"
-#include "sys/crash.h"
 #include "sys/thread3.h"
 #include "sys/thread6.h"
 

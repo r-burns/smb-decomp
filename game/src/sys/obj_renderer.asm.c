@@ -2137,8 +2137,7 @@ void unref_800162C8(struct GObjCommon *obj) {
 }
 
 #ifdef NON_MATCHING
-// nonmatching: this looks right, but there is a not necessary divide by zero that is not being
-// elimated
+// nonmatching: there is an unnecessary divide by zero check that is not being eliminated
 void func_80016338(Gfx **dlist, struct OMCamera *cam, s32 arg2) {
     if ((arg2 == 0 || arg2 == 1) && !(cam->unk80 & 0x20)) {
         append_ucode_load(dlist, D_80046626);

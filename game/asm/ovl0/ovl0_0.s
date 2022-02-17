@@ -4126,7 +4126,7 @@ glabel func_ovl0_800C9A38
   .L800CB1AC:
   /* 046B8C 800CB1AC 0C008D89 */       jal fatal_printf
   /* 046B90 800CB1B0 02002025 */        or $a0, $s0, $zero
-  /* 046B94 800CB1B4 0C028C10 */       jal func_800A3040
+  /* 046B94 800CB1B4 0C028C10 */       jal scnmgr_crash_print_gobj_state
   /* 046B98 800CB1B8 00000000 */       nop 
   /* 046B9C 800CB1BC 1000FFFB */         b .L800CB1AC
   /* 046BA0 800CB1C0 00000000 */       nop 
@@ -4578,7 +4578,7 @@ glabel func_ovl0_800CB7D4
   /* 0471E0 800CB800 3C04800D */       lui $a0, %hi(D_ovl0_800D5E40)
   /* 0471E4 800CB804 0C008D89 */       jal fatal_printf
   /* 0471E8 800CB808 24845E40 */     addiu $a0, $a0, %lo(D_ovl0_800D5E40)
-  /* 0471EC 800CB80C 0C028C10 */       jal func_800A3040
+  /* 0471EC 800CB80C 0C028C10 */       jal scnmgr_crash_print_gobj_state
   /* 0471F0 800CB810 00000000 */       nop 
   /* 0471F4 800CB814 1000FFFA */         b .L800CB800
   /* 0471F8 800CB818 00000000 */       nop 

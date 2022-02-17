@@ -6,8 +6,8 @@ glabel func_800224C0
   /* 0230CC 800224CC 240B0007 */     addiu $t3, $zero, 7
   /* 0230D0 800224D0 27BDFFD0 */     addiu $sp, $sp, -0x30
   /* 0230D4 800224D4 01EB0019 */     multu $t7, $t3
-  /* 0230D8 800224D8 3C0D8004 */       lui $t5, %hi(D_8003CEFC)
-  /* 0230DC 800224DC 25ADCEFC */     addiu $t5, $t5, %lo(D_8003CEFC)
+  /* 0230D8 800224D8 3C0D8004 */       lui $t5, %hi(sCrashScreenGlyphs)
+  /* 0230DC 800224DC 25ADCEFC */     addiu $t5, $t5, %lo(sCrashScreenGlyphs)
   /* 0230E0 800224E0 AFBF0014 */        sw $ra, 0x14($sp)
   /* 0230E4 800224E4 AFA40030 */        sw $a0, 0x30($sp)
   /* 0230E8 800224E8 AFA50034 */        sw $a1, 0x34($sp)
