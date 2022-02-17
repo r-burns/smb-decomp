@@ -1949,7 +1949,7 @@ glabel func_8001FA00
   /* 020B5C 8001FF5C 03E00008 */        jr $ra
   /* 020B60 8001FF60 27BD0108 */     addiu $sp, $sp, 0x108
 
-glabel thread4
+glabel thread4_audio
   /* 020B64 8001FF64 27BDFF78 */     addiu $sp, $sp, -0x88
   /* 020B68 8001FF68 AFBF004C */        sw $ra, 0x4c($sp)
   /* 020B6C 8001FF6C 240E0002 */     addiu $t6, $zero, 2

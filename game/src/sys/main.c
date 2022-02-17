@@ -4,7 +4,7 @@
 #include "sys/crash.h"
 #include "sys/dma.h"
 #include "sys/gtl.h"
-#include "sys/system_10.h"
+#include "sys/hal_audio.h"
 #include "sys/thread3.h"
 #include "sys/thread6.h"
 
@@ -135,7 +135,8 @@ void thread5_main(UNUSED void *arg) {
     // clang-format on
     osRecvMesg(&gThreadingQueue, NULL, OS_MESG_BLOCK);
 
-    osCreateThread(&sThread4, 4, thread4, NULL, sThread4Stack + THREAD4_STACK_SIZE, THREAD4_PRI);
+    osCreateThread(
+        &sThread4, 4, thread4_audio, NULL, sThread4Stack + THREAD4_STACK_SIZE, THREAD4_PRI);
     // clang-format off
     sThread4Stack[0] = STACK_PROBE_MAGIC; osStartThread(&sThread4);
     // clang-format on
