@@ -20,6 +20,23 @@
 #include <PR/os_internal.h>
 #include <PR/ultratypes.h>
 
+// defines
+
+// The varargs functions in this file align the va_list
+// This might be due to a change in the va_list macro from 5.3 to 7.1
+// But, until that is known as a fact, only do the alignment when 
+// building for matching IDO code
+#if defined(__sgi) && !defined(NON_MATCHING)
+#define VA_LIST_ALIGN(ap, paramN) ((ap) = (va_list)ALIGN((uintptr_t)(ap), sizeof((paramN))))
+#else
+#define VA_LIST_ALIGN(ap, paramN)
+#endif
+
+#define HAL_CRASH_MSG_CPU_BREAK ((OSMesg)1)
+#define HAL_CRASH_MSG_FAULT     ((OSMesg)2)
+
+#define THREAD8_MAIN_HANG_PRI 105
+
 // data
 s32 D_8003CBB0 = 0;
 s32 D_8003CBB4 = 0;
@@ -93,7 +110,6 @@ u8 sAsciiToGlyphIdx[128] = {
     0x19, 0x1a, 0x1b, 0x1c, 0x1d, 0x1e, 0x1f, 0x20, 0x21, 0x22, 0x23, 0xff, 0xff, 0xff, 0xff, 0xff,
 };
 
-// Kirby64 says that this is a font
 // looks to be 7 wide by 6 tall?
 u32 sCrashScreenGlyphs[64] = {
     0x70871C30, 0x8988A250, 0x88808290, 0x88831C90, 0x888402F8, 0x88882210, 0x71CF9C10, 0xF9CF9C70,
@@ -503,11 +519,7 @@ void fb_printf(s32 ulx, s32 ulr, char *fmt, ...) {
     va_list ap;
 
     va_start(ap, fmt);
-    // there is an extra align on the va_list
-    // seems fishy, so only do when matching
-#if defined(__sgi) && !defined(NON_MATCHING)
-    ap = (va_list)ALIGN((uintptr_t)ap, sizeof(fmt));
-#endif
+    VA_LIST_ALIGN(ap, fmt);
     ans = _Printf(memcpy_advance, buf, fmt, ap);
     va_end(ap);
 
@@ -760,16 +772,10 @@ void debug_printf(const char *fmt, ...) {
     va_list ap;
 
     va_start(ap, fmt);
-    // move this to another macro
-#if defined(__sgi) && !defined(NON_MATCHING)
-    ap = (va_list)ALIGN((uintptr_t)ap, sizeof(fmt));
-#endif
+    VA_LIST_ALIGN(ap, fmt);
     fb_vprintf_with_newline(fmt, ap);
     va_end(ap);
 }
-
-#define HAL_CRASH_MSG_CPU_BREAK ((OSMesg)1)
-#define HAL_CRASH_MSG_FAULT     ((OSMesg)2)
 
 void cscreen_cpu_break_fault(UNUSED void *arg) {
     OSMesg msg[1];
@@ -885,7 +891,6 @@ void fileloader_thread8_crash(UNUSED void *arg) {
 #pragma GLOBAL_ASM("game/nonmatching/sys/crash/fileloader_thread8_crash.s")
 #endif
 
-#define THREAD8_MAIN_HANG_PRI 105
 void start_rmon_thread5_hang(void) {
     osCreateThread(
         &sT8Hang,
@@ -904,10 +909,7 @@ void fatal_printf(const char *fmt, ...) {
     va_list ap;
 
     va_start(ap, fmt);
-    // move this to another macro
-#if defined(__sgi) && !defined(NON_MATCHING)
-    ap = (va_list)ALIGN((uintptr_t)ap, sizeof(fmt));
-#endif
+    VA_LIST_ALIGN(ap, fmt);
 
     sActiveCrashScreen = TRUE;
     origPri            = osGetThreadPri(NULL);
