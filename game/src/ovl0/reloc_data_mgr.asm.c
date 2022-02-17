@@ -192,7 +192,7 @@ void load_and_reloc_file(RldmFileId fileId, void *ramDst, u32 nbytes, enum RldmF
     }
 }
 #else
-#pragma GLOBAL_ASM("game/nonmatching/sys/reloc_data_mgr/func_ovl0_800CD854.s")
+#pragma GLOBAL_ASM("game/nonmatching/ovl0/reloc_data_mgr/func_ovl0_800CD854.s")
 #endif
 
 u32 external_bytes_needed_to_load(RldmFileId fileId);
@@ -238,7 +238,7 @@ u32 external_bytes_needed_to_load(RldmFileId fileId) {
     return bytesRead;
 }
 #else
-#pragma GLOBAL_ASM("game/nonmatching/sys/reloc_data_mgr/func_ovl0_800CDA38.s")
+#pragma GLOBAL_ASM("game/nonmatching/ovl0/reloc_data_mgr/func_ovl0_800CDA38.s")
 #endif
 
 /// calc space needed to load `id`
@@ -303,7 +303,7 @@ void *get_file_internal_buffer(RldmFileId fileId) {
     return allocFile;
 }
 #else
-#pragma GLOBAL_ASM("game/nonmatching/sys/reloc_data_mgr/func_ovl0_800CDCAC.s")
+#pragma GLOBAL_ASM("game/nonmatching/ovl0/reloc_data_mgr/func_ovl0_800CDCAC.s")
 #endif
 
 void *get_file_external_force(RldmFileId fileId) {
