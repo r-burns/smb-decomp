@@ -24,7 +24,7 @@
 
 // The varargs functions in this file align the va_list
 // This might be due to a change in the va_list macro from 5.3 to 7.1
-// But, until that is known as a fact, only do the alignment when 
+// But, until that is known as a fact, only do the alignment when
 // building for matching IDO code
 #if defined(__sgi) && !defined(NON_MATCHING)
 #define VA_LIST_ALIGN(ap, paramN) ((ap) = (va_list)ALIGN((uintptr_t)(ap), sizeof((paramN))))
@@ -720,6 +720,9 @@ OSThread *get_faulted_thread(void) {
     return NULL;
 }
 
+/**
+ * Set a function to call when a crash screen is displayed
+ */
 void set_crash_print_fn(void (*fn)(void)) {
     sCrashPrintCB = fn;
 }
@@ -818,6 +821,9 @@ void cscreen_cpu_break_fault(UNUSED void *arg) {
     while (TRUE) { }
 }
 
+/**
+ * Start a debugging thread will crash on `OS_EVENT_CPU_BREAK` or `OS_EVENT_FAULT`
+ */
 void start_thread8_rmon(void) {
     osCreateMesgQueue(&sMQCpuFault, sMesgCpuFault, ARRAY_COUNT(sMesgCpuFault));
     osCreateThread(
@@ -891,6 +897,9 @@ void fileloader_thread8_crash(UNUSED void *arg) {
 #pragma GLOBAL_ASM("game/nonmatching/sys/crash/fileloader_thread8_crash.s")
 #endif
 
+/**
+ * Start a debugging thread that checks for hangs in thread5 (maybe?)
+ */
 void start_rmon_thread5_hang(void) {
     osCreateThread(
         &sT8Hang,
@@ -902,6 +911,12 @@ void start_rmon_thread5_hang(void) {
     osStartThread(&sT8Hang);
 }
 
+/**
+ * Print a crash message to the framebuffer.
+ *
+ * This will only show the message if the correct button sequence is entered.
+ * This does not loop, so you could recover after printing a message.
+ */
 void fatal_printf(const char *fmt, ...) {
     void *fb;
     OSPri origPri;
@@ -937,6 +952,13 @@ void fatal_printf(const char *fmt, ...) {
     sActiveCrashScreen = FALSE;
 }
 
+/**
+ * Show a crash screen and call `printFn` to print to the crash screen
+ *
+ * `printFn` is a wrapper function with calls to `debug_printf` for printing.
+ * Note that unlike the other crash screens functions, this will show the crash screen
+ * without having to enter a button sequence on a controller
+ */
 void fatal_print_func(void (*printFn)(void)) {
     OSPri origPri;
     void *fb;
