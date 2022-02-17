@@ -56,6 +56,20 @@ def task_rust_tools():
         'targets': rust_tools
     }
 
+# n64crc tool
+n64crc_src = config.tools / 'n64crc.c'
+n64crc = n64crc_src.with_suffix('')
+
+def task_n64crc():
+    ''' Build the n64crc tool '''
+    flags = ['-Wall', '-Wextra', '-pedantic', '-O3']
+
+    return {
+        'actions': [tc.system.c.CC + flags + ['-o', n64crc, n64crc_src]],
+        'targets': [n64crc],
+        'file_dep': [n64crc_src],
+    }
+
 # Libultra 64bit mips3 Patcher
 patcher_src = config.tools / 'patch_libultra_math.c'
 patcher = patcher_src.with_suffix('')
@@ -209,6 +223,7 @@ def task_distclean():
         'actions': [
             f'rm -rf {config.all_builds}',
             f'rm -rf {patcher}',
+            f'rm -rf {n64crc}',
             f'cargo clean --manifest-path {rust_manifest}',
         ],
         'task_dep': [
@@ -353,7 +368,7 @@ def task_build_rom():
         '-u', 'spScale',
     ]
  
-    link_rom = binutils.LD + [
+    link_elf = binutils.LD + [
         '--no-check-sections', 
         '-Map', rom_map, 
         '-T', ssb_lds, 
@@ -372,9 +387,11 @@ def task_build_rom():
         rom_elf, rom
     ]
 
+    crc_rom = [n64crc, rom]
+
     return { 
-        'actions': [link_rom, copy_rom],
-        'file_dep': linking_deps,
+        'actions': [link_elf, copy_rom, crc_rom],
+        'file_dep': linking_deps + [n64crc],
         'task_dep': [
             'assemble',
             'cc', 
