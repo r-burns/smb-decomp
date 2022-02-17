@@ -402,7 +402,7 @@ checksum = "62aca2aba2d62b4a7f5b33f3712cb1b0692779a56fb510499d5c0aa594daeaf3"
 
 [[package]]
 name = "halld"
-version = "0.2.0"
+version = "0.2.1"
 dependencies = [
  "anyhow",
  "base16ct",
