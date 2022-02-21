@@ -69,7 +69,7 @@ let Boot = Command "boot"
     , CustomObj "asm/boot/boot.o" [ Section.Text, Section.Data ]
     ]
 let System = Command "system"
-    [ Obj "asm/system/entry.o"
+    [ Obj "asm/entry.o"
     , Obj "src/sys/main.o"
     , Obj "src/sys/thread3.asm.o"
     , Obj "src/sys/dma.asm.o"
