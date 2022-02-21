@@ -11419,47 +11419,47 @@ glabel n_alSynSetVol
 .section .data
 
 glabel D_8003D080
-  .incbin "system.raw.bin", 0x3CC80, 0x68
+  .incbin "libultra.raw.bin", 0x3CC80, 0x68
 
 glabel D_8003D0E8
-  .incbin "system.raw.bin", 0x3CCE8, 0x88
+  .incbin "libultra.raw.bin", 0x3CCE8, 0x88
 
 glabel D_8003D170
-  .incbin "system.raw.bin", 0x3CD70, 0x28
+  .incbin "libultra.raw.bin", 0x3CD70, 0x28
 
 glabel D_8003D198
-  .incbin "system.raw.bin", 0x3CD98, 0x28
+  .incbin "libultra.raw.bin", 0x3CD98, 0x28
 
 glabel D_8003D1C0
-  .incbin "system.raw.bin", 0x3CDC0, 0x28
+  .incbin "libultra.raw.bin", 0x3CDC0, 0x28
 
 glabel D_8003D1E8
-  .incbin "system.raw.bin", 0x3CDE8, 0x28
+  .incbin "libultra.raw.bin", 0x3CDE8, 0x28
 
 glabel D_8003D210
-  .incbin "system.raw.bin", 0x3CE10, 0xFE
+  .incbin "libultra.raw.bin", 0x3CE10, 0xFE
 
 glabel D_8003D30E
-  .incbin "system.raw.bin", 0x3CF0E, 0x2
+  .incbin "libultra.raw.bin", 0x3CF0E, 0x2
 
 glabel D_8003D310
-  .incbin "system.raw.bin", 0x3CF10, 0x4
+  .incbin "libultra.raw.bin", 0x3CF10, 0x4
 
 glabel D_8003D314
-  .incbin "system.raw.bin", 0x3CF14, 0x4
+  .incbin "libultra.raw.bin", 0x3CF14, 0x4
 
 glabel D_8003D318
   /* 3CF18 03DF18 8003D318 */
   .4byte 0x3f800000 # .float 1.0
 
 glabel D_8003D31C
-  .incbin "system.raw.bin", 0x3CF1C, 0x4
+  .incbin "libultra.raw.bin", 0x3CF1C, 0x4
 
 glabel D_8003D320
-  .incbin "system.raw.bin", 0x3CF20, 0x4
+  .incbin "libultra.raw.bin", 0x3CF20, 0x4
 
 glabel D_8003D324
-  .incbin "system.raw.bin", 0x3CF24, 0xC
+  .incbin "libultra.raw.bin", 0x3CF24, 0xC
 
 .section .rodata
 
@@ -11676,7 +11676,7 @@ glabel D_8003EB54
 glabel D_8003EB74
   /* 3E774 03F774 8003EB74 */
   .4byte 0x477fff00 # .float 65535.0
-  .incbin "system.raw.bin", 0x3E778, 0x4
+  .incbin "libultra.raw.bin", 0x3E778, 0x4
 
 glabel jtbl_8003EB7C
   /* 3E77C 03F77C 8003EB7C */  .4byte jtgt_8002A7F0
@@ -11905,7 +11905,7 @@ glabel jtbl_8003EE7C
 glabel D_8003EE94
   /* 3EA94 03FA94 8003EE94 */
   .4byte 0x482910da # .float 173123.4
-  .incbin "system.raw.bin", 0x3EA98, 0x8
+  .incbin "libultra.raw.bin", 0x3EA98, 0x8
 
 glabel jtbl_8003EEA0
   /* 3EAA0 03FAA0 8003EEA0 */  .4byte jtgt_8002E8B8
@@ -12058,7 +12058,7 @@ glabel D_8003F078
 glabel D_8003F0D8
   /* 3ECD8 03FCD8 8003F0D8 */
   .4byte 0x48f42400 # .float 500000.0
-  .incbin "system.raw.bin", 0x3ECDC, 0x4
+  .incbin "libultra.raw.bin", 0x3ECDC, 0x4
 
 .section .bss
 

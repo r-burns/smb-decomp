@@ -3,10 +3,10 @@
 .section .data
 
 glabel D_8003D620
-  .incbin "system.raw.bin", 0x3D220, 0x1C
+  .incbin "libultra.raw.bin", 0x3D220, 0x1C
 
 glabel D_8003D63C
-  .incbin "system.raw.bin", 0x3D23C, 0x4
+  .incbin "libultra.raw.bin", 0x3D23C, 0x4
 
 .section .bss
 .balign 16

@@ -8,10 +8,10 @@
 .section .data
 
 glabel D_8003D070
-  .incbin "system.raw.bin", 0x3CC70, 0x4
+  .incbin "libultra.raw.bin", 0x3CC70, 0x4
 
 glabel D_8003D074
-  .incbin "system.raw.bin", 0x3CC74, 0xC
+  .incbin "libultra.raw.bin", 0x3CC74, 0xC
 
 
 .section .rodata
@@ -27,7 +27,7 @@ glabel D_8003E864
 glabel D_8003E868
   /* 3E468 03F468 8003E868 */
   .4byte 0x3f7ff972 # .float 0.9999
-  .incbin "system.raw.bin", 0x3E46C, 0x4
+  .incbin "libultra.raw.bin", 0x3E46C, 0x4
 
 .section .bss
 

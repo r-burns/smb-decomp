@@ -3,13 +3,13 @@
 .section .data
 
 glabel D_8003D5D0
-  .incbin "system.raw.bin", 0x3D1D0, 0x4
+  .incbin "libultra.raw.bin", 0x3D1D0, 0x4
 
 glabel D_8003D5D4
-  .incbin "system.raw.bin", 0x3D1D4, 0xC
+  .incbin "libultra.raw.bin", 0x3D1D4, 0xC
 
 glabel D_8003D5E0
-  .incbin "system.raw.bin", 0x3D1E0, 0x10
+  .incbin "libultra.raw.bin", 0x3D1E0, 0x10
 
 .section .bss
 .align 4

@@ -91,6 +91,7 @@ game/asm/ovl7/ovl7.raw.bin
 game/asm/ovl8/ovl8.raw.bin
 game/asm/ovl9/ovl9.raw.bin
 game/asm/system/system.raw.bin
+game/asm/ultra/libultra.raw.bin
 game/audio/tempbins/B1_sounds1.ctl
 game/audio/tempbins/B1_sounds1.tbl
 game/audio/tempbins/B1_sounds2.ctl

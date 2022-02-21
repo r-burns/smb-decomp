@@ -94,14 +94,14 @@ let System = Command "system"
         , "setattribute.o"
         --, "sprite.o" Minor reordering to fix
         ]
-    , Obj "asm/system/sprite.o"
+    , Obj "asm/ultra/sprite.o"
     , Libultra 
         [ "clearattribute.o"
         , "hide.o"
         , "show.o"
         , "spscale.o"
         ]
-    , Obj "asm/system/audio.o"
+    , Obj "asm/ultra/audio.o"
     , Libultra 
         [ "vimodepallan1.o"
         , "sendmesg.o"
@@ -116,25 +116,25 @@ let System = Command "system"
         , "thread.o"
         , "bzero.o"
         ]
-    , Obj "asm/system/motor.o"
+    , Obj "asm/ultra/motor.o"
     , Libultra 
         [ "siacs.o"
         , "controller.o"
         , "createthread.o"
         ]
-    , Obj "asm/system/contreaddata.o"
+    , Obj "asm/ultra/contreaddata.o"
     , Libultra
         [ "virtualtophysical.o"
         , "writebackdcache.o"
         , "initialize.o"
         , "kdebugserver.o"
         ]
-    , Obj "asm/system/createspeedparam.o"
-    , Obj "asm/system/romhandles.o"
+    , Obj "asm/ultra/createspeedparam.o"
+    , Obj "asm/ultra/romhandles.o"
     , Libultra 
         [ "pirawread.o"
         ]
-    , Obj "asm/system/libultra.nops1.o"
+    , Obj "asm/ultra/libultra.nops1.o"
     , Libultra 
         [ "setsr.o"
         , "getsr.o"
@@ -151,7 +151,7 @@ let System = Command "system"
         , "pimgr.o"
         , "piacs.o"
         ]
-    , Obj "asm/system/libultra.nops2.o"
+    , Obj "asm/ultra/libultra.nops2.o"
     , Libultra
         [ "devmgr.o"
         , "pirawdma.o"
@@ -175,7 +175,7 @@ let System = Command "system"
         , "viswapbuf.o"
         , "mtxcatf.o"
         ]
-    , Obj "asm/system/epirawdma.o"
+    , Obj "asm/ultra/epirawdma.o"
     , Libultra 
         [ "sptaskyielded.o"
         , "gettime.o"
@@ -202,23 +202,23 @@ let System = Command "system"
         , "pfsselectbank.o"
         , "setfpccsr.o"
         ]
-    , Obj "asm/system/epirawread.o"
+    , Obj "asm/ultra/epirawread.o"
     , Libultra 
         [ "yieldthread.o"
         , "cents2ratio.o"
         ]
-    , Obj "asm/system/contramwrite.o"
-    , Obj "asm/system/pfsgetstatus.o"
-    , Obj "asm/system/contpfs.o"
+    , Obj "asm/ultra/contramwrite.o"
+    , Obj "asm/ultra/pfsgetstatus.o"
+    , Obj "asm/ultra/contpfs.o"
     , Libultra 
         [ "bcmp.o"
         ]
-    , Obj "asm/system/contramread.o"
-    , Obj "asm/system/crc.o"
+    , Obj "asm/ultra/contramread.o"
+    , Obj "asm/ultra/crc.o"
     , Libultra 
         [ "pfsisplug.o"
         ]
-    , Obj "asm/system/epirawwrite.o"
+    , Obj "asm/ultra/epirawwrite.o"
     , Libultra 
         [ "settimer.o"
         , "xldtob.o"
@@ -230,8 +230,8 @@ let System = Command "system"
         , "spsetstat.o"
         , "spgetstat.o"
         ]
-    , Obj "asm/system/libultra.nops3.o"
-    , Obj "asm/system/vimgr.o"
+    , Obj "asm/ultra/libultra.nops3.o"
+    , Obj "asm/ultra/vimgr.o"
     , Libultra
         [ "vigetcurrcontext.o"
         , "writebackdcacheall.o"
@@ -245,7 +245,7 @@ let System = Command "system"
         , "setwatchlo.o"
         ]
     , CustomObj "asm/system/unknown.rodata.o" [ Section.Rodata ]
-    , Obj "asm/system/rsp.o"
+    , Obj "asm/ultra/rsp.o"
     ]
 let LoadOvl = Command "scenemgr" 
     [ Obj "src/scenemgr/timestamp.o"

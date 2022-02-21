@@ -9,21 +9,21 @@
 
 .balign 16
 glabel D_800396C0 #F3DEX boot?
-  .incbin "system.raw.bin", 0x392C0, 0xC60
+  .incbin "libultra.raw.bin", 0x392C0, 0xC60
 
 # F3DEX fifo 2.04H
 glabel gspF3DEX2_fifoTextStart 
-  .incbin "system.raw.bin", 0x39F20, 0x1390
+  .incbin "libultra.raw.bin", 0x39F20, 0x1390
 .balign 16
 glabel gspF3DEX2_fifoTextEnd
 
 .section .rodata
 
 .balign 16
-# F3DEX2 data @ 0x3F2B0 in system.raw.bin
+# F3DEX2 data @ 0x3F2B0 in libultra.raw.bin
 #   end + 0x420 => 0x3F6D0
 # audio after?
 glabel gspF3DEX2_fifoDataStart
-  .incbin "system.raw.bin", 0x3F2B0, 0x420
+  .incbin "libultra.raw.bin", 0x3F2B0, 0x420
 .balign 16
 glabel gspF3DEX2_fifoDataEnd
