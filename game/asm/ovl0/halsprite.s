@@ -428,6 +428,7 @@ glabel func_ovl0_800CE1DC
   /* 049BF0 800CE210 03E00008 */        jr $ra
   /* 049BF4 800CE214 00000000 */       nop 
 
+glabel unref_ovl0_800CE218
   /* 049BF8 800CE218 27BDFFE8 */     addiu $sp, $sp, -0x18
   /* 049BFC 800CE21C AFA40018 */        sw $a0, 0x18($sp)
   /* 049C00 800CE220 8FAE0018 */        lw $t6, 0x18($sp)
@@ -630,8 +631,8 @@ glabel func_ovl0_800CE418
   /* 049EBC 800CE4DC 03E00008 */        jr $ra
   /* 049EC0 800CE4E0 27BD0020 */     addiu $sp, $sp, 0x20
 
-# render sprite bank sprite?
 glabel func_ovl0_800CE4E4
+# render sprite bank sprite?
   /* 049EC4 800CE4E4 3C08800D */       lui $t0, %hi(D_ovl0_800D6350)
   /* 049EC8 800CE4E8 25086350 */     addiu $t0, $t0, %lo(D_ovl0_800D6350)
   /* 049ECC 800CE4EC 8D030000 */        lw $v1, ($t0) # D_ovl0_800D6350 + 0
@@ -761,8 +762,8 @@ glabel func_ovl0_800CE4E4
   /* 04A090 800CE6B0 03E00008 */        jr $ra
   /* 04A094 800CE6B4 00000000 */       nop 
 
-# copy sprite bank struct onto stack
 glabel func_ovl0_800CE6B8
+# copy sprite bank struct onto stack
   /* 04A098 800CE6B8 30A20007 */      andi $v0, $a1, 7
   /* 04A09C 800CE6BC 27BDFFB0 */     addiu $sp, $sp, -0x50
   /* 04A0A0 800CE6C0 28410008 */      slti $at, $v0, 8
@@ -1088,6 +1089,7 @@ glabel func_ovl0_800CEA40
   /* 04A528 800CEB48 03E00008 */        jr $ra
   /* 04A52C 800CEB4C 00000000 */       nop 
 
+glabel unref_ovl0_800CEB50
   /* 04A530 800CEB50 27BDFFD8 */     addiu $sp, $sp, -0x28
   /* 04A534 800CEB54 AFB30020 */        sw $s3, 0x20($sp)
   /* 04A538 800CEB58 AFB2001C */        sw $s2, 0x1c($sp)
@@ -1361,8 +1363,8 @@ glabel func_ovl0_800CEEB8
   /* 04A924 800CEF44 03E00008 */        jr $ra
   /* 04A928 800CEF48 00000000 */       nop 
 
-# read sprite bank commands? byte code?
 glabel func_ovl0_800CEF4C
+# read sprite bank commands? byte code?
   /* 04A92C 800CEF4C 27BDFF58 */     addiu $sp, $sp, -0xa8
   /* 04A930 800CEF50 AFBF0024 */        sw $ra, 0x24($sp)
   /* 04A934 800CEF54 AFB30020 */        sw $s3, 0x20($sp)
@@ -5233,6 +5235,7 @@ glabel func_ovl0_800D0D34
   /* 04E0F8 800D2718 03E00008 */        jr $ra
   /* 04E0FC 800D271C 27BD02E0 */     addiu $sp, $sp, 0x2e0
 
+glabel unref_ovl0_800D2720
   /* 04E100 800D2720 18800006 */      blez $a0, .L800D273C
   /* 04E104 800D2724 28810009 */      slti $at, $a0, 9
   /* 04E108 800D2728 10200004 */      beqz $at, .L800D273C
@@ -5244,6 +5247,7 @@ glabel func_ovl0_800D0D34
   /* 04E11C 800D273C 03E00008 */        jr $ra
   /* 04E120 800D2740 00000000 */       nop 
 
+glabel unref_ovl0_800D2744
   /* 04E124 800D2744 3C01800D */       lui $at, %hi(D_ovl0_800D5D50)
   /* 04E128 800D2748 A0245D50 */        sb $a0, %lo(D_ovl0_800D5D50)($at)
   /* 04E12C 800D274C 3C01800D */       lui $at, %hi(D_ovl0_800D5D54)
@@ -6250,8 +6254,8 @@ glabel func_ovl0_800D353C
   /* 04EFB4 800D35D4 03E00008 */        jr $ra
   /* 04EFB8 800D35D8 00000000 */       nop 
 
-# render sprite info?
 glabel func_ovl0_800D35DC
+# render sprite info?
   /* 04EFBC 800D35DC 30820007 */      andi $v0, $a0, 7
   /* 04EFC0 800D35E0 27BDFFD0 */     addiu $sp, $sp, -0x30
   /* 04EFC4 800D35E4 28410008 */      slti $at, $v0, 8
@@ -6502,6 +6506,7 @@ glabel func_ovl0_800D3884
   /* 04F350 800D3970 03E00008 */        jr $ra
   /* 04F354 800D3974 00000000 */       nop 
 
+glabel unref_ovl0_800D3978
   /* 04F358 800D3978 27BDFFE0 */     addiu $sp, $sp, -0x20
   /* 04F35C 800D397C AFB00014 */        sw $s0, 0x14($sp)
   /* 04F360 800D3980 3C10800D */       lui $s0, %hi(D_ovl0_800D639C)
@@ -6523,6 +6528,7 @@ glabel func_ovl0_800D3884
   /* 04F398 800D39B8 03E00008 */        jr $ra
   /* 04F39C 800D39BC 27BD0020 */     addiu $sp, $sp, 0x20
 
+glabel unref_ovl0_800D39C0
   /* 04F3A0 800D39C0 3C01800D */       lui $at, %hi(D_ovl0_800D6444)
   /* 04F3A4 800D39C4 AC246444 */        sw $a0, %lo(D_ovl0_800D6444)($at)
   /* 04F3A8 800D39C8 3C01800D */       lui $at, %hi(D_ovl0_800D6440)
@@ -6683,6 +6689,7 @@ glabel func_ovl0_800D39D4
   /* 04F5D4 800D3BF4 03E00008 */        jr $ra
   /* 04F5D8 800D3BF8 27BD0048 */     addiu $sp, $sp, 0x48
 
+glabel unref_ovl0_800D3BFC
   /* 04F5DC 800D3BFC 27BDFFE8 */     addiu $sp, $sp, -0x18
   /* 04F5E0 800D3C00 AFBF0014 */        sw $ra, 0x14($sp)
   /* 04F5E4 800D3C04 00803025 */        or $a2, $a0, $zero
@@ -6695,6 +6702,7 @@ glabel func_ovl0_800D39D4
   /* 04F600 800D3C20 03E00008 */        jr $ra
   /* 04F604 800D3C24 00000000 */       nop 
 
+glabel unref_ovl0_800D3C28
   /* 04F608 800D3C28 27BDFFE8 */     addiu $sp, $sp, -0x18
   /* 04F60C 800D3C2C AFBF0014 */        sw $ra, 0x14($sp)
   /* 04F610 800D3C30 00803025 */        or $a2, $a0, $zero
@@ -6707,6 +6715,7 @@ glabel func_ovl0_800D39D4
   /* 04F62C 800D3C4C 03E00008 */        jr $ra
   /* 04F630 800D3C50 00000000 */       nop 
 
+glabel unref_ovl0_800D3C54
   /* 04F634 800D3C54 27BDFFD8 */     addiu $sp, $sp, -0x28
   /* 04F638 800D3C58 AFBF0024 */        sw $ra, 0x24($sp)
   /* 04F63C 800D3C5C AFB20020 */        sw $s2, 0x20($sp)
@@ -6748,6 +6757,7 @@ glabel func_ovl0_800D39D4
   /* 04F6B8 800D3CD8 03E00008 */        jr $ra
   /* 04F6BC 800D3CDC 27BD0028 */     addiu $sp, $sp, 0x28
 
+glabel unref_ovl0_800D3CE0
   /* 04F6C0 800D3CE0 27BDFFF0 */     addiu $sp, $sp, -0x10
   /* 04F6C4 800D3CE4 F7B40008 */      sdc1 $f20, 8($sp)
   /* 04F6C8 800D3CE8 3C03800D */       lui $v1, %hi(D_ovl0_800D6358)
@@ -6787,6 +6797,7 @@ glabel func_ovl0_800D39D4
   /* 04F73C 800D3D5C 03E00008 */        jr $ra
   /* 04F740 800D3D60 27BD0010 */     addiu $sp, $sp, 0x10
 
+glabel unref_ovl0_800D3D64
   /* 04F744 800D3D64 00057080 */       sll $t6, $a1, 2
   /* 04F748 800D3D68 3C02800D */       lui $v0, %hi(D_ovl0_800D6358)
   /* 04F74C 800D3D6C 004E1021 */      addu $v0, $v0, $t6
@@ -6827,6 +6838,7 @@ glabel func_ovl0_800D39D4
   /* 04F7C0 800D3DE0 03E00008 */        jr $ra
   /* 04F7C4 800D3DE4 00000000 */       nop 
 
+glabel unref_ovl0_800D3DE8
   /* 04F7C8 800D3DE8 00057080 */       sll $t6, $a1, 2
   /* 04F7CC 800D3DEC 3C02800D */       lui $v0, %hi(D_ovl0_800D6358)
   /* 04F7D0 800D3DF0 004E1021 */      addu $v0, $v0, $t6
