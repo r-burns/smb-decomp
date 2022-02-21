@@ -571,7 +571,7 @@ void fb_print_fcsr(u32 fcsr) {
     }
 }
 
-s32 wait_for_buttons_or_fb(s32 buttonInput, void *fb) {
+s32 wait_for_fb_or_buttons(s32 buttonInput, void *fb) {
     while (TRUE) {
         wait_ms(16);
         update_contdata();
@@ -601,8 +601,8 @@ void fb_print_thread_state(OSThread *t, s32 showThreadSummary) {
         fb_printf(30, 25, "THREAD:%d  (%s)", t->id, sCPUExceptionCauses[adjustedCause]);
         fb_printf(30, 35, "PC:%08XH   SR:%08XH   VA:%08XH", ctx->pc, ctx->sr, ctx->badvaddr);
         osWritebackDCacheAll();
-        wait_for_buttons_or_fb(0, NULL);
-        wait_for_buttons_or_fb(Z_TRIG | L_TRIG | R_TRIG, NULL);
+        wait_for_fb_or_buttons(0, NULL);
+        wait_for_fb_or_buttons(Z_TRIG | L_TRIG | R_TRIG, NULL);
     }
 
     // register dump
@@ -638,8 +638,8 @@ void fb_print_thread_state(OSThread *t, s32 showThreadSummary) {
     fb_print_fp_reg(210, 210, 28, &ctx->fp28.f.f_even);
     fb_print_fp_reg(30, 220, 30, &ctx->fp30.f.f_even);
     osWritebackDCacheAll();
-    wait_for_buttons_or_fb(0, NULL);
-    wait_for_buttons_or_fb(Z_TRIG | L_TRIG | R_TRIG, NULL);
+    wait_for_fb_or_buttons(0, NULL);
+    wait_for_fb_or_buttons(Z_TRIG | L_TRIG | R_TRIG, NULL);
 
     // stack dump
     fb_draw_black_rect(25, 20, 270, 210);
@@ -793,27 +793,27 @@ void cscreen_cpu_break_fault(UNUSED void *arg) {
 
     sActiveCrashScreen = TRUE;
 
-    wait_for_buttons_or_fb(0, NULL);
-    wait_for_buttons_or_fb(Z_TRIG | L_TRIG | R_TRIG, NULL);
-    wait_for_buttons_or_fb(0, NULL);
-    wait_for_buttons_or_fb(U_JPAD | U_CBUTTONS, NULL);
-    wait_for_buttons_or_fb(0, NULL);
-    wait_for_buttons_or_fb(A_BUTTON | L_JPAD, NULL);
-    wait_for_buttons_or_fb(0, NULL);
-    wait_for_buttons_or_fb(B_BUTTON | R_JPAD, NULL);
-    wait_for_buttons_or_fb(0, NULL);
-    wait_for_buttons_or_fb(D_JPAD | D_CBUTTONS, NULL);
+    wait_for_fb_or_buttons(0, NULL);
+    wait_for_fb_or_buttons(Z_TRIG | L_TRIG | R_TRIG, NULL);
+    wait_for_fb_or_buttons(0, NULL);
+    wait_for_fb_or_buttons(U_JPAD | U_CBUTTONS, NULL);
+    wait_for_fb_or_buttons(0, NULL);
+    wait_for_fb_or_buttons(A_BUTTON | L_JPAD, NULL);
+    wait_for_fb_or_buttons(0, NULL);
+    wait_for_fb_or_buttons(B_BUTTON | R_JPAD, NULL);
+    wait_for_fb_or_buttons(0, NULL);
+    wait_for_fb_or_buttons(D_JPAD | D_CBUTTONS, NULL);
     fb_print_thread_state(t, TRUE);
 
     if (sCrashPrintCB) {
         while (TRUE) {
-            wait_for_buttons_or_fb(0, NULL);
-            wait_for_buttons_or_fb(Z_TRIG | L_TRIG | R_TRIG, NULL);
+            wait_for_fb_or_buttons(0, NULL);
+            wait_for_fb_or_buttons(Z_TRIG | L_TRIG | R_TRIG, NULL);
             fb_draw_black_rect(25, 20, 270, 210);
             reset_crashmesg_cursor(30, 25);
             sCrashPrintCB();
-            wait_for_buttons_or_fb(0, NULL);
-            wait_for_buttons_or_fb(Z_TRIG | L_TRIG | R_TRIG, NULL);
+            wait_for_fb_or_buttons(0, NULL);
+            wait_for_fb_or_buttons(Z_TRIG | L_TRIG | R_TRIG, NULL);
             fb_print_thread_state(t, FALSE);
         }
     }
@@ -868,27 +868,27 @@ void fileloader_thread8_crash(UNUSED void *arg) {
         origPri            = osGetThreadPri(NULL);
         osSetThreadPri(NULL, OS_PRIORITY_RMON);
 
-        wait_for_buttons_or_fb(0, NULL);
-        wait_for_buttons_or_fb(Z_TRIG | L_TRIG | R_TRIG, NULL);
-        wait_for_buttons_or_fb(0, NULL);
-        wait_for_buttons_or_fb(U_JPAD | U_CBUTTONS, NULL);
-        wait_for_buttons_or_fb(0, NULL);
-        wait_for_buttons_or_fb(A_BUTTON | L_JPAD, NULL);
-        wait_for_buttons_or_fb(0, NULL);
-        wait_for_buttons_or_fb(B_BUTTON | R_JPAD, NULL);
-        wait_for_buttons_or_fb(0, NULL);
-        wait_for_buttons_or_fb(D_JPAD | D_CBUTTONS, NULL);
+        wait_for_fb_or_buttons(0, NULL);
+        wait_for_fb_or_buttons(Z_TRIG | L_TRIG | R_TRIG, NULL);
+        wait_for_fb_or_buttons(0, NULL);
+        wait_for_fb_or_buttons(U_JPAD | U_CBUTTONS, NULL);
+        wait_for_fb_or_buttons(0, NULL);
+        wait_for_fb_or_buttons(A_BUTTON | L_JPAD, NULL);
+        wait_for_fb_or_buttons(0, NULL);
+        wait_for_fb_or_buttons(B_BUTTON | R_JPAD, NULL);
+        wait_for_fb_or_buttons(0, NULL);
+        wait_for_fb_or_buttons(D_JPAD | D_CBUTTONS, NULL);
         fb_print_thread_state(&gThread5, TRUE);
         if (sCrashPrintCB) {
-            wait_for_buttons_or_fb(0, NULL);
-            wait_for_buttons_or_fb(Z_TRIG | L_TRIG | R_TRIG, NULL);
+            wait_for_fb_or_buttons(0, NULL);
+            wait_for_fb_or_buttons(Z_TRIG | L_TRIG | R_TRIG, NULL);
             fb_draw_black_rect(25, 20, 270, 210);
             reset_crashmesg_cursor(30, 25);
             sCrashPrintCB();
         }
-        wait_for_buttons_or_fb(0, NULL);
+        wait_for_fb_or_buttons(0, NULL);
         count = 0;
-        wait_for_buttons_or_fb(Z_TRIG | L_TRIG | R_TRIG, NULL);
+        wait_for_fb_or_buttons(Z_TRIG | L_TRIG | R_TRIG, NULL);
         osSetThreadPri(NULL, origPri);
         sActiveCrashScreen = FALSE;
     }
@@ -930,22 +930,22 @@ void fatal_printf(const char *fmt, ...) {
     origPri            = osGetThreadPri(NULL);
     osSetThreadPri(NULL, OS_PRIORITY_RMON);
 
-    wait_for_buttons_or_fb(0, NULL);
-    wait_for_buttons_or_fb(Z_TRIG | L_TRIG | R_TRIG, NULL);
-    wait_for_buttons_or_fb(0, NULL);
-    wait_for_buttons_or_fb(U_JPAD | U_CBUTTONS, NULL);
-    wait_for_buttons_or_fb(0, NULL);
-    wait_for_buttons_or_fb(A_BUTTON | L_JPAD, NULL);
-    wait_for_buttons_or_fb(0, NULL);
-    wait_for_buttons_or_fb(B_BUTTON | R_JPAD, NULL);
-    wait_for_buttons_or_fb(0, NULL);
-    wait_for_buttons_or_fb(D_JPAD | D_CBUTTONS, NULL);
+    wait_for_fb_or_buttons(0, NULL);
+    wait_for_fb_or_buttons(Z_TRIG | L_TRIG | R_TRIG, NULL);
+    wait_for_fb_or_buttons(0, NULL);
+    wait_for_fb_or_buttons(U_JPAD | U_CBUTTONS, NULL);
+    wait_for_fb_or_buttons(0, NULL);
+    wait_for_fb_or_buttons(A_BUTTON | L_JPAD, NULL);
+    wait_for_fb_or_buttons(0, NULL);
+    wait_for_fb_or_buttons(B_BUTTON | R_JPAD, NULL);
+    wait_for_fb_or_buttons(0, NULL);
+    wait_for_fb_or_buttons(D_JPAD | D_CBUTTONS, NULL);
     do {
         fb = osViGetCurrentFramebuffer();
         fb_draw_black_rect(25, 20, 270, 25);
         reset_crashmesg_cursor(30, 25);
         fb_vprintf_with_newline(fmt, ap);
-    } while (wait_for_buttons_or_fb(0, fb) || wait_for_buttons_or_fb(Z_TRIG | L_TRIG | R_TRIG, fb));
+    } while (wait_for_fb_or_buttons(0, fb) || wait_for_fb_or_buttons(Z_TRIG | L_TRIG | R_TRIG, fb));
 
     va_end(ap);
     osSetThreadPri(NULL, origPri);
@@ -972,7 +972,7 @@ void fatal_print_func(void (*printFn)(void)) {
         fb_draw_black_rect(25, 20, 270, 210);
         reset_crashmesg_cursor(30, 25);
         printFn();
-    } while (wait_for_buttons_or_fb(0, fb) || wait_for_buttons_or_fb(Z_TRIG | L_TRIG | R_TRIG, fb));
+    } while (wait_for_fb_or_buttons(0, fb) || wait_for_fb_or_buttons(Z_TRIG | L_TRIG | R_TRIG, fb));
 
     osSetThreadPri(NULL, origPri);
     sActiveCrashScreen = FALSE;
