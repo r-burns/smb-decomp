@@ -24,7 +24,7 @@ extern void func_8000B760(struct GObjCommon *);
 extern void func_8000B7B4(void);
 extern struct GObjCommon *func_8000B824(
     u32 arg0,
-    void (*arg1)(void),
+    void (*arg1)(struct GObjCommon *),
     s32 arg2,
     u32 arg3,
     void (*arg4)(struct GObjCommon *),
@@ -38,7 +38,7 @@ extern struct GObjCommon *func_8000B824(
     u32 argC);
 extern struct GObjCommon *func_8000B8BC(
     u32 arg0,
-    void (*arg1)(),
+    void (*arg1)(struct GObjCommon *),
     s32 arg2,
     u32 arg3,
     void (*arg4)(struct GObjCommon *),
@@ -52,7 +52,7 @@ extern struct GObjCommon *func_8000B8BC(
 // what is this struct? is it just `struct GObjCommon`?
 extern struct GObjCommon *func_8000B93C(
     u32 id,
-    void (*arg1)(void),
+    void (*arg1)(struct GObjCommon *),
     s32 link,
     u32 arg3,
     void (*arg4)(struct GObjCommon *),

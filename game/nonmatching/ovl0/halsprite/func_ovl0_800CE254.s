@@ -6,34 +6,34 @@ glabel func_ovl0_800CE254
   /* 049C40 800CE260 8CAF0000 */        lw $t7, ($a1)
   /* 049C44 800CE264 3C0E800D */       lui $t6, %hi(D_ovl0_800D63C0)
   /* 049C48 800CE268 25CE63C0 */     addiu $t6, $t6, %lo(D_ovl0_800D63C0)
-  /* 049C4C 800CE26C 00041080 */       sll $v0, $a0, 2
-  /* 049C50 800CE270 004E1821 */      addu $v1, $v0, $t6
+  /* 049C4C 800CE26C 00041080 */       sll $v0, $a0, 2  ## v0 is arg0 * 4
+  /* 049C50 800CE270 004E1821 */      addu $v1, $v0, $t6 ## &D_ovl0_800D63C0[arg0]
   /* 049C54 800CE274 AC6F0000 */        sw $t7, ($v1)
   /* 049C58 800CE278 8CF90000 */        lw $t9, ($a3)
   /* 049C5C 800CE27C 3C18800D */       lui $t8, %hi(D_ovl0_800D63E0)
   /* 049C60 800CE280 271863E0 */     addiu $t8, $t8, %lo(D_ovl0_800D63E0)
-  /* 049C64 800CE284 00583021 */      addu $a2, $v0, $t8
+  /* 049C64 800CE284 00583021 */      addu $a2, $v0, $t8 ## a2 = D_ovl0_800D63E0[arg0]
   /* 049C68 800CE288 3C01800D */       lui $at, %hi(D_ovl0_800D6400)
   /* 049C6C 800CE28C 00220821 */      addu $at, $at, $v0
   /* 049C70 800CE290 24AD0004 */     addiu $t5, $a1, 4
   /* 049C74 800CE294 ACD90000 */        sw $t9, ($a2)
   /* 049C78 800CE298 AC2D6400 */        sw $t5, %lo(D_ovl0_800D6400)($at)
-  /* 049C7C 800CE29C 8C780000 */        lw $t8, ($v1)
+  /* 049C7C 800CE29C 8C780000 */        lw $t8, ($v1) ## D_ovl0_800D63C0[arg0]
   /* 049C80 800CE2A0 3C0E800D */       lui $t6, %hi(D_ovl0_800D6420)
   /* 049C84 800CE2A4 25CE6420 */     addiu $t6, $t6, %lo(D_ovl0_800D6420)
-  /* 049C88 800CE2A8 004E4021 */      addu $t0, $v0, $t6
+  /* 049C88 800CE2A8 004E4021 */      addu $t0, $v0, $t6  ## to is &D_ovl0_800D6420[arg0]
   /* 049C8C 800CE2AC 24EF0004 */     addiu $t7, $a3, 4
   /* 049C90 800CE2B0 AD0F0000 */        sw $t7, ($t0)
   /* 049C94 800CE2B4 1B00000C */      blez $t8, .L800CE2E8
   /* 049C98 800CE2B8 24090001 */     addiu $t1, $zero, 1
   /* 049C9C 800CE2BC 24A20004 */     addiu $v0, $a1, 4
-  /* 049CA0 800CE2C0 8C590000 */        lw $t9, ($v0)
+  /* 049CA0 800CE2C0 8C590000 */        lw $t9, ($v0) ## arg1[i]?
   .L800CE2C4:
   /* 049CA4 800CE2C4 25290001 */     addiu $t1, $t1, 1
   /* 049CA8 800CE2C8 24420004 */     addiu $v0, $v0, 4
-  /* 049CAC 800CE2CC 03256821 */      addu $t5, $t9, $a1
-  /* 049CB0 800CE2D0 AC4DFFFC */        sw $t5, -4($v0)
-  /* 049CB4 800CE2D4 8C6E0000 */        lw $t6, ($v1)
+  /* 049CAC 800CE2CC 03256821 */      addu $t5, $t9, $a1 ## arg1[i] + (uintptr_t)arg1?
+  /* 049CB0 800CE2D0 AC4DFFFC */        sw $t5, -4($v0) ## arg1[i] += (uintptr_t)arg1?
+  /* 049CB4 800CE2D4 8C6E0000 */        lw $t6, ($v1) ## D_ovl0_800D63C0[arg0]
   /* 049CB8 800CE2D8 01C9082A */       slt $at, $t6, $t1
   /* 049CBC 800CE2DC 5020FFF9 */      beql $at, $zero, .L800CE2C4
   /* 049CC0 800CE2E0 8C590000 */        lw $t9, ($v0)
@@ -57,14 +57,14 @@ glabel func_ovl0_800CE254
   .L800CE320:
   /* 049D00 800CE320 1840003B */      blez $v0, .L800CE410
   /* 049D04 800CE324 00004825 */        or $t1, $zero, $zero
-  /* 049D08 800CE328 00001025 */        or $v0, $zero, $zero
-  /* 049D0C 800CE32C 8D190000 */        lw $t9, ($t0)
+  /* 049D08 800CE328 00001025 */        or $v0, $zero, $zero ## v0 is i * 4
+  /* 049D0C 800CE32C 8D190000 */        lw $t9, ($t0) # D_ovl0_800D6420[arg0]
   .L800CE330:
   /* 049D10 800CE330 00001825 */        or $v1, $zero, $zero
   /* 049D14 800CE334 00005025 */        or $t2, $zero, $zero
-  /* 049D18 800CE338 03226821 */      addu $t5, $t9, $v0
-  /* 049D1C 800CE33C 8DA40000 */        lw $a0, ($t5)
-  /* 049D20 800CE340 8C850000 */        lw $a1, ($a0)
+  /* 049D18 800CE338 03226821 */      addu $t5, $t9, $v0 # D_ovl0_800D6420[arg0] + i
+  /* 049D1C 800CE33C 8DA40000 */        lw $a0, ($t5) # D_ovl0_800D6420[arg0][i]
+  /* 049D20 800CE340 8C850000 */        lw $a1, ($a0) # D_ovl0_800D6420[arg0][i]->count
   /* 049D24 800CE344 10A0000D */      beqz $a1, .L800CE37C
   /* 049D28 800CE348 008A5821 */      addu $t3, $a0, $t2
   .L800CE34C:
@@ -75,8 +75,8 @@ glabel func_ovl0_800CE254
   /* 049D3C 800CE35C AD6F0018 */        sw $t7, 0x18($t3)
   /* 049D40 800CE360 8D180000 */        lw $t8, ($t0)
   /* 049D44 800CE364 0302C821 */      addu $t9, $t8, $v0
-  /* 049D48 800CE368 8F240000 */        lw $a0, ($t9)
-  /* 049D4C 800CE36C 8C850000 */        lw $a1, ($a0)
+  /* 049D48 800CE368 8F240000 */        lw $a0, ($t9) ## struct entry *a0
+  /* 049D4C 800CE36C 8C850000 */        lw $a1, ($a0) ## entry->count
   /* 049D50 800CE370 0065082B */      sltu $at, $v1, $a1
   /* 049D54 800CE374 5420FFF5 */      bnel $at, $zero, .L800CE34C
   /* 049D58 800CE378 008A5821 */      addu $t3, $a0, $t2

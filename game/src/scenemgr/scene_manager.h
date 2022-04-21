@@ -31,9 +31,11 @@ struct BigA44E0 {
     /* 0x450 */ u32 unk540[(0x5EC - 0x450) / 4];
 }; // size == 0x5EC
 
+// global and battle settings?
 struct UnkA4AD0 {
     /* 0x00 */ u8 scene;
-    /* 0x01 */ u8 pad01[0x48 - 0x01];
+    /* 0x01 */ u8 previousScene;
+    /* 0x02 */ u8 pad02[0x48 - 0x02];
 }; // size == 0x48
 
 struct BattlePlayerState {
@@ -149,7 +151,7 @@ extern struct UnkA4AD0 D_800A4AD0;
 extern struct BattleState D_800A4B18;
 extern struct BattleState D_800A4D08;
 extern struct BattleState D_800A4EF8;
-extern u32 D_800A50E8;
+extern struct UnkA4AD0 *D_800A50E8;
 extern u32 D_800A50EC;
 extern u8 D_800A50F0[8];
 extern u8 D_800A50F8[324];

@@ -93,8 +93,6 @@ void hal_mtx_f2l_fixed_w(Mtx4f *src, Mtx *dst) {
     dst->m[3][3] = COMBINE_FRACTIONAL(e1, e2);
 }
 
-#define RAD_TO_IDX(x) ((s32)((x) * ((f32)ARRAY_COUNT(gSinTable) / M_PI_F)))
-
 s32 fast_sinf(f32 x) {
     s32 idx;
     u16 sinX;

@@ -180,33 +180,33 @@ glabel func_ovl0_800D2C4C
   /* 04E870 800D2E90 8C2D626C */        lw $t5, %lo(jtbl_ovl0_800D626C)($at)
   /* 04E874 800D2E94 01A00008 */        jr $t5
   /* 04E878 800D2E98 00000000 */       nop 
-  glabel jtgt_ovl0_800D2E9C
-  /* 04E87C 800D2E9C C7AC0120 */      lwc1 $f12, 0x120($sp)
-  /* 04E880 800D2EA0 C7AE0124 */      lwc1 $f14, 0x124($sp)
-  /* 04E884 800D2EA4 C7B4011C */      lwc1 $f20, 0x11c($sp)
-  /* 04E888 800D2EA8 46006586 */     mov.s $f22, $f12
+  glabel jtgt_ovl0_800D2E9C # 0, 3, 4
+  /* 04E87C 800D2E9C C7AC0120 */      lwc1 $f12, 0x120($sp)  # sp11C.y
+  /* 04E880 800D2EA0 C7AE0124 */      lwc1 $f14, 0x124($sp)  # sp11C.z
+  /* 04E884 800D2EA4 C7B4011C */      lwc1 $f20, 0x11c($sp)  # sp11C.x
+  /* 04E888 800D2EA8 46006586 */     mov.s $f22, $f12   # sp11C.y
   /* 04E88C 800D2EAC 0C00618F */       jal atan2f
-  /* 04E890 800D2EB0 46007606 */     mov.s $f24, $f14
+  /* 04E890 800D2EB0 46007606 */     mov.s $f24, $f14   # sp11C.z
   /* 04E894 800D2EB4 46000686 */     mov.s $f26, $f0
   /* 04E898 800D2EB8 0C00C0FC */       jal __sinf
   /* 04E89C 800D2EBC 46000306 */     mov.s $f12, $f0
-  /* 04E8A0 800D2EC0 46000786 */     mov.s $f30, $f0
+  /* 04E8A0 800D2EC0 46000786 */     mov.s $f30, $f0       # f30 = sinf(atan2f(sp11C.y, sp11C.z))
   /* 04E8A4 800D2EC4 0C00D734 */       jal cosf
   /* 04E8A8 800D2EC8 4600D306 */     mov.s $f12, $f26
-  /* 04E8AC 800D2ECC 461EB182 */     mul.s $f6, $f22, $f30
-  /* 04E8B0 800D2ED0 E7A000F8 */      swc1 $f0, 0xf8($sp)
+  /* 04E8AC 800D2ECC 461EB182 */     mul.s $f6, $f22, $f30 # sp11C.y * sinf(atan2f(sp11C.y, sp11C.z))
+  /* 04E8B0 800D2ED0 E7A000F8 */      swc1 $f0, 0xf8($sp)  # spF8 = cosf(atan2f(sp11C.y, sp11C.z))
   /* 04E8B4 800D2ED4 4600A306 */     mov.s $f12, $f20
-  /* 04E8B8 800D2ED8 4600C102 */     mul.s $f4, $f24, $f0
+  /* 04E8B8 800D2ED8 4600C102 */     mul.s $f4, $f24, $f0  # sp11C.z * spF8;
   /* 04E8BC 800D2EDC 0C00618F */       jal atan2f
-  /* 04E8C0 800D2EE0 46043380 */     add.s $f14, $f6, $f4
-  /* 04E8C4 800D2EE4 46000706 */     mov.s $f28, $f0
+  /* 04E8C0 800D2EE0 46043380 */     add.s $f14, $f6, $f4  # (sp11C.y * sinf(atan2f(sp11C.y, sp11C.z))) + (sp11C.z * spF8)
+  /* 04E8C4 800D2EE4 46000706 */     mov.s $f28, $f0       # f28 = atan2f(sp11C.x, (sp11C.y * sinf(atan2f(sp11C.y, sp11C.z))) + (sp11C.z * spF8))
   /* 04E8C8 800D2EE8 0C00C0FC */       jal __sinf
   /* 04E8CC 800D2EEC 46000306 */     mov.s $f12, $f0
-  /* 04E8D0 800D2EF0 E7A000F4 */      swc1 $f0, 0xf4($sp)
+  /* 04E8D0 800D2EF0 E7A000F4 */      swc1 $f0, 0xf4($sp)  # spF4 = sinf(f28)
   /* 04E8D4 800D2EF4 0C00D734 */       jal cosf
   /* 04E8D8 800D2EF8 4600E306 */     mov.s $f12, $f28
   /* 04E8DC 800D2EFC 4614A202 */     mul.s $f8, $f20, $f20
-  /* 04E8E0 800D2F00 E7A000F0 */      swc1 $f0, 0xf0($sp)
+  /* 04E8E0 800D2F00 E7A000F0 */      swc1 $f0, 0xf0($sp)  # spF0 = cosf(f28)
   /* 04E8E4 800D2F04 E7BE00FC */      swc1 $f30, 0xfc($sp)
   /* 04E8E8 800D2F08 4616B282 */     mul.s $f10, $f22, $f22
   /* 04E8EC 800D2F0C 460A4180 */     add.s $f6, $f8, $f10

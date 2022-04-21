@@ -1,5 +1,5 @@
 .section .text
-glabel func_ovl0_800CEBF8
+glabel bytecode_read_u16
   /* 04A5D8 800CEBF8 90820000 */       lbu $v0, ($a0)
   /* 04A5DC 800CEBFC 24840001 */     addiu $a0, $a0, 1
   /* 04A5E0 800CEC00 304E0080 */      andi $t6, $v0, 0x80

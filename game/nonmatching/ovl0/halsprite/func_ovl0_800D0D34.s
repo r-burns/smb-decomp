@@ -1,21 +1,21 @@
 .section .late_rodata
 
 glabel jtbl_ovl0_800D6130
-  /* E8F0 051B10 800D6130 */  .word jtgt_ovl0_800D0DDC
-  /* E8F4 051B14 800D6134 */  .word jtgt_ovl0_800D0E10
-  /* E8F8 051B18 800D6138 */  .word jtgt_ovl0_800D0E44
-  /* E8FC 051B1C 800D613C */  .word jtgt_ovl0_800D0E80
-  /* E900 051B20 800D6140 */  .word jtgt_ovl0_800D0E80
-  /* E904 051B24 800D6144 */  .word jtgt_ovl0_800D0ECC
-  /* E908 051B28 800D6148 */  .word jtgt_ovl0_800D0ECC
-  /* E90C 051B2C 800D614C */  .word jtgt_ovl0_800D0F14
-  /* E910 051B30 800D6150 */  .word jtgt_ovl0_800D0F14
-  /* E914 051B34 800D6154 */  .word jtgt_ovl0_800D0E80
-  /* E918 051B38 800D6158 */  .word jtgt_ovl0_800D0E80
-  /* E91C 051B3C 800D615C */  .word jtgt_ovl0_800D0ECC
-  /* E920 051B40 800D6160 */  .word jtgt_ovl0_800D0ECC
-  /* E924 051B44 800D6164 */  .word jtgt_ovl0_800D0F14
-  /* E928 051B48 800D6168 */  .word jtgt_ovl0_800D0F14
+  /* E8F0 051B10 800D6130 */  .word jtgt_ovl0_800D0DDC # 3
+  /* E8F4 051B14 800D6134 */  .word jtgt_ovl0_800D0E10 # 4
+  /* E8F8 051B18 800D6138 */  .word jtgt_ovl0_800D0E44 # 5
+  /* E8FC 051B1C 800D613C */  .word jtgt_ovl0_800D0E80 # 6
+  /* E900 051B20 800D6140 */  .word jtgt_ovl0_800D0E80 # 7
+  /* E904 051B24 800D6144 */  .word jtgt_ovl0_800D0ECC # 8
+  /* E908 051B28 800D6148 */  .word jtgt_ovl0_800D0ECC # 9
+  /* E90C 051B2C 800D614C */  .word jtgt_ovl0_800D0F14 # 10
+  /* E910 051B30 800D6150 */  .word jtgt_ovl0_800D0F14 # 11
+  /* E914 051B34 800D6154 */  .word jtgt_ovl0_800D0E80 # 12
+  /* E918 051B38 800D6158 */  .word jtgt_ovl0_800D0E80 # 13
+  /* E91C 051B3C 800D615C */  .word jtgt_ovl0_800D0ECC # 14
+  /* E920 051B40 800D6160 */  .word jtgt_ovl0_800D0ECC # 15
+  /* E924 051B44 800D6164 */  .word jtgt_ovl0_800D0F14 # 16
+  /* E928 051B48 800D6168 */  .word jtgt_ovl0_800D0F14 # 17
 
 glabel D_ovl0_800D616C
   /* E92C 051B4C 800D616C */  .word jtgt_ovl0_800D1874
@@ -129,7 +129,7 @@ glabel func_ovl0_800D0D34
   /* 04C7B0 800D0DD0 8C396130 */        lw $t9, %lo(jtbl_ovl0_800D6130)($at)
   /* 04C7B4 800D0DD4 03200008 */        jr $t9
   /* 04C7B8 800D0DD8 00000000 */       nop 
-  glabel jtgt_ovl0_800D0DDC
+  glabel jtgt_ovl0_800D0DDC #3
   /* 04C7BC 800D0DDC C6040028 */      lwc1 $f4, 0x28($s0)
   /* 04C7C0 800D0DE0 8E060020 */        lw $a2, 0x20($s0)
   /* 04C7C4 800D0DE4 8E070024 */        lw $a3, 0x24($s0)
@@ -143,7 +143,7 @@ glabel func_ovl0_800D0D34
   /* 04C7E4 800D0E04 E7A80018 */      swc1 $f8, 0x18($sp)
   /* 04C7E8 800D0E08 10000071 */         b .L800D0FD0
   /* 04C7EC 800D0E0C 8E020060 */        lw $v0, 0x60($s0)
-  glabel jtgt_ovl0_800D0E10
+  glabel jtgt_ovl0_800D0E10 #4
   /* 04C7F0 800D0E10 C60A0028 */      lwc1 $f10, 0x28($s0)
   /* 04C7F4 800D0E14 8E060020 */        lw $a2, 0x20($s0)
   /* 04C7F8 800D0E18 8E070024 */        lw $a3, 0x24($s0)
@@ -157,7 +157,7 @@ glabel func_ovl0_800D0D34
   /* 04C818 800D0E38 E7A60018 */      swc1 $f6, 0x18($sp)
   /* 04C81C 800D0E3C 10000064 */         b .L800D0FD0
   /* 04C820 800D0E40 8E020060 */        lw $v0, 0x60($s0)
-  glabel jtgt_ovl0_800D0E44
+  glabel jtgt_ovl0_800D0E44 #5
   /* 04C824 800D0E44 C6080028 */      lwc1 $f8, 0x28($s0)
   /* 04C828 800D0E48 8E05001C */        lw $a1, 0x1c($s0)
   /* 04C82C 800D0E4C 8E060020 */        lw $a2, 0x20($s0)
@@ -173,7 +173,7 @@ glabel func_ovl0_800D0D34
   /* 04C854 800D0E74 E7A6001C */      swc1 $f6, 0x1c($sp)
   /* 04C858 800D0E78 10000055 */         b .L800D0FD0
   /* 04C85C 800D0E7C 8E020060 */        lw $v0, 0x60($s0)
-  glabel jtgt_ovl0_800D0E80
+  glabel jtgt_ovl0_800D0E80 # 6, 7, 12, 13
   /* 04C860 800D0E80 C6080048 */      lwc1 $f8, 0x48($s0)
   /* 04C864 800D0E84 8E05003C */        lw $a1, 0x3c($s0)
   /* 04C868 800D0E88 8E060040 */        lw $a2, 0x40($s0)
@@ -193,7 +193,7 @@ glabel func_ovl0_800D0D34
   /* 04C8A0 800D0EC0 E7AA0024 */      swc1 $f10, 0x24($sp)
   /* 04C8A4 800D0EC4 10000042 */         b .L800D0FD0
   /* 04C8A8 800D0EC8 8E020060 */        lw $v0, 0x60($s0)
-  glabel jtgt_ovl0_800D0ECC
+  glabel jtgt_ovl0_800D0ECC #8. 9. 14. 15
   /* 04C8AC 800D0ECC C6040048 */      lwc1 $f4, 0x48($s0)
   /* 04C8B0 800D0ED0 8E05003C */        lw $a1, 0x3c($s0)
   /* 04C8B4 800D0ED4 8E060040 */        lw $a2, 0x40($s0)
@@ -212,7 +212,7 @@ glabel func_ovl0_800D0D34
   /* 04C8E8 800D0F08 E7AA001C */      swc1 $f10, 0x1c($sp)
   /* 04C8EC 800D0F0C 10000030 */         b .L800D0FD0
   /* 04C8F0 800D0F10 8E020060 */        lw $v0, 0x60($s0)
-  glabel jtgt_ovl0_800D0F14
+  glabel jtgt_ovl0_800D0F14 # 10 11 16 17
   /* 04C8F4 800D0F14 C6040048 */      lwc1 $f4, 0x48($s0)
   /* 04C8F8 800D0F18 8E05003C */        lw $a1, 0x3c($s0)
   /* 04C8FC 800D0F1C 8E060040 */        lw $a2, 0x40($s0)
@@ -231,7 +231,7 @@ glabel func_ovl0_800D0D34
   /* 04C930 800D0F50 E7AA001C */      swc1 $f10, 0x1c($sp)
   /* 04C934 800D0F54 1000001E */         b .L800D0FD0
   /* 04C938 800D0F58 8E020060 */        lw $v0, 0x60($s0)
-  .L800D0F5C:
+  .L800D0F5C: #default
   /* 04C93C 800D0F5C C6040028 */      lwc1 $f4, 0x28($s0)
   /* 04C940 800D0F60 8E060020 */        lw $a2, 0x20($s0)
   /* 04C944 800D0F64 8E070024 */        lw $a3, 0x24($s0)
@@ -559,62 +559,62 @@ glabel func_ovl0_800D0D34
   /* 04CE1C 800D143C C606006C */      lwc1 $f6, 0x6c($s0)
   /* 04CE20 800D1440 C60A007C */      lwc1 $f10, 0x7c($s0)
   /* 04CE24 800D1444 C60E00AC */      lwc1 $f14, 0xac($s0)
-  /* 04CE28 800D1448 46163202 */     mul.s $f8, $f6, $f22
+  /* 04CE28 800D1448 46163202 */     mul.s $f8, $f6, $f22   # parent->unk6C[0][0] * curr->unk20
   /* 04CE2C 800D144C C61000B0 */      lwc1 $f16, 0xb0($s0)
-  /* 04CE30 800D1450 46185102 */     mul.s $f4, $f10, $f24
+  /* 04CE30 800D1450 46185102 */     mul.s $f4, $f10, $f24  # parent->unk6C[1][0] * curr->unk24
   /* 04CE34 800D1454 C60A008C */      lwc1 $f10, 0x8c($s0)
-  /* 04CE38 800D1458 46044180 */     add.s $f6, $f8, $f4
-  /* 04CE3C 800D145C 46145202 */     mul.s $f8, $f10, $f20
+  /* 04CE38 800D1458 46044180 */     add.s $f6, $f8, $f4    # (parent->unk6C[0][0] * curr->unk20) + (parent->unk6C[1][0] * curr->unk24)
+  /* 04CE3C 800D145C 46145202 */     mul.s $f8, $f10, $f20  # parent->unk6C[2][0] * curr->unk2C
   /* 04CE40 800D1460 C60A009C */      lwc1 $f10, 0x9c($s0)
-  /* 04CE44 800D1464 46083100 */     add.s $f4, $f6, $f8
+  /* 04CE44 800D1464 46083100 */     add.s $f4, $f6, $f8    # ((parent->unk6C[0][0] * curr->unk20) + (parent->unk6C[1][0] * curr->unk24)) + (parent->unk6C[1][1] * curr->unk2C)
   /* 04CE48 800D1468 C6060070 */      lwc1 $f6, 0x70($s0)
-  /* 04CE4C 800D146C 46045000 */     add.s $f0, $f10, $f4
-  /* 04CE50 800D1470 46163202 */     mul.s $f8, $f6, $f22
-  /* 04CE54 800D1474 C60A0080 */      lwc1 $f10, 0x80($s0)
-  /* 04CE58 800D1478 46185102 */     mul.s $f4, $f10, $f24
+  /* 04CE4C 800D146C 46045000 */     add.s $f0, $f10, $f4   # f0 = (parent->unk6C[0][1]) + (((parent->unk6C[0][0] * curr->unk20) + (parent->unk6C[1][0] * curr->unk24)) + (parent->unk6C[1][1] * curr->unk2C))
+  /* 04CE50 800D1470 46163202 */     mul.s $f8, $f6, $f22   # parent->unk6C[0][1] * curr->unk20
+  /* 04CE54 800D1474 C60A0080 */      lwc1 $f10, 0x80($s0) 
+  /* 04CE58 800D1478 46185102 */     mul.s $f4, $f10, $f24  # parent->unk6C[1][1] * curr->unk24
   /* 04CE5C 800D147C C60A0090 */      lwc1 $f10, 0x90($s0)
-  /* 04CE60 800D1480 46044180 */     add.s $f6, $f8, $f4
-  /* 04CE64 800D1484 46145202 */     mul.s $f8, $f10, $f20
+  /* 04CE60 800D1480 46044180 */     add.s $f6, $f8, $f4    # (parent->unk6C[0][1] * curr->unk20) + (parent->unk6C[1][1] * curr->unk24)
+  /* 04CE64 800D1484 46145202 */     mul.s $f8, $f10, $f20  # parent->unk6C[2][1] * curr->unk2C
   /* 04CE68 800D1488 C60A00A0 */      lwc1 $f10, 0xa0($s0)
-  /* 04CE6C 800D148C 46083100 */     add.s $f4, $f6, $f8
+  /* 04CE6C 800D148C 46083100 */     add.s $f4, $f6, $f8    # ((parent->unk6C[0][1] * curr->unk20) + (parent->unk6C[1][1] * curr->unk24)) + (parent->unk6C[2][1] * curr->unk2C)
   /* 04CE70 800D1490 C6060074 */      lwc1 $f6, 0x74($s0)
-  /* 04CE74 800D1494 46045300 */     add.s $f12, $f10, $f4
-  /* 04CE78 800D1498 46163202 */     mul.s $f8, $f6, $f22
+  /* 04CE74 800D1494 46045300 */     add.s $f12, $f10, $f4  # f12 = (parent->unk6C[3][1) + (((parent->unk6C[0][1] * curr->unk20) + (parent->unk6C[1][1] * curr->unk24)) + (parent->unk6C[2][1] * curr->unk2C))
+  /* 04CE78 800D1498 46163202 */     mul.s $f8, $f6, $f22   # parent->unk6C[0][2] * curr->unk20
   /* 04CE7C 800D149C C60A0084 */      lwc1 $f10, 0x84($s0)
-  /* 04CE80 800D14A0 46185102 */     mul.s $f4, $f10, $f24
+  /* 04CE80 800D14A0 46185102 */     mul.s $f4, $f10, $f24  # parent->unk6C[1][2] * curr->unk24
   /* 04CE84 800D14A4 C60A0094 */      lwc1 $f10, 0x94($s0)
-  /* 04CE88 800D14A8 46044180 */     add.s $f6, $f8, $f4
-  /* 04CE8C 800D14AC 46145202 */     mul.s $f8, $f10, $f20
+  /* 04CE88 800D14A8 46044180 */     add.s $f6, $f8, $f4    # (parent->unk6C[0][2] * curr->unk20) + (parent->unk6C[1][2] * curr->unk24)
+  /* 04CE8C 800D14AC 46145202 */     mul.s $f8, $f10, $f20  # parent->unk6C[2][2] * curr->unk2C
   /* 04CE90 800D14B0 C60A00A4 */      lwc1 $f10, 0xa4($s0)
-  /* 04CE94 800D14B4 46083100 */     add.s $f4, $f6, $f8
+  /* 04CE94 800D14B4 46083100 */     add.s $f4, $f6, $f8    # ((parent->unk6C[0][2] * curr->unk20) + (parent->unk6C[1][2] * curr->unk24)) + (parent->unk6C[2][2] * curr->unk2C)
   /* 04CE98 800D14B8 C6060078 */      lwc1 $f6, 0x78($s0)
-  /* 04CE9C 800D14BC 46045680 */     add.s $f26, $f10, $f4
-  /* 04CEA0 800D14C0 46163202 */     mul.s $f8, $f6, $f22
+  /* 04CE9C 800D14BC 46045680 */     add.s $f26, $f10, $f4  # f26 = (parent->unk6C[3][2]) + (((parent->unk6C[0][2] * curr->unk20) + (parent->unk6C[1][2] * curr->unk24)) + (parent->unk6C[2][2] * curr->unk2C))
+  /* 04CEA0 800D14C0 46163202 */     mul.s $f8, $f6, $f22   # parent->unk6C[0][3] * curr->unk20
   /* 04CEA4 800D14C4 C60A0088 */      lwc1 $f10, 0x88($s0)
-  /* 04CEA8 800D14C8 46185102 */     mul.s $f4, $f10, $f24
+  /* 04CEA8 800D14C8 46185102 */     mul.s $f4, $f10, $f24  # parent->unk6C[1][3] * curr->unk24
   /* 04CEAC 800D14CC C60A0098 */      lwc1 $f10, 0x98($s0)
-  /* 04CEB0 800D14D0 46044180 */     add.s $f6, $f8, $f4
-  /* 04CEB4 800D14D4 46145202 */     mul.s $f8, $f10, $f20
+  /* 04CEB0 800D14D0 46044180 */     add.s $f6, $f8, $f4    # (parent->unk6C[0][3] * curr->unk20) + (parent->unk6C[1][3] * curr->unk24)
+  /* 04CEB4 800D14D4 46145202 */     mul.s $f8, $f10, $f20  # parent->unk6C[2][3] * curr->unk2C
   /* 04CEB8 800D14D8 C60A00A8 */      lwc1 $f10, 0xa8($s0)
-  /* 04CEBC 800D14DC 46083100 */     add.s $f4, $f6, $f8
+  /* 04CEBC 800D14DC 46083100 */     add.s $f4, $f6, $f8    # ((parent->unk6C[0][3] * curr->unk20) + (parent->unk6C[1][3] * curr->unk24)) + (parent->unk6C[2][3] * curr->unk2C)
   /* 04CEC0 800D14E0 1000002D */         b .L800D1598
-  /* 04CEC4 800D14E4 46045080 */     add.s $f2, $f10, $f4
+  /* 04CEC4 800D14E4 46045080 */     add.s $f2, $f10, $f4   # f2 = (parent->unk6C[3][3]) + (((parent->unk6C[0][3] * curr->unk20) + (parent->unk6C[1][3] * curr->unk24)) + (parent->unk6C[2][3] * curr->unk2C))
   .L800D14E8:
   /* 04CEC8 800D14E8 C7A60248 */      lwc1 $f6, 0x248($sp)
   /* 04CECC 800D14EC C7AA0258 */      lwc1 $f10, 0x258($sp)
   /* 04CED0 800D14F0 AFA0020C */        sw $zero, 0x20c($sp)
-  /* 04CED4 800D14F4 46163202 */     mul.s $f8, $f6, $f22
+  /* 04CED4 800D14F4 46163202 */     mul.s $f8, $f6, $f22     # sp248[0][0] * curr->unk20
   /* 04CED8 800D14F8 AFA00210 */        sw $zero, 0x210($sp)
   /* 04CEDC 800D14FC C7AE0220 */      lwc1 $f14, 0x220($sp)
-  /* 04CEE0 800D1500 46185102 */     mul.s $f4, $f10, $f24
+  /* 04CEE0 800D1500 46185102 */     mul.s $f4, $f10, $f24    # sp248[1][0] * curr->unk24
   /* 04CEE4 800D1504 C7AA0268 */      lwc1 $f10, 0x268($sp)
   /* 04CEE8 800D1508 C7B0021C */      lwc1 $f16, 0x21c($sp)
-  /* 04CEEC 800D150C 46044180 */     add.s $f6, $f8, $f4
-  /* 04CEF0 800D1510 46145202 */     mul.s $f8, $f10, $f20
+  /* 04CEEC 800D150C 46044180 */     add.s $f6, $f8, $f4      # (sp248[0][0] * curr->unk20) + (sp248[1][0] * curr->unk24)
+  /* 04CEF0 800D1510 46145202 */     mul.s $f8, $f10, $f20    # sp248[2][0] * curr->unk28
   /* 04CEF4 800D1514 C7AA0278 */      lwc1 $f10, 0x278($sp)
-  /* 04CEF8 800D1518 46083100 */     add.s $f4, $f6, $f8
+  /* 04CEF8 800D1518 46083100 */     add.s $f4, $f6, $f8      # ((sp248[0][0] * curr->unk20) + (sp248[1][0] * curr->unk24)) + (sp248[2][0] * curr->unk28)
   /* 04CEFC 800D151C C7A6024C */      lwc1 $f6, 0x24c($sp)
-  /* 04CF00 800D1520 46045000 */     add.s $f0, $f10, $f4
+  /* 04CF00 800D1520 46045000 */     add.s $f0, $f10, $f4     # f0 = (sp248[3][0]) + (((sp248[0][0] * curr->unk20) + (sp248[1][0] * curr->unk24)) + (sp248[2][0] * curr->unk28))
   /* 04CF04 800D1524 46163202 */     mul.s $f8, $f6, $f22
   /* 04CF08 800D1528 C7AA025C */      lwc1 $f10, 0x25c($sp)
   /* 04CF0C 800D152C 46185102 */     mul.s $f4, $f10, $f24

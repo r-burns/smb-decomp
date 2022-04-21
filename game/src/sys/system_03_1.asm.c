@@ -338,7 +338,7 @@ void func_8000B7B4(void) {
 
 struct GObjCommon *func_8000B824(
     u32 arg0,
-    void (*arg1)(void),
+    void (*arg1)(struct GObjCommon *),
     s32 arg2,
     u32 arg3,
     void (*arg4)(struct GObjCommon *),
@@ -367,7 +367,7 @@ struct GObjCommon *func_8000B824(
 
 struct GObjCommon *func_8000B8BC(
     u32 arg0,
-    void (*arg1)(),
+    void (*arg1)(struct GObjCommon *),
     s32 arg2,
     u32 arg3,
     void (*arg4)(struct GObjCommon *),
@@ -391,7 +391,7 @@ struct GObjCommon *func_8000B8BC(
 
 struct GObjCommon *func_8000B93C(
     u32 id,
-    void (*arg1)(void),
+    void (*arg1)(struct GObjCommon *),
     s32 link,
     u32 arg3,
     void (*arg4)(struct GObjCommon *),

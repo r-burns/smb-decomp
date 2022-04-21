@@ -2,9 +2,15 @@
 #define SYS_SYSTEM_08_H
 
 #include <ssb_types.h>
+#include <macros.h>
 
 #include <PR/mbi.h>
 #include <PR/ultratypes.h>
+
+#define RAD_TO_IDX(x) ((s32)((x) * ((f32)ARRAY_COUNT(gSinTable) / M_PI_F)))
+#define SIN_TABLE_IDX_MASK (ARRAY_COUNT(gSinTable) - 1)
+
+extern u16 gSinTable[0x800];
 
 // might take another pointer type for a1 (to convert to RSP matrix?)
 // convert from mtx4f to gbi Mtx

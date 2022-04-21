@@ -1500,7 +1500,7 @@ void func_80009810(struct OMCamera *cam) {
     free_om_camera(cam);
 }
 
-struct GObjCommon *om_g_add_common(u32 id, void (*arg1)(void), u8 link, u32 arg3) {
+struct GObjCommon *om_g_add_common(u32 id, void (*arg1)(struct GObjCommon *), u8 link, u32 arg3) {
     struct GObjCommon *com;
 
     if (link >= OM_COMMON_MAX_LINKS) {
@@ -1531,7 +1531,8 @@ struct GObjCommon *om_g_add_common(u32 id, void (*arg1)(void), u8 link, u32 arg3
     return com;
 }
 
-struct GObjCommon *func_80009968(u32 id, void (*arg1)(void), u8 link, u32 arg3) {
+// from 64remix: render.create_object
+struct GObjCommon *func_80009968(u32 id, void (*arg1)(struct GObjCommon *), u8 link, u32 arg3) {
     struct GObjCommon *com = om_g_add_common(id, arg1, link, arg3);
 
     if (com == NULL) { return NULL; }
@@ -1541,7 +1542,7 @@ struct GObjCommon *func_80009968(u32 id, void (*arg1)(void), u8 link, u32 arg3) 
     return com;
 }
 
-struct GObjCommon *func_800099A8(u32 id, void (*arg1)(void), u8 link, u32 arg3) {
+struct GObjCommon *func_800099A8(u32 id, void (*arg1)(struct GObjCommon *), u8 link, u32 arg3) {
     struct GObjCommon *com = om_g_add_common(id, arg1, link, arg3);
 
     if (com == NULL) { return NULL; }
@@ -1551,7 +1552,7 @@ struct GObjCommon *func_800099A8(u32 id, void (*arg1)(void), u8 link, u32 arg3) 
     return com;
 }
 
-struct GObjCommon *unref_800099E8(u32 id, void (*arg1)(void), struct GObjCommon *arg2) {
+struct GObjCommon *unref_800099E8(u32 id, void (*arg1)(struct GObjCommon *), struct GObjCommon *arg2) {
     struct GObjCommon *com = om_g_add_common(id, arg1, arg2->unk0C, arg2->unk10);
 
     if (com == NULL) { return NULL; }
@@ -1561,7 +1562,7 @@ struct GObjCommon *unref_800099E8(u32 id, void (*arg1)(void), struct GObjCommon 
     return com;
 }
 
-struct GObjCommon *unref_80009A34(u32 id, void (*arg1)(void), struct GObjCommon *arg2) {
+struct GObjCommon *unref_80009A34(u32 id, void (*arg1)(struct GObjCommon *), struct GObjCommon *arg2) {
     struct GObjCommon *com = om_g_add_common(id, arg1, arg2->unk0C, arg2->unk10);
 
     if (com == NULL) { return NULL; }
@@ -1877,7 +1878,7 @@ struct GObjCommon *func_8000A40C(struct GObjCommon *arg0) {
 
     D_8003B874 = 1;
     D_80046A54 = arg0;
-    arg0->unk14();
+    arg0->unk14(arg0);
     ret        = arg0->unk04;
     D_80046A54 = NULL;
     D_8003B874 = 0;
