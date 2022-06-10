@@ -179,7 +179,7 @@ struct DObj {
     /* 0x10 */ struct DObj *unk10;
     //! checked with `1` for a NULL?
     /* 0x14 */ struct DObj *unk14;
-    /* 0x18 */ union Mtx3fi unk18; // position?
+    /* 0x18 */ union Mtx3fi unk18;     // position?
     /* 0x28 */ struct Mtx4Float unk28; // rotation?
     /* 0x3C */ struct Mtx3Float unk3C; // scale?
     /* 0x4C */ struct DObjDynamicStore *unk4C;
@@ -403,8 +403,10 @@ extern void func_8000948C(struct DObj *);
 extern struct SObj *func_80009614(struct GObjCommon *, Sprite *);
 extern void func_800096EC(struct SObj *);
 extern struct OMCamera *func_80009760(struct GObjCommon *);
-extern struct GObjCommon *func_80009968(u32 id, void (*arg1)(struct GObjCommon *), u8 link, u32 arg3);
-extern struct GObjCommon *func_800099A8(u32 id, void (*arg1)(struct GObjCommon *), u8 link, u32 arg3);
+extern struct GObjCommon *
+func_80009968(u32 id, void (*arg1)(struct GObjCommon *), u8 link, u32 arg3);
+extern struct GObjCommon *
+func_800099A8(u32 id, void (*arg1)(struct GObjCommon *), u8 link, u32 arg3);
 extern void func_80009A84(struct GObjCommon *);
 extern void func_80009C90(struct GObjCommon *arg0, u8 link, u32 arg2);
 extern void func_80009CC8(struct GObjCommon *arg0, u8 link, u32 arg2);

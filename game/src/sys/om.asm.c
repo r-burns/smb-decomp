@@ -1552,7 +1552,8 @@ struct GObjCommon *func_800099A8(u32 id, void (*arg1)(struct GObjCommon *), u8 l
     return com;
 }
 
-struct GObjCommon *unref_800099E8(u32 id, void (*arg1)(struct GObjCommon *), struct GObjCommon *arg2) {
+struct GObjCommon *
+unref_800099E8(u32 id, void (*arg1)(struct GObjCommon *), struct GObjCommon *arg2) {
     struct GObjCommon *com = om_g_add_common(id, arg1, arg2->unk0C, arg2->unk10);
 
     if (com == NULL) { return NULL; }
@@ -1562,7 +1563,8 @@ struct GObjCommon *unref_800099E8(u32 id, void (*arg1)(struct GObjCommon *), str
     return com;
 }
 
-struct GObjCommon *unref_80009A34(u32 id, void (*arg1)(struct GObjCommon *), struct GObjCommon *arg2) {
+struct GObjCommon *
+unref_80009A34(u32 id, void (*arg1)(struct GObjCommon *), struct GObjCommon *arg2) {
     struct GObjCommon *com = om_g_add_common(id, arg1, arg2->unk0C, arg2->unk10);
 
     if (com == NULL) { return NULL; }

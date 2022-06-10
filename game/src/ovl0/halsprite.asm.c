@@ -1,13 +1,16 @@
-#include <PR/ultratypes.h>
-#include "sys/gtl.h"
 #include "ovl0/halsprite.h"
-#include <ssb_types.h>
+
+#include "sys/gtl.h"
+#include "sys/hal_gu.h"
 #include "sys/om.h"
 #include "sys/system_03_1.h"
 #include "sys/trig_rand.h"
-#include "sys/hal_gu.h"
+
+#include <ssb_types.h>
+
 #include <PR/gu.h>
 #include <PR/mbi.h>
+#include <PR/ultratypes.h>
 
 // structs
 struct Temp001 {
@@ -30,9 +33,8 @@ struct Temp001 {
     /* 0xB0 */ f32 unkB0;
     /* 0xB4 */ void (*unkB4)(void); // destructor/cleanup; could have args
     /* 0xB8 */ u16 unkB8;
-    /* 0xBA */ u8 padBA[0xC0-0xBA];
+    /* 0xBA */ u8 padBA[0xC0 - 0xBA];
 }; // sizeof == 0xC0
-
 
 struct Temp003 {
     /* 0x00 */ struct Temp003 *next;
@@ -71,9 +73,9 @@ struct Temp003 {
 // color dither type (G_CD_MAGICSQ)
 u8 D_ovl0_800D5D50[4] = {00, 00, 00, 00};
 // alpha dither type (G_AD_PATTERN)
-u8 D_ovl0_800D5D54[4] = {00, 00, 00, 00};
-u16 D_ovl0_800D5D58[2] = {0000, 0000}; 
-u8 D_ovl0_800D5D5C[4] = {0x7B, 00, 00, 00};
+u8 D_ovl0_800D5D54[4]  = {00, 00, 00, 00};
+u16 D_ovl0_800D5D58[2] = {0000, 0000};
+u8 D_ovl0_800D5D5C[4]  = {0x7B, 00, 00, 00};
 
 // bss
 struct Temp002 *D_ovl0_800D6350;
@@ -83,7 +85,7 @@ struct Temp003 *D_ovl0_800D6398;
 // it looks like a static array of pointers
 struct Temp001 **D_ovl0_800D639C;
 struct Temp001 *D_ovl0_800D63A0[8];
-//struct Temp001 **D_ovl0_800D639C[9];
+// struct Temp001 **D_ovl0_800D639C[9];
 
 // command counts
 s32 D_ovl0_800D63C0[8];
@@ -107,7 +109,6 @@ u16 D_ovl0_800D6452;
 struct Temp001 *D_ovl0_800D6454;
 struct Temp003 *D_ovl0_800D6458;
 
-
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wunknown-pragmas"
 
@@ -119,10 +120,8 @@ s32 func_ovl0_800CE040(s32 count, u32 size) {
     D_ovl0_800D6454 = NULL;
     for (i = 0; i < count; i++) {
         buf = hal_alloc(size, 4);
-        if (buf == NULL) {
-            return i;
-        }
-        buf->next = D_ovl0_800D6454;
+        if (buf == NULL) { return i; }
+        buf->next       = D_ovl0_800D6454;
         D_ovl0_800D6454 = buf;
     }
 
@@ -139,20 +138,18 @@ struct Temp001 *func_ovl0_800CE0D8(u8 arg0, u16 arg1) {
     out = D_ovl0_800D6454;
     if (out != NULL) {
         D_ovl0_800D6454 = out->next;
-        out->unk2A = 1;
-        out->unk29 = *D_ovl0_800D5D5C;
-        out->unkB4 = NULL;
+        out->unk2A      = 1;
+        out->unk29      = *D_ovl0_800D5D5C;
+        out->unkB4      = NULL;
         out->unk04 = out->unk08 = out->unk0C = 0.0f;
         out->unk10 = out->unk14 = out->unk18 = 0.0f;
         out->unk1C = out->unk20 = out->unk24 = 1.0f;
-        
+
         out->unk28 = arg0;
         out->unkB8 = arg1;
-        
+
         D_ovl0_800D644C++;
-        if (D_ovl0_800D6452 < D_ovl0_800D644C) {
-            D_ovl0_800D6452 = D_ovl0_800D644C;
-        }
+        if (D_ovl0_800D6452 < D_ovl0_800D644C) { D_ovl0_800D6452 = D_ovl0_800D644C; }
     }
 
     return out;
@@ -160,11 +157,9 @@ struct Temp001 *func_ovl0_800CE0D8(u8 arg0, u16 arg1) {
 
 // drop_whatever
 void func_ovl0_800CE188(struct Temp001 *arg0) {
-    if (arg0->unkB4 != NULL) {
-        arg0->unkB4();
-    }
+    if (arg0->unkB4 != NULL) { arg0->unkB4(); }
 
-    arg0->next = D_ovl0_800D6454;
+    arg0->next      = D_ovl0_800D6454;
     D_ovl0_800D6454 = arg0;
     D_ovl0_800D644C--;
 }
@@ -178,7 +173,7 @@ struct Temp002 {
     /* 0x00 */ struct Temp002 *next;
     /* 0x04 */ u16 unk04;
     /* 0x06 */ u16 unk06; // flags?
-    /* 0x08 */ u8 unk08; // load bank idx?
+    /* 0x08 */ u8 unk08;  // load bank idx?
     /* 0x09 */ u8 unk09;
     /* 0x0A */ s8 unk0A;
     /* 0x0B */ u8 unk0B;
@@ -259,10 +254,10 @@ struct SpriteBank {
 
 enum HalSpriteBankFormat {
     HalSpriteFmtRGBA = 0,
-    HalSpriteFmtYUV = 1,
-    HalSpriteFmtCI = 2,
-    HalSpriteFmtIA = 3,
-    HalSpriteFmtI = 4
+    HalSpriteFmtYUV  = 1,
+    HalSpriteFmtCI   = 2,
+    HalSpriteFmtIA   = 3,
+    HalSpriteFmtI    = 4
 };
 
 struct SpriteEntry {
@@ -303,11 +298,12 @@ void func_ovl0_800CE254(s32 arg0, struct SpriteBankCmds *arg1, struct SpriteBank
 
         for (i = 0; i < D_ovl0_800D63E0[arg0]; i++) {
             for (j = 0; j < D_ovl0_800D6420[arg0][i]->count; j++) {
-                D_ovl0_800D6420[arg0][i]->sprOffsets[j] = (void *)((uintptr_t)D_ovl0_800D6420[arg0][i]->sprOffsets[j] + (uintptr_t)arg2);
+                D_ovl0_800D6420[arg0][i]->sprOffsets[j] =
+                    (void *)((uintptr_t)D_ovl0_800D6420[arg0][i]->sprOffsets[j] + (uintptr_t)arg2);
             }
             // L800CE37C
             if (D_ovl0_800D6420[arg0][i]->format == HalSpriteFmtCI) {
-                //void **palettes;
+                // void **palettes;
 
                 if (D_ovl0_800D6420[arg0][i]->flags & 1) {
                     // one palette after the images
@@ -315,8 +311,12 @@ void func_ovl0_800CE254(s32 arg0, struct SpriteBankCmds *arg1, struct SpriteBank
                 } else {
                     // L800CE3B0
                     // well, this is one way to write this loop...
-                    for (j = D_ovl0_800D6420[arg0][i]->count; j < D_ovl0_800D6420[arg0][i]->count * 2; j++) {
-                        D_ovl0_800D6420[arg0][i]->sprOffsets[j] = (void *)((uintptr_t)D_ovl0_800D6420[arg0][i]->sprOffsets[j] + (uintptr_t)arg2);
+                    for (j = D_ovl0_800D6420[arg0][i]->count;
+                         j < D_ovl0_800D6420[arg0][i]->count * 2;
+                         j++) {
+                        D_ovl0_800D6420[arg0][i]->sprOffsets[j] =
+                            (void
+                                 *)((uintptr_t)D_ovl0_800D6420[arg0][i]->sprOffsets[j] + (uintptr_t)arg2);
                     }
                 }
                 // L800CE3F8
@@ -338,80 +338,68 @@ struct GObjCommon *func_ovl0_800CE418(s32 arg0) {
     struct Temp002 *alloced;
 
     D_ovl0_800D6350 = NULL;
-    for (i = 0; i < ARRAY_COUNT(D_ovl0_800D6358); i++) {
-        D_ovl0_800D6358[i] = NULL;
-    }
+    for (i = 0; i < ARRAY_COUNT(D_ovl0_800D6358); i++) { D_ovl0_800D6358[i] = NULL; }
 
     for (i = arg0 - 1; i >= 0; i--) {
         alloced = hal_alloc(sizeof(struct Temp002), 4);
-        if (alloced == NULL) {
-            return NULL;
-        }
-        alloced->next = D_ovl0_800D6350;
+        if (alloced == NULL) { return NULL; }
+        alloced->next   = D_ovl0_800D6350;
         D_ovl0_800D6350 = alloced;
     }
 
     D_ovl0_800D6448 = 0;
     D_ovl0_800D644E = 0;
-    if (find_gobj_with_id(-6)) {
-        return NULL;
-    }
+    if (find_gobj_with_id(-6)) { return NULL; }
 
     return func_80009968(-6, func_ovl0_800D0C74, 0, 0x80000000);
 }
 
 struct Temp002 *func_ovl0_800CE4E4(
-    struct Temp002 *arg0, 
+    struct Temp002 *arg0,
     s32 arg1, // loaded bank id
-    s32 arg2, 
+    s32 arg2,
     u16 arg3, // texture/sprite entry id
     u8 *arg4, // command byte code
     s32 arg5, // total frames?
-    f32 arg6, 
-    f32 arg7, 
-    f32 arg8, 
-    f32 arg9, 
-    f32 argA, 
-    f32 argB, 
-    f32 argC, 
-    f32 argD, 
+    f32 arg6,
+    f32 arg7,
+    f32 arg8,
+    f32 arg9,
+    f32 argA,
+    f32 argB,
+    f32 argC,
+    f32 argD,
     f32 argE,
-    s32 argF, // texture/sprite entry flags 
-    struct Temp003 *arg10
-);
+    s32 argF, // texture/sprite entry flags
+    struct Temp003 *arg10);
 
 #ifdef NON_MATCHING
 // nonmatching: regalloc / can't make a zero constant
 struct Temp002 *func_ovl0_800CE4E4(
-    struct Temp002 *arg0, 
-    s32 arg1, 
-    s32 arg2, 
-    u16 arg3, 
-    u8 *arg4, 
-    s32 arg5, 
-    f32 arg6, 
-    f32 arg7, 
-    f32 arg8, 
-    f32 arg9, 
-    f32 argA, 
-    f32 argB, 
-    f32 argC, 
-    f32 argD, 
-    f32 argE, 
-    s32 argF, 
-    struct Temp003 *arg10
-) {
+    struct Temp002 *arg0,
+    s32 arg1,
+    s32 arg2,
+    u16 arg3,
+    u8 *arg4,
+    s32 arg5,
+    f32 arg6,
+    f32 arg7,
+    f32 arg8,
+    f32 arg9,
+    f32 argA,
+    f32 argB,
+    f32 argC,
+    f32 argD,
+    f32 argE,
+    s32 argF,
+    struct Temp003 *arg10) {
     struct Temp002 *s;
 
     s = D_ovl0_800D6350;
-    if (s == NULL) {
-        return NULL;
-    }
+    if (s == NULL) { return NULL; }
 
     D_ovl0_800D6448++;
-    if (D_ovl0_800D644E < D_ovl0_800D6448) {
-        D_ovl0_800D644E = D_ovl0_800D6448;
-    }
+    if (D_ovl0_800D644E < D_ovl0_800D6448) { D_ovl0_800D644E = D_ovl0_800D6448; }
 
     if (arg10 != NULL) {
         s->unk04 = arg10->unk04;
@@ -421,19 +409,17 @@ struct Temp002 *func_ovl0_800CE4E4(
     // L800CE568
     if (arg10 != NULL) {
         s->unk5C = arg10->unk4C;
-        if (s->unk5C != NULL) {
-            s->unk5C->unk2A++;
-        }
+        if (s->unk5C != NULL) { s->unk5C->unk2A++; }
     } else {
         s->unk5C = NULL;
     }
     // L800CE590
     D_ovl0_800D6350 = s->next;
     if (arg0 == NULL) {
-        s->next = D_ovl0_800D6358[arg1 >> 3];
+        s->next                    = D_ovl0_800D6358[arg1 >> 3];
         D_ovl0_800D6358[arg1 >> 3] = s;
     } else {
-        s->next = arg0->next;
+        s->next    = arg0->next;
         arg0->next = s;
     }
     // L800CE5D4
@@ -452,13 +438,11 @@ struct Temp002 *func_ovl0_800CE4E4(
     s->unk3C = argE;
 
     s->unk1E = arg5 + 1; // s16
-    s->unk18 = 0; //u16
-    s->unk1A = 0; // s16
+    s->unk18 = 0;        // u16
+    s->unk1A = 0;        // s16
     s->unk14 = arg4;
 
-    if (argF) {
-        s->unk06 = (arg2 | 0x10);
-    }
+    if (argF) { s->unk06 = (arg2 | 0x10); }
 
     if (arg4 != NULL) {
         s->unk0C = TRUE; // s16
@@ -466,13 +450,13 @@ struct Temp002 *func_ovl0_800CE4E4(
         s->unk0C = FALSE;
     }
     // L800CE670
-    //s->unk48[3] = 0xFF; // s8/u8
-    //s->unk48[2] = 0xFF;
-    //s->unk48[1] = 0xFF;
+    // s->unk48[3] = 0xFF; // s8/u8
+    // s->unk48[2] = 0xFF;
+    // s->unk48[1] = 0xFF;
     s->unk48.b0 = s->unk48.b1 = s->unk48.b2 = s->unk48.b3 = 0xFF;
-    s->unk50.b0 = s->unk50.b1 = s->unk50.b2 = s->unk50.b3 = 0; 
-    s->unk0B = 0; // s8
-    //s->unk53 = 0;
+    s->unk50.b0 = s->unk50.b1 = s->unk50.b2 = s->unk50.b3 = 0;
+    s->unk0B                                              = 0; // s8
+    // s->unk53 = 0;
     s->unk12 = 0; // s16
     s->unk10 = 0;
     s->unk0E = 0;
@@ -490,14 +474,10 @@ struct Temp002 *func_ovl0_800CE6B8(struct Temp002 *arg0, s32 bankIdx, s32 cmdIdx
     struct SpriteCommand *cmd;
 
     idx = bankIdx & 7;
-    if (idx >= 8) {
-        return NULL;
-    }
+    if (idx >= 8) { return NULL; }
 
-    if (cmdIdx >= D_ovl0_800D63C0[idx]) {
-        return NULL;
-    }
-    
+    if (cmdIdx >= D_ovl0_800D63C0[idx]) { return NULL; }
+
     cmd = D_ovl0_800D6400[idx][cmdIdx];
 
     return func_ovl0_800CE4E4(
@@ -507,23 +487,59 @@ struct Temp002 *func_ovl0_800CE6B8(struct Temp002 *arg0, s32 bankIdx, s32 cmdIdx
         cmd->unk02,
         cmd->bytecode,
         cmd->unk06,
-        0.0f, 0.0f, 0.0f,
-        cmd->unk14, cmd->unk18, cmd->unk1C,
-        cmd->unk2C, cmd->unk0C, cmd->unk10,
+        0.0f,
+        0.0f,
+        0.0f,
+        cmd->unk14,
+        cmd->unk18,
+        cmd->unk1C,
+        cmd->unk2C,
+        cmd->unk0C,
+        cmd->unk10,
         D_ovl0_800D6420[idx][cmd->unk02]->flags,
-        NULL
-    );
+        NULL);
 }
 
 struct Temp002 *func_ovl0_800CEF4C(struct Temp002 *, struct Temp002 *, s32);
 
-struct Temp002 *func_ovl0_800CE7A8(s32 arg0, s32 arg1, u16 arg2, u8 *arg3, s32 arg4, f32 arg5, f32 arg6, f32 arg7, f32 arg8, f32 arg9, f32 argA, f32 argB, f32 argC, f32 argD, s32 argE, struct Temp003 *argF) {
+struct Temp002 *func_ovl0_800CE7A8(
+    s32 arg0,
+    s32 arg1,
+    u16 arg2,
+    u8 *arg3,
+    s32 arg4,
+    f32 arg5,
+    f32 arg6,
+    f32 arg7,
+    f32 arg8,
+    f32 arg9,
+    f32 argA,
+    f32 argB,
+    f32 argC,
+    f32 argD,
+    s32 argE,
+    struct Temp003 *argF) {
     struct Temp002 *ret;
 
-    ret = func_ovl0_800CE4E4(NULL, arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, argA, argB, argC, argD, argE, argF);
-    if (ret != NULL) {
-        func_ovl0_800CEF4C(ret, NULL, arg0 >> 3);
-    }
+    ret = func_ovl0_800CE4E4(
+        NULL,
+        arg0,
+        arg1,
+        arg2,
+        arg3,
+        arg4,
+        arg5,
+        arg6,
+        arg7,
+        arg8,
+        arg9,
+        argA,
+        argB,
+        argC,
+        argD,
+        argE,
+        argF);
+    if (ret != NULL) { func_ovl0_800CEF4C(ret, NULL, arg0 >> 3); }
     return ret;
 }
 
@@ -531,49 +547,49 @@ struct Temp002 *func_ovl0_800CE870(s32 bankIdx, s32 cmdIdx) {
     struct Temp002 *ret;
 
     ret = func_ovl0_800CE6B8(NULL, bankIdx, cmdIdx);
-    if (ret != NULL) {
-        func_ovl0_800CEF4C(ret, NULL, bankIdx >> 3);
-    }
+    if (ret != NULL) { func_ovl0_800CEF4C(ret, NULL, bankIdx >> 3); }
     return ret;
 }
 
 struct Temp002 *func_ovl0_800CE8C0(
-    s32 bankIdx, s32 cmdIdx, 
-    f32 arg2, f32 arg3, f32 arg4, 
-    f32 arg5, f32 arg6, f32 arg7
-) {
+    s32 bankIdx,
+    s32 cmdIdx,
+    f32 arg2,
+    f32 arg3,
+    f32 arg4,
+    f32 arg5,
+    f32 arg6,
+    f32 arg7) {
     struct Temp002 *s;
     struct SpriteCommand *cmd;
     s32 idx;
 
     idx = bankIdx & 7;
-    if (idx >= 8) {
-        return NULL;
-    }
+    if (idx >= 8) { return NULL; }
 
-    if (cmdIdx >= D_ovl0_800D63C0[idx]) {
-        return NULL;
-    }
+    if (cmdIdx >= D_ovl0_800D63C0[idx]) { return NULL; }
 
     cmd = D_ovl0_800D6400[idx][cmdIdx];
-    s = func_ovl0_800CE4E4(
-        NULL, 
-        bankIdx, 
-        cmd->unk08, 
-        cmd->unk02, 
+    s   = func_ovl0_800CE4E4(
+        NULL,
+        bankIdx,
+        cmd->unk08,
+        cmd->unk02,
         cmd->bytecode,
-        cmd->unk06, 
-        arg2, arg3, arg4, 
-        arg5, arg6, arg7, 
-        cmd->unk2C, 
-        cmd->unk0C, cmd->unk10, 
-        D_ovl0_800D6420[idx][cmd->unk02]->flags, 
-        NULL
-    );
+        cmd->unk06,
+        arg2,
+        arg3,
+        arg4,
+        arg5,
+        arg6,
+        arg7,
+        cmd->unk2C,
+        cmd->unk0C,
+        cmd->unk10,
+        D_ovl0_800D6420[idx][cmd->unk02]->flags,
+        NULL);
 
-    if (s != NULL) {
-        func_ovl0_800CEF4C(s, NULL, bankIdx >> 3);
-    }
+    if (s != NULL) { func_ovl0_800CEF4C(s, NULL, bankIdx >> 3); }
 
     return s;
 }
@@ -583,9 +599,7 @@ struct Temp002 *func_ovl0_800CE9E8(s32 bankIdx, s32 cmdIdx) {
 }
 
 void func_ovl0_800CEA14(struct Temp002 *s) {
-    if (s != NULL) {
-        func_ovl0_800CEF4C(s, NULL, s->unk08 >> 3);
-    }
+    if (s != NULL) { func_ovl0_800CEF4C(s, NULL, s->unk08 >> 3); }
 }
 
 // maybe remove Temp002 from active queue (D_ovl0_800D6358)?
@@ -594,8 +608,8 @@ void func_ovl0_800CEA40(struct Temp002 *arg0) {
     struct Temp003 *temp; // child?
     s32 idx;
 
-    idx = arg0->unk08 >> 3;
-    curr = D_ovl0_800D6358[idx];
+    idx   = arg0->unk08 >> 3;
+    curr  = D_ovl0_800D6358[idx];
     prior = NULL;
 
     while (curr != NULL) {
@@ -607,26 +621,22 @@ void func_ovl0_800CEA40(struct Temp002 *arg0) {
             }
 
             temp = arg0->unk58;
-            if (temp != NULL && (arg0->unk06 & 4) && (temp->unk08 == 2)) {
-                temp->unk54.half--;
-            }
+            if (temp != NULL && (arg0->unk06 & 4) && (temp->unk08 == 2)) { temp->unk54.half--; }
 
             if (arg0->unk5C != NULL) {
                 arg0->unk5C->unk2A--;
-                if (arg0->unk5C->unk2A == 0) {
-                    func_ovl0_800CE188(arg0->unk5C);
-                }
+                if (arg0->unk5C->unk2A == 0) { func_ovl0_800CE188(arg0->unk5C); }
             }
-            
-            curr->next = D_ovl0_800D6350;
+
+            curr->next      = D_ovl0_800D6350;
             D_ovl0_800D6350 = curr;
             D_ovl0_800D6448--;
-            
+
             break;
         }
 
         prior = curr;
-        curr = curr->next;
+        curr  = curr->next;
     }
 }
 
@@ -634,7 +644,7 @@ void unref_ovl0_800CEB50(void) {
     struct Temp002 *curr, *next;
     s32 i;
 
-    for (i = 0; i < ARRAY_COUNT(D_ovl0_800D6358); i ++) {
+    for (i = 0; i < ARRAY_COUNT(D_ovl0_800D6358); i++) {
         curr = D_ovl0_800D6358[i];
 
         while (curr != NULL) {
@@ -656,7 +666,7 @@ CmdCsr bytecode_read_f32(CmdCsr raw, f32 *dst) {
     buf[1] = raw[1];
     buf[2] = raw[2];
     buf[3] = raw[3];
-    *dst = *(f32 *)buf;
+    *dst   = *(f32 *)buf;
 
     return raw + 4;
 }
@@ -687,7 +697,7 @@ void func_ovl0_800CEC34(struct Temp002 *arg0, f32 arg1);
 #ifdef MIPS_TO_C
 void func_ovl0_800CEC34(struct Temp002 *arg0, f32 arg1) {
     f32 sp5C;
-    f32 theta; //sp58
+    f32 theta; // sp58
     f32 sp54;
     f32 sinT; // f26
     f32 cosT; // sp4C
@@ -697,17 +707,17 @@ void func_ovl0_800CEC34(struct Temp002 *arg0, f32 arg1) {
 
     f32 f22, f20, tempf2;
 
-    theta = atan2f(arg0->unk30, arg0->unk34);
-    sinT = sinf(theta);
-    cosT = cosf(theta);
-    sp54 = atan2f(arg0->unk2C, (arg0->unk30 * sinT) + (arg0->unk34 * cosT));
-    sp48 = sinf(sp54);
-    sp44 = cosf(sp54);
-    sp5C = sqrtf(SQUARE(arg0->unk2C) + SQUARE(arg0->unk30) + SQUARE(arg0->unk34));
+    theta   = atan2f(arg0->unk30, arg0->unk34);
+    sinT    = sinf(theta);
+    cosT    = cosf(theta);
+    sp54    = atan2f(arg0->unk2C, (arg0->unk30 * sinT) + (arg0->unk34 * cosT));
+    sp48    = sinf(sp54);
+    sp44    = cosf(sp54);
+    sp5C    = sqrtf(SQUARE(arg0->unk2C) + SQUARE(arg0->unk30) + SQUARE(arg0->unk34));
     randAng = rand_f32() * (2.0f * M_PI_F);
 
-    f22 = cosf(randAng) * sinf(arg1) * sp5C;
-    f20 = sinf(randAng) * sinf(arg1) * sp5C;
+    f22    = cosf(randAng) * sinf(arg1) * sp5C;
+    f20    = sinf(randAng) * sinf(arg1) * sp5C;
     tempf2 = cosf(arg1) * sp5C;
 
     arg0->unk2C = (f22 * sp44) + (cosf(arg1) * sp5C * sp48);
@@ -735,7 +745,7 @@ void func_ovl0_800CEDBC(struct Temp002 *arg0, struct Temp001 *arg1) {
         sp20 = arg1->unk20 - arg0->unk24;
         sp1C = arg1->unk24 - arg0->unk28;
 
-        sp18 = sqrtf(SQUARE(arg0->unk2C) + SQUARE(arg0->unk30) + SQUARE(arg0->unk34));
+        sp18  = sqrtf(SQUARE(arg0->unk2C) + SQUARE(arg0->unk30) + SQUARE(arg0->unk34));
         denom = SQUARE(sp24) + SQUARE(sp20) + SQUARE(sp1C);
 
         if (denom != 0.0f) {
@@ -764,9 +774,9 @@ void func_ovl0_800CEEB8(struct Temp002 *arg0, struct Temp001 *arg1, f32 arg2) {
     f32 frac;
 
     if (arg1 != NULL) {
-        dx = arg1->unk1C - arg0->unk20;
-        dy = arg1->unk20 - arg0->unk24;
-        dz = arg1->unk24 - arg0->unk28;
+        dx  = arg1->unk1C - arg0->unk20;
+        dy  = arg1->unk20 - arg0->unk24;
+        dz  = arg1->unk24 - arg0->unk28;
         sos = SQUARE(dx) + SQUARE(dy) + SQUARE(dz);
 
         if (sos) {
@@ -776,13 +786,11 @@ void func_ovl0_800CEEB8(struct Temp002 *arg0, struct Temp001 *arg1, f32 arg2) {
             arg0->unk30 += frac * dy;
             arg0->unk34 += frac * dz;
         }
-
     }
 }
 #else
 #pragma GLOBAL_ASM("game/nonmatching/ovl0/halsprite/func_ovl0_800CEEB8.s")
 #endif
-
 
 struct Temp003 *func_ovl0_800D35DC(s32 bankIdx, s32);
 
@@ -791,16 +799,14 @@ struct Temp002 *func_ovl0_800CEF4C(struct Temp002 *arg0, struct Temp002 *arg1, s
     u16 sp94;
     u8 command; // s0
     CmdCsr csr; // s1
-    s32 temp1; // sp88?
+    s32 temp1;  // sp88?
     s32 temp2;
     f32 sp80; // s3
     f32 sp7C;
     u8 mainCmd;
 
     // s2 is arg0
-    if (arg0->unk06 & 0x800) {
-        return arg0->next;
-    }
+    if (arg0->unk06 & 0x800) { return arg0->next; }
 
     if (arg0->unk0C) {
         if (--arg0->unk0C == 0) {
@@ -828,533 +834,499 @@ struct Temp002 *func_ovl0_800CEF4C(struct Temp002 *arg0, struct Temp002 *arg1, s
 
                     // L800CF004
                     switch (mainCmd) {
-                    case 0x80:
-                    {
-                        if (command & 1) {
-                            csr = bytecode_read_f32(csr, &arg0->unk20);
+                        case 0x80:
+                        {
+                            if (command & 1) { csr = bytecode_read_f32(csr, &arg0->unk20); }
+                            if (command & 2) { csr = bytecode_read_f32(csr, &arg0->unk24); }
+                            if (command & 4) { csr = bytecode_read_f32(csr, &arg0->unk28); }
+                            break;
                         }
-                        if (command & 2) {
-                            csr = bytecode_read_f32(csr, &arg0->unk24);
-                        }
-                        if (command & 4) {
-                            csr = bytecode_read_f32(csr, &arg0->unk28);
-                        }
-                        break;
-                    }
-                    case 0x88:
-                    {
-                        if (command & 1) {
-                            csr = bytecode_read_f32(csr, &sp80);
-                            arg0->unk20 += sp80;
-                        }
-                        if (command & 2) {
-                            csr = bytecode_read_f32(csr, &sp80);
-                            arg0->unk24 += sp80;
-                        }
-                        if (command & 4) {
-                            csr = bytecode_read_f32(csr, &sp80);
-                            arg0->unk28 += sp80;
-                        }
-                        break;
-                    }
-                    case 0x90:
-                    {
-                        if (command & 1) {
-                            csr = bytecode_read_f32(csr, &arg0->unk2C);
-                        }
-                        if (command & 2) {
-                            csr = bytecode_read_f32(csr, &arg0->unk30);
-                        }
-                        if (command & 4) {
-                            csr = bytecode_read_f32(csr, &arg0->unk34);
-                        }
-                        break;
-                    }
-                    case 0x98:
-                    {
-                        if (command & 1) {
-                            csr = bytecode_read_f32(csr, &sp80);
-                            arg0->unk2C += sp80;
-                        }
-                        if (command & 2) {
-                            csr = bytecode_read_f32(csr, &sp80);
-                            arg0->unk30 += sp80;
-                        }
-                        if (command & 4) {
-                            csr = bytecode_read_f32(csr, &sp80);
-                            arg0->unk34 += sp80;
-                        }
-                        break;
-                    }
-                    case 0xA0:
-                    {
-                        csr = bytecode_read_u16(csr, &arg0->unk0E);
-                        csr = bytecode_read_f32(csr, &arg0->unk44);
-
-                        if (arg0->unk0E == 1) {
-                            arg0->unk0E = 0;
-                            arg0->unk40 = arg0->unk44;
-                        }
-                        break;
-                    }
-                    case 0xA1:
-                    {
-                        arg0->unk06 = *csr++;
-                        break;
-                    }
-                    case 0xA2:
-                    {
-                        csr = bytecode_read_f32(csr, &arg0->unk38);
-                        if (arg0->unk38 == 0.0f) {
-                            arg0->unk06 &= ~1;
-                        } else {
-                            arg0->unk06 |= 1;
-                        }
-                        break;
-                    }
-                    case 0xA3:
-                    {
-                        csr = bytecode_read_f32(csr, &arg0->unk3C);
-                        if (arg0->unk3C == 1.0f) {
-                            arg0->unk06 &= ~2;
-                        } else {
-                            arg0->unk06 |= 2;
-                        }
-                        break;
-                    }
-                    case 0xA4:
-                    {
-                        // branch? call?
-                        struct Temp002 *temp;
-
-                        temp1 = *csr++;
-                        temp1 <<= 8;
-                        temp1 += *csr++;
-
-                        temp = func_ovl0_800CE6B8(arg0, arg0->unk08, temp1);
-                        if (temp != NULL) {
-                            temp->unk20 = arg0->unk20;
-                            temp->unk24 = arg0->unk24;
-                            temp->unk28 = arg0->unk28;
-                            temp->unk04 = arg0->unk04;
-                            temp->unk58 = arg0->unk58;
-                            temp->unk5C = arg0->unk5C;
-                            if (temp->unk5C != NULL) {
-                                temp->unk5C->unk2A++;
+                        case 0x88:
+                        {
+                            if (command & 1) {
+                                csr = bytecode_read_f32(csr, &sp80);
+                                arg0->unk20 += sp80;
                             }
-                            func_ovl0_800CEF4C(temp, arg0, arg0->unk08 >> 3);
-                        }
-                        break;
-                    }
-                    case 0xA5:
-                    {
-                        struct Temp003 *temp;
-                        
-                        temp1 = *csr++;
-                        temp1 <<= 8;
-                        temp1 += *csr++;
-                        
-                        temp = func_ovl0_800D35DC(arg0->unk08, temp1);
-                        if (temp != NULL) {
-                            temp->unk14 = arg0->unk20;
-                            temp->unk18 = arg0->unk24;
-                            temp->unk1C = arg0->unk28;
-                            temp->unk04 = arg0->unk04;
-                            temp->unk4C = arg0->unk5C;
-                            if (temp->unk4C != NULL) {
-                                temp->unk4C->unk2A++;
+                            if (command & 2) {
+                                csr = bytecode_read_f32(csr, &sp80);
+                                arg0->unk24 += sp80;
                             }
+                            if (command & 4) {
+                                csr = bytecode_read_f32(csr, &sp80);
+                                arg0->unk28 += sp80;
+                            }
+                            break;
                         }
-                        break;
-                    }
-                    case 0xA6:
-                    {
-                        
-                        //sp88 = (csr[0] << 8) + csr[1];
-                        temp1 = *csr++;
-                        temp1 <<= 8;
-                        temp1 += *csr++;
+                        case 0x90:
+                        {
+                            if (command & 1) { csr = bytecode_read_f32(csr, &arg0->unk2C); }
+                            if (command & 2) { csr = bytecode_read_f32(csr, &arg0->unk30); }
+                            if (command & 4) { csr = bytecode_read_f32(csr, &arg0->unk34); }
+                            break;
+                        }
+                        case 0x98:
+                        {
+                            if (command & 1) {
+                                csr = bytecode_read_f32(csr, &sp80);
+                                arg0->unk2C += sp80;
+                            }
+                            if (command & 2) {
+                                csr = bytecode_read_f32(csr, &sp80);
+                                arg0->unk30 += sp80;
+                            }
+                            if (command & 4) {
+                                csr = bytecode_read_f32(csr, &sp80);
+                                arg0->unk34 += sp80;
+                            }
+                            break;
+                        }
+                        case 0xA0:
+                        {
+                            csr = bytecode_read_u16(csr, &arg0->unk0E);
+                            csr = bytecode_read_f32(csr, &arg0->unk44);
 
-                        //temp1 = (csr[2] << 8) + csr[3];
-                        temp2 = *csr++;
-                        temp2 <<= 8;
-                        temp2 += *csr++;
+                            if (arg0->unk0E == 1) {
+                                arg0->unk0E = 0;
+                                arg0->unk40 = arg0->unk44;
+                            }
+                            break;
+                        }
+                        case 0xA1:
+                        {
+                            arg0->unk06 = *csr++;
+                            break;
+                        }
+                        case 0xA2:
+                        {
+                            csr = bytecode_read_f32(csr, &arg0->unk38);
+                            if (arg0->unk38 == 0.0f) {
+                                arg0->unk06 &= ~1;
+                            } else {
+                                arg0->unk06 |= 1;
+                            }
+                            break;
+                        }
+                        case 0xA3:
+                        {
+                            csr = bytecode_read_f32(csr, &arg0->unk3C);
+                            if (arg0->unk3C == 1.0f) {
+                                arg0->unk06 &= ~2;
+                            } else {
+                                arg0->unk06 |= 2;
+                            }
+                            break;
+                        }
+                        case 0xA4:
+                        {
+                            // branch? call?
+                            struct Temp002 *temp;
 
-                        //csr += 4;
+                            temp1 = *csr++;
+                            temp1 <<= 8;
+                            temp1 += *csr++;
 
-                        arg0->unk1E = (s32)((f32)temp1 * rand_f32()) + temp2;
-                        break;
-                    }
-                    case 0xA7:
-                    {
-                        temp1 = *csr++;
+                            temp = func_ovl0_800CE6B8(arg0, arg0->unk08, temp1);
+                            if (temp != NULL) {
+                                temp->unk20 = arg0->unk20;
+                                temp->unk24 = arg0->unk24;
+                                temp->unk28 = arg0->unk28;
+                                temp->unk04 = arg0->unk04;
+                                temp->unk58 = arg0->unk58;
+                                temp->unk5C = arg0->unk5C;
+                                if (temp->unk5C != NULL) { temp->unk5C->unk2A++; }
+                                func_ovl0_800CEF4C(temp, arg0, arg0->unk08 >> 3);
+                            }
+                            break;
+                        }
+                        case 0xA5:
+                        {
+                            struct Temp003 *temp;
 
-                        if (temp1 >= (s32)(rand_f32() * 100.0f)) {
+                            temp1 = *csr++;
+                            temp1 <<= 8;
+                            temp1 += *csr++;
+
+                            temp = func_ovl0_800D35DC(arg0->unk08, temp1);
+                            if (temp != NULL) {
+                                temp->unk14 = arg0->unk20;
+                                temp->unk18 = arg0->unk24;
+                                temp->unk1C = arg0->unk28;
+                                temp->unk04 = arg0->unk04;
+                                temp->unk4C = arg0->unk5C;
+                                if (temp->unk4C != NULL) { temp->unk4C->unk2A++; }
+                            }
+                            break;
+                        }
+                        case 0xA6:
+                        {
+                            // sp88 = (csr[0] << 8) + csr[1];
+                            temp1 = *csr++;
+                            temp1 <<= 8;
+                            temp1 += *csr++;
+
+                            // temp1 = (csr[2] << 8) + csr[3];
+                            temp2 = *csr++;
+                            temp2 <<= 8;
+                            temp2 += *csr++;
+
+                            // csr += 4;
+
+                            arg0->unk1E = (s32)((f32)temp1 * rand_f32()) + temp2;
+                            break;
+                        }
+                        case 0xA7:
+                        {
+                            temp1 = *csr++;
+
+                            if (temp1 >= (s32)(rand_f32() * 100.0f)) { arg0->unk1E = 1; }
+                            goto loop_break;
+                        }
+                        case 0xA8:
+                        {
+                            csr = bytecode_read_f32(csr, &sp80);
+                            arg0->unk20 += sp80 * rand_f32();
+
+                            csr = bytecode_read_f32(csr, &sp80);
+                            arg0->unk24 += sp80 * rand_f32();
+
+                            csr = bytecode_read_f32(csr, &sp80);
+                            arg0->unk28 += sp80 * rand_f32();
+
+                            break;
+                        }
+                        case 0xA9:
+                        {
+                            csr = bytecode_read_f32(csr, &sp80);
+                            func_ovl0_800CEC34(arg0, sp80);
+                            break;
+                        }
+                        case 0xAA:
+                        {
+                            struct Temp002 *ret;
+
+                            temp1 = *csr++;
+                            temp1 <<= 8;
+                            temp1 += *csr++;
+
+                            // temp1 = (csr[2] << 8) + csr[3];
+                            temp2 = *csr++;
+                            temp2 <<= 8;
+                            temp2 += *csr++;
+
+                            ret = func_ovl0_800CE6B8(
+                                arg0, arg0->unk08, temp2 + (s32)((f32)temp1 * rand_f32()));
+                            if (ret != NULL) {
+                                ret->unk20 = arg0->unk20;
+                                ret->unk24 = arg0->unk24;
+                                ret->unk28 = arg0->unk28;
+                                ret->unk04 = arg0->unk04;
+                                ret->unk58 = arg0->unk58;
+                                ret->unk5C = arg0->unk5C;
+
+                                if (ret->unk5C != NULL) { ret->unk5C->unk2A++; }
+                                func_ovl0_800CEF4C(ret, arg0, arg0->unk08 >> 3);
+                            }
+                            break;
+                        }
+                        case 0xAB:
+                        {
+                            csr = bytecode_read_f32(csr, &sp80);
+                            arg0->unk2C *= sp80;
+                            arg0->unk30 *= sp80;
+                            arg0->unk34 *= sp80;
+                            break;
+                        }
+                        case 0xAC:
+                        {
+                            csr = bytecode_read_u16(csr, &arg0->unk0E);
+                            csr = bytecode_read_f32(csr, &arg0->unk44);
+                            csr = bytecode_read_f32(csr, &sp80);
+
+                            arg0->unk44 += sp80 * rand_f32();
+                            if (arg0->unk0E == 1) {
+                                arg0->unk04 = 0;
+                                arg0->unk40 = arg0->unk44;
+                            }
+                            break;
+                        }
+                        case 0xAD:
+                        {
+                            arg0->unk06 |= 0x0080;
+                            break;
+                        }
+                        case 0xAE:
+                        {
+                            // why is this off?
+                            arg0->unk06 &= ~0x0060;
+                            break;
+                        }
+                        case 0xAF:
+                        {
+                            arg0->unk06 &= ~0x0040;
+                            arg0->unk06 |= 0x0020;
+                            break;
+                        }
+                        case 0xB0:
+                        {
+                            arg0->unk06 &= ~0x0020;
+                            arg0->unk06 |= 0x0040;
+                            break;
+                        }
+                        case 0xB1:
+                        {
+                            arg0->unk06 |= 0x0060;
+                            break;
+                        }
+                        case 0xB2:
+                        {
+                            arg0->unk06 |= 0x0200;
+                            break;
+                        }
+                        case 0xB3:
+                        {
+                            arg0->unk06 &= ~0x0400;
+                            break;
+                        }
+                        case 0xB4:
+                        {
+                            arg0->unk06 |= 0x0400;
+                            break;
+                        }
+                        case 0xB5:
+                        {
+                            arg0->unk06 |= 0x0100;
+                            break;
+                        }
+                        case 0xB6:
+                        {
+                            arg0->unk06 &= ~0x0100;
+                            break;
+                        }
+                        case 0xB7:
+                        {
+                            func_ovl0_800CEDBC(arg0, (void *)(&D_ovl0_800D639C)[*csr++]);
+                            break;
+                        }
+                        case 0xB8:
+                        {
+                            temp1 = *csr++;
+                            csr   = bytecode_read_f32(csr, &sp80);
+                            func_ovl0_800CEEB8(arg0, (void *)(&D_ovl0_800D639C)[temp1], sp80);
+                            break;
+                        }
+                        case 0xB9:
+                        {
+                            struct Temp002 *ret;
+
+                            temp1 = *csr++;
+                            temp1 <<= 8;
+                            temp1 += *csr++;
+
+                            ret = func_ovl0_800CE6B8(arg0, arg0->unk08, temp1);
+
+                            if (ret != NULL) {
+                                ret->unk20 = arg0->unk20;
+                                ret->unk24 = arg0->unk24;
+                                ret->unk28 = arg0->unk28;
+                                ret->unk2C = arg0->unk2C;
+                                ret->unk30 = arg0->unk30;
+                                ret->unk34 = arg0->unk34;
+                                ret->unk04 = arg0->unk04;
+                                ret->unk58 = arg0->unk58;
+                                ret->unk5C = arg0->unk5C;
+                                if (ret->unk5C != NULL) { ret->unk5C->unk2A++; }
+                                func_ovl0_800CEF4C(ret, arg0, arg0->unk08 >> 3);
+                            }
+                            break;
+                        }
+                        case 0xBA:
+                        {
+                            sp80 = (f32)*csr++;
+                            arg0->unk4C.b0 += sp80 * rand_f32();
+                            sp80 = (f32)*csr++;
+                            arg0->unk4C.b1 += sp80 * rand_f32();
+                            sp80 = (f32)*csr++;
+                            arg0->unk4C.b2 += sp80 * rand_f32();
+                            sp80 = (f32)*csr++;
+                            arg0->unk4C.b3 += sp80 * rand_f32();
+
+                            if (arg0->unk10 == 0) {
+                                // this has lwl and lwr, so maybe it's a struct?
+                                arg0->unk48 = arg0->unk4C;
+                            }
+                            break;
+                        }
+                        case 0xBB:
+                        {
+                            sp80 = (f32)*csr++;
+                            arg0->unk54.b0 += sp80 * rand_f32();
+                            sp80 = (f32)*csr++;
+                            arg0->unk54.b1 += sp80 * rand_f32();
+                            sp80 = (f32)*csr++;
+                            arg0->unk54.b2 += sp80 * rand_f32();
+                            sp80 = (f32)*csr++;
+                            arg0->unk54.b3 += sp80 * rand_f32();
+
+                            if (arg0->unk12 == 0) {
+                                // this has lwl and lwr, so maybe it's a struct?
+                                arg0->unk50 = arg0->unk54;
+                            }
+                            break;
+                        }
+                        case 0xBC:
+                        {
+                            arg0->unk0B = *csr++;
+                            sp80        = (f32)*csr++;
+                            arg0->unk0B += sp80 * rand_f32();
+                            break;
+                        }
+                        case 0xBD:
+                        {
+                            csr = bytecode_read_f32(csr, &sp80);
+                            csr = bytecode_read_f32(csr, &sp7C);
+
+                            sp80 += sp7C * rand_f32();
+
+                            sp7C = sqrtf(
+                                SQUARE(arg0->unk2C) + SQUARE(arg0->unk30) + SQUARE(arg0->unk34));
+                            sp80 /= sp7C;
+
+                            arg0->unk2C *= sp80;
+                            arg0->unk30 *= sp80;
+                            arg0->unk34 *= sp80;
+                            break;
+                        }
+                        case 0xBE:
+                        {
+                            csr = bytecode_read_f32(csr, &sp80);
+                            arg0->unk2C *= sp80;
+                            csr = bytecode_read_f32(csr, &sp80);
+                            arg0->unk30 *= sp80;
+                            csr = bytecode_read_f32(csr, &sp80);
+                            arg0->unk34 *= sp80;
+                            break;
+                        }
+                        case 0xBF:
+                        {
+                            temp1 = *csr++ - 1;
+                            arg0->unk06 |= 0x8000 | (temp1 << 12);
+                            break;
+                        }
+                        case 0xC0:
+                        {
+                            struct FourBytes *src, *dst; // sp2c, sp28;
+
+                            dst  = &arg0->unk48;
+                            src  = &arg0->unk4C;
+                            csr  = bytecode_read_u16(csr, &arg0->unk10);
+                            *src = *dst;
+                            if (command & 1) { arg0->unk4C.b0 = *csr++; }
+                            if (command & 2) { arg0->unk4C.b1 = *csr++; }
+                            if (command & 4) { arg0->unk4C.b2 = *csr++; }
+                            if (command & 8) { arg0->unk4C.b3 = *csr++; }
+
+                            if (arg0->unk10 == 1) {
+                                *dst        = *src;
+                                arg0->unk10 = 0;
+                            }
+                            break;
+                        }
+                        case 0xD0:
+                        {
+                            struct FourBytes *src, *dst; // sp2c, sp28;
+
+                            dst  = &arg0->unk50;
+                            src  = &arg0->unk54;
+                            csr  = bytecode_read_u16(csr, &arg0->unk12);
+                            *src = *dst;
+                            if (command & 1) { arg0->unk54.b0 = *csr++; }
+                            if (command & 2) { arg0->unk54.b1 = *csr++; }
+                            if (command & 4) { arg0->unk54.b2 = *csr++; }
+                            if (command & 8) { arg0->unk54.b3 = *csr++; }
+
+                            if (arg0->unk12 == 1) {
+                                *dst        = *src;
+                                arg0->unk12 = 0;
+                            }
+                            break;
+                        }
+                        case 0xFA:
+                        {
+                            s32 temp;
+                            temp        = *csr++;
+                            arg0->unk1C = (uintptr_t)csr - (uintptr_t)arg0->unk14;
+                            arg0->unk09 = temp;
+                            break;
+                        }
+                        case 0xFB:
+                        {
+                            if (--arg0->unk09 != 0) { csr = arg0->unk14 + arg0->unk1C; }
+                            break;
+                        }
+                        case 0xFC:
+                        {
+                            arg0->unk1A = (uintptr_t)csr - (uintptr_t)arg0->unk14;
+                            break;
+                        }
+                        case 0xFD:
+                        {
+                            csr = arg0->unk14 + arg0->unk1A;
+                            break;
+                        }
+                        case 0xFE:
+                        case 0xFF:
+                        {
                             arg0->unk1E = 1;
+                            goto loop_break;
                         }
-                        goto loop_break;
-                    }
-                    case 0xA8:
-                    {
-                        csr = bytecode_read_f32(csr, &sp80);
-                        arg0->unk20 += sp80 * rand_f32();
-
-                        csr = bytecode_read_f32(csr, &sp80);
-                        arg0->unk24 += sp80 * rand_f32();
-
-                        csr = bytecode_read_f32(csr, &sp80);
-                        arg0->unk28 += sp80 * rand_f32();
-
-                        break;
-                    }
-                    case 0xA9:
-                    {
-                        csr = bytecode_read_f32(csr, &sp80);
-                        func_ovl0_800CEC34(arg0, sp80);
-                        break;
-                    }
-                    case 0xAA:
-                    {
-                        struct Temp002 *ret;
-                        
-                        temp1 = *csr++;
-                        temp1 <<= 8;
-                        temp1 += *csr++;
-
-                        //temp1 = (csr[2] << 8) + csr[3];
-                        temp2 = *csr++;
-                        temp2 <<= 8;
-                        temp2 += *csr++;
-
-                        ret = func_ovl0_800CE6B8(arg0, arg0->unk08, temp2 + (s32)((f32)temp1 * rand_f32()));
-                        if (ret != NULL) {
-                            ret->unk20 = arg0->unk20;
-                            ret->unk24 = arg0->unk24;
-                            ret->unk28 = arg0->unk28;
-                            ret->unk04 = arg0->unk04;
-                            ret->unk58 = arg0->unk58;
-                            ret->unk5C = arg0->unk5C;
-
-                            if (ret->unk5C != NULL) {
-                                ret->unk5C->unk2A++;
-                            }
-                            func_ovl0_800CEF4C(ret, arg0, arg0->unk08 >> 3);
-                        }
-                        break;
-                    }
-                    case 0xAB:
-                    {
-                        csr = bytecode_read_f32(csr, &sp80);
-                        arg0->unk2C *= sp80;
-                        arg0->unk30 *= sp80;
-                        arg0->unk34 *= sp80;
-                        break;
-                    }
-                    case 0xAC:
-                    {
-                        csr = bytecode_read_u16(csr, &arg0->unk0E);
-                        csr = bytecode_read_f32(csr, &arg0->unk44);
-                        csr = bytecode_read_f32(csr, &sp80);
-
-                        arg0->unk44 += sp80 * rand_f32();
-                        if (arg0->unk0E == 1) {
-                            arg0->unk04 = 0;
-                            arg0->unk40 = arg0->unk44;
-                        }
-                        break;
-                    }
-                    case 0xAD:
-                    {
-                        arg0->unk06 |= 0x0080;
-                        break;
-                    }
-                    case 0xAE:
-                    {
-                        // why is this off?
-                        arg0->unk06 &= ~0x0060;
-                        break;
-                    }
-                    case 0xAF:
-                    {
-                        arg0->unk06 &= ~0x0040;
-                        arg0->unk06 |= 0x0020;
-                        break;
-                    }
-                    case 0xB0:
-                    {
-                        arg0->unk06 &= ~0x0020;
-                        arg0->unk06 |= 0x0040;
-                        break;
-                    }
-                    case 0xB1:
-                    {
-                        arg0->unk06 |= 0x0060;
-                        break;
-                    }
-                    case 0xB2:
-                    {
-                        arg0->unk06 |= 0x0200;
-                        break;
-                    }
-                    case 0xB3:
-                    {
-                        arg0->unk06 &= ~0x0400;
-                        break;
-                    }
-                    case 0xB4:
-                    {
-                        arg0->unk06 |= 0x0400;
-                        break;
-                    }
-                    case 0xB5:
-                    {
-                        arg0->unk06 |= 0x0100;
-                        break;
-                    }
-                    case 0xB6:
-                    {
-                        arg0->unk06 &= ~0x0100;
-                        break;
-                    }
-                    case 0xB7:
-                    {
-                        func_ovl0_800CEDBC(arg0, (void *)(&D_ovl0_800D639C)[*csr++]);
-                        break;
-
-                    }
-                    case 0xB8:
-                    {
-                        temp1 = *csr++;
-                        csr = bytecode_read_f32(csr, &sp80);
-                        func_ovl0_800CEEB8(arg0, (void *)(&D_ovl0_800D639C)[temp1], sp80);
-                        break;
-                    }
-                    case 0xB9:
-                    {
-                        struct Temp002 *ret;
-
-                        temp1 = *csr++;
-                        temp1 <<= 8;
-                        temp1 += *csr++;
-
-                        ret = func_ovl0_800CE6B8(arg0, arg0->unk08, temp1);
-
-                        if (ret != NULL) {
-                            ret->unk20 = arg0->unk20;
-                            ret->unk24 = arg0->unk24;
-                            ret->unk28 = arg0->unk28;
-                            ret->unk2C = arg0->unk2C;
-                            ret->unk30 = arg0->unk30;
-                            ret->unk34 = arg0->unk34;
-                            ret->unk04 = arg0->unk04;
-                            ret->unk58 = arg0->unk58;
-                            ret->unk5C = arg0->unk5C;
-                            if (ret->unk5C != NULL) {
-                                ret->unk5C->unk2A++;
-                            }
-                            func_ovl0_800CEF4C(ret, arg0, arg0->unk08 >> 3);
-                        }
-                        break;
-                    }
-                    case 0xBA:
-                    {
-                        sp80 = (f32)*csr++;
-                        arg0->unk4C.b0 += sp80 * rand_f32();
-                        sp80 = (f32)*csr++;
-                        arg0->unk4C.b1 += sp80 * rand_f32();
-                        sp80 = (f32)*csr++;
-                        arg0->unk4C.b2 += sp80 * rand_f32();
-                        sp80 = (f32)*csr++;
-                        arg0->unk4C.b3 += sp80 * rand_f32();
-
-                        if (arg0->unk10 == 0) {
-                            // this has lwl and lwr, so maybe it's a struct?
-                            arg0->unk48 = arg0->unk4C;
-                        }
-                        break;
-                    }
-                    case 0xBB:
-                    {
-                        sp80 = (f32)*csr++;
-                        arg0->unk54.b0 += sp80 * rand_f32();
-                        sp80 = (f32)*csr++;
-                        arg0->unk54.b1 += sp80 * rand_f32();
-                        sp80 = (f32)*csr++;
-                        arg0->unk54.b2 += sp80 * rand_f32();
-                        sp80 = (f32)*csr++;
-                        arg0->unk54.b3 += sp80 * rand_f32();
-
-                        if (arg0->unk12 == 0) {
-                            // this has lwl and lwr, so maybe it's a struct?
-                            arg0->unk50 = arg0->unk54;
-                        }
-                        break;
-                    }
-                    case 0xBC:
-                    {
-                        arg0->unk0B = *csr++;
-                        sp80 = (f32)*csr++;
-                        arg0->unk0B += sp80 * rand_f32();
-                        break;
-                    }
-                    case 0xBD:
-                    {
-                        csr = bytecode_read_f32(csr, &sp80);
-                        csr = bytecode_read_f32(csr, &sp7C);
-
-                        sp80 += sp7C * rand_f32();
-
-                        sp7C = sqrtf(SQUARE(arg0->unk2C) + SQUARE(arg0->unk30) + SQUARE(arg0->unk34));
-                        sp80 /= sp7C;
-
-                        arg0->unk2C *= sp80;
-                        arg0->unk30 *= sp80;
-                        arg0->unk34 *= sp80;
-                        break;
-                    }
-                    case 0xBE:
-                    {
-                        csr = bytecode_read_f32(csr, &sp80);
-                        arg0->unk2C *= sp80;
-                        csr = bytecode_read_f32(csr, &sp80);
-                        arg0->unk30 *= sp80;
-                        csr = bytecode_read_f32(csr, &sp80);
-                        arg0->unk34 *= sp80;
-                        break;
-                    }
-                    case 0xBF:
-                    {
-                        temp1 = *csr++ - 1;
-                        arg0->unk06 |= 0x8000 | (temp1 << 12);
-                        break;
-                    }
-                    case 0xC0:
-                    {
-                        struct FourBytes *src, *dst; // sp2c, sp28;
-
-                        dst = &arg0->unk48;
-                        src = &arg0->unk4C;
-                        csr = bytecode_read_u16(csr, &arg0->unk10);
-                        *src = *dst;
-                        if (command & 1) {
-                            arg0->unk4C.b0 = *csr++;
-                        }
-                        if (command & 2) {
-                            arg0->unk4C.b1 = *csr++;
-                        }
-                        if (command & 4) {
-                            arg0->unk4C.b2 = *csr++;
-                        }
-                        if (command & 8) {
-                            arg0->unk4C.b3 = *csr++;
-                        }
-
-                        if (arg0->unk10 == 1) {
-                            *dst = *src;
-                            arg0->unk10 = 0;
-                        }
-                        break;
-                    }
-                    case 0xD0:
-                    {
-                        struct FourBytes *src, *dst; // sp2c, sp28;
-
-                        dst = &arg0->unk50;
-                        src = &arg0->unk54;
-                        csr = bytecode_read_u16(csr, &arg0->unk12);
-                        *src = *dst;
-                        if (command & 1) {
-                            arg0->unk54.b0 = *csr++;
-                        }
-                        if (command & 2) {
-                            arg0->unk54.b1 = *csr++;
-                        }
-                        if (command & 4) {
-                            arg0->unk54.b2 = *csr++;
-                        }
-                        if (command & 8) {
-                            arg0->unk54.b3 = *csr++;
-                        }
-
-                        if (arg0->unk12 == 1) {
-                            *dst = *src;
-                            arg0->unk12 = 0;
-                        }
-                        break;
-                    }
-                    case 0xFA:
-                    {
-                        s32 temp;
-                        temp = *csr++;
-                        arg0->unk1C = (uintptr_t)csr - (uintptr_t)arg0->unk14;
-                        arg0->unk09 = temp;
-                        break;
-                    }
-                    case 0xFB:
-                    {
-                        if (--arg0->unk09 != 0) {
-                            csr = arg0->unk14 + arg0->unk1C;
-                        }
-                        break;
-                    }
-                    case 0xFC:
-                    {
-                        arg0->unk1A = (uintptr_t)csr - (uintptr_t)arg0->unk14;
-                        break;
-                    }
-                    case 0xFD:
-                    {
-                        csr = arg0->unk14 + arg0->unk1A;
-                        break;
-                    }
-                    case 0xFE:
-                    case 0xFF:
-                    {
-                        arg0->unk1E = 1;
-                        goto loop_break;
-                    }
                     }
                 } else { // ?
-                // L800D03E8
+                         // L800D03E8
                     sp94 = command & 0x1F;
-                    if (command & 0x20) {
-                        sp94 = *csr++ + (sp94 << 8);
-                    }
+                    if (command & 0x20) { sp94 = *csr++ + (sp94 << 8); }
                     // L800D0410
-                    if (command & 0xC0 && (command & 0xC0) == 0x40) {
-                        arg0->unk0B = *csr++;
-                    }
+                    if (command & 0xC0 && (command & 0xC0) == 0x40) { arg0->unk0B = *csr++; }
                 }
                 // jtgt_ovl0_800D0434 ??
                 // L800D0438
             } while (sp94 == 0);
-            // L800D0448 break?
-            loop_break:
+        // L800D0448 break?
+        loop_break:
             arg0->unk18 = csr - arg0->unk14;
             arg0->unk0C = sp94;
         }
     }
     // L800D0454
     // L800D0458
-    if (arg0->unk0E != 0) {
-        arg0->unk40 += (arg0->unk44 - arg0->unk40) / (f32)arg0->unk0E--;
-    }
+    if (arg0->unk0E != 0) { arg0->unk40 += (arg0->unk44 - arg0->unk40) / (f32)arg0->unk0E--; }
     // L800D04A0
     if (arg0->unk10 != 0) {
         //(arg0->unk4C.b0 - arg0->unk48.b0) * (1 / arg0->unk10);
-        arg0->unk48.b0 = ((arg0->unk48.b0 << 16) + ((arg0->unk4C.b0 - arg0->unk48.b0) * (1 / arg0->unk10))) >> 16;
-        arg0->unk48.b1 = ((arg0->unk48.b1 << 16) + ((arg0->unk4C.b1 - arg0->unk48.b1) * (1 / arg0->unk10))) >> 16;
-        arg0->unk48.b2 = ((arg0->unk48.b2 << 16) + ((arg0->unk4C.b2 - arg0->unk48.b2) * (1 / arg0->unk10))) >> 16;
-        arg0->unk48.b3 = ((arg0->unk48.b3 << 16) + ((arg0->unk4C.b3 - arg0->unk48.b3) * (1 / arg0->unk10))) >> 16;
+        arg0->unk48.b0 =
+            ((arg0->unk48.b0 << 16) + ((arg0->unk4C.b0 - arg0->unk48.b0) * (1 / arg0->unk10)))
+            >> 16;
+        arg0->unk48.b1 =
+            ((arg0->unk48.b1 << 16) + ((arg0->unk4C.b1 - arg0->unk48.b1) * (1 / arg0->unk10)))
+            >> 16;
+        arg0->unk48.b2 =
+            ((arg0->unk48.b2 << 16) + ((arg0->unk4C.b2 - arg0->unk48.b2) * (1 / arg0->unk10)))
+            >> 16;
+        arg0->unk48.b3 =
+            ((arg0->unk48.b3 << 16) + ((arg0->unk4C.b3 - arg0->unk48.b3) * (1 / arg0->unk10)))
+            >> 16;
 
         arg0->unk10--;
     }
     // L800D0574
     if (arg0->unk12 != 0) {
-        arg0->unk50.b0 = ((arg0->unk50.b0 << 16) + ((arg0->unk54.b0 - arg0->unk50.b0) * 1 / arg0->unk12)) >> 16;
-        arg0->unk50.b1 = ((arg0->unk50.b1 << 16) + ((arg0->unk54.b1 - arg0->unk50.b1) * 1 / arg0->unk12)) >> 16;
-        arg0->unk50.b2 = ((arg0->unk50.b2 << 16) + ((arg0->unk54.b2 - arg0->unk50.b2) * 1 / arg0->unk12)) >> 16;
-        arg0->unk50.b3 = ((arg0->unk50.b3 << 16) + ((arg0->unk54.b3 - arg0->unk50.b3) * 1 / arg0->unk12)) >> 16;
+        arg0->unk50.b0 =
+            ((arg0->unk50.b0 << 16) + ((arg0->unk54.b0 - arg0->unk50.b0) * 1 / arg0->unk12)) >> 16;
+        arg0->unk50.b1 =
+            ((arg0->unk50.b1 << 16) + ((arg0->unk54.b1 - arg0->unk50.b1) * 1 / arg0->unk12)) >> 16;
+        arg0->unk50.b2 =
+            ((arg0->unk50.b2 << 16) + ((arg0->unk54.b2 - arg0->unk50.b2) * 1 / arg0->unk12)) >> 16;
+        arg0->unk50.b3 =
+            ((arg0->unk50.b3 << 16) + ((arg0->unk54.b3 - arg0->unk50.b3) * 1 / arg0->unk12)) >> 16;
 
         arg0->unk12--;
     }
@@ -1379,14 +1351,12 @@ struct Temp002 *func_ovl0_800CEF4C(struct Temp002 *arg0, struct Temp002 *arg1, s
                 func_ovl0_800CE188(arg0->unk5C);
 
                 if (arg1 == NULL) {
-                    if (next != D_ovl0_800D6358[arg2]) {
-                        next = D_ovl0_800D6358[arg2];
-                    }
+                    if (next != D_ovl0_800D6358[arg2]) { next = D_ovl0_800D6358[arg2]; }
                 }
             }
         }
         // L800D071C
-        arg0->next = D_ovl0_800D6350;
+        arg0->next      = D_ovl0_800D6350;
         D_ovl0_800D6350 = arg0;
         D_ovl0_800D6448--;
 
@@ -1397,7 +1367,7 @@ struct Temp002 *func_ovl0_800CEF4C(struct Temp002 *arg0, struct Temp002 *arg1, s
         u16 sinIdx;
         u16 cosIdx;
         f32 sp70;
-        f32 sp6C; // f2
+        f32 sp6C;     // f2
         f32 sx1, sx2; // sp5C, sp58
         f32 cx1, cx2; // f16=>sp54, f12=>sp50
         f32 sx3, cx3; // f18, f0=>sp44
@@ -1405,27 +1375,19 @@ struct Temp002 *func_ovl0_800CEF4C(struct Temp002 *arg0, struct Temp002 *arg1, s
 
         sinIdx = RAD_TO_IDX(arg0->unk38) & 0xFFF;
         cosIdx = sinIdx + 0x400;
-        sx1 = gSinTable[sinIdx & SIN_TABLE_IDX_MASK];
-        if (sinIdx & 0x800) {
-            sx1 = -sx1;
-        }
+        sx1    = gSinTable[sinIdx & SIN_TABLE_IDX_MASK];
+        if (sinIdx & 0x800) { sx1 = -sx1; }
         // L800D07D4
         cx1 = gSinTable[cosIdx & SIN_TABLE_IDX_MASK];
-        if (cosIdx & 0x800) {
-            cx1 = -cx1;
-        }
+        if (cosIdx & 0x800) { cx1 = -cx1; }
         // L800D0810
         sinIdx = RAD_TO_IDX(arg0->unk3C);
         cosIdx = sinIdx + 0x400;
-        sx2 = gSinTable[sinIdx & SIN_TABLE_IDX_MASK];
-        if (sinIdx & 0x800) {
-            sx2 = -sx2;
-        }
+        sx2    = gSinTable[sinIdx & SIN_TABLE_IDX_MASK];
+        if (sinIdx & 0x800) { sx2 = -sx2; }
         // L800D087C
         cx2 = gSinTable[cosIdx & SIN_TABLE_IDX_MASK];
-        if (cosIdx & 0x800) {
-            cx2 = -cx2;
-        }
+        if (cosIdx & 0x800) { cx2 = -cx2; }
         // L800D08BC
         sx1 /= 32768.0f;
         cx1 /= 32768.0f;
@@ -1447,15 +1409,11 @@ struct Temp002 *func_ovl0_800CEF4C(struct Temp002 *arg0, struct Temp002 *arg1, s
         // L800D093C
         sinIdx = RAD_TO_IDX(sp6C);
         cosIdx = sinIdx + 0x400;
-        sx3 = gSinTable[sinIdx & SIN_TABLE_IDX_MASK];
-        if (sinIdx & 0x800) {
-            sx3 = -sx3;
-        }
+        sx3    = gSinTable[sinIdx & SIN_TABLE_IDX_MASK];
+        if (sinIdx & 0x800) { sx3 = -sx3; }
         // L800D099C
         cx3 = gSinTable[cosIdx & SIN_TABLE_IDX_MASK];
-        if (cosIdx & 0x800) {
-            cx3 = -cx3;
-        }
+        if (cosIdx & 0x800) { cx3 = -cx3; }
         // L800D09D8
         sp70 += arg0->unk34 * (sx3 / cx3);
         sp70 *= arg0->unk30;
@@ -1463,24 +1421,22 @@ struct Temp002 *func_ovl0_800CEF4C(struct Temp002 *arg0, struct Temp002 *arg1, s
 
         sinIdx = RAD_TO_IDX(arg0->unk2C);
         cosIdx = sinIdx + 0x400;
-        sx3 = gSinTable[sinIdx & SIN_TABLE_IDX_MASK];
-        if (sinIdx & 0x800) {
-            sx3 = -sx3;
-        }
+        sx3    = gSinTable[sinIdx & SIN_TABLE_IDX_MASK];
+        if (sinIdx & 0x800) { sx3 = -sx3; }
         cx3 = gSinTable[cosIdx & SIN_TABLE_IDX_MASK];
-        if (cosIdx & 0x800) {
-            cx3 = -cx3;
-        }
+        if (cosIdx & 0x800) { cx3 = -cx3; }
         // L800D0AB8
         sp70 /= 32768.0f;
         arg0->unk20 = (((sp70 * cx3) * cx2) + (arg0->unk34 * sx2)) + a2->unk14;
-        arg0->unk24 = ((((-(sp70 * cx3) * sx1) * sx2) + ((sp70 * sx3) * cx1)) + ((arg0->unk34 * sx1) * cx2)) + a2->unk18;
-        arg0->unk2C = ((((sx2 * cx1) * sx2) - ((sp70 * sx3) * sx1)) + ((arg0->unk34 * cx1) * ((sp70 * sx3) * sx1))) + a2->unk1C;
+        arg0->unk24 =
+            ((((-(sp70 * cx3) * sx1) * sx2) + ((sp70 * sx3) * cx1)) + ((arg0->unk34 * sx1) * cx2))
+            + a2->unk18;
+        arg0->unk2C = ((((sx2 * cx1) * sx2) - ((sp70 * sx3) * sx1))
+                       + ((arg0->unk34 * cx1) * ((sp70 * sx3) * sx1)))
+                    + a2->unk1C;
     } else {
         // L800D0B80
-        if (arg0->unk06 & 1) {
-            arg0->unk30 -= arg0->unk38;
-        }
+        if (arg0->unk06 & 1) { arg0->unk30 -= arg0->unk38; }
         // L800D0BA4
         if (arg0->unk06 & 2) {
             arg0->unk2C *= arg0->unk3C;
@@ -1491,7 +1447,6 @@ struct Temp002 *func_ovl0_800CEF4C(struct Temp002 *arg0, struct Temp002 *arg1, s
         arg0->unk20 += arg0->unk2C;
         arg0->unk24 += arg0->unk30;
         arg0->unk28 += arg0->unk34;
-
     }
     // L800D0C04
     if (arg0->unk06 & 0x8000) {
@@ -1516,13 +1471,13 @@ void func_ovl0_800D0C74(struct GObjCommon *obj) {
     struct Temp002 *curr, *prev, *ret;
     u32 flags;
     s32 i;
-    
+
     flags = obj->unk7C;
     for (i = 0; i < ARRAY_COUNT(D_ovl0_800D6358); i++) {
         if (!(flags & 0x10000)) {
             prev = NULL;
             curr = D_ovl0_800D6358[i];
-            while (curr != NULL) { 
+            while (curr != NULL) {
                 ret = func_ovl0_800CEF4C(curr, prev, i);
                 if (ret == curr->next) {
                     prev = curr;
@@ -1534,7 +1489,6 @@ void func_ovl0_800D0C74(struct GObjCommon *obj) {
         }
         flags >>= 1;
     }
-
 }
 #else
 #pragma GLOBAL_ASM("game/nonmatching/ovl0/halsprite/func_ovl0_800D0C74.s")
@@ -1573,72 +1527,125 @@ void func_ovl0_800D0D34(struct GObjCommon *obj) {
     cam = obj->unk74;
     for (i = 0; i < cam->unk60; i++) {
         switch (cam->unk64[i]->unk04) {
-        case 3:
-        {
-            hal_perspective_fast_f(&sp248, NULL, cam->unk18.f6.f[1], cam->unk18.f6.f[2], cam->unk18.f6.f[3], cam->unk18.f6.f[4], cam->unk18.f6.f[5]);
-            break;
+            case 3:
+            {
+                hal_perspective_fast_f(
+                    &sp248,
+                    NULL,
+                    cam->unk18.f6.f[1],
+                    cam->unk18.f6.f[2],
+                    cam->unk18.f6.f[3],
+                    cam->unk18.f6.f[4],
+                    cam->unk18.f6.f[5]);
+                break;
+            }
+            case 4:
+            {
+                hal_perspective_f(
+                    &sp248,
+                    NULL,
+                    cam->unk18.f6.f[1],
+                    cam->unk18.f6.f[2],
+                    cam->unk18.f6.f[3],
+                    cam->unk18.f6.f[4],
+                    cam->unk18.f6.f[5]);
+                break;
+            }
+            case 5:
+            {
+                hal_ortho_f(
+                    &sp248,
+                    cam->unk18.f7.f[0],
+                    cam->unk18.f7.f[1],
+                    cam->unk18.f7.f[2],
+                    cam->unk18.f7.f[3],
+                    cam->unk18.f7.f[4],
+                    cam->unk18.f7.f[5],
+                    cam->unk18.f7.f[6]);
+                break;
+            }
+            case 6:
+            case 7:
+            case 12:
+            case 13:
+            {
+                hal_look_at_f(
+                    &sp288,
+                    cam->unk38.array[0][0],
+                    cam->unk38.array[0][1],
+                    cam->unk38.array[0][2],
+                    cam->unk38.array[1][0],
+                    cam->unk38.array[1][1],
+                    cam->unk38.array[1][2],
+                    cam->unk38.array[2][0],
+                    cam->unk38.array[2][1],
+                    cam->unk38.array[2][2]);
+                break;
+            }
+            case 8:
+            case 9:
+            case 14:
+            case 15:
+            {
+                hal_mod_look_at_f(
+                    &sp288,
+                    cam->unk38.array[0][0],
+                    cam->unk38.array[0][1],
+                    cam->unk38.array[0][2],
+                    cam->unk38.array[1][0],
+                    cam->unk38.array[1][1],
+                    cam->unk38.array[1][2],
+                    cam->unk38.array[2][0],
+                    0.0f,
+                    1.0f,
+                    0.0f);
+                break;
+            }
+            case 10:
+            case 11:
+            case 16:
+            case 17:
+            {
+                hal_mod_look_at_f(
+                    &sp288,
+                    cam->unk38.array[0][0],
+                    cam->unk38.array[0][1],
+                    cam->unk38.array[0][2],
+                    cam->unk38.array[1][0],
+                    cam->unk38.array[1][1],
+                    cam->unk38.array[1][2],
+                    cam->unk38.array[2][0],
+                    0.0f,
+                    0.0f,
+                    1.0f);
+                break;
+            }
+            // L800D0F5C
+            default:
+            {
+                hal_perspective_fast_f(
+                    &sp248,
+                    NULL,
+                    cam->unk18.f6.f[1],
+                    cam->unk18.f6.f[2],
+                    cam->unk18.f6.f[3],
+                    cam->unk18.f6.f[4],
+                    cam->unk18.f6.f[5]);
+                hal_look_at_f(
+                    &sp288,
+                    cam->unk38.array[0][0],
+                    cam->unk38.array[0][1],
+                    cam->unk38.array[0][2],
+                    cam->unk38.array[1][0],
+                    cam->unk38.array[1][1],
+                    cam->unk38.array[1][2],
+                    cam->unk38.array[2][0],
+                    cam->unk38.array[2][1],
+                    cam->unk38.array[2][2]);
+                break;
+            }
         }
-        case 4:
-        {
-            hal_perspective_f(&sp248, NULL, cam->unk18.f6.f[1], cam->unk18.f6.f[2], cam->unk18.f6.f[3], cam->unk18.f6.f[4], cam->unk18.f6.f[5]);
-            break;
-        }
-        case 5:
-        {
-            hal_ortho_f(&sp248, cam->unk18.f7.f[0], cam->unk18.f7.f[1], cam->unk18.f7.f[2], cam->unk18.f7.f[3], cam->unk18.f7.f[4], cam->unk18.f7.f[5], cam->unk18.f7.f[6]);
-            break;
-        }
-        case 6:
-        case 7:
-        case 12:
-        case 13:
-        {
-            hal_look_at_f(&sp288, 
-                cam->unk38.array[0][0], cam->unk38.array[0][1], cam->unk38.array[0][2],
-                cam->unk38.array[1][0], cam->unk38.array[1][1], cam->unk38.array[1][2],
-                cam->unk38.array[2][0], cam->unk38.array[2][1], cam->unk38.array[2][2]
-            );
-            break;
-        }
-        case 8:
-        case 9:
-        case 14:
-        case 15:
-        {
-            hal_mod_look_at_f(&sp288,
-                cam->unk38.array[0][0], cam->unk38.array[0][1], cam->unk38.array[0][2],
-                cam->unk38.array[1][0], cam->unk38.array[1][1], cam->unk38.array[1][2],
-                cam->unk38.array[2][0],
-                0.0f, 1.0f, 0.0f
-            );
-            break;
-        }
-        case 10:
-        case 11:
-        case 16:
-        case 17:
-        {
-            hal_mod_look_at_f(&sp288,
-                cam->unk38.array[0][0], cam->unk38.array[0][1], cam->unk38.array[0][2],
-                cam->unk38.array[1][0], cam->unk38.array[1][1], cam->unk38.array[1][2],
-                cam->unk38.array[2][0],
-                0.0f, 0.0f, 1.0f
-            );
-            break;
-        }
-        // L800D0F5C
-        default:
-        {
-            hal_perspective_fast_f(&sp248, NULL, cam->unk18.f6.f[1], cam->unk18.f6.f[2], cam->unk18.f6.f[3], cam->unk18.f6.f[4], cam->unk18.f6.f[5]);
-            hal_look_at_f(&sp288, 
-                cam->unk38.array[0][0], cam->unk38.array[0][1], cam->unk38.array[0][2],
-                cam->unk38.array[1][0], cam->unk38.array[1][1], cam->unk38.array[1][2],
-                cam->unk38.array[2][0], cam->unk38.array[2][1], cam->unk38.array[2][2]
-            );
-            break;
-        }
-        }
-        //L800D0FD0
+        // L800D0FD0
     }
     // L800D0FE8
     if (cam->unk60 != 0) {
@@ -1683,12 +1690,10 @@ void func_ovl0_800D0D34(struct GObjCommon *obj) {
     sp2CC = -1;
     sp2C8 = -1; // t7, i?
     while (sp2C8 != 16) {
-        struct Temp002 *curr; // s6
+        struct Temp002 *curr;   // s6
         struct Temp001 *parent; // s0, guess on name
 
-        if (obj->unk30 & (1 << sp1D4)) {
-            continue;
-        }
+        if (obj->unk30 & (1 << sp1D4)) { continue; }
         // L800D12A8
         curr = D_ovl0_800D6358[sp1D4];
         while (curr != NULL) {
@@ -1699,20 +1704,27 @@ void func_ovl0_800D0D34(struct GObjCommon *obj) {
                     if (parent->unk29 != D_ovl0_800D5D5C[0]) {
                         if (parent->unk28 != 2) {
                             hal_rotate_rpy_translate_scale_f(
-                                &parent->unk2C, 
-                                parent->unk04, parent->unk08, parent->unk0C,
-                                parent->unk10, parent->unk14, parent->unk18,
-                                parent->unk1C, parent->unk20, parent->unk24
-                            );
+                                &parent->unk2C,
+                                parent->unk04,
+                                parent->unk08,
+                                parent->unk0C,
+                                parent->unk10,
+                                parent->unk14,
+                                parent->unk18,
+                                parent->unk1C,
+                                parent->unk20,
+                                parent->unk24);
                         }
                         // L800D135C
-                        if (parent->unk28 == 1) {
-                            parent->unk28 = 2;
-                        }
+                        if (parent->unk28 == 1) { parent->unk28 = 2; }
                         // L800D1370
                         guMtxCatF(parent->unk2C, sp248, parent->unk6C);
-                        curr->unk5C->unkAC = sqrtf(SQUARE(parent->unk6C[0][0]) + SQUARE(parent->unk6C[1][0]) + SQUARE(parent->unk6C[2][0]));
-                        curr->unk5C->unkB0 = sqrtf(SQUARE(parent->unk6C[0][1]) + SQUARE(parent->unk6C[1][1]) + SQUARE(parent->unk6C[2][1]));
+                        curr->unk5C->unkAC = sqrtf(
+                            SQUARE(parent->unk6C[0][0]) + SQUARE(parent->unk6C[1][0])
+                            + SQUARE(parent->unk6C[2][0]));
+                        curr->unk5C->unkB0 = sqrtf(
+                            SQUARE(parent->unk6C[0][1]) + SQUARE(parent->unk6C[1][1])
+                            + SQUARE(parent->unk6C[2][1]));
                         curr->unk5C->unk29 = D_ovl0_800D5D5C[0];
                     }
                     // L800D13F8
@@ -1728,35 +1740,54 @@ void func_ovl0_800D0D34(struct GObjCommon *obj) {
                         sp20C = 0;
                     }
                     // L800D143C
-                    f0  = (parent->unk6C[3][0]) + (((parent->unk6C[0][0] * curr->unk20) + (parent->unk6C[1][0] * curr->unk24)) + (parent->unk6C[2][0] * curr->unk28));
-                    f12 = (parent->unk6C[3][1]) + (((parent->unk6C[0][1] * curr->unk20) + (parent->unk6C[1][1] * curr->unk24)) + (parent->unk6C[2][1] * curr->unk28));
-                    f26 = (parent->unk6C[3][2]) + (((parent->unk6C[0][2] * curr->unk20) + (parent->unk6C[1][2] * curr->unk24)) + (parent->unk6C[2][2] * curr->unk28));
-                    f2  = (parent->unk6C[3][3]) + (((parent->unk6C[0][3] * curr->unk20) + (parent->unk6C[1][3] * curr->unk24)) + (parent->unk6C[2][3] * curr->unk28));
+                    f0 = (parent->unk6C[3][0])
+                       + (((parent->unk6C[0][0] * curr->unk20)
+                           + (parent->unk6C[1][0] * curr->unk24))
+                          + (parent->unk6C[2][0] * curr->unk28));
+                    f12 = (parent->unk6C[3][1])
+                        + (((parent->unk6C[0][1] * curr->unk20)
+                            + (parent->unk6C[1][1] * curr->unk24))
+                           + (parent->unk6C[2][1] * curr->unk28));
+                    f26 = (parent->unk6C[3][2])
+                        + (((parent->unk6C[0][2] * curr->unk20)
+                            + (parent->unk6C[1][2] * curr->unk24))
+                           + (parent->unk6C[2][2] * curr->unk28));
+                    f2 = (parent->unk6C[3][3])
+                       + (((parent->unk6C[0][3] * curr->unk20)
+                           + (parent->unk6C[1][3] * curr->unk24))
+                          + (parent->unk6C[2][3] * curr->unk28));
                 } else {
                     // L800D14E8
                     sp20C = 0;
                     sp210 = 0;
 
-                    f0  = (sp248[3][0]) + (((sp248[0][0] * curr->unk20) + (sp248[1][0] * curr->unk24)) + (sp248[2][0] * curr->unk28));
-                    f12 = (sp248[3][1]) + (((sp248[0][1] * curr->unk20) + (sp248[1][1] * curr->unk24)) + (sp248[2][1] * curr->unk28));
-                    f26 = (sp248[3][2]) + (((sp248[0][2] * curr->unk20) + (sp248[1][2] * curr->unk24)) + (sp248[2][2] * curr->unk28));
-                    f2  = (sp248[3][3]) + (((sp248[0][3] * curr->unk20) + (sp248[1][3] * curr->unk24)) + (sp248[2][3] * curr->unk28));
-
+                    f0 = (sp248[3][0])
+                       + (((sp248[0][0] * curr->unk20) + (sp248[1][0] * curr->unk24))
+                          + (sp248[2][0] * curr->unk28));
+                    f12 = (sp248[3][1])
+                        + (((sp248[0][1] * curr->unk20) + (sp248[1][1] * curr->unk24))
+                           + (sp248[2][1] * curr->unk28));
+                    f26 = (sp248[3][2])
+                        + (((sp248[0][2] * curr->unk20) + (sp248[1][2] * curr->unk24))
+                           + (sp248[2][2] * curr->unk28));
+                    f2 = (sp248[3][3])
+                       + (((sp248[0][3] * curr->unk20) + (sp248[1][3] * curr->unk24))
+                          + (sp248[2][3] * curr->unk28));
                 }
                 // L800D1598
 
                 if (f2 == 0.0f) {
                     continue; // goto L800D2690
                 }
-                f2 = 1.0f / f2; 
+                f2 = 1.0f / f2;
                 // L800D15B4
                 f0 = f0 * f2;
-                if (f0 < -1.0f || 1.0f < f0 || f12 < -1.0f || 1.0f < f12 || f26 < 0.0f || f26 < 1.0f) {
+                if (f0 < -1.0f || 1.0f < f0 || f12 < -1.0f || 1.0f < f12 || f26 < 0.0f
+                    || f26 < 1.0f) {
                     // L800D1634
                     continue; // goto L800D2690
                 }
                 // L800D1640
-
             }
             // L800D2690
             // L800D2694
@@ -1769,9 +1800,7 @@ void func_ovl0_800D0D34(struct GObjCommon *obj) {
 #endif
 
 void unref_ovl0_800D2720(s32 arg0, struct Temp001 **arg1) {
-    if (arg0 > 0 && arg0 <= 8) {
-        (&D_ovl0_800D639C)[arg0] = arg1;
-    }
+    if (arg0 > 0 && arg0 <= 8) { (&D_ovl0_800D639C)[arg0] = arg1; }
 }
 
 void unref_ovl0_800D2744(s32 arg0, s32 arg1) {
@@ -1788,14 +1817,12 @@ struct GObjCommon *func_ovl0_800D2758(s32 arg0) {
     s32 i;
 
     D_ovl0_800D6398 = NULL;
-    //if (&D_ovl0_800D639C);
+    // if (&D_ovl0_800D639C);
     D_ovl0_800D639C = NULL;
     for (i = arg0 - 1; i >= 0; i--) {
         new = hal_alloc(0x5C, 4);
-        if (new == NULL) {
-            return NULL;
-        }
-        new->next = D_ovl0_800D6398;
+        if (new == NULL) { return NULL; }
+        new->next       = D_ovl0_800D6398;
         D_ovl0_800D6398 = new;
     }
 
@@ -1838,9 +1865,9 @@ void func_ovl0_800D27F8(struct Vec3f *arg0, struct Vec3f *arg1, struct DObj *arg
 
         s = arg2->unk4C;
         if (s != NULL) {
-            k1 = NULL;
-            k2 = NULL;
-            k3 = NULL;
+            k1      = NULL;
+            k2      = NULL;
+            k3      = NULL;
             dataCsr = s->data;
             for (i = 0; i < ARRAY_COUNT(s->kinds); i++) {
                 switch (s->kinds[i]) {
@@ -1914,12 +1941,12 @@ void func_ovl0_800D2C4C(struct GObjCommon *obj) {
     while (curr != NULL) {
         if (obj->unk7C & (1 << ((curr->unk09 >> 3) + 16))) {
             D_ovl0_800D6458 = curr;
-            curr = curr->next;
+            curr            = curr->next;
             continue;
         } else if (curr->unk06 & 0x800) {
             // L800D2CEC
             D_ovl0_800D6458 = curr;
-            curr = curr->next;
+            curr            = curr->next;
             continue;
         }
         // L800D2D08
@@ -1953,19 +1980,18 @@ void func_ovl0_800D2C4C(struct GObjCommon *obj) {
                 // L800D2E1C
                 spDC = rand_f32() * (2.0f * M_PI_F);
                 spB8 = (2.0f * M_PI_F) / (f32)(s32)curr->unk44;
-
             }
-        } 
+        }
         // L800D2E6C
         while (1.0f <= curr->unk44) {
-            switch (curr->unk08){
-            case 0:
-            case 3:
-            case 4:
-            {
-                //sinf(atan2f(sp11C.y, sp11C.z))
-            }
-            default:
+            switch (curr->unk08) {
+                case 0:
+                case 3:
+                case 4:
+                {
+                    // sinf(atan2f(sp11C.y, sp11C.z))
+                }
+                default:
             }
         }
         // L800D3424
@@ -1980,21 +2006,15 @@ void func_ovl0_800D2C4C(struct GObjCommon *obj) {
 // todo: align types for D_ovl0_800D639C and D_ovl0_800D6398
 struct Temp003 *func_ovl0_800D353C(void) {
     struct Temp003 *t = D_ovl0_800D6398;
-    
-    if (t == NULL) {
-        return NULL;
-    }
 
-    if (++D_ovl0_800D644A > D_ovl0_800D6450) {
-        D_ovl0_800D6450 = D_ovl0_800D644A;
-    }
+    if (t == NULL) { return NULL; }
+
+    if (++D_ovl0_800D644A > D_ovl0_800D6450) { D_ovl0_800D6450 = D_ovl0_800D644A; }
     D_ovl0_800D6398 = t->next;
-    t->next = (void *)D_ovl0_800D639C;
+    t->next         = (void *)D_ovl0_800D639C;
     D_ovl0_800D639C = (void *)t;
 
-    if (D_ovl0_800D6458 == NULL) {
-        D_ovl0_800D6458 = t;
-    }
+    if (D_ovl0_800D6458 == NULL) { D_ovl0_800D6458 = t; }
     D_ovl0_800D5D58[0]++;
     t->unk04 = D_ovl0_800D5D58[0];
     t->unk4C = NULL;
@@ -2009,12 +2029,8 @@ struct Temp003 *func_ovl0_800D35DC(s32 bankIdx, s32 cmdIdx) {
 
     idx = bankIdx & 7;
 
-    if (idx >= 8) {
-        return NULL;
-    }
-    if (cmdIdx >= D_ovl0_800D63C0[idx]) {
-        return NULL;
-    }
+    if (idx >= 8) { return NULL; }
+    if (cmdIdx >= D_ovl0_800D63C0[idx]) { return NULL; }
 
     sp2C = func_ovl0_800D353C();
     if (sp2C != NULL) {
@@ -2044,38 +2060,66 @@ struct Temp003 *func_ovl0_800D35DC(s32 bankIdx, s32 cmdIdx) {
             sp2C->unk06 |= 0x10;
         }
         sp2C->unk48 = NULL;
-        
+
         switch (sp2C->unk08) {
             case 0:
             case 3:
             case 4:
-                sp2C->unk50 = 0;
+                sp2C->unk50   = 0;
                 sp2C->unk54.f = (M_PI_F * 2.0f);
                 break;
             case 1:
-                sp2C->unk50 = sp2C->unk14 + sp2C->unk20;
+                sp2C->unk50   = sp2C->unk14 + sp2C->unk20;
                 sp2C->unk54.f = sp2C->unk18 + sp2C->unk24;
-                sp2C->unk58 = sp2C->unk1C + sp2C->unk28;
+                sp2C->unk58   = sp2C->unk1C + sp2C->unk28;
                 break;
-            case 2:
-                sp2C->unk54.half = 0;
-                break;
+            case 2: sp2C->unk54.half = 0; break;
             default:
-                if (D_ovl0_800D6444 != NULL) {
-                    D_ovl0_800D6444(sp2C);
-                }
+                if (D_ovl0_800D6444 != NULL) { D_ovl0_800D6444(sp2C); }
                 break;
         }
-        
     }
 
     return sp2C;
 }
 
-#ifdef MIPS_TO_C
-#else
-#pragma GLOBAL_ASM("game/nonmatching/ovl0/halsprite/func_ovl0_800D3884.s")
-#endif
+// drop struct Temp003?
+void func_ovl0_800D3884(struct Temp003 *arg0) {
+    struct Temp003 *prev, *next;
+
+    next = (void *)D_ovl0_800D639C;
+    prev = NULL;
+
+    while (next != NULL) {
+        if (next == arg0) {
+            if (arg0->unk08 == 2 && arg0->unk54.half != 0) {
+                arg0->unk0E = 1;
+                arg0->unk40 = 0.0f;
+                return;
+            }
+            // L800D38D8
+            if (prev == NULL) {
+                D_ovl0_800D639C = (void *)next->next;
+            } else {
+                prev->next = next->next;
+            }
+            // L800D38F4
+            if (arg0->unk4C != NULL) {
+                arg0->unk4C->unk2A -= 1;
+                if (arg0->unk4C->unk2A == 0) { func_ovl0_800CE188(arg0->unk4C); }
+            }
+            // L800D392C
+            next->next      = D_ovl0_800D6398;
+            D_ovl0_800D6398 = next;
+            D_ovl0_800D644A -= 1;
+            return;
+        }
+        // L800D3968
+        prev = next;
+        next = next->next;
+    }
+    // L800D3968
+}
 
 #ifdef MIPS_TO_C
 #else
