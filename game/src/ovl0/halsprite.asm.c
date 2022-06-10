@@ -2085,84 +2085,144 @@ struct Temp003 *func_ovl0_800D35DC(s32 bankIdx, s32 cmdIdx) {
 
 // drop struct Temp003?
 void func_ovl0_800D3884(struct Temp003 *arg0) {
-    struct Temp003 *prev, *next;
+    struct Temp003 *prev, *curr;
 
-    next = (void *)D_ovl0_800D639C;
+    curr = (void *)D_ovl0_800D639C;
     prev = NULL;
-
-    while (next != NULL) {
-        if (next == arg0) {
+    while (curr != NULL) {
+        if (curr == arg0) {
             if (arg0->unk08 == 2 && arg0->unk54.half != 0) {
                 arg0->unk0E = 1;
                 arg0->unk40 = 0.0f;
                 return;
             }
-            // L800D38D8
+
             if (prev == NULL) {
-                D_ovl0_800D639C = (void *)next->next;
+                D_ovl0_800D639C = (void *)curr->next;
             } else {
-                prev->next = next->next;
+                prev->next = curr->next;
             }
-            // L800D38F4
+
             if (arg0->unk4C != NULL) {
                 arg0->unk4C->unk2A -= 1;
                 if (arg0->unk4C->unk2A == 0) { func_ovl0_800CE188(arg0->unk4C); }
             }
-            // L800D392C
-            next->next      = D_ovl0_800D6398;
-            D_ovl0_800D6398 = next;
+
+            curr->next      = D_ovl0_800D6398;
+            D_ovl0_800D6398 = curr;
             D_ovl0_800D644A -= 1;
             return;
         }
-        // L800D3968
-        prev = next;
-        next = next->next;
+        prev = curr;
+        curr = curr->next;
     }
-    // L800D3968
 }
 
-#ifdef MIPS_TO_C
-#else
-#pragma GLOBAL_ASM("game/nonmatching/ovl0/halsprite/unref_ovl0_800D3978.s")
-#endif
+void unref_ovl0_800D3978(void) {
+    struct Temp003 *next, *curr;
 
-#ifdef MIPS_TO_C
-#else
-#pragma GLOBAL_ASM("game/nonmatching/ovl0/halsprite/unref_ovl0_800D39C0.s")
-#endif
+    curr = (void *)D_ovl0_800D639C;
+    while (curr != NULL) {
+        next = curr->next;
+        func_ovl0_800D3884(curr);
+        curr = next;
+    }
+}
 
+void unref_ovl0_800D39C0(void (*arg0)(struct Temp003 *), u32 arg1) {
+    D_ovl0_800D6444 = arg0;
+    D_ovl0_800D6440 = arg1;
+}
+
+void func_ovl0_800D39D4(s32 arg0, s32 arg1);
 #ifdef MIPS_TO_C
 #else
 #pragma GLOBAL_ASM("game/nonmatching/ovl0/halsprite/func_ovl0_800D39D4.s")
 #endif
 
-#ifdef MIPS_TO_C
-#else
-#pragma GLOBAL_ASM("game/nonmatching/ovl0/halsprite/unref_ovl0_800D3BFC.s")
-#endif
+void unref_ovl0_800D3BFC(struct Temp003 *arg0) {
+    func_ovl0_800D39D4(arg0->unk04, arg0->unk08 >> 3);
+}
 
-#ifdef MIPS_TO_C
-#else
-#pragma GLOBAL_ASM("game/nonmatching/ovl0/halsprite/unref_ovl0_800D3C28.s")
-#endif
+// guess on the arg type..
+void unref_ovl0_800D3C28(struct Temp003 *arg0) {
+    func_ovl0_800D39D4(arg0->unk04, arg0->unk09 >> 3);
+}
 
-#ifdef MIPS_TO_C
-#else
-#pragma GLOBAL_ASM("game/nonmatching/ovl0/halsprite/unref_ovl0_800D3C54.s")
-#endif
+void unref_ovl0_800D3C54(struct GObjCommon *obj) {
+    struct DObj *dobj;
+    struct Temp003 *curr, *next;
 
-#ifdef MIPS_TO_C
-#else
-#pragma GLOBAL_ASM("game/nonmatching/ovl0/halsprite/unref_ovl0_800D3CE0.s")
-#endif
+    if (obj->unk0F == 1) {
+        dobj = obj->unk74;
+        while (dobj != NULL) {
+            curr = (void *)D_ovl0_800D639C;
+            while (curr != NULL) {
+                next = curr->next;
+                if (dobj == curr->unk48) { func_ovl0_800D3884(curr); }
+                curr = next;
+            }
+            dobj = func_8000BAA0(dobj);
+        }
+    }
+}
 
-#ifdef MIPS_TO_C
-#else
-#pragma GLOBAL_ASM("game/nonmatching/ovl0/halsprite/unref_ovl0_800D3D64.s")
-#endif
+void unref_ovl0_800D3CE0(f32 arg0, f32 arg1, f32 arg2) {
+    s32 i;
+    struct Temp002 *curr;
+    struct Temp003 *t3Curr;
 
-#ifdef MIPS_TO_C
-#else
-#pragma GLOBAL_ASM("game/nonmatching/ovl0/halsprite/unref_ovl0_800D3DE8.s")
-#endif
+    for (i = 0; i < ARRAY_COUNT(D_ovl0_800D6358); i++) {
+        curr = D_ovl0_800D6358[i];
+        while (curr != NULL) {
+            curr->unk20 = arg0;
+            curr->unk24 = arg1;
+            curr->unk28 = arg2;
+            curr        = curr->next;
+        }
+    }
+
+    t3Curr = (void *)D_ovl0_800D639C;
+    while (t3Curr != NULL) {
+        t3Curr->unk14 = arg0;
+        t3Curr->unk18 = arg1;
+        t3Curr->unk1C = arg2;
+        t3Curr        = t3Curr->next;
+    }
+}
+
+void unref_ovl0_800D3D64(u16 arg0, s32 arg1) {
+    struct Temp002 *t2Curr;
+    struct Temp003 *t3Curr;
+
+    t2Curr = D_ovl0_800D6358[arg1];
+    while (t2Curr != NULL) {
+        if (t2Curr->unk04 == arg0) { t2Curr->unk06 |= 0x0800; }
+        t2Curr = t2Curr->next;
+    }
+
+    t3Curr = (void *)D_ovl0_800D639C;
+    while (t3Curr != NULL) {
+        if (t3Curr->unk04 == arg0) { t3Curr->unk06 |= 0x0800; }
+        t3Curr = t3Curr->next;
+    }
+}
+
+void unref_ovl0_800D3DE8(u16 arg0, s32 arg1) {
+    struct Temp002 *t2Curr;
+    struct Temp003 *t3Curr;
+
+    t2Curr = D_ovl0_800D6358[arg1];
+    while (t2Curr != NULL) {
+        if (t2Curr->unk04 == arg0) { t2Curr->unk06 &= ~0x0800; }
+        t2Curr = t2Curr->next;
+    }
+
+    t3Curr = (void *)D_ovl0_800D639C;
+    while (t3Curr != NULL) {
+        if (t3Curr->unk04 == arg0) { t3Curr->unk06 &= ~0x0800; }
+        t3Curr = t3Curr->next;
+    }
+}
+
 #pragma GCC diagnostic pop
