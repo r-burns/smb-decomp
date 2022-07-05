@@ -444,7 +444,6 @@ def task_assemble():
 inc_dir = config.game_dir / 'include'
 c_dir = config.game_dir / 'src'
 c_files = c_dir.rglob('*.c')
-#c_objs = list(map(lambda f: config.to_output(f, '.o'), c_files))
 
 def task_cc():
     ''' Compile .c files into .o '''
@@ -459,7 +458,7 @@ def task_cc():
         syntax_check = tc.invoke_cc_check(includes, d, f, o)
         # if the input needs to have asm processed
         if f.name.endswith('.asm.c'):
-            actions = [syntax_check] + tc.invoke_asm_prepoc(includes, f, o)
+            actions = [syntax_check, tc.invoke_asm_prepoc(includes, f, o)]
         else:
             actions = [syntax_check, tc.invoke_cc(includes, f, o)]
 
@@ -636,6 +635,9 @@ def get_make_dependencies(src_file, obj_file, default_deps = []):
         deps = [src_file] + default_deps
     else:
         deps = found_deps[obj_file]
+        if src_file.name.endswith('.asm.c'):
+            asmd = obj_file.with_suffix('.asmproc.d')
+            deps += parse_mk_dependencies(asmd)[obj_file]
 
     return (d, deps)
 

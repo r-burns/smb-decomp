@@ -23,9 +23,7 @@ C_SYNTAX_CHECK_FLAGS = [
 # ASM processor for IDO
 # TODO: dynamic under config tools direction?
 IDO_ASMPROC = {
-    'proc': 'tools/asm-processor/asm_processor.py',
-    'cin': 'tools/asm-processor/include-stdin.c',
-    'prelude': 'tools/asm-processor/prelude.s',
+    'build': 'tools/asm-processor/build.py',
 }
 
 # Libultra flags
@@ -137,17 +135,24 @@ class ToolChain:
         tc = self.game.assembler
 
         return tc.AS + tc.ASFLAGS + incs + files
-    
-    def invoke_cc(self, includes, input, output, opt = 'O2', defs = []):
-        ''' create a list for calling the current game cross-compiler '''
+
+    def generate_cflags(self, includes, opt, defs = []):
+        ''' create an array of flags to pass to compiler '''
+        flags = self.game.c.CFLAGS
+        opt = ['-'+opt]
         incs = list(_prefix_it(includes, '-I'))
         # TODO: do this once when creating user_defines?
         defines = ['-D'+d for d in self.user_defines] + defs
-        opt = ['-'+opt]
-        files = ['-o', output, input]
-        tc = self.game.c
 
-        return tc.CC + tc.CFLAGS + incs + defines + opt + files
+        return flags + incs + defines + opt
+
+    
+    def invoke_cc(self, includes, input, output, opt = 'O2', defs = []):
+        ''' create a list for calling the current game cross-compiler '''
+        cflags = self.generate_cflags(includes, opt, defs)
+        files = ['-o', output, input]
+
+        return self.game.c.CC + cflags + files
 
     def invoke_cc_check(self, includes, depfile, input, output):
         ''' use the system CC to check syntax and to create dependency files '''
@@ -167,22 +172,18 @@ class ToolChain:
         if not self.game.c.needsAsmPrepoc:
             return [self.invoke_cc(includes, input, output, opt)]
 
-        cc = self.invoke_cc(includes, IDO_ASMPROC['cin'], output, opt)
-        gas = self.game.assembler.AS + self.game.assembler.ASFLAGS
-        asmproc_flags = ['-'+opt, input, '--input-enc', 'utf-8', '--output-enc', 'utf-8', '--drop-mdebug-gptab']
-        asmproc_invocation = [IDO_ASMPROC['proc']] + asmproc_flags
+        CC = self.game.c.CC
+        CFLAGS = self.generate_cflags(includes, opt)
+        AS = self.game.assembler.AS
+        ASFLAGS = self.game.assembler.ASFLAGS
 
-        compile_cmd = map(str, asmproc_invocation + ['|'] + cc)
-        shell_str = " ".join(compile_cmd)
-        gas_str = " ".join(map(str, gas))
-        postproc_options = [
-            '--post-process', output, 
-            '--asm-prelude', IDO_ASMPROC['prelude'], 
-            '--assembler', gas_str
+        command = ['python3', IDO_ASMPROC['build'], *CC, 
+            '--', *AS, *ASFLAGS, '--', 
+            *CFLAGS, '-o', output, input
         ]
-        postproc = asmproc_invocation + postproc_options
 
-        return [ shell_str, postproc ]
+        return command
+
 
     def libultra_cc(self, includes, input, output, mipsiset, opt):
         incs = list(_prefix_it(includes, '-I'))
