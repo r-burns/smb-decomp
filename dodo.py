@@ -7,7 +7,7 @@ import platform
 sys.path.append('doit')
 from parsemk import parse_mk_dependencies
 from toolchain import ToolChain
-from config import Config
+from config import Config, ALL_VERSIONS
 from pathutil import append_suffix, up_one_dir
 
 
@@ -401,7 +401,7 @@ def task_build_rom():
             'temp_bin_obj'
         ],
         'targets': outputs,
-        'clean': [f'rm -rf {config.all_builds}'],
+        'clean': [f'rm -rf {" ".join([str(config.all_builds/ver) for ver in ALL_VERSIONS])}'],
     }
 
 def task_convert_specfile():
