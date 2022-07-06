@@ -239,10 +239,10 @@ glabel func_ovl0_800D4404
   /* 04FDEC 800D440C AFB00018 */        sw $s0, 0x18($sp)
   /* 04FDF0 800D4410 AFB1001C */        sw $s1, 0x1c($sp)
   /* 04FDF4 800D4414 3C10800D */       lui $s0, %hi(D_ovl0_800D5D60)
-  /* 04FDF8 800D4418 3C12800D */       lui $s2, %hi(D_ovl0_800D5E10)
+  /* 04FDF8 800D4418 3C12800D */       lui $s2, %hi(D_ovl0_800D5D60 + 0xB0)
   /* 04FDFC 800D441C AFBF0024 */        sw $ra, 0x24($sp)
   /* 04FE00 800D4420 00008825 */        or $s1, $zero, $zero
-  /* 04FE04 800D4424 26525E10 */     addiu $s2, $s2, %lo(D_ovl0_800D5E10)
+  /* 04FE04 800D4424 26525E10 */     addiu $s2, $s2, %lo(D_ovl0_800D5D60 + 0xB0)
   /* 04FE08 800D4428 26105D60 */     addiu $s0, $s0, %lo(D_ovl0_800D5D60)
   .L800D442C:
   /* 04FE0C 800D442C 0C0336F4 */       jal rldm_bytes_needed_to_load
