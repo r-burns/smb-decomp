@@ -1,4 +1,9 @@
 #include <PR/ultratypes.h>
+#include <PR/gu.h>
+#include <ssb_types.h>
+#include <macros.h>
+
+#include "ovl0/halbitmap.h"
 
 /*** Data ***/
 #include "ovl0/sintable.inc.h"
@@ -86,45 +91,121 @@ u8 D_ovl0_800D62D0[16];
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wunknown-pragmas"
 
-#ifdef MIPS_TO_C
-#else
-#pragma GLOBAL_ASM("game/nonmatching/ovl0/halbitmap/func_ovl0_800C7840.s")
-#endif
+f32 bitmap_sinf(f32 x) {
+    u16 idx;
+    f32 ret;
 
-#ifdef MIPS_TO_C
-#else
-#pragma GLOBAL_ASM("game/nonmatching/ovl0/halbitmap/func_ovl0_800C78B8.s")
-#endif
+    idx = (s32)(x * 651.8986f) & 0xFFF;
 
-#ifdef MIPS_TO_C
-#else
-#pragma GLOBAL_ASM("game/nonmatching/ovl0/halbitmap/func_ovl0_800C793C.s")
-#endif
+    if (idx & 0x400) {
+        ret = D_ovl0_800D4CA0[0x400 - 1 - (idx & 0x3FF)];
+    } else {
+        ret = D_ovl0_800D4CA0[idx & 0x3FF];
+    }
 
-#ifdef MIPS_TO_C
-#else
-#pragma GLOBAL_ASM("game/nonmatching/ovl0/halbitmap/func_ovl0_800C7A00.s")
-#endif
+    if (idx & 0x800) {
+        return -ret;
+    } else {
+        return ret;
+    }
+}
 
-#ifdef MIPS_TO_C
-#else
-#pragma GLOBAL_ASM("game/nonmatching/ovl0/halbitmap/func_ovl0_800C7A84.s")
-#endif
+// bitmap_cosf?
+f32 func_ovl0_800C78B8(f32 x) {
+    u16 idx;
+    f32 ret;
 
-#ifdef MIPS_TO_C
-#else
-#pragma GLOBAL_ASM("game/nonmatching/ovl0/halbitmap/func_ovl0_800C7AB8.s")
-#endif
+    idx = (s32)((x + 1.5707964f) * 651.8986f) & 0xFFF;
 
-#ifdef MIPS_TO_C
-#else
-#pragma GLOBAL_ASM("game/nonmatching/ovl0/halbitmap/func_ovl0_800C7AE0.s")
-#endif
+    if (idx & 0x400) {
+        ret = D_ovl0_800D4CA0[0x400 - 1 - (idx & 0x3FF)];
+    } else {
+        ret = D_ovl0_800D4CA0[idx & 0x3FF];
+    }
 
-#ifdef MIPS_TO_C
-#else
-#pragma GLOBAL_ASM("game/nonmatching/ovl0/halbitmap/func_ovl0_800C7B08.s")
-#endif
+    if (idx & 0x800) {
+        return -ret;
+    } else {
+        return ret;
+    }
+}
+
+// bitmap_tanf
+f32 func_ovl0_800C793C(f32 angle) {
+    u16 idx;
+    f32 sinX;
+    f32 cosX;
+
+    idx = (s32)(angle * 651.8986f) & 0xFFF;
+    if (idx & 0x400) {
+        sinX = D_ovl0_800D4CA0[0x400 - 1 - (idx & 0x3FF)];
+    } else {
+        sinX = D_ovl0_800D4CA0[idx & 0x3FF];
+    }
+    
+    if (idx & 0x800) {
+        sinX = -sinX;
+    }
+
+    idx = (idx + 0x400) & 0xFFF;
+    if (idx & 0x400) {
+        cosX = D_ovl0_800D4CA0[0x400 - 1 - (idx & 0x3FF)];
+    } else {
+        cosX = D_ovl0_800D4CA0[idx & 0x3FF];
+    }
+    if (idx & 0x800) {
+        cosX = -cosX;
+    }
+
+    return sinX / cosX;
+}
+
+// vec2f_normalize_get_distance
+f32 func_ovl0_800C7A00(struct Vec2f *p) {
+    f32 dist;
+
+    dist = sqrtf(SQUARE(p->x) + SQUARE(p->y));
+    if (dist == 0.0f) {
+        return 0.0f;
+    }
+    p->x *= 1.0f / dist;
+    p->y *= 1.0f / dist;
+
+    return dist;
+}
+
+// vec2f_distance
+f32 func_ovl0_800C7A84(struct Vec2f *p) {
+    return sqrtf(SQUARE(p->x) + SQUARE(p->y));
+}
+
+// vec2f_add_to
+struct Vec2f *func_ovl0_800C7AB8(struct Vec2f *dst, const struct Vec2f *p) {
+    dst->x += p->x;
+    dst->y += p->y;
+
+    return dst;
+}
+
+// vec2f_scale
+struct Vec2f *func_ovl0_800C7AE0(struct Vec2f *dst, f32 scale) {
+    dst->x *= scale;
+    dst->y *= scale;
+
+    return dst;
+}
+
+struct Vec2f *func_ovl0_800C7B08(struct Vec2f *dst, const struct Vec2f *p) {
+    f32 temp;
+
+    // -2 * (dst . p)
+    temp = ((p->x * dst->x) + (p->y * dst->y)) * -2.0f;
+    // dst + -2 * (dst . p)
+    dst->x += p->x * temp;
+    dst->y += p->y * temp;
+
+    return dst;
+}
 
 #ifdef MIPS_TO_C
 #else

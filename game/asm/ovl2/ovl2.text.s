@@ -24408,7 +24408,7 @@ glabel func_ovl2_800EBD08
   /* 067560 800EBD60 0C00CD44 */       jal sqrtf
   /* 067564 800EBD64 E7A0009C */      swc1 $f0, 0x9c($sp)
   /* 067568 800EBD68 46000506 */     mov.s $f20, $f0
-  /* 06756C 800EBD6C 0C031E10 */       jal func_ovl0_800C7840
+  /* 06756C 800EBD6C 0C031E10 */       jal bitmap_sinf
   /* 067570 800EBD70 C7AC00B4 */      lwc1 $f12, 0xb4($sp)
   /* 067574 800EBD74 E7A00094 */      swc1 $f0, 0x94($sp)
   /* 067578 800EBD78 0C031E2E */       jal func_ovl0_800C78B8
@@ -25595,7 +25595,7 @@ glabel func_ovl2_800ECDE4
   /* 0685FC 800ECDFC AFA40050 */        sw $a0, 0x50($sp)
   /* 068600 800ECE00 AFA50054 */        sw $a1, 0x54($sp)
   /* 068604 800ECE04 00C08025 */        or $s0, $a2, $zero
-  /* 068608 800ECE08 0C031E10 */       jal func_ovl0_800C7840
+  /* 068608 800ECE08 0C031E10 */       jal bitmap_sinf
   /* 06860C 800ECE0C C48C0030 */      lwc1 $f12, 0x30($a0)
   /* 068610 800ECE10 8FB10050 */        lw $s1, 0x50($sp)
   /* 068614 800ECE14 46000506 */     mov.s $f20, $f0
@@ -25603,13 +25603,13 @@ glabel func_ovl2_800ECDE4
   /* 06861C 800ECE1C 0C031E2E */       jal func_ovl0_800C78B8
   /* 068620 800ECE20 C62C0000 */      lwc1 $f12, ($s1)
   /* 068624 800ECE24 46000586 */     mov.s $f22, $f0
-  /* 068628 800ECE28 0C031E10 */       jal func_ovl0_800C7840
+  /* 068628 800ECE28 0C031E10 */       jal bitmap_sinf
   /* 06862C 800ECE2C C62C0004 */      lwc1 $f12, 4($s1)
   /* 068630 800ECE30 E7A0003C */      swc1 $f0, 0x3c($sp)
   /* 068634 800ECE34 0C031E2E */       jal func_ovl0_800C78B8
   /* 068638 800ECE38 C62C0004 */      lwc1 $f12, 4($s1)
   /* 06863C 800ECE3C C62C0008 */      lwc1 $f12, 8($s1)
-  /* 068640 800ECE40 0C031E10 */       jal func_ovl0_800C7840
+  /* 068640 800ECE40 0C031E10 */       jal bitmap_sinf
   /* 068644 800ECE44 E7A00030 */      swc1 $f0, 0x30($sp)
   /* 068648 800ECE48 C62C0008 */      lwc1 $f12, 8($s1)
   /* 06864C 800ECE4C 0C031E2E */       jal func_ovl0_800C78B8
@@ -25756,7 +25756,7 @@ glabel func_ovl2_800ECFF4
   /* 068864 800ED064 AFA60060 */        sw $a2, 0x60($sp)
   /* 068868 800ED068 AFA40058 */        sw $a0, 0x58($sp)
   /* 06886C 800ED06C AFA3001C */        sw $v1, 0x1c($sp)
-  /* 068870 800ED070 0C031E10 */       jal func_ovl0_800C7840
+  /* 068870 800ED070 0C031E10 */       jal bitmap_sinf
   /* 068874 800ED074 AFA20020 */        sw $v0, 0x20($sp)
   /* 068878 800ED078 8FB80020 */        lw $t8, 0x20($sp)
   /* 06887C 800ED07C E7A00044 */      swc1 $f0, 0x44($sp)
@@ -25764,7 +25764,7 @@ glabel func_ovl2_800ECFF4
   /* 068884 800ED084 C70C0000 */      lwc1 $f12, ($t8)
   /* 068888 800ED088 8FB90020 */        lw $t9, 0x20($sp)
   /* 06888C 800ED08C E7A00038 */      swc1 $f0, 0x38($sp)
-  /* 068890 800ED090 0C031E10 */       jal func_ovl0_800C7840
+  /* 068890 800ED090 0C031E10 */       jal bitmap_sinf
   /* 068894 800ED094 C72C0004 */      lwc1 $f12, 4($t9)
   /* 068898 800ED098 8FA80020 */        lw $t0, 0x20($sp)
   /* 06889C 800ED09C E7A00040 */      swc1 $f0, 0x40($sp)
@@ -25772,7 +25772,7 @@ glabel func_ovl2_800ECFF4
   /* 0688A4 800ED0A4 C50C0004 */      lwc1 $f12, 4($t0)
   /* 0688A8 800ED0A8 8FA90020 */        lw $t1, 0x20($sp)
   /* 0688AC 800ED0AC C52C0008 */      lwc1 $f12, 8($t1)
-  /* 0688B0 800ED0B0 0C031E10 */       jal func_ovl0_800C7840
+  /* 0688B0 800ED0B0 0C031E10 */       jal bitmap_sinf
   /* 0688B4 800ED0B4 E7A00034 */      swc1 $f0, 0x34($sp)
   /* 0688B8 800ED0B8 8FAA0020 */        lw $t2, 0x20($sp)
   /* 0688BC 800ED0BC C54C0008 */      lwc1 $f12, 8($t2)
@@ -43284,7 +43284,7 @@ glabel func_ovl2_800FCB70
   /* 078394 800FCB94 AFA5003C */        sw $a1, 0x3c($sp)
   /* 078398 800FCB98 46083303 */     div.s $f12, $f6, $f8
   /* 07839C 800FCB9C 46006307 */     neg.s $f12, $f12
-  /* 0783A0 800FCBA0 0C031E10 */       jal func_ovl0_800C7840
+  /* 0783A0 800FCBA0 0C031E10 */       jal bitmap_sinf
   /* 0783A4 800FCBA4 E7AC001C */      swc1 $f12, 0x1c($sp)
   /* 0783A8 800FCBA8 46000287 */     neg.s $f10, $f0
   /* 0783AC 800FCBAC C7AC001C */      lwc1 $f12, 0x1c($sp)
@@ -43298,7 +43298,7 @@ glabel func_ovl2_800FCB70
   /* 0783CC 800FCBCC 46128102 */     mul.s $f4, $f16, $f18
   /* 0783D0 800FCBD0 E7A00034 */      swc1 $f0, 0x34($sp)
   /* 0783D4 800FCBD4 46062303 */     div.s $f12, $f4, $f6
-  /* 0783D8 800FCBD8 0C031E10 */       jal func_ovl0_800C7840
+  /* 0783D8 800FCBD8 0C031E10 */       jal bitmap_sinf
   /* 0783DC 800FCBDC E7AC001C */      swc1 $f12, 0x1c($sp)
   /* 0783E0 800FCBE0 C7A20034 */      lwc1 $f2, 0x34($sp)
   /* 0783E4 800FCBE4 C7AC001C */      lwc1 $f12, 0x1c($sp)
@@ -49084,7 +49084,7 @@ glabel func_ovl2_80101D34
   /* 07D5F8 80101DF8 46120102 */     mul.s $f4, $f0, $f18
   /* 07D5FC 80101DFC 8FA30020 */        lw $v1, 0x20($sp)
   /* 07D600 80101E00 46062303 */     div.s $f12, $f4, $f6
-  /* 07D604 80101E04 0C031E10 */       jal func_ovl0_800C7840
+  /* 07D604 80101E04 0C031E10 */       jal bitmap_sinf
   /* 07D608 80101E08 E46C0038 */      swc1 $f12, 0x38($v1)
   /* 07D60C 80101E0C 8FA30020 */        lw $v1, 0x20($sp)
   /* 07D610 80101E10 C46C0038 */      lwc1 $f12, 0x38($v1)
@@ -60849,7 +60849,7 @@ glabel func_ovl2_8010C320
   /* 087B4C 8010C34C C5C80068 */      lwc1 $f8, 0x68($t6)
   /* 087B50 8010C350 00A08025 */        or $s0, $a1, $zero
   /* 087B54 8010C354 46083300 */     add.s $f12, $f6, $f8
-  /* 087B58 8010C358 0C031E10 */       jal func_ovl0_800C7840
+  /* 087B58 8010C358 0C031E10 */       jal bitmap_sinf
   /* 087B5C 8010C35C E7AC0024 */      swc1 $f12, 0x24($sp)
   /* 087B60 8010C360 46000287 */     neg.s $f10, $f0
   /* 087B64 8010C364 C7AC0024 */      lwc1 $f12, 0x24($sp)
@@ -60860,7 +60860,7 @@ glabel func_ovl2_8010C320
   /* 087B78 8010C378 C4301468 */      lwc1 $f16, %lo(D_ovl2_80131468)($at)
   /* 087B7C 8010C37C C7B20030 */      lwc1 $f18, 0x30($sp)
   /* 087B80 8010C380 46128300 */     add.s $f12, $f16, $f18
-  /* 087B84 8010C384 0C031E10 */       jal func_ovl0_800C7840
+  /* 087B84 8010C384 0C031E10 */       jal bitmap_sinf
   /* 087B88 8010C388 E7AC0020 */      swc1 $f12, 0x20($sp)
   /* 087B8C 8010C38C C6040008 */      lwc1 $f4, 8($s0)
   /* 087B90 8010C390 C7AC0020 */      lwc1 $f12, 0x20($sp)
@@ -61314,14 +61314,14 @@ glabel func_ovl2_8010C960
   /* 0881FC 8010C9FC 46128100 */     add.s $f4, $f16, $f18
   /* 088200 8010CA00 46083300 */     add.s $f12, $f6, $f8
   /* 088204 8010CA04 E7A40058 */      swc1 $f4, 0x58($sp)
-  /* 088208 8010CA08 0C031E10 */       jal func_ovl0_800C7840
+  /* 088208 8010CA08 0C031E10 */       jal bitmap_sinf
   /* 08820C 8010CA0C E7AC0054 */      swc1 $f12, 0x54($sp)
   /* 088210 8010CA10 46000287 */     neg.s $f10, $f0
   /* 088214 8010CA14 C7AC0054 */      lwc1 $f12, 0x54($sp)
   /* 088218 8010CA18 0C031E2E */       jal func_ovl0_800C78B8
   /* 08821C 8010CA1C E7AA004C */      swc1 $f10, 0x4c($sp)
   /* 088220 8010CA20 E7A00050 */      swc1 $f0, 0x50($sp)
-  /* 088224 8010CA24 0C031E10 */       jal func_ovl0_800C7840
+  /* 088224 8010CA24 0C031E10 */       jal bitmap_sinf
   /* 088228 8010CA28 C7AC0058 */      lwc1 $f12, 0x58($sp)
   /* 08822C 8010CA2C C7B00050 */      lwc1 $f16, 0x50($sp)
   /* 088230 8010CA30 C7AC0058 */      lwc1 $f12, 0x58($sp)
@@ -61609,14 +61609,14 @@ glabel func_ovl2_8010CBE4
   /* 08864C 8010CE4C 46049180 */     add.s $f6, $f18, $f4
   /* 088650 8010CE50 460A4300 */     add.s $f12, $f8, $f10
   /* 088654 8010CE54 E7A60058 */      swc1 $f6, 0x58($sp)
-  /* 088658 8010CE58 0C031E10 */       jal func_ovl0_800C7840
+  /* 088658 8010CE58 0C031E10 */       jal bitmap_sinf
   /* 08865C 8010CE5C E7AC0054 */      swc1 $f12, 0x54($sp)
   /* 088660 8010CE60 46000407 */     neg.s $f16, $f0
   /* 088664 8010CE64 C7AC0054 */      lwc1 $f12, 0x54($sp)
   /* 088668 8010CE68 0C031E2E */       jal func_ovl0_800C78B8
   /* 08866C 8010CE6C E7B0004C */      swc1 $f16, 0x4c($sp)
   /* 088670 8010CE70 E7A00050 */      swc1 $f0, 0x50($sp)
-  /* 088674 8010CE74 0C031E10 */       jal func_ovl0_800C7840
+  /* 088674 8010CE74 0C031E10 */       jal bitmap_sinf
   /* 088678 8010CE78 C7AC0058 */      lwc1 $f12, 0x58($sp)
   /* 08867C 8010CE7C C7B20050 */      lwc1 $f18, 0x50($sp)
   /* 088680 8010CE80 C7AC0058 */      lwc1 $f12, 0x58($sp)
@@ -62390,7 +62390,7 @@ glabel func_ovl2_8010D7E8
   /* 0891C0 8010D9C0 C4460000 */      lwc1 $f6, ($v0) # D_ovl2_80131468 + 0
   /* 0891C4 8010D9C4 E6100010 */      swc1 $f16, 0x10($s0) # D_ovl2_801314B0 + 16
   /* 0891C8 8010D9C8 E4660000 */      swc1 $f6, ($v1) # D_ovl2_80131464 + 0
-  /* 0891CC 8010D9CC 0C031E10 */       jal func_ovl0_800C7840
+  /* 0891CC 8010D9CC 0C031E10 */       jal bitmap_sinf
   /* 0891D0 8010D9D0 C46C0000 */      lwc1 $f12, ($v1) # D_ovl2_80131464 + 0
   /* 0891D4 8010D9D4 46000107 */     neg.s $f4, $f0
   /* 0891D8 8010D9D8 3C018013 */       lui $at, %hi(D_ovl2_80131464)
@@ -62399,7 +62399,7 @@ glabel func_ovl2_8010D7E8
   /* 0891E4 8010D9E4 C42C1464 */      lwc1 $f12, %lo(D_ovl2_80131464)($at)
   /* 0891E8 8010D9E8 3C018013 */       lui $at, %hi(D_ovl2_80131468)
   /* 0891EC 8010D9EC C42C1468 */      lwc1 $f12, %lo(D_ovl2_80131468)($at)
-  /* 0891F0 8010D9F0 0C031E10 */       jal func_ovl0_800C7840
+  /* 0891F0 8010D9F0 0C031E10 */       jal bitmap_sinf
   /* 0891F4 8010D9F4 E7A00054 */      swc1 $f0, 0x54($sp)
   /* 0891F8 8010D9F8 C7A20054 */      lwc1 $f2, 0x54($sp)
   /* 0891FC 8010D9FC 3C018013 */       lui $at, %hi(D_ovl2_80131468)
