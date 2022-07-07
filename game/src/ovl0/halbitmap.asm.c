@@ -207,17 +207,43 @@ struct Vec2f *func_ovl0_800C7B08(struct Vec2f *dst, const struct Vec2f *p) {
     return dst;
 }
 
-#ifdef MIPS_TO_C
-#else
-#pragma GLOBAL_ASM("game/nonmatching/ovl0/halbitmap/func_ovl0_800C7B58.s")
-#endif
+#define VEC3F_DOT(a, b) ((a)->x * (b)->x + (a)->y * (b)->y + (a)->z * (b)->z)
+#define VEC3F_MAG(v) (sqrtf(SQUARE((v)->x) + SQUARE((v)->y) + SQUARE((v)->z)))
 
-#ifdef MIPS_TO_C
-#else
-#pragma GLOBAL_ASM("game/nonmatching/ovl0/halbitmap/func_ovl0_800C7C0C.s")
-#endif
+f32 func_ovl0_800C7B58(struct Vec3f *a, struct Vec3f *b) {
+    return VEC3F_DOT(a, b) / (VEC3F_MAG(a) + VEC3F_MAG(b));
+}
 
-#ifdef MIPS_TO_C
+#define VEC2F_DOT(a, b) ((a)->x * (b)->x + (a)->y * (b)->y)
+#define VEC2F_MAG(v) (sqrtf(SQUARE((v)->x) + SQUARE((v)->y)))
+
+f32 func_ovl0_800C7C0C(struct Vec2f *a, struct Vec2f *b) {
+    return VEC2F_DOT(a, b) / (VEC2F_MAG(a) + VEC2F_MAG(b));
+}
+
+#ifdef NON_MATCHING
+bool32 func_ovl0_800C7C98(struct Vec2f *arg0, struct Vec2f *arg1, f32 arg2) {
+    f32 sp24;
+    f32 sp20;
+    f32 factor;
+
+    sp24 = func_ovl0_800C7C0C(arg1, arg0);
+    if (sp24 <= 0.0f && cosf(arg2 + 1.5707964f) <= sp24) {
+        
+        if (((arg1->x * arg0->y) + -(arg1->y * arg0->x)) < 0.0f) {
+            sp20 = -1.0f;
+        } else {
+            sp20 = 1.0f;
+        }
+
+        factor = func_ovl0_800C7A84(arg0) * sp20;
+        arg0->x = -arg1->y * factor;
+        arg0->y = arg1->x * factor;
+        return TRUE;
+    }
+
+    return FALSE;
+}
 #else
 #pragma GLOBAL_ASM("game/nonmatching/ovl0/halbitmap/func_ovl0_800C7C98.s")
 #endif
