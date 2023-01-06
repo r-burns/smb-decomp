@@ -250,7 +250,7 @@ def _get_game_syntax_checker(config):
     if config.host == 'darwin':
         return Compiler(['clang'], C_SYNTAX_CHECK_FLAGS + ['-m32'])
     elif config.host == 'linux':
-        if config.arch == 'arm64':
+        if config.arch == 'arm64' or config.arch == 'aarch64':
             # on ARM64, use a 32bit compiler for compile-time pointer constants
             return Compiler(['arm-linux-gnueabihf-gcc'], C_SYNTAX_CHECK_FLAGS)
         else:
