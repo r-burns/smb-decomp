@@ -4,10 +4,10 @@ import subprocess
 import sys
 import platform
 
-from doit.parsemk import parse_mk_dependencies
-from doit.toolchain import ToolChain
-from doit.config import Config, ALL_VERSIONS
-from doit.pathutil import append_suffix, up_one_dir
+from doutils.parsemk import parse_mk_dependencies
+from doutils.toolchain import ToolChain
+from doutils.config import Config, ALL_VERSIONS
+from doutils.pathutil import append_suffix, up_one_dir
 
 
 ############ Configuration ###########################
@@ -469,9 +469,7 @@ def task_cc():
         }
 
 def task_fmt():
-    ''' Use clang-tidy to format game C source code '''
-
-    from config import ALL_VERSIONS 
+    ''' Use clang-tidy to format game C source code ''' 
 
     flags  = [
         '--',

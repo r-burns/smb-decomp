@@ -1,5 +1,5 @@
 from doit import get_var
-from pathutil import append_suffix
+from .pathutil import append_suffix
 import sys
 import platform
 
