@@ -14,8 +14,8 @@ IDO_CC_FLAGS = [
 GCC_AS_FLAGS = ['-march=vr4300', '-mabi=32']
 C_SYNTAX_CHECK_FLAGS = [
     '-fsyntax-only', '-fsigned-char', '-fno-builtin',
-    '-std=gnu90', '-m32',
-    '-Wall', '-Wextra', '-Wno-format-security', '-Wno-main', 
+    '-std=gnu90',
+    '-Wall', '-Wextra', '-Wno-format-security', '-Wno-main',
     '-D_LANGUAGE_C', '-DNON_MATCHING', '-DAVOID_UB', '-DIGNORE_SYNTAX_CHECK',
     '-D_MIPS_SZINT=32', '-D_MIPS_SZLONG=32', '-DF3DEX_GBI_2',
 ]
@@ -115,9 +115,18 @@ class ToolChain:
             sys_cxx = CXX(['clang++'], ['-O2'])
             system = SystemTools(sys_cc, sys_cxx, ['clang', '-E', '-P', '-x', 'c'])
         elif config.host == 'linux':
-            sys_cc = Compiler(['gcc'], ['-O2'])
+            # use default gcc with 32bit flag for syntax checking on x64
+            if config.arch == 'AMD64':
+                C_SYNTAX_CHECK_FLAGS.append('-m32')
+                sys_cc = Compiler(['gcc'], ['-O2'])
+            else:
+                # on ARM, use a standard 32bit compiler...
+                # fix this later
+                sys_cc = Compiler(['arm-linux-gnueabihf-gcc'], ['-O2'])
+            
             sys_cxx = CXX(['g++'], ['-O2'])
             system = SystemTools(sys_cc, sys_cxx, ['cpp'])
+            
         else:
             raise Exception(f'Unsupported Host OS: {config.host}')
         # Configure cross toolchain for game
