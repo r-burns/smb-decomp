@@ -102,33 +102,17 @@ class CrossTools:
 @dataclass
 class ToolChain:
     system: SystemTools
+    syntax: Compiler
     game: CrossTools
     libultra: CrossTools
     user_defines: List[str] # NON_MATCHING, AVOID_UB, VERSION_XX, TARGET_YY, etc.
 
     def from_config(config):
         # Configure system C/C++ compiler
-        if config.host == 'darwin':
-            sys_cc = Compiler(['clang'], ['-O2'])
-            sys_cxx = CXX(['clang++'], ['-O2'])
-            system = SystemTools(sys_cc, sys_cxx, ['clang', '-E', '-P', '-x', 'c'])
-            # add m32 flag for clang
-            C_SYNTAX_CHECK_FLAGS.append('-m32')
-        elif config.host == 'linux':
-            # use default gcc with 32bit flag for syntax checking on x64
-            if config.arch == 'AMD64':
-                C_SYNTAX_CHECK_FLAGS.append('-m32')
-                sys_cc = Compiler(['gcc'], ['-O2'])
-            else:
-                # on ARM, use a standard 32bit compiler...
-                # fix this later
-                sys_cc = Compiler(['arm-linux-gnueabihf-gcc'], ['-O2'])
-            
-            sys_cxx = CXX(['g++'], ['-O2'])
-            system = SystemTools(sys_cc, sys_cxx, ['cpp'])
-            
-        else:
-            raise Exception(f'Unsupported Host OS: {config.host}')
+        system = _get_system_compiler(config)
+        # Get compiler to check 32bit mips code
+        # TODO: ignore when/if support for building with modern toolchains is added, maybe?
+        syntax = _get_game_syntax_checker(config)
         # Configure cross toolchain for game
         game = _get_game_crosschain(config.toolchain, config)
         # Configure libultra cross toolchain for game
@@ -136,7 +120,7 @@ class ToolChain:
         # TODO: Encode user CLI options
         defines = []
 
-        return ToolChain(system, game, libultra, defines)
+        return ToolChain(system, syntax, game, libultra, defines)
     
     def invoke_as(self, includes, depfile, input, output):
         ''' create a list for calling the current game cross-assembler '''
@@ -168,9 +152,9 @@ class ToolChain:
         ''' use the system CC to check syntax and to create dependency files '''
         incs = list(_prefix_it(includes, '-I'))
         files = ['-MMD', '-MP', '-MT', output, '-MF', depfile, input]
-        tc = self.system.c
+        tc = self.syntax
 
-        return tc.CC + C_SYNTAX_CHECK_FLAGS + incs + files
+        return tc.CC + tc.CFLAGS + incs + files
 
     def invoke_asm_prepoc(self, includes, input, output, opt = 'O2'):
         ''' 
@@ -246,6 +230,35 @@ class ToolChain:
 
 
 ### Helper Routines ###
+def _get_system_compiler(config):
+    # TODO: support choosing clang or gcc thru config
+    if config.host == 'darwin':
+        cc = Compiler(['clang'], ['-O2'])
+        cxx = CXX(['clang++'], ['-O2'])
+        cpp = ['clang', '-E', '-P', '-x', 'c']
+        
+        return SystemTools(cc, cxx, cpp)
+    elif config.host == 'linux':
+        cc = Compiler(['gcc'], ['-O2'])
+        cxx = CXX(['g++'], ['-O2'])
+
+        return SystemTools(cc, cxx, ['cpp'])
+    else:
+        raise Exception(f'Unsupported Host OS: {config.host}')
+
+def _get_game_syntax_checker(config):
+    if config.host == 'darwin':
+        return Compiler(['clang'], C_SYNTAX_CHECK_FLAGS + ['-m32'])
+    elif config.host == 'linux':
+        if config.arch == 'arm64':
+            # on ARM64, use a 32bit compiler for compile-time pointer constants
+            return Compiler(['arm-linux-gnueabihf-gcc'], C_SYNTAX_CHECK_FLAGS)
+        else:
+            # use default gcc with 32bit flag for syntax checking on x64
+            return Compiler(['gcc'], C_SYNTAX_CHECK_FLAGS + ['-m32'])
+    else:
+        raise Exception(f'Unsupported Host OS: {config.host}')
+
 def _get_game_crosschain(requested_tc, config):
     ''' 
     Get `CrossTools` used for building game code
