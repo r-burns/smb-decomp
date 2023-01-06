@@ -112,6 +112,8 @@ class ToolChain:
             sys_cc = Compiler(['clang'], ['-O2'])
             sys_cxx = CXX(['clang++'], ['-O2'])
             system = SystemTools(sys_cc, sys_cxx, ['clang', '-E', '-P', '-x', 'c'])
+            # add m32 flag for clang
+            C_SYNTAX_CHECK_FLAGS.append('-m32')
         elif config.host == 'linux':
             # use default gcc with 32bit flag for syntax checking on x64
             if config.arch == 'AMD64':
