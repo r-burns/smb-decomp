@@ -148,13 +148,14 @@ class ToolChain:
 
         return self.game.c.CC + cflags + files
 
-    def invoke_cc_check(self, includes, depfile, input, output):
-        ''' use the system CC to check syntax and to create dependency files '''
+    def invoke_cc_check(self, includes, depfile, input, output, no_syntax=False):
+        ''' use the a modern compiler to check syntax and to create dependency files '''
         incs = list(_prefix_it(includes, '-I'))
         files = ['-MMD', '-MP', '-MT', output, '-MF', depfile, input]
-        tc = self.syntax
+        cc = self.syntax.CC
+        flags = self.syntax.CFLAGS + (['-w'] if no_syntax else [])
 
-        return tc.CC + tc.CFLAGS + incs + files
+        return cc + flags + incs + files
 
     def invoke_asm_prepoc(self, includes, input, output, opt = 'O2'):
         ''' 

@@ -561,7 +561,7 @@ def task_compile_libultra():
             libultra_objs.append(out)
 
             # don't check syntax for libultra; not useful anyways
-            # syntax_check = tc.invoke_cc_check(includes, d, src, out)
+            syntax_check = tc.invoke_cc_check(includes, d, src, out, no_syntax=True)
             if 'sp' in str(module):
                 # compile sp in libultra with ido7.1 at -O2 ...uh oh
                 # probably should make this more official
@@ -571,7 +571,7 @@ def task_compile_libultra():
 
             yield {
                 'name': out,
-                'actions': [compile_src],
+                'actions': [syntax_check, compile_src],
                 'targets': [out, d],
                 'file_dep': make_deps + tools_dep
             }
