@@ -4,11 +4,10 @@ import subprocess
 import sys
 import platform
 
-sys.path.append('doit')
-from parsemk import parse_mk_dependencies
-from toolchain import ToolChain
-from config import Config, ALL_VERSIONS
-from pathutil import append_suffix, up_one_dir
+from doit.parsemk import parse_mk_dependencies
+from doit.toolchain import ToolChain
+from doit.config import Config, ALL_VERSIONS
+from doit.pathutil import append_suffix, up_one_dir
 
 
 ############ Configuration ###########################

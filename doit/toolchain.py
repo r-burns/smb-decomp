@@ -352,6 +352,10 @@ class MissingQemuIrix(Exception):
 def _which_gnu_prefix():
     if which('mips64-elf-ld') is not None:
         return "mips64-elf-"
+    elif which('mips-linux-gnu') is not None:
+        return "mips-linux-gnu"
+    elif which('mips64-linux-gnu') is not None:
+        return "mips64-linux-gnu"
     else:
         raise MissingGNUToolchain()
 
