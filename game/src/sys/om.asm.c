@@ -1,10 +1,10 @@
 #include "sys/om.h"
 
+#include "sys/crash.h"
 #include "sys/gtl.h"
 #include "sys/obj_renderer.h"
 #include "sys/rdp_reset.h"
 #include "sys/system_03_1.h"
-#include "sys/system_11.h"
 
 #include <macros.h>
 #include <ssb_types.h>
@@ -100,7 +100,7 @@ struct GObjThread *get_obj_thread(void) {
     struct GObjThread *ret;
 
     if (sObjThreadHead == NULL) {
-        sObjThreadHead = func_80004980(sizeof(struct GObjThread), 8);
+        sObjThreadHead = hal_alloc(sizeof(struct GObjThread), 8);
 
         sObjThreadHead->next = NULL;
     }
@@ -137,7 +137,7 @@ struct ThreadStackNode *get_stack_of_size(u32 size) {
     }
 
     if (curr == NULL) {
-        curr        = func_80004980(sizeof(struct ThreadStackList), 4);
+        curr        = hal_alloc(sizeof(struct ThreadStackList), 4);
         curr->next  = NULL;
         curr->stack = NULL;
         curr->size  = size;
@@ -154,7 +154,7 @@ struct ThreadStackNode *get_stack_of_size(u32 size) {
 
         curr->stack = curr->stack->next;
     } else {
-        ret = func_80004980(size + offsetof(struct ThreadStackNode, stack), 8);
+        ret = hal_alloc(size + offsetof(struct ThreadStackNode, stack), 8);
 
         ret->stackSize = size;
     }
@@ -192,7 +192,7 @@ struct GObjProcess *get_obj_process(void) {
     struct GObjProcess *ret;
 
     if (sObjProcessHead == NULL) {
-        sObjProcessHead = func_80004980(sizeof(struct GObjProcess), 4);
+        sObjProcessHead = hal_alloc(sizeof(struct GObjProcess), 4);
 
         sObjProcessHead->unk00 = NULL;
     }
@@ -265,7 +265,7 @@ nested_loop_end:
     v0->unk1C   = arg0;
 }
 #else
-#pragma GLOBAL_ASM("game/nonmatching/om/func_80007680.s")
+#pragma GLOBAL_ASM("game/nonmatching/sys/om/func_80007680.s")
 #endif
 
 void func_80007758(struct GObjProcess *op) {
@@ -345,7 +345,7 @@ struct GObjCommon *func_800078FC(void) {
     if (sMaxNumObjCommon == -1 || sObjCommonsActive < sMaxNumObjCommon) {
         v1 = sObjCommonHead;
         if (v1 == NULL) {
-            sObjCommonHead        = func_80004980(sObjCommonSize, 8);
+            sObjCommonHead        = hal_alloc(sObjCommonSize, 8);
             sObjCommonHead->unk04 = NULL;
             v1                    = sObjCommonHead;
         }
@@ -483,7 +483,7 @@ struct OMMtx *get_om_mtx(void) {
     struct OMMtx *ret;
 
     if (sMtxHead == NULL) {
-        sMtxHead = func_80004980(sizeof(struct OMMtx), 8);
+        sMtxHead = hal_alloc(sizeof(struct OMMtx), 8);
 
         sMtxHead->next = NULL;
     }
@@ -509,7 +509,7 @@ struct AObj *get_aobj(void) {
     struct AObj *ret;
 
     if (sAObjHead == NULL) {
-        sAObjHead = func_80004980(sizeof(struct AObj), 4);
+        sAObjHead = hal_alloc(sizeof(struct AObj), 4);
 
         sAObjHead->next = NULL;
     }
@@ -553,7 +553,7 @@ struct MObj *get_mobj(void) {
     struct MObj *ret;
 
     if (sMObjHead == NULL) {
-        sMObjHead = func_80004980(sizeof(struct MObj), 4);
+        sMObjHead = hal_alloc(sizeof(struct MObj), 4);
 
         sMObjHead->next = NULL;
     }
@@ -580,7 +580,7 @@ struct DObj *get_dobj(void) {
     struct DObj *ret;
 
     if (sDObjHead == NULL) {
-        sDObjHead = func_80004980(sDObjSize, 8);
+        sDObjHead = hal_alloc(sDObjSize, 8);
 
         sDObjHead->unk0 = NULL;
     }
@@ -607,7 +607,7 @@ struct SObj *get_sobj(void) {
     struct SObj *ret;
 
     if (sSObjHead == NULL) {
-        sSObjHead = func_80004980(sSObjSize, 8);
+        sSObjHead = hal_alloc(sSObjSize, 8);
 
         sSObjHead->next = NULL;
     }
@@ -634,7 +634,7 @@ struct OMCamera *get_om_camera(void) {
     struct OMCamera *ret;
 
     if (sCameraHead == NULL) {
-        sCameraHead       = func_80004980(sCameraSize, 8);
+        sCameraHead       = hal_alloc(sCameraSize, 8);
         sCameraHead->next = NULL;
     }
 
@@ -1019,7 +1019,7 @@ struct OMMtx *func_8000855C(struct DObj *arg0, u8 arg1, u8 arg2, s32 arg3) {
     return mtx;
 }
 #else
-#pragma GLOBAL_ASM("game/nonmatching/om/func_8000855C.s")
+#pragma GLOBAL_ASM("game/nonmatching/sys/om/func_8000855C.s")
 #endif
 
 void func_80008CC0(struct DObj *arg0, u8 arg1, u8 arg2) {
@@ -1090,7 +1090,7 @@ struct AObj *create_aobj_for_dobj(struct DObj *dobj, u8 index) {
 
     aobj->unk04 = index;
     aobj->unk05 = 0;
-    aobj->unk20 = 0;
+    aobj->unk20 = NULL;
     aobj->unk1C = 0.0;
     aobj->unk18 = 0.0;
     aobj->unk14 = 0.0;
@@ -1122,7 +1122,7 @@ struct AObj *create_aobj_for_mobj(struct MObj *mobj, u8 index) {
 
     aobj->unk04 = index;
     aobj->unk05 = 0;
-    aobj->unk20 = 0;
+    aobj->unk20 = NULL;
     aobj->unk1C = 0.0;
     aobj->unk18 = 0.0;
     aobj->unk14 = 0.0;
@@ -1156,7 +1156,7 @@ struct AObj *func_80009010(struct DObj *obj, u8 index) {
 
     aobj->unk04 = index;
     aobj->unk05 = 0;
-    aobj->unk20 = 0;
+    aobj->unk20 = NULL;
     aobj->unk1C = 0.0;
     aobj->unk18 = 0.0;
     aobj->unk14 = 0.0;
@@ -1222,7 +1222,7 @@ struct MObj *func_800090DC(struct DObj *arg0, struct MObjSub *arg1) {
     return mobj;
 }
 #else
-#pragma GLOBAL_ASM("game/nonmatching/om/func_800090DC.s")
+#pragma GLOBAL_ASM("game/nonmatching/sys/om/func_800090DC.s")
 #endif
 
 void func_800091F4(struct DObj *obj) {
@@ -1268,7 +1268,7 @@ void func_8000926C(struct DObj *arg0) {
     arg0->unk84 = 0;
 }
 #else
-#pragma GLOBAL_ASM("game/nonmatching/om/func_8000926C.s")
+#pragma GLOBAL_ASM("game/nonmatching/sys/om/func_8000926C.s")
 #endif
 
 struct DObj *func_800092D0(struct GObjCommon *arg0, void *arg1) {
@@ -1500,7 +1500,7 @@ void func_80009810(struct OMCamera *cam) {
     free_om_camera(cam);
 }
 
-struct GObjCommon *om_g_add_common(u32 id, void (*arg1)(void), u8 link, u32 arg3) {
+struct GObjCommon *om_g_add_common(u32 id, void (*arg1)(struct GObjCommon *), u8 link, u32 arg3) {
     struct GObjCommon *com;
 
     if (link >= OM_COMMON_MAX_LINKS) {
@@ -1531,7 +1531,8 @@ struct GObjCommon *om_g_add_common(u32 id, void (*arg1)(void), u8 link, u32 arg3
     return com;
 }
 
-struct GObjCommon *func_80009968(u32 id, void (*arg1)(void), u8 link, u32 arg3) {
+// from 64remix: render.create_object
+struct GObjCommon *func_80009968(u32 id, void (*arg1)(struct GObjCommon *), u8 link, u32 arg3) {
     struct GObjCommon *com = om_g_add_common(id, arg1, link, arg3);
 
     if (com == NULL) { return NULL; }
@@ -1541,7 +1542,7 @@ struct GObjCommon *func_80009968(u32 id, void (*arg1)(void), u8 link, u32 arg3) 
     return com;
 }
 
-struct GObjCommon *func_800099A8(u32 id, void (*arg1)(void), u8 link, u32 arg3) {
+struct GObjCommon *func_800099A8(u32 id, void (*arg1)(struct GObjCommon *), u8 link, u32 arg3) {
     struct GObjCommon *com = om_g_add_common(id, arg1, link, arg3);
 
     if (com == NULL) { return NULL; }
@@ -1551,7 +1552,8 @@ struct GObjCommon *func_800099A8(u32 id, void (*arg1)(void), u8 link, u32 arg3) 
     return com;
 }
 
-struct GObjCommon *unref_800099E8(u32 id, void (*arg1)(void), struct GObjCommon *arg2) {
+struct GObjCommon *
+unref_800099E8(u32 id, void (*arg1)(struct GObjCommon *), struct GObjCommon *arg2) {
     struct GObjCommon *com = om_g_add_common(id, arg1, arg2->unk0C, arg2->unk10);
 
     if (com == NULL) { return NULL; }
@@ -1561,7 +1563,8 @@ struct GObjCommon *unref_800099E8(u32 id, void (*arg1)(void), struct GObjCommon 
     return com;
 }
 
-struct GObjCommon *unref_80009A34(u32 id, void (*arg1)(void), struct GObjCommon *arg2) {
+struct GObjCommon *
+unref_80009A34(u32 id, void (*arg1)(struct GObjCommon *), struct GObjCommon *arg2) {
     struct GObjCommon *com = om_g_add_common(id, arg1, arg2->unk0C, arg2->unk10);
 
     if (com == NULL) { return NULL; }
@@ -1877,7 +1880,7 @@ struct GObjCommon *func_8000A40C(struct GObjCommon *arg0) {
 
     D_8003B874 = 1;
     D_80046A54 = arg0;
-    arg0->unk14();
+    arg0->unk14(arg0);
     ret        = arg0->unk04;
     D_80046A54 = NULL;
     D_8003B874 = 0;
@@ -1999,7 +2002,7 @@ void set_up_object_manager(struct OMSetup *setup) {
     if (setup->numStacks != 0 && setup->threadStackSize != NULL) {
         struct ThreadStackNode *csr;
 
-        sThreadStackHead        = func_80004980(sizeof(struct ThreadStackList), 4);
+        sThreadStackHead        = hal_alloc(sizeof(struct ThreadStackList), 4);
         sThreadStackHead->next  = NULL;
         sThreadStackHead->size  = sThreadStackSize;
         sThreadStackHead->stack = csr = setup->stacks;

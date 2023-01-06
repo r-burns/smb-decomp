@@ -1,10 +1,10 @@
 #include "sys/obj_renderer.h"
 
 #include "sys/gtl.h"
+#include "sys/hal_gu.h"
 #include "sys/om.h"
 #include "sys/system_00.h"
 #include "sys/system_04.h"
-#include "sys/system_08.h"
 
 #include <config.h>
 #include <macros.h>
@@ -93,9 +93,9 @@ s32 func_80010D70(Gfx **arg0, struct DObj *arg1) {
                 if (mtx->unk05 == 4) {
                     if (D_8003B6E8.parts[3] != arg1->unk4->unk0E) {
                         // this is weird...
-                        *(void **)&mtx->unk08 = D_800465D8.ptr;
-                        mtxStore.f            = D_800465D8.ptr;
-                        D_800465D8.ptr        = (u8 *)D_800465D8.ptr + sizeof(Mtx4f);
+                        *(void **)&mtx->unk08 = gMatrixHeap.ptr;
+                        mtxStore.f            = gMatrixHeap.ptr;
+                        gMatrixHeap.ptr       = (u8 *)gMatrixHeap.ptr + sizeof(Mtx4f);
                     } else {
                         // L80010EDC
                         switch (mtx->unk04) {
@@ -117,14 +117,14 @@ s32 func_80010D70(Gfx **arg0, struct DObj *arg1) {
                             case 48:
                             case 49:
                             case 50:
-                                mtxStore.f     = D_800465D8.ptr;
-                                D_800465D8.ptr = (u8 *)D_800465D8.ptr + sizeof(Mtx4f);
+                                mtxStore.f      = gMatrixHeap.ptr;
+                                gMatrixHeap.ptr = (u8 *)gMatrixHeap.ptr + sizeof(Mtx4f);
                                 break;
                             default:
                                 // L80010F18
                                 if (mtx->unk04 > 66) {
-                                    mtxStore.f     = D_800465D8.ptr;
-                                    D_800465D8.ptr = (u8 *)D_800465D8.ptr + sizeof(Mtx4f);
+                                    mtxStore.f      = gMatrixHeap.ptr;
+                                    gMatrixHeap.ptr = (u8 *)gMatrixHeap.ptr + sizeof(Mtx4f);
                                 } else {
                                     // L80010F38
                                     // what is it loading here?
@@ -133,10 +133,10 @@ s32 func_80010D70(Gfx **arg0, struct DObj *arg1) {
                                 }
                         }
                     }
-                } else if (D_80046630 > 0) {
+                } else if (gGtlTaskId > 0) {
                     // L80010F40
-                    mtxStore.f     = D_800465D8.ptr;
-                    D_800465D8.ptr = (u8 *)D_800465D8.ptr + sizeof(Mtx4f);
+                    mtxStore.f      = gMatrixHeap.ptr;
+                    gMatrixHeap.ptr = (u8 *)gMatrixHeap.ptr + sizeof(Mtx4f);
                 } else {
                     // L80010F68
                     if (D_8003B6E8.parts[3] == arg1->unk4->unk0E) {
@@ -159,20 +159,20 @@ s32 func_80010D70(Gfx **arg0, struct DObj *arg1) {
                             case 48:
                             case 49:
                             case 50:
-                                mtxStore.f     = D_800465D8.ptr;
-                                D_800465D8.ptr = (u8 *)D_800465D8.ptr + sizeof(Mtx4f);
+                                mtxStore.f      = gMatrixHeap.ptr;
+                                gMatrixHeap.ptr = (u8 *)gMatrixHeap.ptr + sizeof(Mtx4f);
                                 break;
                             default:
                             {
                                 if (mtx->unk04 > 66) {
-                                    mtxStore.f     = D_800465D8.ptr;
-                                    D_800465D8.ptr = (u8 *)D_800465D8.ptr + sizeof(Mtx4f);
+                                    mtxStore.f      = gMatrixHeap.ptr;
+                                    gMatrixHeap.ptr = (u8 *)gMatrixHeap.ptr + sizeof(Mtx4f);
                                 } else {
                                     // L80010FDC
                                     if (mtx->unk05 != 3) { continue; }
 
-                                    mtxStore.f     = D_800465D8.ptr;
-                                    D_800465D8.ptr = (u8 *)D_800465D8.ptr + sizeof(Mtx4f);
+                                    mtxStore.f      = gMatrixHeap.ptr;
+                                    gMatrixHeap.ptr = (u8 *)gMatrixHeap.ptr + sizeof(Mtx4f);
                                 }
                             }
                         }
@@ -185,11 +185,11 @@ s32 func_80010D70(Gfx **arg0, struct DObj *arg1) {
                     case 1: break;
                     case 2: break;
                     case 18:
-                        func_8001B9C4(
+                        hal_translate(
                             mtxStore.gbi, arg1->unk18.f.v.x, arg1->unk18.f.v.y, arg1->unk18.f.v.z);
                         break;
                     case 19:
-                        func_8001D2F4(
+                        hal_rotate_degrees(
                             mtxStore.gbi,
                             arg1->unk28.f[0],
                             arg1->unk28.f[1],
@@ -197,7 +197,7 @@ s32 func_80010D70(Gfx **arg0, struct DObj *arg1) {
                             arg1->unk28.f[3]);
                         break;
                     case 20:
-                        func_8001D3C4(
+                        hal_rotate_translate_degrees(
                             mtxStore.gbi,
                             arg1->unk18.f.v.x,
                             arg1->unk18.f.v.y,
@@ -208,11 +208,11 @@ s32 func_80010D70(Gfx **arg0, struct DObj *arg1) {
                             arg1->unk28.f[3]);
                         break;
                     case 21:
-                        func_8001D4A4(
+                        hal_rotate_rpy_degrees(
                             mtxStore.gbi, arg1->unk28.f[1], arg1->unk28.f[2], arg1->unk28.f[3]);
                         break;
                     case 22:
-                        func_8001D58C(
+                        hal_rotate_rpy_translate_degrees(
                             mtxStore.gbi,
                             arg1->unk18.f.v.x,
                             arg1->unk18.f.v.y,
@@ -222,7 +222,7 @@ s32 func_80010D70(Gfx **arg0, struct DObj *arg1) {
                             arg1->unk28.f[3]);
                         break;
                     case 23:
-                        func_8001BBF8(
+                        hal_rotate(
                             mtxStore.gbi,
                             arg1->unk28.f[0],
                             arg1->unk28.f[1],
@@ -230,7 +230,7 @@ s32 func_80010D70(Gfx **arg0, struct DObj *arg1) {
                             arg1->unk28.f[3]);
                         break;
                     case 24:
-                        func_8001BCA0(
+                        hal_rotate_translate(
                             mtxStore.gbi,
                             arg1->unk18.f.v.x,
                             arg1->unk18.f.v.y,
@@ -241,7 +241,7 @@ s32 func_80010D70(Gfx **arg0, struct DObj *arg1) {
                             arg1->unk28.f[3]);
                         break;
                     case 25:
-                        func_8001BD70(
+                        hal_rotate_translate_rowscale(
                             mtxStore.gbi,
                             arg1->unk18.f.v.x,
                             arg1->unk18.f.v.y,
@@ -256,11 +256,11 @@ s32 func_80010D70(Gfx **arg0, struct DObj *arg1) {
                         D_80046FA4 *= arg1->unk3C.v.x;
                         break;
                     case 26:
-                        func_8001BF20(
+                        hal_rotate_rpy(
                             mtxStore.gbi, arg1->unk28.f[1], arg1->unk28.f[2], arg1->unk28.f[3]);
                         break;
                     case 27:
-                        func_8001C21C(
+                        hal_rotate_rpy_translate(
                             mtxStore.gbi,
                             arg1->unk18.f.v.x,
                             arg1->unk18.f.v.y,
@@ -270,7 +270,7 @@ s32 func_80010D70(Gfx **arg0, struct DObj *arg1) {
                             arg1->unk28.f[3]);
                         break;
                     case 28:
-                        func_8001C588(
+                        hal_rotate_rpy_translate_scale(
                             mtxStore.gbi,
                             arg1->unk18.f.v.x,
                             arg1->unk18.f.v.y,
@@ -284,11 +284,11 @@ s32 func_80010D70(Gfx **arg0, struct DObj *arg1) {
                         D_80046FA4 *= arg1->unk3C.v.x;
                         break;
                     case 29:
-                        func_8001CAB4(
+                        hal_rotate_pyr(
                             mtxStore.gbi, arg1->unk28.f[1], arg1->unk28.f[2], arg1->unk28.f[3]);
                         break;
                     case 30:
-                        func_8001CB4C(
+                        hal_rotate_pyr_translate(
                             mtxStore.gbi,
                             arg1->unk18.f.v.x,
                             arg1->unk18.f.v.y,
@@ -298,7 +298,7 @@ s32 func_80010D70(Gfx **arg0, struct DObj *arg1) {
                             arg1->unk28.f[3]);
                         break;
                     case 31:
-                        func_8001CC0C(
+                        hal_rotate_pyr_translate_scale(
                             mtxStore.gbi,
                             arg1->unk18.f.v.x,
                             arg1->unk18.f.v.y,
@@ -312,8 +312,7 @@ s32 func_80010D70(Gfx **arg0, struct DObj *arg1) {
                         D_80046FA4 *= arg1->unk3C.v.x;
                         break;
                     case 32:
-                        func_8001B780(
-                            mtxStore.gbi, arg1->unk3C.v.x, arg1->unk3C.v.y, arg1->unk3C.v.z);
+                        hal_scale(mtxStore.gbi, arg1->unk3C.v.x, arg1->unk3C.v.y, arg1->unk3C.v.z);
                         D_80046FA4 *= arg1->unk3C.v.x;
                         break;
                     case 33: func_80010AE8(mtxStore.f, arg1, FALSE); break;
@@ -325,21 +324,21 @@ s32 func_80010D70(Gfx **arg0, struct DObj *arg1) {
                     case 39: func_80010918(mtxStore.f, arg1, FALSE); break;
                     case 40: func_80010918(mtxStore.f, arg1, TRUE); break;
                     case 56:
-                        func_8001B9C4(mtxStore.gbi, sp2C0->f.v.x, sp2C0->f.v.y, sp2C0->f.v.z);
+                        hal_translate(mtxStore.gbi, sp2C0->f.v.x, sp2C0->f.v.y, sp2C0->f.v.z);
                         break;
                     case 57:
-                        func_8001BBF8(
+                        hal_rotate(
                             mtxStore.gbi, sp2BC->f[0], sp2BC->f[1], sp2BC->f[2], sp2BC->f[3]);
                         break;
                     case 58:
-                        func_8001BF20(mtxStore.gbi, sp2BC->f[1], sp2BC->f[2], sp2BC->f[3]);
+                        hal_rotate_rpy(mtxStore.gbi, sp2BC->f[1], sp2BC->f[2], sp2BC->f[3]);
                         break;
                     case 59:
-                        func_8001B780(mtxStore.gbi, sp2B8->v.x, sp2B8->v.y, sp2B8->v.z);
+                        hal_scale(mtxStore.gbi, sp2B8->v.x, sp2B8->v.y, sp2B8->v.z);
                         D_80046FA4 *= sp2B8->v.x;
                         break;
                     case 60:
-                        func_8001BCA0(
+                        hal_rotate_translate(
                             mtxStore.gbi,
                             sp2C0->f.v.x,
                             sp2C0->f.v.y,
@@ -350,7 +349,7 @@ s32 func_80010D70(Gfx **arg0, struct DObj *arg1) {
                             sp2BC->f[3]);
                         break;
                     case 61:
-                        func_8001BD70(
+                        hal_rotate_translate_rowscale(
                             mtxStore.gbi,
                             sp2C0->f.v.x,
                             sp2C0->f.v.y,
@@ -365,7 +364,7 @@ s32 func_80010D70(Gfx **arg0, struct DObj *arg1) {
                         D_80046FA4 *= sp2B8->v.x;
                         break;
                     case 62:
-                        func_8001C21C(
+                        hal_rotate_rpy_translate(
                             mtxStore.gbi,
                             sp2C0->f.v.x,
                             sp2C0->f.v.y,
@@ -375,7 +374,7 @@ s32 func_80010D70(Gfx **arg0, struct DObj *arg1) {
                             sp2BC->f[3]);
                         break;
                     case 63:
-                        func_8001C588(
+                        hal_rotate_rpy_translate_scale(
                             mtxStore.gbi,
                             sp2C0->f.v.x,
                             sp2C0->f.v.y,
@@ -443,7 +442,7 @@ s32 func_80010D70(Gfx **arg0, struct DObj *arg1) {
                         D_80046FE8[2][0] = 0.0f;
                         D_80046FE8[2][1] = 0.0f;
 
-                        func_80019C70(&D_80046FE8, mtxStore.gbi);
+                        hal_mtx_f2l(&D_80046FE8, mtxStore.gbi);
 
                         gSPMvpRecalc(sp2D4++);
                         gMoveWd(sp2D4++, G_MW_MATRIX, G_MWO_MATRIX_YX_YY_I, mtxStore.gbi->m[0][0]);
@@ -482,7 +481,7 @@ s32 func_80010D70(Gfx **arg0, struct DObj *arg1) {
                         D_80046FE8[2][0] = 0.0f;
                         D_80046FE8[2][1] = 0.0f;
 
-                        func_80019C70(&D_80046FE8, mtxStore.gbi);
+                        hal_mtx_f2l(&D_80046FE8, mtxStore.gbi);
 
                         gSPMvpRecalc(sp2D4++);
                         gMoveWd(sp2D4++, G_MW_MATRIX, G_MWO_MATRIX_XX_XY_I, mtxStore.gbi->m[0][0]);
@@ -525,7 +524,7 @@ s32 func_80010D70(Gfx **arg0, struct DObj *arg1) {
                         D_80046FE8[2][2] = D_80046FA8[2][2] * D_80046FA4;
                         D_80046FE8[2][3] = D_80046FA8[2][3] * D_80046FA4;
 
-                        func_80019C70(&D_80046FE8, mtxStore.gbi);
+                        hal_mtx_f2l(&D_80046FE8, mtxStore.gbi);
 
                         gSPMvpRecalc(sp2D4++);
                         gMoveWd(sp2D4++, G_MW_MATRIX, G_MWO_MATRIX_XX_XY_I, mtxStore.gbi->m[0][0]);
@@ -566,7 +565,7 @@ s32 func_80010D70(Gfx **arg0, struct DObj *arg1) {
                         D_80046FE8[2][2] = D_80046FA8[2][2] * D_80046FA4;
                         D_80046FE8[2][3] = D_80046FA8[2][3] * D_80046FA4;
 
-                        func_80019C70(&D_80046FE8, mtxStore.gbi);
+                        hal_mtx_f2l(&D_80046FE8, mtxStore.gbi);
 
                         gSPMvpRecalc(sp2D4++);
                         gMoveWd(sp2D4++, G_MW_MATRIX, G_MWO_MATRIX_XX_XY_I, mtxStore.gbi->m[0][0]);
@@ -604,7 +603,7 @@ s32 func_80010D70(Gfx **arg0, struct DObj *arg1) {
                         D_80046FE8[2][2] = D_80047028[2][2] * D_80046FA4;
                         D_80046FE8[2][3] = D_80047028[2][3] * D_80046FA4;
 
-                        func_80019C70(&D_80046FE8, mtxStore.gbi);
+                        hal_mtx_f2l(&D_80046FE8, mtxStore.gbi);
 
                         gSPMvpRecalc(sp2D4++);
                         gMoveWd(sp2D4++, G_MW_MATRIX, G_MWO_MATRIX_YX_YY_I, mtxStore.gbi->m[0][0]);
@@ -642,7 +641,7 @@ s32 func_80010D70(Gfx **arg0, struct DObj *arg1) {
                         D_80046FE8[2][2] = D_80047028[2][2] * D_80046FA4;
                         D_80046FE8[2][3] = D_80047028[2][3] * D_80046FA4;
 
-                        func_80019C70(&D_80046FE8, mtxStore.gbi);
+                        hal_mtx_f2l(&D_80046FE8, mtxStore.gbi);
 
                         gSPMvpRecalc(sp2D4++);
                         gMoveWd(sp2D4++, G_MW_MATRIX, G_MWO_MATRIX_XX_XY_I, mtxStore.gbi->m[0][0]);
@@ -680,7 +679,7 @@ s32 func_80010D70(Gfx **arg0, struct DObj *arg1) {
                         D_80046FE8[2][2] = D_80047068[2][2] * D_80046FA4;
                         D_80046FE8[2][3] = D_80047068[2][3] * D_80046FA4;
 
-                        func_80019C70(&D_80046FE8, mtxStore.gbi);
+                        hal_mtx_f2l(&D_80046FE8, mtxStore.gbi);
 
                         gSPMvpRecalc(sp2D4++);
                         gMoveWd(sp2D4++, G_MW_MATRIX, G_MWO_MATRIX_YX_YY_I, mtxStore.gbi->m[0][0]);
@@ -718,7 +717,7 @@ s32 func_80010D70(Gfx **arg0, struct DObj *arg1) {
                         D_80046FE8[2][2] = D_80047068[2][2] * D_80046FA4;
                         D_80046FE8[2][3] = D_80047068[2][3] * D_80046FA4;
 
-                        func_80019C70(&D_80046FE8, mtxStore.gbi);
+                        hal_mtx_f2l(&D_80046FE8, mtxStore.gbi);
 
                         gSPMvpRecalc(sp2D4++);
                         gMoveWd(sp2D4++, G_MW_MATRIX, G_MWO_MATRIX_XX_XY_I, mtxStore.gbi->m[0][0]);
@@ -788,7 +787,7 @@ s32 func_80010D70(Gfx **arg0, struct DObj *arg1) {
     return sp2CC;
 }
 #else
-#pragma GLOBAL_ASM("game/nonmatching/system_05/func_80010D70.s")
+#pragma GLOBAL_ASM("game/nonmatching/sys/system_05/func_80010D70.s")
 #endif
 
 #ifdef MIPS_TO_C
@@ -802,7 +801,7 @@ void func_80012D90(struct DObj *arg0, Gfx **arg1) {
 
     if (arg0->unk80 == NULL) { return; }
 
-    gSPSegment((*arg1)++, 14, D_800465D8.ptr);
+    gSPSegment((*arg1)++, 14, gMatrixHeap.ptr);
 
     count = 0;
     mobj  = arg0->unk80;
@@ -812,7 +811,7 @@ void func_80012D90(struct DObj *arg0, Gfx **arg1) {
     }
 
     mobj     = arg0->unk80; // a1 for `mobj`
-    newDl    = D_800465D8.ptr;
+    newDl    = gMatrixHeap.ptr;
     branchDl = newDl + count;
     for (sp14 = 0; sp14 < count * 8; sp14 += 8) {
         // L80012E30
@@ -1136,10 +1135,10 @@ void func_80012D90(struct DObj *arg0, Gfx **arg1) {
         gSPEndDisplayList(branchDl++);
     }
     // L80013D80
-    D_800465D8.ptr = (u8 *)D_800465D8.ptr + (count * 8); // sizeof(Gfx)..?
+    gMatrixHeap.ptr = (u8 *)gMatrixHeap.ptr + (count * 8); // sizeof(Gfx)..?
 }
 #else
-#pragma GLOBAL_ASM("game/nonmatching/system_05/func_80012D90.s")
+#pragma GLOBAL_ASM("game/nonmatching/sys/system_05/func_80012D90.s")
 #endif
 
 void func_80013D90(struct GObjCommon *gobj, Gfx **dlHead) {
@@ -1233,7 +1232,7 @@ void func_80014068(struct DObj *dobj, struct Unk50DlLink *arg1) {
         sp28 = D_800465B0[arg1->listId];
 
         if (arg1->dl != NULL) {
-            sp20 = D_800465D8.ptr;
+            sp20 = gMatrixHeap.ptr;
             func_80012D90(dobj, &D_800465B0[arg1->listId]);
             gSPDisplayList((D_800465B0[0])++, arg1->dl);
 
@@ -1289,7 +1288,7 @@ void func_80014068(struct DObj *dobj, struct Unk50DlLink *arg1) {
     // L800143EC
 }
 #else
-#pragma GLOBAL_ASM("game/nonmatching/system_05/func_80014068.s")
+#pragma GLOBAL_ASM("game/nonmatching/sys/system_05/func_80014068.s")
 #endif
 
 void func_800143FC(struct GObjCommon *obj) {
@@ -1340,7 +1339,7 @@ void func_8001445C(struct DObj *arg0) {
                     // L8001457C
                     if (arg0->unk80 != NULL) {
                         if (s4 == NULL) {
-                            s4 = D_800465D8.ptr;
+                            s4 = gMatrixHeap.ptr;
                             func_80012D90(arg0, &D_800465B0[sp44->listId]);
                         } else {
                             // L800145C8
@@ -1391,7 +1390,7 @@ void func_8001445C(struct DObj *arg0) {
     // L8001474C
 }
 #else
-#pragma GLOBAL_ASM("game/nonmatching/system_05/func_8001445C.s")
+#pragma GLOBAL_ASM("game/nonmatching/sys/system_05/func_8001445C.s")
 #endif
 
 void func_80014768(struct GObjCommon *obj) {
@@ -1525,7 +1524,7 @@ void unref_80014A84(struct GObjCommon *obj) {
     // L80014C28
 }
 #else
-#pragma GLOBAL_ASM("game/nonmatching/system_05/unref_80014A84.s")
+#pragma GLOBAL_ASM("game/nonmatching/sys/system_05/unref_80014A84.s")
 #endif
 
 void unref_80014C38(struct GObjCommon *obj) {
@@ -1586,7 +1585,7 @@ void func_80014CD0(struct DObj *dobj) {
                     // L80014E10
                     if (dobj->unk80 != NULL) {
                         if (s4 == NULL) {
-                            s4 = D_800465D8.ptr;
+                            s4 = gMatrixHeap.ptr;
                             func_80012D90(dobj, &D_800465B0[sp40->listId]);
                         } else {
                             // L80014E5C
@@ -1631,7 +1630,7 @@ void func_80014CD0(struct DObj *dobj) {
     }
 }
 #else
-#pragma GLOBAL_ASM("game/nonmatching/system_05/func_80014CD0.s")
+#pragma GLOBAL_ASM("game/nonmatching/sys/system_05/func_80014CD0.s")
 #endif
 
 void unref_80014FFC(struct GObjCommon *obj);
@@ -1682,7 +1681,7 @@ void unref_80014FFC(struct GObjCommon *obj) {
 
                         if (dobj->unk80 != NULL) {
                             if (segaddr == NULL) {
-                                segaddr = D_800465D8.ptr;
+                                segaddr = gMatrixHeap.ptr;
                                 func_80012D90(dobj, &D_800465B0[sp34->listId]);
                             } else {
                                 // L800151C4
@@ -1725,7 +1724,7 @@ void unref_80014FFC(struct GObjCommon *obj) {
     // L8001533C
 }
 #else
-#pragma GLOBAL_ASM("game/nonmatching/system_05/unref_80014FFC.s")
+#pragma GLOBAL_ASM("game/nonmatching/sys/system_05/unref_80014FFC.s")
 #endif
 
 void func_80015358(struct DObj *dobj) {
@@ -1809,7 +1808,7 @@ void func_80015520(struct DObj *dobj) {
                     // L80015674
                     if (dobj->unk80 != NULL) {
                         if (segaddr == NULL) {
-                            segaddr = D_800465D8.ptr;
+                            segaddr = gMatrixHeap.ptr;
                             func_80012D90(dobj, &D_800465B0[sp44->id]);
                         } else {
                             gSPSegment(D_800465B0[sp44->id]++, 14, segaddr);
@@ -1850,7 +1849,7 @@ void func_80015520(struct DObj *dobj) {
     // L80015814
 }
 #else
-#pragma GLOBAL_ASM("game/nonmatching/system_05/func_80015520.s")
+#pragma GLOBAL_ASM("game/nonmatching/sys/system_05/func_80015520.s")
 #endif
 
 void unref_80015860(struct GObjCommon *obj) {
@@ -1947,7 +1946,7 @@ void unref_80015A58(struct GObjCommon *obj) {
     // L80015BFC
 }
 #else
-#pragma GLOBAL_ASM("game/nonmatching/system_05/unref_80015A58.s")
+#pragma GLOBAL_ASM("game/nonmatching/sys/system_05/unref_80015A58.s")
 #endif
 
 void func_80015C0C(struct DObj *dobj) {
@@ -1986,7 +1985,7 @@ void func_80015C0C(struct DObj *dobj) {
                     // L80015D80
                     if (dobj->unk80 != NULL) {
                         if (segaddr == NULL) {
-                            segaddr = D_800465D8.ptr;
+                            segaddr = gMatrixHeap.ptr;
                             func_80012D90(dobj, &D_800465B0[sp40->id]);
                         } else {
                             // L80015DD0
@@ -2076,7 +2075,7 @@ void unref_80015F6C(struct GObjCommon *obj) {
                         // L800160E8
                         if (dobj->unk80 != NULL) {
                             if (segaddr == NULL) {
-                                segaddr = D_800465D8.ptr;
+                                segaddr = gMatrixHeap.ptr;
                                 func_80012D90(dobj, &D_800465B0[link->listId]);
                             } else {
                                 gSPSegment(D_800465B0[link->listId]++, 14, segaddr);
@@ -2118,7 +2117,7 @@ void unref_80015F6C(struct GObjCommon *obj) {
     // L800162AC
 }
 #else
-#pragma GLOBAL_ASM("game/nonmatching/system_05/unref_80015F6C.s")
+#pragma GLOBAL_ASM("game/nonmatching/sys/system_05/unref_80015F6C.s")
 #endif
 
 void unref_800162C8(struct GObjCommon *obj) {
@@ -2138,8 +2137,7 @@ void unref_800162C8(struct GObjCommon *obj) {
 }
 
 #ifdef NON_MATCHING
-// nonmatching: this looks right, but there is a not necessary divide by zero that is not being
-// elimated
+// nonmatching: there is an unnecessary divide by zero check that is not being eliminated
 void func_80016338(Gfx **dlist, struct OMCamera *cam, s32 arg2) {
     if ((arg2 == 0 || arg2 == 1) && !(cam->unk80 & 0x20)) {
         append_ucode_load(dlist, D_80046626);
@@ -2169,7 +2167,7 @@ void func_80016338(Gfx **dlist, struct OMCamera *cam, s32 arg2) {
     }
 }
 #else
-#pragma GLOBAL_ASM("game/nonmatching/system_05/func_80016338.s")
+#pragma GLOBAL_ASM("game/nonmatching/sys/system_05/func_80016338.s")
 #endif
 
 void func_8001663C(Gfx **dlist, struct OMCamera *cam, s32 arg2);
@@ -2228,17 +2226,17 @@ void func_8001663C(Gfx **dlist, struct OMCamera *cam, s32 arg2) {
     dlist[0] = csr;
 }
 #else
-#pragma GLOBAL_ASM("game/nonmatching/system_05/func_8001663C.s")
+#pragma GLOBAL_ASM("game/nonmatching/sys/system_05/func_8001663C.s")
 #endif
 
 #ifdef MIPS_TO_C
 #else
-#pragma GLOBAL_ASM("game/nonmatching/system_05/unref_80016AE4.s")
+#pragma GLOBAL_ASM("game/nonmatching/sys/system_05/unref_80016AE4.s")
 #endif
 
 #ifdef MIPS_TO_C
 #else
-#pragma GLOBAL_ASM("game/nonmatching/system_05/func_80016EDC.s")
+#pragma GLOBAL_ASM("game/nonmatching/sys/system_05/func_80016EDC.s")
 #endif
 
 void func_80017830(s32 val) {
@@ -2303,7 +2301,7 @@ void func_80017978(struct GObjCommon *obj, s32 idx, s32 arg2) {
     D_80046A88[idx].unk00 = D_8003B6E8.word;
 }
 #else
-#pragma GLOBAL_ASM("game/nonmatching/system_05/func_80017978.s")
+#pragma GLOBAL_ASM("game/nonmatching/sys/system_05/func_80017978.s")
 #endif
 
 void func_80017AAC(s32 idx) {
@@ -2448,7 +2446,7 @@ void func_80017EC0(struct GObjCommon *obj) {
     func_80017CC8(cam);
 }
 #else
-#pragma GLOBAL_ASM("game/nonmatching/system_05/func_80017EC0.s")
+#pragma GLOBAL_ASM("game/nonmatching/sys/system_05/func_80017EC0.s")
 #endif
 
 void unref_8001810C(void);
@@ -2495,7 +2493,7 @@ void unref_8001810C(void) {
     for (i = 1; i < ARRAY_COUNT(D_800465B0); i++) { D_800472B0[i] = ++D_800465B0[i]; }
 }
 #else
-#pragma GLOBAL_ASM("game/nonmatching/system_05/unref_8001810C.s")
+#pragma GLOBAL_ASM("game/nonmatching/sys/system_05/unref_8001810C.s")
 #endif
 
 #ifdef NON_MATCHING
@@ -2526,6 +2524,6 @@ void func_80018300(struct GObjCommon *obj) {
     gDPSetTexturePersp(D_800465B0[0]++, G_TP_PERSP);
 }
 #else
-#pragma GLOBAL_ASM("game/nonmatching/system_05/func_80018300.s")
+#pragma GLOBAL_ASM("game/nonmatching/sys/system_05/func_80018300.s")
 #endif
 #pragma GCC diagnostic pop

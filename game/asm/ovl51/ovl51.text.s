@@ -40,7 +40,7 @@ glabel func_ovl51_8018D0C0
   /* 1749A0 8018D120 0C0337BB */       jal rldm_bytes_need_to_load
   /* 1749A4 8018D124 24050002 */     addiu $a1, $zero, 2
   /* 1749A8 8018D128 00402025 */        or $a0, $v0, $zero
-  /* 1749AC 8018D12C 0C001260 */       jal func_80004980
+  /* 1749AC 8018D12C 0C001260 */       jal hal_alloc
   /* 1749B0 8018D130 24050010 */     addiu $a1, $zero, 0x10
   /* 1749B4 8018D134 3C048019 */       lui $a0, %hi(D_ovl51_8018D934)
   /* 1749B8 8018D138 3C068019 */       lui $a2, %hi(D_ovl51_8018DC60)
@@ -175,7 +175,7 @@ glabel func_ovl51_8018D2DC
   .L8018D328:
   /* 174BA8 8018D328 0C008D89 */       jal fatal_printf
   /* 174BAC 8018D32C 02002025 */        or $a0, $s0, $zero
-  /* 174BB0 8018D330 0C028C10 */       jal func_800A3040
+  /* 174BB0 8018D330 0C028C10 */       jal scnmgr_crash_print_gobj_state
   /* 174BB4 8018D334 00000000 */       nop 
   /* 174BB8 8018D338 1000FFFB */         b .L8018D328
   /* 174BBC 8018D33C 00000000 */       nop 
@@ -195,7 +195,7 @@ glabel func_ovl51_8018D2DC
   .L8018D370:
   /* 174BF0 8018D370 0C008D89 */       jal fatal_printf
   /* 174BF4 8018D374 02002025 */        or $a0, $s0, $zero
-  /* 174BF8 8018D378 0C028C10 */       jal func_800A3040
+  /* 174BF8 8018D378 0C028C10 */       jal scnmgr_crash_print_gobj_state
   /* 174BFC 8018D37C 00000000 */       nop 
   /* 174C00 8018D380 1000FFFB */         b .L8018D370
   /* 174C04 8018D384 00000000 */       nop 

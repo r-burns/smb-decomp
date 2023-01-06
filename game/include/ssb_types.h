@@ -22,4 +22,12 @@ struct Vec3f {
     f32 x, y, z;
 };
 
+struct Vec2f {
+    f32 x, y;
+};
+
+// boolean quick types
+
+typedef s32 bool32;
+
 #endif /* SSB64_TYPES_H */

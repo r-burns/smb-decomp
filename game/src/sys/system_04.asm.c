@@ -1,10 +1,10 @@
 #include "sys/system_04.h"
 
+#include "sys/hal_gu.h"
+#include "sys/interpolation.h"
 #include "sys/obj_renderer.h"
 #include "sys/om.h"
 #include "sys/system_03_1.h"
-#include "sys/system_08.h"
-#include "sys/system_09.h"
 
 #include <macros.h>
 #include <ssb_types.h>
@@ -411,7 +411,7 @@ void func_8000BFE8(struct DObj *dobj) {
                 {
                     dobj->unk70++;
                     if (sp80[3] == NULL) { sp80[3] = create_aobj_for_dobj(dobj, 3 + 1); }
-                    sp80[3]->unk20 = dobj->unk70->w;
+                    sp80[3]->unk20 = dobj->unk70->ptr;
                     dobj->unk70++;
                     break;
                 }
@@ -585,7 +585,7 @@ void func_8000CCBC(struct DObj *dobj) {
                             } else {
                                 if (f26 > 1.0f) { f26 = 1.0f; }
                             }
-                            func_8001E530(&dobj->unk18.f.v, aobj->unk20, f26);
+                            hal_interpolation_cubic(&dobj->unk18.f.v, aobj->unk20, f26);
                             break;
                         case 5: dobj->unk18.f.v.x = f26; break;
                         case 6: dobj->unk18.f.v.y = f26; break;
@@ -992,7 +992,7 @@ void func_8000DA40(struct MObj *mobj) {
     // L8000DF20
 }
 #else
-#pragma GLOBAL_ASM("game/nonmatching/system_04/func_8000DA40.s")
+#pragma GLOBAL_ASM("game/nonmatching/sys/system_04/func_8000DA40.s")
 #endif
 
 void func_8000DF34(struct GObjCommon *arg0) {
@@ -1138,7 +1138,7 @@ s32 func_8000E164(
                         *arg2 = 1.0f;
                     }
                     // L8000E330
-                    func_8001E530(arg8, aobj->unk20, *arg2);
+                    hal_interpolation_cubic(arg8, aobj->unk20, *arg2);
                     switch (arg6) {
                         case 5: *arg2 = arg8->x; break;
                         case 6: *arg2 = arg8->y; break;
@@ -1276,7 +1276,7 @@ void func_8000E428(s32 arg0, f32 arg1, f32 arg2, f32 arg3, f32 *arg4, struct AOb
     // L8000E89C return
 }
 #else
-#pragma GLOBAL_ASM("game/nonmatching/system_04/func_8000E428.s")
+#pragma GLOBAL_ASM("game/nonmatching/sys/system_04/func_8000E428.s")
 #endif
 
 f32 func_8000E8A8(
@@ -1440,7 +1440,7 @@ f32 func_8000E8A8(
     return spA4;
 }
 #else
-#pragma GLOBAL_ASM("game/nonmatching/system_04/func_8000E8A8.s")
+#pragma GLOBAL_ASM("game/nonmatching/sys/system_04/func_8000E8A8.s")
 #endif
 
 #ifdef NON_MATCHING
@@ -1509,7 +1509,7 @@ f32 unref_8000EC64(
     return arg5;
 }
 #else
-#pragma GLOBAL_ASM("game/nonmatching/system_04/unref_8000EC64.s")
+#pragma GLOBAL_ASM("game/nonmatching/sys/system_04/unref_8000EC64.s")
 #endif
 
 void unref_8000EE40(
@@ -1581,7 +1581,7 @@ void unref_8000EE40(
     // L8000F020
 }
 #else
-#pragma GLOBAL_ASM("game/nonmatching/system_04/unref_8000EE40.s")
+#pragma GLOBAL_ASM("game/nonmatching/sys/system_04/unref_8000EE40.s")
 #endif
 
 void func_8000F058(struct DObj *dobj) {
@@ -1668,7 +1668,7 @@ void func_8000F120(struct GObjCommon *arg0, struct UnkEC64Arg3 *arg1, struct DOb
     // L8000F2D4
 }
 #else
-#pragma GLOBAL_ASM("game/nonmatching/system_04/func_8000F120.s")
+#pragma GLOBAL_ASM("game/nonmatching/sys/system_04/func_8000F120.s")
 #endif
 
 void func_8000F2FC(struct DObj *arg0, u8 arg1, u8 arg2, u8 arg3) {
@@ -2122,13 +2122,13 @@ void func_8000FA74(struct DObj *arg) {
                     if (subcmd & 0x08) {
                         if (sp80[3] == NULL) { sp80[3] = func_80009010(arg, 3 + 25); }
 
-                        sp80[3]->unk20 = arg->unk70->w;
+                        sp80[3]->unk20 = arg->unk70->ptr;
                         arg->unk70++;
                     }
                     if (subcmd & 0x80) {
                         if (sp80[7] == NULL) { sp80[7] = func_80009010(arg, 7 + 25); }
 
-                        sp80[7]->unk20 = arg->unk70->w;
+                        sp80[7]->unk20 = arg->unk70->ptr;
                         arg->unk70++;
                     }
                     break;
@@ -2200,7 +2200,7 @@ void func_80010344(struct TempUnkObj *arg) {
                             } else {
                                 if (temp > 1.0f) { temp = 1.0f; }
                             }
-                            func_8001E530(&arg->unk3C, aobj->unk20, temp);
+                            hal_interpolation_cubic(&arg->unk3C, aobj->unk20, temp);
                             break;
                         }
                         case 29: arg->unk48.x = func_8000CB94(aobj); break;
@@ -2214,7 +2214,7 @@ void func_80010344(struct TempUnkObj *arg) {
                             } else {
                                 if (temp > 1.0f) { temp = 1.0f; }
                             }
-                            func_8001E530(&arg->unk48, aobj->unk20, temp);
+                            hal_interpolation_cubic(&arg->unk48, aobj->unk20, temp);
                             break;
                         }
                         case 33: arg->unk54 = func_8000CB94(aobj); break;
@@ -2314,7 +2314,7 @@ s32 unref_800105AC(union AnimCmd **arg0) {
     }
 }
 #else
-#pragma GLOBAL_ASM("game/nonmatching/system_04/unref_800105AC.s")
+#pragma GLOBAL_ASM("game/nonmatching/sys/system_04/unref_800105AC.s")
 #endif
 
 void unref_80010710(s32 arg0, s32 arg1, s32 arg2, s32 arg3) {
@@ -2334,7 +2334,7 @@ void unref_80010740(void) {
     return;
 }
 
-void func_80010748(Mtx4f *arg0, struct DObj *arg1, s32 arg2) {
+void func_80010748(Mtx *arg0, struct DObj *arg1, s32 arg2) {
     Mtx4f sp48;
     struct Vec3f sp3C;
 
@@ -2384,12 +2384,12 @@ void func_80010748(Mtx4f *arg0, struct DObj *arg1, s32 arg2) {
         sp48[3][0] = sp48[3][1] = sp48[3][2] = 0.0f;
     }
 
-    func_80019EA0(&sp48, arg0);
+    hal_mtx_f2l_fixed_w(&sp48, arg0);
 }
 
 #ifdef NON_MATCHING
 // nonmatching: store reorder in first if block (res != 0.0f)
-void func_80010918(Mtx4f *arg0, struct DObj *arg1, s32 arg2) {
+void func_80010918(Mtx *arg0, struct DObj *arg1, s32 arg2) {
     Mtx4f sp48;
     struct Vec3f sp3C;
 
@@ -2437,13 +2437,13 @@ void func_80010918(Mtx4f *arg0, struct DObj *arg1, s32 arg2) {
         sp48[3][0] = sp48[3][1] = sp48[3][2] = 0.0f;
     }
 
-    func_80019EA0(&sp48, arg0);
+    hal_mtx_f2l_fixed_w(&sp48, arg0);
 }
 #else
-#pragma GLOBAL_ASM("game/nonmatching/system_04/func_80010918.s")
+#pragma GLOBAL_ASM("game/nonmatching/sys/system_04/func_80010918.s")
 #endif
 
-void func_80010AE8(Mtx4f *arg0, struct DObj *arg1, s32 arg2) {
+void func_80010AE8(Mtx *arg0, struct DObj *arg1, s32 arg2) {
     Mtx4f sp48;
     f32 sp44;
     f32 sp40;
@@ -2483,10 +2483,10 @@ void func_80010AE8(Mtx4f *arg0, struct DObj *arg1, s32 arg2) {
         sp48[3][0] = sp48[3][1] = sp48[3][2] = 0;
     }
 
-    func_80019EA0(&sp48, arg0);
+    hal_mtx_f2l_fixed_w(&sp48, arg0);
 }
 
-void func_80010C2C(Mtx4f *arg0, struct DObj *arg1, s32 arg2) {
+void func_80010C2C(Mtx *arg0, struct DObj *arg1, s32 arg2) {
     Mtx4f sp48;
     f32 sp44;
     f32 sp40;
@@ -2526,5 +2526,5 @@ void func_80010C2C(Mtx4f *arg0, struct DObj *arg1, s32 arg2) {
         sp48[3][0] = sp48[3][1] = sp48[3][2] = 0;
     }
 
-    func_80019EA0(&sp48, arg0);
+    hal_mtx_f2l_fixed_w(&sp48, arg0);
 }

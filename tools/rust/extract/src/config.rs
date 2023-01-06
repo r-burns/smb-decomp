@@ -3,6 +3,7 @@ use serde::Deserialize;
 use std::collections::HashMap;
 use std::fmt::Debug;
 use std::fs;
+use std::io::BufReader;
 use std::ops::{Index, Range};
 use std::path::{Path, PathBuf};
 use std::str::FromStr;
@@ -111,9 +112,12 @@ struct RawResourceInfo {
 }
 
 #[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
 struct RawResTable {
     /// [start, end] of resource table
     table: [u32; 2],
+    /// extra, unknown bytes after files; needed to match
+    excess_bytes: Option<HashMap<u16, Vec<u8>>>,
     /// names of resource files in table in order
     entries: Option<Vec<String>>,
 }
@@ -207,14 +211,20 @@ impl Resources {
 pub struct ResTable {
     pub offset: Range<u32>,
     pub entries: Option<Vec<String>>,
+    pub excess_bytes: Option<HashMap<u16, Vec<u8>>>,
 }
 
 impl ResTable {
     fn from_raw(raw: RawResTable) -> Self {
         let offset = raw.table[0]..raw.table[1];
         let entries = raw.entries;
+        let excess_bytes = raw.excess_bytes;
 
-        Self { offset, entries }
+        Self {
+            offset,
+            entries,
+            excess_bytes,
+        }
     }
 }
 
@@ -244,12 +254,11 @@ impl Assets {
         }
     }
 
-    pub fn from_toml_str(s: &str) -> Result<Self, Error> {
-        toml::from_str(s).map(Self::from_raw).map_err(Into::into)
-    }
-
     pub fn from_path(p: &Path) -> Result<Self, Error> {
-        let s = fs::read_to_string(p).context("reading asset toml file")?;
-        Self::from_toml_str(&s)
+        let f = fs::File::open(p).context("reading asset yaml file")?;
+        let rdr = BufReader::new(f);
+        serde_yaml::from_reader(rdr)
+            .map(Self::from_raw)
+            .map_err(Into::into)
     }
 }

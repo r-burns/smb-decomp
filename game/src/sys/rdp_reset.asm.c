@@ -66,7 +66,7 @@ void func_80007080(Vp *vp, f32 arg1, f32 arg2, f32 arg3, f32 arg4) {
     vp->vp.vscale[2] = vp->vp.vtrans[2] = G_MAXZ / 2;
 }
 #else
-#pragma GLOBAL_ASM("game/nonmatching/system_01/func_80007080.s")
+#pragma GLOBAL_ASM("game/nonmatching/sys/system_01/func_80007080.s")
 #endif
 
 #pragma GCC diagnostic pop

@@ -9,8 +9,8 @@
 .4byte 0x0000000F               # clock rate 
 .4byte CIC_ENTRY                # entry point
 .4byte 0x00001449               # release (OS2.0I ?)
-.4byte 0x916B8B5B               # CRC 1
-.4byte 0x780B85A4               # CRC 2
+.4byte 0x00000000               # CRC 1
+.4byte 0x00000000               # CRC 2
 .4byte 0x00000000               # unknown 
 .4byte 0x00000000               # unknown
 .ascii "SMASH BROTHERS      "   # ROM Name (20 bytes ASCII)

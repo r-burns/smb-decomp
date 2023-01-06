@@ -63,7 +63,7 @@ class _ParseMkDeps():
             prior.extend_deps(more_deps)
             return next_state
         else:
-            raise Exception(f"Unknown parse state {state}")
+            raise Exception(f"Unknown parse state {self.state}")
     
     def _combine_lexed(store, symbols):
         ''' return dict<'target' => set<dependencies>> '''

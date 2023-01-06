@@ -1,7 +1,7 @@
 #include "sys/thread3.h"
 
+#include "sys/crash.h"
 #include "sys/main.h"
-#include "sys/system_11.h"
 #include "sys/thread6.h"
 
 #include <config.h>
@@ -178,7 +178,7 @@ s32 unref_80000A34(struct SCTaskGfx *t) {
     return 0;
 }
 #else
-#pragma GLOBAL_ASM("game/nonmatching/thread3/unref_80000A34.s")
+#pragma GLOBAL_ASM("game/nonmatching/sys/thread3/unref_80000A34.s")
 #endif /* NON_MATCHING */
 
 s32 func_80000B54(UNUSED struct SCTaskInfo *t) {
@@ -600,7 +600,7 @@ void func_80000F30(u32 arg0, u32 arg1, s32 arg2, s16 arg3, s16 arg4, s16 arg5, s
     D_80044F88[0]               = 1;
 }
 #else
-#pragma GLOBAL_ASM("game/nonmatching/thread3/func_80000F30.s")
+#pragma GLOBAL_ASM("game/nonmatching/sys/thread3/func_80000F30.s")
 #endif /* NON_MATCHING */
 
 void func_800016D8(void) {
@@ -886,7 +886,7 @@ s32 func_80001A00(struct SCTaskInfo *task) {
     return sp4C;
 }
 #else
-#pragma GLOBAL_ASM("game/nonmatching/thread3/func_80001A00.s")
+#pragma GLOBAL_ASM("game/nonmatching/sys/thread3/func_80001A00.s")
 #endif /* NON_MATCHING */
 
 void func_80001E64(void) {
@@ -1065,7 +1065,7 @@ void func_800020D0(void) {
     // L80002330
 }
 #else
-#pragma GLOBAL_ASM("game/nonmatching/thread3/func_800020D0.s")
+#pragma GLOBAL_ASM("game/nonmatching/sys/thread3/func_800020D0.s")
 #endif /* NON_MATCHING */
 
 void func_80002340(void) {

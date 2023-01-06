@@ -42,7 +42,7 @@ struct GObjCommon {
     /* 0x0E */ u8 unk0E;
     /* 0x0F */ u8 unk0F; // ptr kind?
     /* 0x10 */ u32 unk10;
-    /* 0x14 */ void (*unk14)(void);
+    /* 0x14 */ void (*unk14)(struct GObjCommon *); // takes a self?
     /* 0x18 */ struct GObjProcess *unk18;
     /* 0x1C */ struct GObjProcess *unk1C;
     /* 0x20 */ struct GObjCommon *unk20;
@@ -63,7 +63,7 @@ struct GObjCommon {
     // 3 : OMCamera
     /* 0x74 */ void *unk74;
     /* 0x78 */ f32 unk78;
-    /* 0x7C */ s32 unk7C;
+    /* 0x7C */ u32 unk7C;
     /* 0x80 */ void (*unk80)(struct DObj *, u32, f32);
     /* 0x84 */ void *unk84;
 }; // size >= 0x88
@@ -87,7 +87,7 @@ struct GObjProcess {
 
 struct OMMtx {
     /* 0x00 */ struct OMMtx *next;
-    /* 0x04 */ u8 unk04;
+    /* 0x04 */ u8 unk04; // kind
     /* 0x05 */ u8 unk05;
     /* 0x08 */ Mtx unk08;
     ///* 0x08 */ f32 unk08[4][4];
@@ -179,9 +179,9 @@ struct DObj {
     /* 0x10 */ struct DObj *unk10;
     //! checked with `1` for a NULL?
     /* 0x14 */ struct DObj *unk14;
-    /* 0x18 */ union Mtx3fi unk18;
-    /* 0x28 */ struct Mtx4Float unk28;
-    /* 0x3C */ struct Mtx3Float unk3C;
+    /* 0x18 */ union Mtx3fi unk18;     // position?
+    /* 0x28 */ struct Mtx4Float unk28; // rotation?
+    /* 0x3C */ struct Mtx3Float unk3C; // scale?
     /* 0x4C */ struct DObjDynamicStore *unk4C;
     // can be any of: DObj *, Gfx *, or the struct Unk50... above
     /* 0x50 */ void *unk50;
@@ -211,8 +211,8 @@ struct AObj {
     /* 0x14 */ f32 unk14;
     /* 0x18 */ f32 unk18;
     /* 0x1C */ f32 unk1C;
-    // s16 *? struct *?
-    /* 0x20 */ s32 unk20;
+    // interpolation control struct?
+    /* 0x20 */ void *unk20;
 }; // size == 0x24
 
 // texture scroll? (from K64)
@@ -309,7 +309,7 @@ struct OMCamera {
         struct Mtx7Float f7;
     } unk18;
     /* 0x38 */ struct Mtx3x3Float unk38;
-    /* 0x60 */ s32 unk60;
+    /* 0x60 */ s32 unk60; // len of unk64
     /* 0x64 */ struct OMMtx *unk64[2];
     /* 0x6C */ struct AObj *unk6C;
     /* 0x70 */ s32 unk70;
@@ -403,8 +403,10 @@ extern void func_8000948C(struct DObj *);
 extern struct SObj *func_80009614(struct GObjCommon *, Sprite *);
 extern void func_800096EC(struct SObj *);
 extern struct OMCamera *func_80009760(struct GObjCommon *);
-extern struct GObjCommon *func_80009968(u32 id, void (*arg1)(void), u8 link, u32 arg3);
-extern struct GObjCommon *func_800099A8(u32 id, void (*arg1)(void), u8 link, u32 arg3);
+extern struct GObjCommon *
+func_80009968(u32 id, void (*arg1)(struct GObjCommon *), u8 link, u32 arg3);
+extern struct GObjCommon *
+func_800099A8(u32 id, void (*arg1)(struct GObjCommon *), u8 link, u32 arg3);
 extern void func_80009A84(struct GObjCommon *);
 extern void func_80009C90(struct GObjCommon *arg0, u8 link, u32 arg2);
 extern void func_80009CC8(struct GObjCommon *arg0, u8 link, u32 arg2);

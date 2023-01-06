@@ -234,7 +234,7 @@ void unref_80018C14(u8 *arg0, s32 arg1, s32 arg2, s32 (*arg3)(u8 *, u8 *)) {
     }
 }
 #else
-#pragma GLOBAL_ASM("game/nonmatching/system_06/unref_80018C14.s")
+#pragma GLOBAL_ASM("game/nonmatching/sys/system_06/unref_80018C14.s")
 #endif
 
 #ifdef NON_MATCHING
@@ -282,7 +282,7 @@ u32 unref_80018CEC(s32 arg0, u32 arg1, u32 arg2, s32 arg3, s32 (*arg4)(u32, u32,
     return 0;
 }
 #else
-#pragma GLOBAL_ASM("game/nonmatching/system_06/unref_80018CEC.s")
+#pragma GLOBAL_ASM("game/nonmatching/sys/system_06/unref_80018CEC.s")
 #endif
 
 #pragma GCC diagnostic pop

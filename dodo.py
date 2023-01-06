@@ -4,11 +4,10 @@ import subprocess
 import sys
 import platform
 
-sys.path.append('doit')
-from parsemk import parse_mk_dependencies
-from toolchain import ToolChain
-from config import Config
-from pathutil import append_suffix, up_one_dir
+from doit.parsemk import parse_mk_dependencies
+from doit.toolchain import ToolChain
+from doit.config import Config, ALL_VERSIONS
+from doit.pathutil import append_suffix, up_one_dir
 
 
 ############ Configuration ###########################
@@ -39,10 +38,10 @@ rust_manifest = rust_dir / 'Cargo.toml'
 rust_output_dir = rust_dir / 'target' / 'release'
 n64gfx = rust_output_dir / 'n64gfx'
 imgbank = rust_output_dir / 'imgbank'
-restool = rust_output_dir / 'resources'
 extract = rust_output_dir / 'extract'
 spec = rust_output_dir / 'spec'
-rust_tools = [n64gfx, imgbank, restool, extract, spec]
+halld = rust_output_dir / 'halld'
+rust_tools = [n64gfx, imgbank, extract, spec, halld]
 
 def task_rust_tools():
     ''' Use cargo to check and rebuild rust based tools '''
@@ -54,6 +53,20 @@ def task_rust_tools():
     return {
         'actions': [cargo_build],
         'targets': rust_tools
+    }
+
+# n64crc tool
+n64crc_src = config.tools / 'n64crc.c'
+n64crc = n64crc_src.with_suffix('')
+
+def task_n64crc():
+    ''' Build the n64crc tool '''
+    flags = ['-Wall', '-Wextra', '-pedantic', '-O3']
+
+    return {
+        'actions': [tc.system.c.CC + flags + ['-o', n64crc, n64crc_src]],
+        'targets': [n64crc],
+        'file_dep': [n64crc_src],
     }
 
 # Libultra 64bit mips3 Patcher
@@ -209,6 +222,7 @@ def task_distclean():
         'actions': [
             f'rm -rf {config.all_builds}',
             f'rm -rf {patcher}',
+            f'rm -rf {n64crc}',
             f'cargo clean --manifest-path {rust_manifest}',
         ],
         'task_dep': [
@@ -228,7 +242,7 @@ def task_print_config():
 
 ########## Asset Extraction ##########################
 asset_cache = Path('.localassets')
-assets = Path('assets.toml')
+assets = Path('assets.yaml')
 extracted_assets = config.build_dir / 'extracted-assets.txt'
 baserom = Path(f'baserom.{config.version}.z64')
 
@@ -267,7 +281,7 @@ def task_extract_assets():
     except FileNotFoundError:
         # doit will only create this task after making the list if 
         # there is an active run. For other commands (list, info, etc.),
-        # it create this task as normal
+        # it will create this task as normal
         pass
     
     return {
@@ -293,8 +307,10 @@ def ensure_asset_extraction():
     return [] if assets_are_extracted else ['extract_assets']
 
 ########## Generated Headers #########################
-generated_incs = config.make_output_dir('include')
-linker_segs = generated_incs / 'linkersegs.h'
+geninc_dir = config.make_output_dir('include')
+linkersegs = geninc_dir / 'linkersegs.h'
+rld_fids_h  = geninc_dir / 'rld_fids.h'
+generated_incs = [linkersegs, rld_fids_h]
 
 ########## ROM Linking and Creation ##################
 # ROM and Build Artifacts
@@ -330,11 +346,6 @@ def task_compare():
         'verbosity': 2,
     }
 
-libultra_exports = [
-    '-u', 'spHide',
-    '-u', 'spShow',
-    '-u', 'spScale',
-]
 
 def task_build_rom():
     """ Build the ROM """
@@ -348,8 +359,15 @@ def task_build_rom():
     else:
         dep_flag = []
         outputs = [rom_elf, rom_map, rom]
+
+    libultra_exports = [
+        '-u', 'spColor',
+        '-u', 'spHide',
+        '-u', 'spShow',
+        '-u', 'spScale',
+    ]
  
-    link_rom = binutils.LD + [
+    link_elf = binutils.LD + [
         '--no-check-sections', 
         '-Map', rom_map, 
         '-T', ssb_lds, 
@@ -368,19 +386,21 @@ def task_build_rom():
         rom_elf, rom
     ]
 
+    crc_rom = [n64crc, rom]
+
     return { 
-        'actions': [link_rom, copy_rom],
-        'file_dep': linking_deps,
+        'actions': [link_elf, copy_rom, crc_rom],
+        'file_dep': linking_deps + [n64crc],
         'task_dep': [
             'assemble',
             'cc', 
             'libultra',
-            'link_resources',
+            'link_rld',
             'link_sprite_bank',
             'temp_bin_obj'
         ],
         'targets': outputs,
-        'clean': [f'rm -rf {config.all_builds}'],
+        'clean': [f'rm -rf {" ".join([str(config.all_builds/ver) for ver in ALL_VERSIONS])}'],
     }
 
 def task_convert_specfile():
@@ -389,12 +409,12 @@ def task_convert_specfile():
         spec, 
         '--input', specfile, 
         '--ld', ssb_lds, 
-        '--header', linker_segs,
+        '--header', linkersegs,
     ]
     return {
         'actions': [convert_spec],
         'file_dep': [spec, specfile],
-        'targets': [ssb_lds, linker_segs],
+        'targets': [ssb_lds, linkersegs],
     }
 
 ########## Game Assembling ###########################
@@ -423,22 +443,21 @@ def task_assemble():
 inc_dir = config.game_dir / 'include'
 c_dir = config.game_dir / 'src'
 c_files = c_dir.rglob('*.c')
-#c_objs = list(map(lambda f: config.to_output(f, '.o'), c_files))
 
 def task_cc():
     ''' Compile .c files into .o '''
 
-    includes = [inc_dir, c_dir, generated_incs]
+    includes = [inc_dir, c_dir, geninc_dir]
     tools_dep = get_toolchain_deps(config.toolchain)
 
     for f in c_files:
         o = config.to_output(f, '.o')
-        d, deps = get_make_dependencies(f, o)
+        d, deps = get_make_dependencies(f, o, generated_incs)
         
         syntax_check = tc.invoke_cc_check(includes, d, f, o)
         # if the input needs to have asm processed
         if f.name.endswith('.asm.c'):
-            actions = [syntax_check] + tc.invoke_asm_prepoc(includes, f, o)
+            actions = [syntax_check, tc.invoke_asm_prepoc(includes, f, o)]
         else:
             actions = [syntax_check, tc.invoke_cc(includes, f, o)]
 
@@ -461,7 +480,7 @@ def task_fmt():
         '-Wno-format-security', '-Wno-main', 
         f'-I{inc_dir}',
         f'-I{c_dir}',
-        f'-I{generated_incs}',
+        f'-I{geninc_dir}',
         '-D_LANGUAGE_C','-D_MIPS_SZINT=32', '-D_MIPS_SZLONG=32', '-DF3DEX_GBI_2'
     ]
 
@@ -544,7 +563,12 @@ def task_compile_libultra():
             libultra_objs.append(out)
 
             syntax_check = tc.invoke_cc_check(includes, d, src, out)
-            compile_src = tc.libultra_cc(includes, src, out, src_mi, src_opt)
+            if 'sp' in str(module):
+                # compile sp in libultra with ido7.1 at -O2 ...uh oh
+                # probably should make this more official
+                compile_src = tc.invoke_cc(includes, src, out, defs=['-DNDEBUG', '-D_FINALROM'])
+            else:
+                compile_src = tc.libultra_cc(includes, src, out, src_mi, src_opt)
 
             yield {
                 'name': out,
@@ -602,14 +626,17 @@ def option_or(a, b):
     else:
         return a
 
-def get_make_dependencies(src_file, obj_file):
+def get_make_dependencies(src_file, obj_file, default_deps = []):
     ''' (Path to .d file, List[Make Dependancies]) '''
     d = obj_file.with_suffix('.d')
     found_deps = parse_mk_dependencies(d)
     if found_deps is None:
-        deps = [src_file, linker_segs]
+        deps = [src_file] + default_deps
     else:
         deps = found_deps[obj_file]
+        if src_file.name.endswith('.asm.c'):
+            asmd = obj_file.with_suffix('.asmproc.d')
+            deps += parse_mk_dependencies(asmd)[obj_file]
 
     return (d, deps)
 
@@ -617,67 +644,31 @@ def get_make_dependencies(src_file, obj_file):
 res_dir = config.game_dir / 'resources'
 res_list = res_dir / 'resources.json'
 
-res_link  = config.to_output(res_dir / 'resources.ld', '.ld')
-res_archive = res_link.with_suffix('.o')
-res_bundle_dir = config.create_output_dir(res_dir / 'bundles')
+res_out_dir = config.create_output_dir(res_dir)
+rld_obj = res_out_dir / 'rld.o'
 
-@create_after(executed='extract_assets', target_regex=res_link)
-def task_generate_resources_linkerscript():
-    ''' Generate the linkerscript for building the resource files together '''
-    return {
-        'actions': [
-            [restool, 'table', '-i', res_list, '-o', res_link]
-        ],
-        'file_dep': [restool, res_list],
-        'targets': [res_link],
-    }
+# @create_after(executed='extract_assets', target_regex=f'({rld_obj}|{rld_fids_h})')
+def task_link_rld():
+    '''Link together HAL relocatable data (rld)'''
+    (rld_d, deps) = get_make_dependencies(res_list, rld_obj)
 
-@create_after(executed='extract_assets', target_regex='*.o')
-def task_bundle_resources():
-    res_tempbins = res_dir.glob('files/raw/*')
-    invoke_ld = tc.game.utils.LD + ['-r', '-b', 'binary']
-
-    for f in res_tempbins:
-        o = (res_bundle_dir / f.name).with_suffix('.o')
-        yield {
-            'name': o,
-            'actions': [
-                invoke_ld + ['-o', o, f],
-            ],
-            'file_dep': [f],
-            'targets': [o],
-        }
-
-
-@create_after(executed='bundle_resources', target_regex=res_archive)
-def task_link_resources():
-    ''' Link resource files into a relocatable binary for linking '''
-    (res_d, deps) = get_make_dependencies(res_link, res_archive)
-
-    # other deps? as passed clousure?
-    # resource_temp_o = [config.to_output(f, '.o') for f in res_dir.glob('temp/files/*')]
-    binutils = tc.game.utils
-
-    if binutils.is_at_least(2, 35):
-        dep_flag = [f'--dependency-file={res_d}']
-    else:
-        dep_flag = []
-
-    link_all_resources = binutils.LD + [
-        '-T', res_link, 
-        '-L', res_bundle_dir,
-        '-r', 
-        '-o', res_archive, 
-    ] + dep_flag
+    link = [
+        halld,
+        '-L', res_dir,
+        '-L', res_out_dir,
+        '-c', rld_fids_h,
+        '-d', rld_d,
+        '-k', config.rld_cache_dir(),
+        '-o', rld_obj,
+        res_list
+    ]
 
     return {
-        # $(LD) -T %f -r -o %o %<resbins> 
-        'actions': [link_all_resources],
-        'file_dep': deps,
-        'task_dep': ['generate_resources_linkerscript'],
-        'targets': [res_archive],
+        'actions': [link],
+        'file_dep': [halld] + deps,
+        'task_dep': ensure_asset_extraction(),
+        'targets': [rld_obj, rld_d, rld_fids_h]
     }
-
 
 ########## Sprites ###################################
 def gfx_encode_cmd(f, o):

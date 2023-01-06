@@ -35,19 +35,22 @@ nop
 )
 ```
 
-To compile the file, run `./compile.sh file.c`, or invoke the `asm_processor.py` script in a similar manner. (`compile.sh` is mostly just intended to describe example usage.)
+To compile the file, run `python3 build.py $CC -- $AS $ASFLAGS -- $CFLAGS -o out.o in.c`, where $CC points to an IDO binary (5.3/7.1 and recomp/qemu all supported), $AS is e.g. `mips-linux-gnu-as`, $ASFLAGS e.g. `-march=vr4300 -mabi=32` and $CFLAGS e.g. `-Wab,-r4300_mul -non_shared -G 0 -Xcpluscomm -g`. build.py may be customized as needed.
 
-Reading assembly from file is also supported, e.g. `GLOBAL_ASM("file.s")`.
+In addition to an .o file, build.py also generates a .d file with Makefile dependencies for .s files referenced by the input .c file.
+This functionality may be removed if not needed.
+
+Reading assembly from file is also supported, by either `GLOBAL_ASM("file.s")` or `#pragma GLOBAL_ASM("file.s")`.
 
 ### What is supported?
 
-`.text`, `.data`, `.bss` and `.rodata` sections, `.word`/`.incbin`, `.ascii`/`.asciz`, and `-g`, `-g3`, `-O1`, `-O2` and `-framepointer` flags to the IDO compiler.
+`.text`, `.data`, `.bss` and `.rodata` sections, `.word`/`.incbin`, `.ascii`/`.asciz`, and `-g`, `-g3`, `-O1`, `-O2`, `-framepointer` and `-mips1`/`-mips2` flags to the IDO compiler.
 
 ### What is not supported?
 
 * complicated assembly (.ifdef, macro declarations/calls other than `glabel`, pseudo-instructions that expand to several real instructions)
 * non-IDO compilers
-* `-mips1` (`-mips3` may also not work fully)
+* `-O3` (due to function reordering)
 
 C `#ifdef`s only work outside of `GLOBAL_ASM` calls, but is otherwise able to replace `.ifdef`.
 
@@ -70,7 +73,7 @@ and for emitting C code of exact sizes for a bunch of different IDO compiler fla
 The assembler code is padded with nops to line it up with its correct position in the C;
 this allows C and asm ELF files to be merged easily without having to fix up e.g. symbol addresses.
 
-The most difficulty part is `late_rodata`, which is hard to create programmatically.
+The most difficult part is `late_rodata`, which is hard to create programmatically.
 asm-processor does that by emitting code that uses dummy float literals/double literals/jump tables,
 assembles the late_rodata at another location of the .rodata section, then overwrites the dummy rodata.
 This does require some movement of symbols and relocations, and quite a bit of care in what code to
@@ -91,3 +94,17 @@ how to avoid reordering the injected assembly, and how .rodata/.late_rodata are 
 ### Testing
 
 There are a few tests to ensure you don't break anything when hacking on asm-processor: `./run-tests.sh` should exit without output if they pass, or else output a diff from previous to new version.
+
+Tests need the environment variable `MIPS_CC` set as the IDO 5.3 compiler.
+
+For example if asm-processor is cloned in the same directory as [zeldaret/oot](https://github.com/zeldaret/oot/) and the working directory is asm-processor, tests can be run using the IDO recompilation:
+
+```sh
+MIPS_CC=../oot/tools/ido_recomp/linux/5.3/cc ./run-tests.sh
+```
+
+Or using [qemu-irix](https://github.com/zeldaret/oot/releases/tag/0.1q) (don't forget `chmod u+x qemu-irix`) to emulate IDO:
+
+```sh
+MIPS_CC='./qemu-irix -silent -L ../oot/tools/ido5.3_compiler/ ../oot/tools/ido5.3_compiler/usr/bin/cc' ./run-tests.sh
+```

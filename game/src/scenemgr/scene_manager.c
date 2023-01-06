@@ -1,17 +1,18 @@
 #include "scenemgr/scene_manager.h"
 
+#include "ovl0/halsprite.h"
 #include "ovl0/ovl0.h"
 #include "ovl2/ovl2.h"
 #include "scenemgr/entries.h"
+#include "sys/crash.h"
 #include "sys/dma.h"
 #include "sys/gtl.h"
+#include "sys/hal_audio.h"
 #include "sys/obj_renderer.h"
 #include "sys/om.h"
 #include "sys/system_00.h"
 #include "sys/system_03_1.h"
 #include "sys/system_04.h"
-#include "sys/system_10.h"
-#include "sys/system_11.h"
 #include "sys/thread6.h"
 
 #include <linkersegs.h>
@@ -23,13 +24,15 @@
 // bss
 u8 D_800A44D0[16];
 struct BigA44E0 D_800A44E0;
+// current screen info
 struct UnkA4AD0 D_800A4AD0;
 
 struct BattleState D_800A4B18;
 struct BattleState D_800A4D08;
 struct BattleState D_800A4EF8;
 
-u32 D_800A50E8;
+// pointer to battle settings
+struct UnkA4AD0 *D_800A50E8;
 u32 D_800A50EC;
 u8 D_800A50F0[8];
 u8 D_800A50F8[324];
@@ -48,8 +51,8 @@ void start_scene_manager(UNUSED u32 set) {
     struct BattleState sp30;
 
     set_contstatus_delay(60);
-    set_debug_fn(crash_print_gobj_state);
-    start_new_debug_thread();
+    set_crash_print_fn(crash_print_gobj_state);
+    start_rmon_thread5_hang();
     load_overlay(&D_800A3070[0]);
     load_overlay(&D_800A3070[2]);
     load_overlay(&D_800A3070[1]);
@@ -447,7 +450,7 @@ void func_800A26D8(struct GObjCommon *arg0) {
     // could explain the double sync
     {
         uintptr_t freeSpace; // sp38
-        freeSpace = (uintptr_t)D_800465E8.end - (uintptr_t)D_800465E8.ptr;
+        freeSpace = (uintptr_t)gGeneralHeap.end - (uintptr_t)gGeneralHeap.ptr;
 
         gDPSetFillColor((*D_800465B0)++, rgba32_to_fill_color(0xFFFFFFFF));
         func_800218E0(0x14, 0x14, freeSpace, 7, 1);
@@ -484,44 +487,44 @@ void unref_800A2BA8(s32 link, u32 arg1, s32 arg2) {
 }
 
 void crash_inspect_gobj(struct GObjCommon *obj) {
-    crash_printf("gobj id:%d:", obj->unk00);
+    debug_printf("gobj id:%d:", obj->unk00);
     switch (obj->unk00) {
         case 0x3E8:
         {
             struct FighterInfo *f = obj->unk84;
 
-            crash_printf("fighter\n");
-            crash_printf("kind:%d, player:%d, pkind:%d\n", f->kind, f->player, f->pkind);
-            crash_printf("stat:%d, mstat:%d\n", f->stat, f->mstat);
-            crash_printf("ga:%d\n", f->ga);
+            debug_printf("fighter\n");
+            debug_printf("kind:%d, player:%d, pkind:%d\n", f->kind, f->player, f->pkind);
+            debug_printf("stat:%d, mstat:%d\n", f->stat, f->mstat);
+            debug_printf("ga:%d\n", f->ga);
             break;
         }
         case 0x3F4:
         {
             struct WeaponInfo *w = obj->unk84;
 
-            crash_printf("weapon\n");
-            crash_printf("kind:%d, player:%d\n", w->kind, w->player);
-            crash_printf("atk stat:%d\n", w->attackStat);
-            crash_printf("ga:%d\n", w->ga);
+            debug_printf("weapon\n");
+            debug_printf("kind:%d, player:%d\n", w->kind, w->player);
+            debug_printf("atk stat:%d\n", w->attackStat);
+            debug_printf("ga:%d\n", w->ga);
             break;
         }
         case 0x3F5:
         {
             struct ItemInfo *i = obj->unk84;
 
-            crash_printf("item\n");
-            crash_printf("kind:%d, player:%d\n", i->kind, i->player);
-            crash_printf("atk stat:%d\n", i->attackStat);
-            crash_printf("ga:%d\n", i->ga);
-            crash_printf("proc update:%x\n", i->procUpdate);
-            crash_printf("proc map:%x\n", i->procMap);
-            crash_printf("proc hit:%x\n", i->procHit);
-            crash_printf("proc shield:%x\n", i->procShield);
-            crash_printf("proc hop:%x\n", i->procHop);
-            crash_printf("proc setoff:%x\n", i->procSetoff);
-            crash_printf("proc reflector:%x\n", i->procReflector);
-            crash_printf("proc damage:%x\n", i->procDamage);
+            debug_printf("item\n");
+            debug_printf("kind:%d, player:%d\n", i->kind, i->player);
+            debug_printf("atk stat:%d\n", i->attackStat);
+            debug_printf("ga:%d\n", i->ga);
+            debug_printf("proc update:%x\n", i->procUpdate);
+            debug_printf("proc map:%x\n", i->procMap);
+            debug_printf("proc hit:%x\n", i->procHit);
+            debug_printf("proc shield:%x\n", i->procShield);
+            debug_printf("proc hop:%x\n", i->procHop);
+            debug_printf("proc setoff:%x\n", i->procSetoff);
+            debug_printf("proc reflector:%x\n", i->procReflector);
+            debug_printf("proc damage:%x\n", i->procDamage);
             break;
         }
         case 0x3F3:
@@ -529,17 +532,17 @@ void crash_inspect_gobj(struct GObjCommon *obj) {
             struct EffectInfo *e = obj->unk84;
 
             if ((uintptr_t)e >= 0x80000000 && (uintptr_t)e < 0x80800000) {
-                crash_printf("effect\n");
-                crash_printf("fgobj:%x", e->fgObj);
-                crash_printf("proc func:%x\n", e->procFunc);
+                debug_printf("effect\n");
+                debug_printf("fgobj:%x", e->fgObj);
+                debug_printf("proc func:%x\n", e->procFunc);
             } else {
-                crash_printf("\n");
+                debug_printf("\n");
             }
             break;
         }
         default:
         {
-            crash_printf("\n");
+            debug_printf("\n");
             break;
         }
     }
@@ -549,29 +552,29 @@ void crash_print_gobj_state(void) {
     switch (D_8003B874) {
         case 0:
         {
-            crash_printf("SYS\n");
+            debug_printf("SYS\n");
             break;
         }
         case 1:
         {
-            crash_printf("BF\n");
+            debug_printf("BF\n");
             if (D_80046A54 != NULL) {
-                crash_printf("addr:%x\n", D_80046A54->unk14);
+                debug_printf("addr:%x\n", D_80046A54->unk14);
                 crash_inspect_gobj(D_80046A54);
             }
             break;
         }
         case 2:
         {
-            crash_printf("GP\n");
+            debug_printf("GP\n");
             if (D_80046A54 != NULL) {
                 if (D_80046A60 != NULL) {
                     switch (D_80046A60->unk14) {
                         case 0:
-                            crash_printf(
+                            debug_printf(
                                 "thread:%x\n", D_80046A60->unk1C.thread->osThread.context.pc);
                             break;
-                        case 1: crash_printf("func:%x\n", D_80046A60->unk1C.cb); break;
+                        case 1: debug_printf("func:%x\n", D_80046A60->unk1C.cb); break;
                     }
                 }
                 crash_inspect_gobj(D_80046A54);
@@ -580,19 +583,19 @@ void crash_print_gobj_state(void) {
         }
         case 3:
         {
-            crash_printf("DFC\n");
+            debug_printf("DFC\n");
             if (D_80046A58 != NULL) {
-                crash_printf("addr:%x\n", D_80046A58->unk2C);
+                debug_printf("addr:%x\n", D_80046A58->unk2C);
                 crash_inspect_gobj(D_80046A58);
             }
             break;
         }
         case 4:
         {
-            crash_printf("DFO\n");
-            if (D_80046A58 != NULL) { crash_printf("cam addr:%x\n", D_80046A58->unk2C); }
+            debug_printf("DFO\n");
+            if (D_80046A58 != NULL) { debug_printf("cam addr:%x\n", D_80046A58->unk2C); }
             if (D_80046A5C != NULL) {
-                crash_printf("disp addr:%x\n", D_80046A5C->unk2C);
+                debug_printf("disp addr:%x\n", D_80046A5C->unk2C);
                 crash_inspect_gobj(D_80046A5C);
             }
             break;
@@ -600,8 +603,8 @@ void crash_print_gobj_state(void) {
     }
 }
 
-void func_800A3040(void) {
-    func_80023778(crash_print_gobj_state);
+void scnmgr_crash_print_gobj_state(void) {
+    fatal_print_func(crash_print_gobj_state);
 }
 
 // all of the data here...
@@ -1340,13 +1343,14 @@ struct BigA44E0 D_800A3994 = {
      0x00000000, 0x00034BC0, 0x00000000, 0x00000000, 0x00000000, 0x029A0000, 0x00000000},
 };
 
-struct UnkA4AD0 D_800A3F80 = {27, {0x1B, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x04, 0x00, 0x00,
-                                   0x1C, 0x1C, 0x1C, 0x00, 0x00, 0x00, 0x00, 0x00, 0x1C, 0x00, 0x05,
-                                   0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-                                   0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-                                   0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-                                   0x00, 0x1C, 0x00, 0x1C, 0x00, 0x1C, 0x00, 0x01, 0x00, 0x00, 0x00,
-                                   0x00, 0x00, 0x00, 0x00, 0x00}};
+struct UnkA4AD0 D_800A3F80 = {
+    27,
+    0x1B,
+    {0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x04, 0x00, 0x00, 0x1C, 0x1C, 0x1C, 0x00,
+     0x00, 0x00, 0x00, 0x00, 0x1C, 0x00, 0x05, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x1C,
+     0x00, 0x1C, 0x00, 0x1C, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}};
 
 // clang-format off
 struct BattleState gDefaultBattleSettings = {

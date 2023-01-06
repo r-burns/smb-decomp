@@ -97,6 +97,8 @@ struct SCTaskType9 {
 
 extern OSMesgQueue gScheduleTaskQueue;
 extern u32 D_80044FA4;
+extern u32 D_80044FB4;
+extern u32 D_80044FB8;
 extern s64 D_80044FC0;
 extern s32 D_80045020;
 

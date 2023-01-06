@@ -187,7 +187,7 @@ u32 func_80002E18(u16 *arg0, u32 arg1, void (*arg2)(void), void *arg3) {
 }
 
 #else
-#pragma GLOBAL_ASM("game/nonmatching/dma/func_80002E18.s")
+#pragma GLOBAL_ASM("game/nonmatching/sys/dma/func_80002E18.s")
 #endif /* NON_MATCHING */
 
 void initialize_vpk_dma_stream(u32 devAddr, void *ramAddr, u32 nbytes) {
@@ -212,6 +212,6 @@ void dma_vpk_read(u32 devAddr, void *ramDst) {
     func_80003648(devAddr, ramDst, &buffer, ARRAY_COUNT(buffer));
 }
 
-#pragma GLOBAL_ASM("game/nonmatching/dma/unref_800036B4.s")
+#pragma GLOBAL_ASM("game/nonmatching/sys/dma/unref_800036B4.s")
 
 #pragma GCC diagnostic pop

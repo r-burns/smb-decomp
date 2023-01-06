@@ -17,7 +17,7 @@ BASE = [
     '--'
 ]
 CACHE = '.localassets'
-ASSESTS = 'assets.toml'
+ASSESTS = 'assets.yaml'
 GITIGNORE = '.gitignore'
 
 def baserom(version):

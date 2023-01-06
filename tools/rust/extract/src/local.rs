@@ -12,7 +12,7 @@ use std::{
  1:     Add resource table JSON extraction
         Pad sprite frames number based on total number of frames
 */
-const CURRENT_VERSION: u16 = 1;
+const CURRENT_VERSION: u16 = 2;
 const VERSION_KEY: &str = "Version:";
 
 #[derive(Debug)]
