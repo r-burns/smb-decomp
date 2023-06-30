@@ -374,6 +374,10 @@ class MissingQemuIrix(Exception):
         super().__init__(self.message)
 
 def _which_gnu_prefix():
+    if which('mips-none-elf-ld') is not None:
+        return "mips-none-elf-"
+    if which('mips64-none-elf-ld') is not None:
+        return "mips64-none-elf-"
     if which('mips64-elf-ld') is not None:
         return "mips64-elf-"
     elif which('mips-linux-gnu') is not None:
